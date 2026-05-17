@@ -1,0 +1,208 @@
+{
+  "_createdAt": "2026-03-30T19:42:14Z",
+  "_id": "homePage",
+  "_rev": "NjFKn5TWxAiAPiVihZ6FWp",
+  "_system": {
+    "base": {
+      "id": "homePage",
+      "rev": "lnX7HMbh9IodYBkTbW8zf1"
+    }
+  },
+  "_type": "homePage",
+  "_updatedAt": "2026-05-05T05:37:14Z",
+  "modules": [],
+  "navbarMenuItems": [],
+  "organizationCards": [],
+  "platformAudienceCards": [
+    {
+      "_key": "platform-audience-school",
+      "badge": {
+        "_type": "localeString",
+        "en": "K12",
+        "hi": "के12",
+        "mr": "के१२"
+      },
+      "subtitle": {
+        "_type": "localeString",
+        "en": "Fees, attendance, exams, and parent communication in one system.",
+        "hi": "शुल्क, उपस्थिति, परीक्षा और अभिभावकों के साथ संवाद, सब कुछ एक ही सिस्टम में।",
+        "mr": "फीस, उपस्थिती, परीक्षा आणि पालक संवाद एकाच प्रणालीमध्ये."
+      },
+      "title": {
+        "_type": "localeString",
+        "en": "Schools",
+        "hi": "स्कूलों",
+        "mr": "शाळा"
+      }
+    },
+    {
+      "_key": "platform-audience-college",
+      "badge": {
+        "_type": "localeString",
+        "en": "DEG",
+        "hi": "आप",
+        "mr": "तुम्ही"
+      },
+      "subtitle": {
+        "_type": "localeString",
+        "en": "Department workflows, accreditation, exams, and campus administration.",
+        "hi": "विभाग की कार्यप्रणालियाँ, मान्यता, परीक्षाएँ और परिसर प्रशासन।",
+        "mr": "विभागीय कार्यप्रवाह, अधिस्वीकृती, परीक्षा आणि परिसर प्रशासन."
+      },
+      "title": {
+        "_type": "localeString",
+        "en": "Colleges",
+        "hi": "कालेजों",
+        "mr": "महाविद्यालये"
+      }
+    },
+    {
+      "_key": "platform-audience-coaching",
+      "badge": {
+        "_type": "localeString",
+        "en": "CO",
+        "hi": "सीओ",
+        "mr": "सीओ"
+      },
+      "subtitle": {
+        "_type": "localeString",
+        "en": "Batches, test series, enquiries, and student follow-up.",
+        "hi": "बैच, टेस्ट सीरीज, पूछताछ और छात्रों से संपर्क बनाए रखना।",
+        "mr": "बॅचेस, चाचणी मालिका, चौकशी आणि विद्यार्थ्यांचा पाठपुरावा."
+      },
+      "title": {
+        "_type": "localeString",
+        "en": "Coaching Institutes",
+        "hi": "कोचिंग संस्थान",
+        "mr": "कोचिंग संस्था"
+      }
+    }
+  ],
+  "platformBody": {
+    "_type": "localeString",
+    "en": "ClassGrid unifies academic workflows, operations, and communication in a single platform built for schools, colleges, and coaching institutes. No disconnected tools for fees, exams, admissions, CRM, or parent updates.",
+    "hi": "क्लासग्रिड स्कूलों, कॉलेजों और कोचिंग संस्थानों के लिए बनाए गए एक ही प्लेटफॉर्म पर शैक्षणिक कार्यप्रवाह, संचालन और संचार को एकीकृत करता है। फीस, परीक्षा, प्रवेश, सीआरएम या अभिभावक अपडेट के लिए अलग-अलग टूल की आवश्यकता नहीं है।",
+    "mr": "क्लासग्रिड हे शाळा, महाविद्यालये आणि कोचिंग संस्थांसाठी तयार केलेल्या एकाच प्लॅटफॉर्मवर शैक्षणिक कार्यप्रवाह, कामकाज आणि संवाद यांना एकत्रित करते. शुल्क, परीक्षा, प्रवेश, सीआरएम किंवा पालकांना माहिती देण्यासाठी कोणतीही विलग साधने नाहीत."
+  },
+  "platformConnectionHint": {
+    "_type": "localeString",
+    "en": "Primary use cases shown. Every module supports every institution type.",
+    "hi": "मुख्य उपयोग के उदाहरण दिखाए गए हैं। प्रत्येक मॉड्यूल सभी प्रकार के संस्थानों के लिए उपयुक्त है।",
+    "mr": "प्राथमिक उपयोग दर्शविले आहेत. प्रत्येक मॉड्यूल प्रत्येक प्रकारच्या संस्थेला समर्थन देते."
+  },
+  "platformInputLabels": [
+    {
+      "_type": "localeString",
+      "en": "Academic Management",
+      "hi": "शैक्षणिक प्रबंधन",
+      "mr": "शैक्षणिक व्यवस्थापन"
+    },
+    {
+      "_type": "localeString",
+      "en": "Institutional Operations",
+      "hi": "संस्थागत संचालन",
+      "mr": "संस्थात्मक कामकाज"
+    },
+    {
+      "_type": "localeString",
+      "en": "Communication & Engagement",
+      "hi": "संचार और सहभागिता",
+      "mr": "संवाद आणि सहभाग"
+    }
+  ],
+  "platformKicker": {
+    "_type": "localeString",
+    "en": "Unified Education Stack",
+    "hi": "एकीकृत शिक्षा स्टैक",
+    "mr": "युनिफाइड एज्युकेशन स्टॅक"
+  },
+  "platformSystemLabel": {
+    "_type": "localeString",
+    "en": "classgrid/os",
+    "hi": "क्लासग्रिड/ओएस",
+    "mr": "क्लासग्रिड/ओएस"
+  },
+  "platformTitle": {
+    "_type": "localeString",
+    "en": "Built for every institution, on one education platform",
+    "hi": "सभी संस्थानों के लिए एक ही शिक्षा मंच पर निर्मित।",
+    "mr": "प्रत्येक संस्थेसाठी, एकाच शैक्षणिक व्यासपीठावर तयार केलेले."
+  },
+  "showcaseSlides": [
+    {
+      "_key": "slide-1",
+      "_type": "homeShowcaseSlide",
+      "body": "ClassGrid is a comprehensive education management platform designed to simplify and streamline the operations of schools, colleges, and coaching institutes. From admissions and student lifecycle management to fee collection, attendance tracking, academic planning, and communication, ClassGrid brings every critical function into a single unified system.\n\nOur platform helps institutions eliminate manual processes, reduce operational errors, and improve overall efficiency through automation and real-time insights.",
+      "headline": "All-in-One ERP for Schools, Colleges & Coaching Institutes",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-176eb2e1cb780cebe051e04f7dee754dad1df0a9-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Overview",
+      "subtitle": "With a user-friendly interface and scalable architecture, ClassGrid adapts to the unique needs of institutions of all sizes, ensuring seamless coordination between administrators, teachers, students, and parents."
+    },
+    {
+      "_key": "slide-2",
+      "_type": "homeShowcaseSlide",
+      "body": "ClassGrid transforms the way educational institutions handle daily operations by automating repetitive tasks and centralizing critical workflows. From managing admissions and generating reports to tracking attendance and processing fee payments, every function is streamlined into a single platform.\n\nThis reduces administrative burden, minimizes human errors, and allows staff to focus more on delivering quality education instead of handling manual processes.",
+      "headline": "Focus: Automation & Efficiency",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-4480e7f7b10a464feae9c145f8809b5c7afa4dba-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Automation",
+      "subtitle": "This reduces administrative burden, minimizes human errors, and allows staff to focus more on delivering quality education instead of handling manual processes."
+    },
+    {
+      "_key": "slide-3",
+      "_type": "homeShowcaseSlide",
+      "body": "With powerful analytics and real-time reporting, ClassGrid gives institutions complete visibility into their operations. Administrators can monitor financial performance, track student progress, and analyze key metrics from a unified dashboard.\n\nThese insights enable faster, data-driven decision-making, helping institutions improve performance, identify gaps, and plan more effectively for the future.",
+      "headline": "Powerful Analytics and Real-Time Reporting",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-c22028403f71a9c94890d040d91f760557931cc6-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Analytics",
+      "subtitle": "These insights enable faster, data-driven decision-making, helping institutions improve performance, identify gaps, and plan more effectively for the future."
+    },
+    {
+      "_key": "slide-4",
+      "_type": "homeShowcaseSlide",
+      "body": "Effective communication is at the core of every successful institution, and ClassGrid ensures seamless interaction between administrators, teachers, students, and parents.\n\nThrough integrated messaging, notifications, and updates, everyone stays informed and connected. This improves transparency, strengthens engagement, and creates a more collaborative educational environment.",
+      "headline": "Focus: Communication & Collaboration",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-065bc480adf0593142f2f277f38643f60b2dbf87-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Communication",
+      "subtitle": "Through integrated messaging, notifications, and updates, everyone stays informed and connected. This improves transparency, strengthens engagement, and creates a more collaborative educational environment."
+    },
+    {
+      "_key": "slide-5",
+      "_type": "homeShowcaseSlide",
+      "body": "Designed to grow with your institution, ClassGrid offers a flexible and scalable architecture that adapts to your evolving needs. Whether you are managing a small coaching institute or a large multi-campus university, the platform provides the tools and customization required to support your operations.\n\nIts modern design and intuitive interface ensure quick adoption and a smooth user experience across all users.",
+      "headline": "Focus: Scalability & Flexibility",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-b7f8705a8543b85411dfb0086948e59affb42103-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Scalability",
+      "subtitle": "Its modern design and intuitive interface ensure quick adoption and a smooth user experience across all users."
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"name":"@classgrid/payment-service","private":true,"version":"0.0.1","scripts":{"dev":"node src/index.ts"},"dependencies":{"express":"^4.21.2"}}

@@ -1,0 +1,366 @@
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
+
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { supabaseAdmin } from "@/lib/supabase";
+
+const transporter = nodemailer.createTransport({
+  host: process.env.BREVO_SMTP_HOST,
+  port: Number(process.env.BREVO_SMTP_PORT || 587),
+  secure: false,
+  auth: {
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_PASS,
+  },
+});
+
+function getLocalizedString(value: unknown, fallback = ""): string {
+  if (typeof value === "string") {
+    return value || fallback;
+  }
+
+  if (value && typeof value === "object") {
+    const localized = value as { en?: unknown; hi?: unknown; mr?: unknown };
+    if (typeof localized.en === "string" && localized.en) return localized.en;
+    if (typeof localized.hi === "string" && localized.hi) return localized.hi;
+    if (typeof localized.mr === "string" && localized.mr) return localized.mr;
+  }
+
+  return fallback;
+}
+
+function truncateText(value: string, maxLength = 120): string {
+  if (!value) return "";
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
+}
+
+function resolveImageUrl(image: unknown, width: number): string | null {
+  if (!image) return null;
+
+  if (typeof image === "string") {
+    return image;
+  }
+
+  try {
+    return urlFor(image).width(width).url();
+  } catch {
+    return null;
+  }
+}
+
+function formatUpdateType(value: string | null | undefined): string {
+  switch (value) {
+    case "feature":
+      return "New Feature";
+    case "improvement":
+      return "Improvement";
+    case "bugfix":
+      return "Bug Fix";
+    default:
+      return "Update";
+  }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderRecentBlogs(
+  blogs: Array<{ slug: string; resolvedTitle: string; resolvedExcerpt: string; imageUrl: string | null }>,
+  siteUrl: string
+) {
+  if (blogs.length === 0) return "";
+
+  return `
+<div style="margin-top:40px;padding-top:30px;border-top:1px solid #2a2a2a;">
+  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">Latest from Our Blog</h3>
+  ${blogs
+    .map((blog) => {
+      const blogUrl = `${siteUrl}/blog/${blog.slug}`;
+      const imageHtml = blog.imageUrl
+        ? `<img src="${escapeHtml(blog.imageUrl)}" alt="${escapeHtml(blog.resolvedTitle)}" width="520" style="width:100%;max-width:520px;border-radius:6px;display:block;margin:0 0 12px;" />`
+        : "";
+
+      return `
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+    <tr>
+      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+        ${imageHtml}
+        <a href="${escapeHtml(blogUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;">${escapeHtml(blog.resolvedTitle)}</a>
+        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(blog.resolvedExcerpt)}</p>
+      </td>
+    </tr>
+  </table>`;
+    })
+    .join("")}
+</div>`;
+}
+
+function renderRecentChangelogs(
+  changelogs: Array<{
+    slug: string;
+    resolvedTitle: string;
+    resolvedSummary: string;
+    imageUrl: string | null;
+    updateType: string | null | undefined;
+  }>,
+  siteUrl: string
+) {
+  if (changelogs.length === 0) return "";
+
+  return `
+<div style="margin-top:30px;padding-top:30px;border-top:1px solid #2a2a2a;">
+  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
+  ${changelogs
+    .map((entry) => {
+      const changelogUrl = `${siteUrl}/changelog/${entry.slug}`;
+      const imageHtml = entry.imageUrl
+        ? `<img src="${escapeHtml(entry.imageUrl)}" alt="${escapeHtml(entry.resolvedTitle)}" width="520" style="width:100%;max-width:520px;border-radius:6px;display:block;margin:0 0 12px;" />`
+        : "";
+
+      return `
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+    <tr>
+      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+        ${imageHtml}
+        <div style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;background:#34d399;color:#000;">
+          ${escapeHtml(formatUpdateType(entry.updateType))}
+        </div>
+        <a href="${escapeHtml(changelogUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;display:block;margin-top:6px;">${escapeHtml(entry.resolvedTitle)}</a>
+        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(entry.resolvedSummary)}</p>
+      </td>
+    </tr>
+  </table>`;
+    })
+    .join("")}
+</div>`;
+}
+
+function generateUnsubscribeHash(email: string): string {
+  const secret = process.env.SANITY_WEBHOOK_SECRET || "classgrid_fallback";
+  return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
+}
+
+export async function POST(req: Request) {
+  try {
+    const { email } = await req.json();
+
+    if (!email || !email.includes("@")) {
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+    }
+
+    const { data: existingSub } = await supabaseAdmin
+      .from("blog_subscribers")
+      .select("email")
+      .eq("email", email)
+      .single();
+
+    if (existingSub) {
+      return NextResponse.json(
+        { message: "You are already subscribed to our updates!" },
+        { status: 409 }
+      );
+    }
+
+    const { error: insertError } = await supabaseAdmin
+      .from("blog_subscribers")
+      .insert({ email });
+
+    if (insertError) {
+      if (insertError.code === "23505") {
+        return NextResponse.json(
+          { message: "You are already subscribed to our updates!" },
+          { status: 409 }
+        );
+      }
+
+      throw insertError;
+    }
+
+    const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || "support@classgrid.in";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
+    const unsubHash = generateUnsubscribeHash(email);
+    const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubHash}`;
+
+    const [recentBlogs, recentChangelogs] = await Promise.all([
+      client.fetch(`*[_type == "post"] | order(publishedAt desc)[0...4]{
+        _id,
+        title,
+        "slug": slug.current,
+        excerpt,
+        publishedAt,
+        coverImage
+      }`),
+      client.fetch(`*[_type == "changelogEntry"] | order(releaseDate desc)[0...4]{
+        _id,
+        title,
+        "slug": slug.current,
+        summary,
+        releaseDate,
+        updateType,
+        image
+      }`),
+    ]);
+
+    const blogsWithImages = ((recentBlogs as any[]) || [])
+      .map((blog: any) => ({
+        ...blog,
+        resolvedTitle: getLocalizedString(blog.title, "Blog Post"),
+        resolvedExcerpt: truncateText(getLocalizedString(blog.excerpt, "Read the latest insight from Classgrid.")),
+        imageUrl: resolveImageUrl(blog.coverImage, 520),
+      }))
+      .filter((blog) => blog.slug && blog.resolvedTitle);
+
+    const changelogsWithImages = ((recentChangelogs as any[]) || [])
+      .map((entry: any) => ({
+        ...entry,
+        resolvedTitle: getLocalizedString(entry.title, "Product Update"),
+        resolvedSummary: truncateText(
+          getLocalizedString(entry.summary, "Explore the latest Classgrid release update.")
+        ),
+        imageUrl: resolveImageUrl(entry.image, 520),
+      }))
+      .filter((entry) => entry.slug && entry.resolvedTitle);
+
+    const emailHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Classgrid Updates</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body, html {
+      margin: 0; padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f0f0f;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 { color: #ffffff; margin-top: 0; margin-bottom: 16px; font-size: 20px;}
+    p { margin: 0 0 20px; color: #cccccc; font-size: 14px; line-height: 1.7; }
+    ul { margin: 0 0 20px 20px; color: #cccccc; font-size: 14px; padding: 0; line-height: 1.7; }
+    li { margin-bottom: 8px; }
+    strong { color: #ffffff; }
+    a { color: #ffffff; text-decoration: underline; }
+    .btn {
+      display: inline-block;
+      background-color: #34d399;
+      color: #000000 !important;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#0f0f0f;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#0f0f0f;width:100%;">
+<tr>
+<td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
+<tr>
+<td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
+<img src="https://classgrid.in/Classgrid.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
+<h1 style="color:#ffffff;margin:0;font-size:22px;">Welcome to Classgrid Updates</h1>
+<p style="color:#34d399;margin-top:8px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">
+Subscription Confirmed
+</p>
+</td>
+</tr>
+<tr>
+<td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;">
+<p>Hi there,</p>
+<p>Thanks for subscribing to updates from the <strong>Classgrid Unified Campus Platform</strong>. You will now receive our latest insights tailored for <strong>Schools, Junior Colleges, and Coaching Institutes</strong> straight into your inbox.</p>
+<p>Here's what you can expect from us:</p>
+<ul style="padding-left:20px;">
+  <li style="margin-bottom:6px;">Campus Administration & ERP Strategy</li>
+  <li style="margin-bottom:6px;">AI Workflow Integrations for Education</li>
+  <li style="margin-bottom:6px;">Platform Updates from the Classgrid Team</li>
+</ul>
+
+${renderRecentBlogs(blogsWithImages, siteUrl)}
+${renderRecentChangelogs(changelogsWithImages, siteUrl)}
+
+<div style="text-align:center;margin:30px 0;">
+<a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Read the Latest Insights</a>
+</div>
+
+<div style="margin-top:40px;padding-top:20px;border-top:1px solid #2a2a2a;text-align:center;">
+  <p style="color:#ffffff;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
+  <div style="display:inline-block;">
+    <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="24" height="24" style="opacity:0.8;">
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="24" height="24" style="opacity:0.8;">
+    </a>
+    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;">
+    </a>
+  </div>
+</div>
+
+<div style="margin-top:30px;text-align:center;">
+<p style="color:#9ca3af;font-size:13px;margin:0;">
+Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
+</p>
+</div>
+</td>
+</tr>
+<tr>
+<td style="padding:20px;text-align:center;border-top:1px solid #2a2a2a;color:#7a7a7a;font-size:12px;">
+<p style="margin-bottom:8px;color:#7a7a7a;font-size:12px;">You received this because you opted into Classgrid Updates.</p>
+<p style="margin-bottom:12px;"><a href="${unsubscribeUrl}" style="color:#9ca3af;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
+&copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`;
+
+    const emailText = [
+      "Welcome to Classgrid Updates.",
+      "",
+      "Recent blog posts:",
+      ...blogsWithImages.map((blog) => `- ${blog.resolvedTitle}: ${siteUrl}/blog/${blog.slug}`),
+      "",
+      "Recent changelog entries:",
+      ...changelogsWithImages.map((entry) => `- ${entry.resolvedTitle}: ${siteUrl}/changelog/${entry.slug}`),
+    ].join("\n");
+
+    await transporter.sendMail({
+      from: `"${senderName}" <${senderEmail}>`,
+      replyTo: senderEmail,
+      to: email,
+      subject: "Welcome to Classgrid Updates",
+      text: emailText,
+      html: emailHtml,
+    });
+
+    return NextResponse.json(
+      { message: "Successfully subscribed! Please check your inbox." },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Subscribe Error:", error);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again later." },
+      { status: 500 }
+    );
+  }
+}

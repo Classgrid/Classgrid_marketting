@@ -1,0 +1,232 @@
+import Image from "next/image";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { ArrowRight, Bug, Rocket, WandSparkles } from "lucide-react";
+import { format } from "date-fns";
+
+import { ShareUpdateButton } from "@/components/changelog/ShareUpdateButton";
+import { PortableTextBlock } from "@/components/PortableTextBlock";
+import { Badge } from "@/components/ui/badge";
+import { CmsFallback } from "@/components/ui/CmsErrorBoundary";
+import { ContentCoverImage } from "@/components/ui/ContentCoverImage";
+import { DocumentHero } from "@/components/ui/DocumentHero";
+import { changelogFallbackBySlug, changelogFallbackEntries } from "@/content/changelog";
+import { siteMeta } from "@/content/siteMeta";
+import { buildLangHref, extractLocaleString, extractLocaleValue, parseLang } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/metadata";
+import { urlFor } from "@/sanity/lib/image";
+import { getChangelogEntries, getChangelogEntryBySlug } from "@/sanity/lib/marketing";
+
+type ChangelogDetailPageProps = {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const UPDATE_LABELS = {
+  feature: { label: "New Feature", icon: Rocket },
+  improvement: { label: "Improvement", icon: WandSparkles },
+  bugfix: { label: "Bug Fix", icon: Bug },
+} as const;
+
+function buildSanityImageUrl(image: unknown, width: number) {
+  if (!image) return null;
+  const base = urlFor(image).width(width).fit("max").quality(80).format("webp").url();
+  return `${base}&auto=format,compress`;
+}
+
+function prettyModule(moduleValue: string) {
+  return moduleValue.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export async function generateStaticParams() {
+  const cmsEntries =
+    ((await getChangelogEntries()) as Array<{ slug?: string }> | null)?.filter((entry) => entry.slug) ?? [];
+  const slugs = Array.from(
+    new Set([...cmsEntries.map((entry) => entry.slug as string), ...changelogFallbackEntries.map((entry) => entry.slug)])
+  );
+
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: ChangelogDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const lang = parseLang((await searchParams) ?? undefined);
+  const cms = (await getChangelogEntryBySlug(slug)) as
+    | {
+        title?: unknown;
+        summary?: unknown;
+        seoTitle?: string;
+        metaDescription?: unknown;
+        ogImage?: unknown;
+      }
+    | null;
+  const fallback = changelogFallbackBySlug[slug];
+  const ogImage = buildSanityImageUrl(cms?.ogImage, 1200) ?? fallback?.ogImage;
+  const localizedTitle = extractLocaleString(cms?.title, lang);
+  const localizedSummary = extractLocaleString(cms?.summary, lang);
+  const localizedMetaDescription = extractLocaleString(cms?.metaDescription, lang);
+  const href = buildLangHref(`/changelog/${slug}`, lang);
+
+  return buildPageMetadata({
+    title: cms?.seoTitle ?? fallback?.seoTitle ?? localizedTitle ?? fallback?.title ?? "Changelog update",
+    description:
+      localizedMetaDescription ??
+      fallback?.metaDescription ??
+      localizedSummary ??
+      "Read the latest Classgrid product update.",
+    path: href,
+    canonical: href,
+    ogImage: ogImage ?? undefined,
+    type: "article",
+  });
+}
+
+export default async function ChangelogDetailPage({
+  params,
+  searchParams,
+}: ChangelogDetailPageProps) {
+  const { slug } = await params;
+  const lang = parseLang((await searchParams) ?? undefined);
+  const cms = (await getChangelogEntryBySlug(slug)) as any;
+  const fallback = changelogFallbackBySlug[slug];
+
+  if (!cms && !fallback) {
+    return (
+      <CmsFallback
+        type="changelog entry"
+        backHref={buildLangHref("/changelog", lang)}
+        backLabel="Back to Changelog"
+      />
+    );
+  }
+
+  const entry = cms
+    ? {
+        title: extractLocaleString(cms.title, lang) || fallback?.title || "Changelog update",
+        slug: cms.slug ?? slug,
+        releaseDate: cms.releaseDate ?? fallback?.releaseDate ?? new Date().toISOString().slice(0, 10),
+        updateType: cms.updateType ?? fallback?.updateType ?? "improvement",
+        versionLabel: cms.versionLabel ?? fallback?.versionLabel,
+        modules: cms.modules ?? fallback?.modules ?? [],
+        summary: extractLocaleString(cms.summary, lang) || fallback?.summary || "",
+        content: extractLocaleValue(cms.content, lang, fallback?.content ?? []) ?? [],
+        imageUrl: buildSanityImageUrl(cms.image, 1600),
+        relatedTourLabel: cms.relatedTourLabel ?? fallback?.relatedTourLabel,
+        relatedTourHref: cms.relatedTourHref ?? fallback?.relatedTourHref,
+        metaDescription: extractLocaleString(cms.metaDescription, lang) || fallback?.metaDescription || "",
+      }
+    : {
+        title: fallback.title,
+        slug: fallback.slug,
+        releaseDate: fallback.releaseDate,
+        updateType: fallback.updateType,
+        versionLabel: fallback.versionLabel,
+        modules: fallback.modules,
+        summary: fallback.summary,
+        content: fallback.content,
+        imageUrl: null,
+        relatedTourLabel: fallback.relatedTourLabel,
+        relatedTourHref: fallback.relatedTourHref,
+        metaDescription: fallback.metaDescription,
+      };
+
+  const sharePath = buildLangHref(`/changelog/${entry.slug}`, lang);
+  const shareUrl = `${siteMeta.domain}${sharePath}`;
+  const updateMeta = UPDATE_LABELS[entry.updateType];
+  const UpdateIcon = updateMeta.icon;
+
+  const softwareUpdateJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareUpdate",
+    name: entry.title,
+    description: entry.metaDescription || entry.summary,
+    datePublished: entry.releaseDate,
+    softwareVersion: entry.versionLabel,
+    url: shareUrl,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    isPartOf: {
+      "@type": "SoftwareApplication",
+      name: "Classgrid",
+      url: siteMeta.domain,
+    },
+  };
+
+  return (
+    <main className="bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareUpdateJsonLd) }}
+      />
+
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-12 text-center">
+          <DocumentHero
+            badgeLabel={`Update / ${updateMeta.label}`}
+            badgeDotColor="bg-emerald-500"
+            title={entry.title}
+            subtitles={[
+              entry.versionLabel ? `Version ${entry.versionLabel}` : "",
+              format(new Date(entry.releaseDate), "MMMM d, yyyy"),
+            ].filter(Boolean)}
+            description={entry.summary}
+            lang={lang}
+            showAccentBar={false}
+          >
+            <ShareUpdateButton
+              title={entry.title}
+              url={shareUrl}
+              className="rounded-full border-border bg-card text-foreground hover:bg-accent"
+            />
+          </DocumentHero>
+
+          {entry.modules.length > 0 && (
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              {entry.modules.map((moduleValue) => (
+                <Badge key={moduleValue} variant="secondary" className="rounded-full">
+                  {prettyModule(moduleValue)}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-4xl px-6 py-16">
+        {entry.imageUrl ? (
+          <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
+        ) : null}
+
+        <div className="space-y-12">
+          <PortableTextBlock value={entry.content} showAccentBars={false} />
+        </div>
+
+        <div className="mt-20 rounded-2xl border border-border bg-card p-8">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-500">Next step</p>
+          <h3 className="mb-3 text-2xl font-extrabold tracking-tight text-foreground">See it in action</h3>
+          <p className="mb-6 text-sm leading-relaxed text-muted-foreground max-w-lg">
+            Book a demo to see how this update works in your institution's workflow.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href={buildLangHref("/contact", lang)}
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-80"
+            >
+              Book a Demo
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href={buildLangHref("/changelog", lang)}
+              className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-6 text-sm font-semibold text-foreground transition-colors hover:border-emerald-500/40 hover:text-emerald-500"
+            >
+              View All Updates
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

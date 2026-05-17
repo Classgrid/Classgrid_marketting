@@ -1,0 +1,617 @@
+// ============================================================
+// PRISMA DATABASE SCHEMA
+// ============================================================
+// Deploy to: prisma/schema.prisma
+// Usage:
+//   npx prisma db push
+//   npx prisma migrate dev --name init
+//   npx prisma generate
+//
+// This schema supports:
+// - Multi-tenancy with Row-Level isolation
+// - 5 organizational structure types (college, school, coaching, etc)
+// - Dynamic divisions/batches based on org type
+// - Comprehensive academic management
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// CORE: ORGANIZATIONS & TENANTS
+// ============================================================
+
+/// Represents a single educational institution (school, college, coaching center)
+/// Each org gets a unique subdomain (e.g., harvard.classgrid.in)
+model Organization {
+  id                    String    @id @default(cuid())
+  name                  String    @db.VarChar(255)
+  slug                  String    @unique @db.VarChar(100) // e.g., 'harvard'
+  email                 String    @unique @db.VarChar(255)
+  phone                 String?   @db.VarChar(20)
+  
+  // Organization type determines database schema validation
+  // - college: Semester-based, complex academic structure
+  // - school: Grade-based with optional divisions
+  // - school_no_division: Grade-based, hidden default division
+  // - coaching: Batch-based (no divisions)
+  // - junior_college: Only grades 11-12
+  structureType         String    @default("school") // Enum: college | school | school_no_division | coaching | junior_college
+  
+  // Branding & Customization
+  logoUrl               String?
+  primaryColor          String    @default("#0066CC")
+  secondaryColor        String    @default("#333333")
+  themeDark             Boolean   @default(false)
+  
+  // Subscription & Plan
+  plan                  String    @default("demo") // demo | coaching | school | college | premium
+  isPaid                Boolean   @default(false)
+  expiresAt             DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  users                 User[]
+  academicYears         AcademicYear[]
+  divisions             Division[]
+  batches               Batch[]
+  classes               Class[]
+  timetableSlots        TimetableSlot[]
+  exams                 Exam[]
+  results               Result[]
+  fees                  Fee[]
+  feeStructures         FeeStructure[]
+  announcements         Announcement[]
+  assignments           Assignment[]
+  chat                  ChatMessage[]
+  
+  @@index([slug])
+  @@index([plan])
+  @@index([createdAt])
+}
+
+// ============================================================
+// AUTHENTICATION & USERS
+// ============================================================
+
+/// User roles determine what the user can see and do
+enum UserRole {
+  SUPER_ADMIN    // Platform admin (access to all orgs)
+  ORG_ADMIN      // Organization admin (principal/director)
+  TEACHER        // Faculty member
+  STUDENT        // Student/Learner
+  PARENT         // Parent/Guardian
+  SUPPORT_STAFF  // Administrative staff
+}
+
+model User {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  email                 String    @db.VarChar(255)
+  password              String    @db.VarChar(255) // Use bcrypt
+  firstName             String    @db.VarChar(100)
+  lastName              String    @db.VarChar(100)
+  phone                 String?   @db.VarChar(20)
+  profilePicture        String?
+  
+  role                  UserRole  @default(STUDENT)
+  
+  // User status
+  isActive              Boolean   @default(true)
+  emailVerified         Boolean   @default(false)
+  lastLoginAt           DateTime?
+  
+  // Teacher specific
+  departmentId          String?
+  qualifications        String[]
+  specializations       String[]
+  
+  // Student specific
+  registrationNumber    String?   @unique
+  dateOfBirth           DateTime?
+  parentPhone           String?
+  
+  // Multi-device login tokens
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  teacherClasses        TeacherClass[]
+  studentEnrollments    StudentEnrollment[]
+  attendance            Attendance[]
+  assignmentSubmissions AssignmentSubmission[]
+  chatMessages          ChatMessage[]
+  resultNotes           String    @default("") // For teacher comments
+  
+  @@unique([orgId, email]) // Email unique per organization
+  @@index([orgId, role])
+  @@index([email])
+}
+
+// ============================================================
+// ACADEMIC STRUCTURE: YEARS, DIVISIONS, BATCHES, CLASSES
+// ============================================================
+
+/// Academic Year (e.g., 2024-2025)
+model AcademicYear {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(20) // e.g., "2024-2025"
+  startDate             DateTime
+  endDate               DateTime
+  isActive              Boolean   @default(true)
+  
+  // Relations
+  divisions             Division[]
+  semesters             Semester[]
+  classes               Class[]
+  timetableSlots        TimetableSlot[]
+  exams                 Exam[]
+  
+  @@unique([orgId, name])
+  @@index([orgId, isActive])
+}
+
+/// Semesters (college-specific)
+model Semester {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  academicYearId        String
+  academicYear          AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(50) // "Sem 1", "Sem 2"
+  orderIndex            Int       // 1, 2, 3...
+  startDate             DateTime
+  endDate               DateTime
+  
+  // Relations
+  classes               Class[]
+  subjects              Subject[]
+  
+  @@unique([academicYearId, orderIndex])
+}
+
+/// Divisions (School-specific: for G10A, G10B, etc)
+model Division {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  academicYearId        String
+  academicYear          AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(100) // "Grade 10 - A"
+  grade                 Int       // 10, 11, 12, etc
+  divisionLetter        String?   // "A", "B", "C"
+  capacity              Int       @default(50)
+  isDefault             Boolean   @default(false) // Hidden division for schools without divisions
+  
+  // Relations
+  classes               Class[]
+  students              StudentEnrollment[]
+  timetableSlots        TimetableSlot[]
+  
+  @@unique([academicYearId, grade, divisionLetter])
+  @@index([orgId, academicYearId])
+}
+
+/// Batches (Coaching-specific: for batch scheduling)
+model Batch {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  courseId              String
+  course                Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(100) // "JEE Morning Batch 2026"
+  startTime             DateTime  // Time of day (e.g., 6:00 AM)
+  endTime               DateTime  // Time of day (e.g., 9:00 AM)
+  capacity              Int       @default(50)
+  isFull                Boolean   @default(false)
+  
+  // Relations
+  classes               Class[]
+  students              StudentEnrollment[]
+  timetableSlots        TimetableSlot[]
+  
+  @@unique([courseId, name])
+  @@index([orgId])
+}
+
+/// Courses (for coaching: JEE, NEET, etc)
+model Course {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  
+  name                  String    @db.VarChar(100) // "JEE Mains & Advanced"
+  description           String    @db.Text
+  
+  // Relations
+  batches               Batch[]
+  subjects              Subject[]
+  
+  @@index([orgId])
+}
+
+/// Subjects (taught in classes)
+model Subject {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  
+  name                  String    @db.VarChar(100)
+  code                  String    @db.VarChar(20)
+  creditHours           Float     @default(3.0) // For college
+  semesterId            String?
+  semester              Semester? @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  courseId              String?
+  course                Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  
+  // Relations
+  classes               Class[]
+  
+  @@unique([orgId, code])
+  @@index([orgId])
+}
+
+/// Class (A combination of division/batch + subject for a specific academic period)
+/// This is where teachers teach and students learn
+model Class {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  academicYearId        String
+  academicYear          AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  
+  subjectId             String
+  subject               Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  
+  // Can belong to either division or batch (depending on org type)
+  divisionId            String?
+  division              Division? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  
+  batchId               String?
+  batch                 Batch?    @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  
+  // Or standalone for college
+  semesterId            String?
+  
+  classCode             String    @db.VarChar(50)
+  
+  // Relations
+  teachers              TeacherClass[]
+  students              StudentEnrollment[]
+  timetableSlots        TimetableSlot[]
+  attendance            Attendance[]
+  exams                 Exam[]
+  assignments           Assignment[]
+  
+  @@unique([orgId, academicYearId, subjectId, divisionId, batchId])
+  @@index([orgId, academicYearId])
+}
+
+/// Mapping between Teachers and Classes (many-to-many)
+model TeacherClass {
+  id                    String    @id @default(cuid())
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId             String
+  teacher               User      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  
+  // Additional metadata
+  isPrimary             Boolean   @default(false) // Main teacher for the class
+  assignedAt            DateTime  @default(now())
+  
+  @@unique([classId, teacherId])
+}
+
+/// Student Enrollment in a Class/Division/Batch
+model StudentEnrollment {
+  id                    String    @id @default(cuid())
+  studentId             String
+  student               User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  // Which structural unit they're enrolled in
+  divisionId            String?
+  division              Division? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  
+  batchId               String?
+  batch                 Batch?    @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  
+  enrollmentDate        DateTime  @default(now())
+  status                String    @default("active") // active | dropped | transferred
+  
+  @@unique([studentId, classId])
+  @@index([classId])
+}
+
+// ============================================================
+// TIMETABLE & SCHEDULING
+// ============================================================
+
+/// Timetable Slots (recurring schedule for classes)
+model TimetableSlot {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  academicYearId        String
+  academicYear          AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  divisionId            String?
+  division              Division? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  
+  batchId               String?
+  batch                 Batch?    @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  
+  // Schedule details
+  dayOfWeek             Int       // 0-6 (Monday-Sunday)
+  startTime             String    // "09:00"
+  endTime               String    // "10:00"
+  room                  String?   // "Room 101"
+  
+  // Virtual class details
+  zoomLink              String?
+  googleMeetLink        String?
+  
+  // Recurrence details
+  isRecurring           Boolean   @default(true)
+  recurrencePattern     String?   // "weekly" | "daily" | "custom"
+  startDate             DateTime
+  endDate               DateTime?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([classId, dayOfWeek])
+  @@index([academicYearId])
+}
+
+// ============================================================
+// ATTENDANCE
+// ============================================================
+
+model Attendance {
+  id                    String    @id @default(cuid())
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  studentId             String
+  student               User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  date                  DateTime
+  status                String    @default("present") // present | absent | late | half-day
+  markedBy              String?   // User ID of teacher who marked
+  source                String    @default("manual") // manual | biometric | api
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@unique([classId, studentId, date])
+  @@index([studentId, date])
+}
+
+// ============================================================
+// EXAMINATIONS & RESULTS
+// ============================================================
+
+model Exam {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  academicYearId        String
+  academicYear          AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(100) // "Mid-Term", "Final", etc.
+  examDate              DateTime
+  startTime             String
+  endTime               String
+  totalMarks            Float
+  passingMarks          Float
+  
+  examType              String    @default("written") // written | practical | oral | project
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  results               Result[]
+  
+  @@index([classId, examDate])
+}
+
+model Result {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  examId                String
+  exam                  Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  studentId             String
+  
+  marksObtained         Float
+  percentage            Float
+  grade                 String    // "A+", "A", "B+", etc.
+  status                String    @default("pass") // pass | fail
+  
+  remarks               String    @db.Text
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@unique([examId, studentId])
+  @@index([studentId])
+}
+
+// ============================================================
+// FEES & PAYMENTS
+// ============================================================
+
+model FeeStructure {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  name                  String    @db.VarChar(100) // "School Fee", "Transport", etc.
+  amount                Float
+  frequency             String    @default("yearly") // yearly | semester | monthly
+  applicableTo          String    // "all_students" | "grade_10_and_above" | specific division/batch
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([orgId])
+}
+
+model Fee {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  studentId             String
+  
+  feeStructureId        String?
+  feeStructure          FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  
+  amount                Float
+  dueDate               DateTime
+  paidDate              DateTime?
+  status                String    @default("pending") // pending | partial | paid
+  
+  description           String?   @db.Text
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([orgId, studentId, status])
+}
+
+// ============================================================
+// COMMUNICATIONS
+// ============================================================
+
+model Announcement {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  title                 String    @db.VarChar(200)
+  content               String    @db.Text
+  
+  postedBy              String
+  visibility            String    @default("all") // all | teachers | students | staff
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([orgId, createdAt])
+}
+
+model ChatMessage {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  senderId              String
+  sender                User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  
+  channelId             String    // chatroom-001, class-001, direct-user-002
+  channelType           String    // direct | class_group | org_group | broadcast
+  
+  message               String    @db.Text
+  mediaUrl              String?
+  
+  isRead                Boolean   @default(false)
+  isPinned              Boolean   @default(false)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([orgId, channelId, createdAt])
+  @@index([senderId])
+}
+
+// ============================================================
+// ASSIGNMENTS & SUBMISSIONS
+// ============================================================
+
+model Assignment {
+  id                    String    @id @default(cuid())
+  orgId                 String
+  org                   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  classId               String
+  class                 Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  title                 String    @db.VarChar(200)
+  description           String    @db.Text
+  dueDate               DateTime
+  
+  totalMarks            Float?
+  
+  createdBy             String // Teacher ID
+  attachmentUrl         String?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  submissions           AssignmentSubmission[]
+  
+  @@index([classId, dueDate])
+}
+
+model AssignmentSubmission {
+  id                    String    @id @default(cuid())
+  assignmentId          String
+  assignment            Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  
+  studentId             String
+  student               User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  content               String    @db.Text
+  submissionUrl         String?
+  
+  status                String    @default("submitted") // submitted | graded
+  marksAwarded          Float?
+  feedback              String    @db.Text
+  
+  submittedAt           DateTime  @default(now())
+  gradedAt              DateTime?
+  
+  @@unique([assignmentId, studentId])
+  @@index([studentId])
+}
+
+// ============================================================
+// DEVICE & SESSION MANAGEMENT
+// ============================================================
+
+model Session {
+  id                    String    @id @default(cuid())
+  userId                String
+  token                 String    @unique
+  
+  userAgent             String?
+  ipAddress             String?
+  deviceType            String    @default("web") // web | ios | android
+  
+  expiresAt             DateTime
+  createdAt             DateTime  @default(now())
+  
+  @@index([userId, expiresAt])
+}

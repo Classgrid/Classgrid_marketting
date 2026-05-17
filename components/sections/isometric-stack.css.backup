@@ -1,0 +1,332 @@
+/* ════════════════════════════════════════════
+   ClassGrid Isometric Stack Section
+   Prefix: cg-iso-
+════════════════════════════════════════════ */
+
+.cg-iso-wrapper {
+  position: relative;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, #0a1610 0%, #060e0a 100%);
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  padding: 100px 5%;
+  overflow: hidden;
+}
+
+/* Subtle grid overlay */
+.cg-iso-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(52,211,153,.03) 0, rgba(52,211,153,.03) 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(0deg, rgba(52,211,153,.03) 0, rgba(52,211,153,.03) 1px, transparent 1px, transparent 60px);
+}
+
+.cg-iso-inner {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══ LEFT TEXT PANEL ═══ */
+.cg-iso-text {
+  max-width: 460px;
+  flex-shrink: 0;
+}
+
+.cg-iso-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 2px;
+}
+
+.cg-iso-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  flex-shrink: 0;
+}
+
+.cg-iso-kicker span {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  background: linear-gradient(90deg, #fff 0%, #34d399 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Carousel container */
+.cg-iso-carousel {
+  position: relative;
+  min-height: 360px;
+}
+
+/* Slide */
+.cg-iso-slide {
+  display: none;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.cg-iso-slide.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cg-iso-slide h2 {
+  font-family: var(--font-heading), 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -.5px;
+  color: #e2e8f0;
+  margin-bottom: 16px;
+  max-width: 430px;
+}
+
+.cg-iso-slide p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.cg-iso-bullets {
+  list-style: none;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding-left: 0;
+}
+
+.cg-iso-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.cg-iso-bullets li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: #34d399;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* Indicators */
+.cg-iso-indicators {
+  display: flex;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.cg-iso-indicators span {
+  width: 35px;
+  height: 24px; /* Much larger invisible hit area for the hand cursor */
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cg-iso-indicators span::after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255,255,255,.2);
+  transition: background .3s ease;
+}
+
+.cg-iso-indicators span.active::after,
+.cg-iso-indicators span:hover::after {
+  background: #34d399;
+}
+
+/* ═══ RIGHT ISO STACK ═══ */
+.cg-iso-stack-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container for the SVG — sized to fit screen like Zoho */
+.cg-iso-stack {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ═══ LAYER INTERACTIONS ═══ */
+.cg-iso-layer-container {
+  cursor: pointer;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+
+.cg-iso-layer {
+  transition: transform 0.4s ease, filter 0.3s ease;
+  transform-origin: center;
+}
+
+/* Non-active layers fade slightly when any layer is active */
+.cg-iso-svg[data-active] .cg-iso-layer-container:not(.active) {
+  opacity: 0.75;
+}
+
+/* ═══ THE REAL STRETCH: Active layer scales up + glowing border ═══ */
+.cg-iso-layer-container.active {
+  transform: scale(1.25);
+  opacity: 1 !important;
+  z-index: 10;
+}
+
+/* Bright glowing border on the active layer's structural faces */
+.cg-iso-layer-container.active .cg-iso-layer > path {
+  stroke: #34d399 !important;
+  stroke-width: 1.5 !important;
+}
+
+/* Also glow the inner decoration group strokes subtly */
+.cg-iso-layer-container.active .cg-iso-layer > g path {
+  stroke: rgba(52, 211, 153, 0.35) !important;
+}
+
+/* Hover hint for non-active layers */
+.cg-iso-layer-container:not(.active):hover {
+  opacity: 0.9 !important;
+}
+.cg-iso-layer-container:not(.active):hover .cg-iso-layer {
+  transform: scale(1.05);
+}
+
+/* ═══ LAYER SPREADING (subtle, secondary to the scale) ═══ */
+
+/* Active = 0 (top) */
+.cg-iso-svg[data-active="0"] [data-layer="1"] { transform: translateY(8px); }
+.cg-iso-svg[data-active="0"] [data-layer="2"] { transform: translateY(14px); }
+.cg-iso-svg[data-active="0"] [data-layer="3"] { transform: translateY(18px); }
+.cg-iso-svg[data-active="0"] [data-layer="4"] { transform: translateY(22px); }
+.cg-iso-svg[data-active="0"] [data-layer="5"] { transform: translateY(24px); }
+
+/* Active = 1 */
+.cg-iso-svg[data-active="1"] [data-layer="0"] { transform: translateY(-8px); }
+.cg-iso-svg[data-active="1"] [data-layer="2"] { transform: translateY(8px); }
+.cg-iso-svg[data-active="1"] [data-layer="3"] { transform: translateY(14px); }
+.cg-iso-svg[data-active="1"] [data-layer="4"] { transform: translateY(18px); }
+.cg-iso-svg[data-active="1"] [data-layer="5"] { transform: translateY(22px); }
+
+/* Active = 2 */
+.cg-iso-svg[data-active="2"] [data-layer="0"] { transform: translateY(-14px); }
+.cg-iso-svg[data-active="2"] [data-layer="1"] { transform: translateY(-8px); }
+.cg-iso-svg[data-active="2"] [data-layer="3"] { transform: translateY(8px); }
+.cg-iso-svg[data-active="2"] [data-layer="4"] { transform: translateY(14px); }
+.cg-iso-svg[data-active="2"] [data-layer="5"] { transform: translateY(18px); }
+
+/* Active = 3 */
+.cg-iso-svg[data-active="3"] [data-layer="0"] { transform: translateY(-18px); }
+.cg-iso-svg[data-active="3"] [data-layer="1"] { transform: translateY(-12px); }
+.cg-iso-svg[data-active="3"] [data-layer="2"] { transform: translateY(-6px); }
+.cg-iso-svg[data-active="3"] [data-layer="4"] { transform: translateY(8px); }
+.cg-iso-svg[data-active="3"] [data-layer="5"] { transform: translateY(14px); }
+
+/* Active = 4 */
+.cg-iso-svg[data-active="4"] [data-layer="0"] { transform: translateY(-22px); }
+.cg-iso-svg[data-active="4"] [data-layer="1"] { transform: translateY(-16px); }
+.cg-iso-svg[data-active="4"] [data-layer="2"] { transform: translateY(-10px); }
+.cg-iso-svg[data-active="4"] [data-layer="3"] { transform: translateY(-6px); }
+.cg-iso-svg[data-active="4"] [data-layer="5"] { transform: translateY(8px); }
+
+/* Active = 5 (bottom) */
+.cg-iso-svg[data-active="5"] [data-layer="0"] { transform: translateY(-24px); }
+.cg-iso-svg[data-active="5"] [data-layer="1"] { transform: translateY(-20px); }
+.cg-iso-svg[data-active="5"] [data-layer="2"] { transform: translateY(-14px); }
+.cg-iso-svg[data-active="5"] [data-layer="3"] { transform: translateY(-10px); }
+.cg-iso-svg[data-active="5"] [data-layer="4"] { transform: translateY(-6px); }
+
+/* One-shot entry fan-out: collapsed center stack -> existing active spread rules */
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container,
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container {
+  transition-property: transform, opacity;
+  transition-duration: 2.8s, 2.1s;
+  transition-timing-function: cubic-bezier(0.18, 0.72, 0.24, 1), ease-out;
+  will-change: transform, opacity;
+}
+
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container {
+  opacity: 0.42 !important;
+  pointer-events: none;
+}
+
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="0"] { transform: translateY(212px); }
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="1"] { transform: translateY(127px); }
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="2"] { transform: translateY(42px); }
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="3"] { transform: translateY(-42px); }
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="4"] { transform: translateY(-127px); }
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container[data-layer="5"] { transform: translateY(-212px); }
+
+.cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer {
+  transform: none;
+}
+
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container {
+  opacity: 1 !important;
+}
+
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="0"] { transition-delay: 0ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="1"] { transition-delay: 220ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="2"] { transition-delay: 440ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="3"] { transition-delay: 660ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="4"] { transition-delay: 880ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="5"] { transition-delay: 1100ms; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cg-iso-inner { gap: 40px; }
+  .cg-iso-stack { max-width: 340px; }
+}
+
+@media (max-width: 768px) {
+  .cg-iso-wrapper { padding: 60px 5%; }
+  .cg-iso-inner { flex-direction: column; gap: 40px; }
+  .cg-iso-text { max-width: 100%; }
+  .cg-iso-stack { max-width: 320px; }
+  /* Disable stretch on mobile — static stack */
+  .cg-iso-svg [data-layer] { transform: none !important; }
+  .cg-iso-layer-container.active { transform: none; }
+  .cg-iso-svg[data-active] .cg-iso-layer-container:not(.active) { opacity: 1; }
+  .cg-iso-wrapper[data-stack-entry] .cg-iso-layer-container {
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto;
+    transition-delay: 0ms !important;
+  }
+  .cg-iso-wrapper[data-stack-entry] .cg-iso-layer {
+    transform: none !important;
+  }
+}

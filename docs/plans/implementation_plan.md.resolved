@@ -1,0 +1,33 @@
+# Migrate Solution Pages to Rich Text (Portable Text)
+
+This plan outlines the steps to correctly upload the perfectly generated MDX files into Sanity so that they appear in the clean, section-by-section Rich Text editor (`structuredSections`), preserving all formatting, paragraphs, and tables.
+
+## User Review Required
+> [!IMPORTANT]
+> Because you have generated extremely rich MDX files (up to 3,700 words), we are **abandoning the JSON prompt to Codex**. Do not ask Codex for JSON. We will use your existing MDX files exactly as they are.
+
+## Proposed Changes
+
+### 1. Update Sanity Schema
+
+We will upgrade the **Solution Page** schema so it gets the exact same editing experience as Module pages.
+
+#### [MODIFY] [solutionPageType.ts](file:///c:/Users/nikhi/OneDrive/Documents/classgrid_marketting/sanity/schemaTypes/solutionPageType.ts)
+- Replace the basic `markdownSections` text-field array with the `structuredSections` array.
+- This uses Sanity's `richBody` (Portable Text), which supports headings, paragraphs, lists, bold text, and the custom `richTable` layout.
+
+### 2. Custom Migration Script
+
+We will write a robust Node script (`scripts/upload-to-portable-text.mjs`) that:
+- Reads your 8 existing `.mdx` files.
+- Identifies every section (`## Heading`).
+- Parses every paragraph, converting `**bold**` into Sanity's `strong` marks.
+- Parses every bullet point into Sanity's `listItem: "bullet"` blocks.
+- Parses every `<table>` into Sanity's native `richTable` format.
+- Uploads the fully formed JSON directly into `structuredSections` in Sanity.
+
+## Verification Plan
+1. Run the script locally across all 8 pages.
+2. Open Sanity Studio and verify that `for-admins` shows separate, editable Rich Text sections.
+3. Verify that paragraphs are intact (not merged into one heavy block).
+4. Verify that the tables render inside the Sanity Rich Text editor and the frontend.

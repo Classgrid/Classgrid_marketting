@@ -1,0 +1,68 @@
+export const pricingHeader = {
+  kicker: "Pricing Architecture",
+  title: "Module coverage across school, coaching, and college workflows",
+  callout:
+    "Premium modules are available for any institution type. Pricing depends on scope and institution size.",
+};
+
+export const moduleMatrix = [
+  { id: 1, name: "Classroom Hub", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 2, name: "Homework & Assignments", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 3, name: "Attendance Engine", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 4, name: "Exams & Results", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 5, name: "AI Quiz Maker", school: false, coaching: true, engineering: true, level: "PRO" },
+  { id: 6, name: "AI Tutor / Sidekick", school: false, coaching: true, engineering: true, level: "PRO" },
+  { id: 7, name: "Course & Subject Mapping", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 8, name: "Timetable / Schedule", school: true, coaching: false, engineering: true, level: "Basic" },
+  { id: 9, name: "Internal Tests", school: false, coaching: true, engineering: true, level: "Basic" },
+  { id: 10, name: "Student & Parent Communication", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 11, name: "Digital Certificates", school: true, coaching: true, engineering: true, level: "PRO" },
+  { id: 12, name: "Study Notes & Materials", school: true, coaching: true, engineering: true, level: "Basic" },
+  {
+    id: 13,
+    name: "Online Meetings (Zoom / Google / Classgrid Meet)",
+    school: true,
+    coaching: true,
+    engineering: true,
+    level: "Basic",
+  },
+  { id: 14, name: "Digital ID Cards", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 15, name: "Admission Management", school: false, coaching: true, engineering: true, level: "PRO" },
+  { id: 16, name: "Fee Management", school: true, coaching: true, engineering: true, level: "PRO" },
+  { id: 17, name: "Library Management", school: false, coaching: false, engineering: true, level: "PRO" },
+  { id: 18, name: "Student Management", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 19, name: "Faculty Management", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 20, name: "Leave Management", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 21, name: "Academic Calendar Management", school: true, coaching: false, engineering: true, level: "Basic" },
+  { id: 22, name: "Events & Notice Management", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 23, name: "Academic Hierarchy Builder", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 24, name: "Organization Control Management", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 25, name: "Feedback & Survey Dashboard", school: true, coaching: true, engineering: true, level: "Basic" },
+  { id: 26, name: "Alumni Relationship Management", school: false, coaching: false, engineering: true, level: "PRO" },
+  { id: 27, name: "NAAC / NBA Accreditation Management", school: false, coaching: false, engineering: true, level: "MASTER" },
+  { id: 28, name: "Canteen QR-Ordering Management", school: true, coaching: false, engineering: true, level: "PRO" },
+  { id: 29, name: "Transport & Bus Tracking Management", school: true, coaching: false, engineering: true, level: "PRO" },
+  { id: 30, name: "Hostel Management", school: false, coaching: false, engineering: true, level: "PRO" },
+];
+
+export const premiumSection = {
+  title: "Premium + Master Modules",
+  description:
+    "PRO and MASTER modules unlock advanced workflows like AI tooling, admissions automation, and accreditation management.",
+  pricingNote: "Premium pricing is quoted based on institution size, scope, and rollout timeline.",
+  items: [
+    "AI Quiz Maker",
+    "AI Tutor / Sidekick",
+    "Digital Certificates",
+    "Admission Management",
+    "Fee Management",
+    "Library Management",
+    "Alumni Relationship Management",
+    "NAAC / NBA Accreditation Management",
+    "Canteen QR-Ordering Management",
+    "Transport & Bus Tracking Management",
+    "Hostel Management",
+  ],
+  ctaLabel: "Contact Sales for Premium Pricing",
+  ctaHref: "/contact/sales",
+};

@@ -1,0 +1,33 @@
+
+# Chrome browser temp profiles
+.tmp-codex-chrome-profile/
+.tmp-chrome-profile/
+.tmp-home.html
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Build output and dependencies
+.next/
+node_modules/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# Dev logs
+*.log
+.codex-dev/
+.codex-dev.log
+.kilo/
+
+# Archive / scratch files (not part of codebase)
+_archive/
+
+# Temp data directories
+temp_all_solutions/
+temp_institutions/
+temp_roles/
+discourse_local/

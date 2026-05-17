@@ -1,0 +1,123 @@
+{
+  "_createdAt": "2026-03-30T19:42:14Z",
+  "_id": "homePage",
+  "_rev": "7wQCO4M3t9edSa4TGLGVaG",
+  "_system": {
+    "base": {
+      "id": "homePage",
+      "rev": "lnX7HMbh9IodYBkTbW8zf1"
+    }
+  },
+  "_type": "homePage",
+  "_updatedAt": "2026-04-27T19:02:29Z",
+  "modules": [],
+  "navbarMenuItems": [],
+  "organizationCards": [],
+  "platformAudienceCards": [
+    {
+      "_key": "platform-audience-school",
+      "badge": "K12",
+      "subtitle": "Fees, attendance, exams, and parent communication in one system.",
+      "title": "Schools"
+    },
+    {
+      "_key": "platform-audience-college",
+      "badge": "DEG",
+      "subtitle": "Department workflows, accreditation, exams, and campus administration.",
+      "title": "Colleges"
+    },
+    {
+      "_key": "platform-audience-coaching",
+      "badge": "CO",
+      "subtitle": "Batches, test series, enquiries, and student follow-up.",
+      "title": "Coaching Institutes"
+    }
+  ],
+  "platformBody": "ClassGrid unifies academic workflows, operations, and communication in a single platform built for schools, colleges, and coaching institutes. No disconnected tools for fees, exams, admissions, CRM, or parent updates.",
+  "platformConnectionHint": "Primary use cases shown. Every module supports every institution type.",
+  "platformInputLabels": [
+    "Academic Management",
+    "Institutional Operations",
+    "Communication & Engagement"
+  ],
+  "platformKicker": "Unified Education Stack",
+  "platformSystemLabel": "classgrid/os",
+  "platformTitle": "Built for every institution, on one education platform",
+  "showcaseSlides": [
+    {
+      "_key": "slide-1",
+      "_type": "homeShowcaseSlide",
+      "body": "ClassGrid is a comprehensive education management platform designed to simplify and streamline the operations of schools, colleges, and coaching institutes. From admissions and student lifecycle management to fee collection, attendance tracking, academic planning, and communication, ClassGrid brings every critical function into a single unified system.\n\nOur platform helps institutions eliminate manual processes, reduce operational errors, and improve overall efficiency through automation and real-time insights.",
+      "headline": "All-in-One ERP for Schools, Colleges & Coaching Institutes",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-176eb2e1cb780cebe051e04f7dee754dad1df0a9-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Overview",
+      "subtitle": "With a user-friendly interface and scalable architecture, ClassGrid adapts to the unique needs of institutions of all sizes, ensuring seamless coordination between administrators, teachers, students, and parents."
+    },
+    {
+      "_key": "slide-2",
+      "_type": "homeShowcaseSlide",
+      "body": "ClassGrid transforms the way educational institutions handle daily operations by automating repetitive tasks and centralizing critical workflows. From managing admissions and generating reports to tracking attendance and processing fee payments, every function is streamlined into a single platform.\n\nThis reduces administrative burden, minimizes human errors, and allows staff to focus more on delivering quality education instead of handling manual processes.",
+      "headline": "Focus: Automation & Efficiency",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-4480e7f7b10a464feae9c145f8809b5c7afa4dba-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Automation",
+      "subtitle": "This reduces administrative burden, minimizes human errors, and allows staff to focus more on delivering quality education instead of handling manual processes."
+    },
+    {
+      "_key": "slide-3",
+      "_type": "homeShowcaseSlide",
+      "body": "With powerful analytics and real-time reporting, ClassGrid gives institutions complete visibility into their operations. Administrators can monitor financial performance, track student progress, and analyze key metrics from a unified dashboard.\n\nThese insights enable faster, data-driven decision-making, helping institutions improve performance, identify gaps, and plan more effectively for the future.",
+      "headline": "Powerful Analytics and Real-Time Reporting",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-c22028403f71a9c94890d040d91f760557931cc6-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Analytics",
+      "subtitle": "These insights enable faster, data-driven decision-making, helping institutions improve performance, identify gaps, and plan more effectively for the future."
+    },
+    {
+      "_key": "slide-4",
+      "_type": "homeShowcaseSlide",
+      "body": "Effective communication is at the core of every successful institution, and ClassGrid ensures seamless interaction between administrators, teachers, students, and parents.\n\nThrough integrated messaging, notifications, and updates, everyone stays informed and connected. This improves transparency, strengthens engagement, and creates a more collaborative educational environment.",
+      "headline": "Focus: Communication & Collaboration",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-065bc480adf0593142f2f277f38643f60b2dbf87-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Communication",
+      "subtitle": "Through integrated messaging, notifications, and updates, everyone stays informed and connected. This improves transparency, strengthens engagement, and creates a more collaborative educational environment."
+    },
+    {
+      "_key": "slide-5",
+      "_type": "homeShowcaseSlide",
+      "body": "Designed to grow with your institution, ClassGrid offers a flexible and scalable architecture that adapts to your evolving needs. Whether you are managing a small coaching institute or a large multi-campus university, the platform provides the tools and customization required to support your operations.\n\nIts modern design and intuitive interface ensure quick adoption and a smooth user experience across all users.",
+      "headline": "Focus: Scalability & Flexibility",
+      "image": {
+        "_type": "image",
+        "asset": {
+          "_ref": "image-b7f8705a8543b85411dfb0086948e59affb42103-1586x992-png",
+          "_type": "reference"
+        }
+      },
+      "label": "Scalability",
+      "subtitle": "Its modern design and intuitive interface ensure quick adoption and a smooth user experience across all users."
+    }
+  ]
+}
