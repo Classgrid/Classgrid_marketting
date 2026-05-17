@@ -1,0 +1,91 @@
+# Light Mode Master Prompt — Copy & Paste Daily
+
+Replace `[PAGE_NAME]` with the page you want converted that day.
+
+---
+
+## The Prompt:
+
+```
+LIGHT MODE OPTIMIZATION — [PAGE_NAME]
+
+Convert the [PAGE_NAME] page and ALL its child components to work in both light and dark mode. Follow these exact rules:
+
+### CONVERSION RULES:
+
+1. **Backgrounds:**
+   - `bg-[#0f0f0f]`, `bg-[#0a0a0a]`, `bg-[#141414]`, `bg-black` → `bg-background`
+   - `bg-white/[0.03]`, `bg-white/5` → `bg-card` or `bg-muted`
+   - Keep `bg-[#022c22]` (emerald sections) as-is — they're intentional dark features
+
+2. **Text colors:**
+   - `text-white` → `text-foreground`
+   - `text-white/40`, `text-white/50`, `text-white/55`, `text-white/60`, `text-white/70`, `text-white/80` → `text-muted-foreground`
+   - `text-emerald-400` → `text-emerald-600 dark:text-emerald-400`
+   - Keep any text inside intentionally dark sections as-is
+
+3. **Borders:**
+   - `border-white/8`, `border-white/10`, `border-white/20` → `border-border`
+   - `border-emerald-500/XX` → keep as-is (accent borders work in both modes)
+
+4. **Hover states:**
+   - `hover:text-emerald-400` → `hover:text-emerald-600 dark:hover:text-emerald-400`
+   - `hover:bg-white/[0.05]` → `hover:bg-accent`
+   - `hover:border-white/XX` → `hover:border-border`
+
+5. **Dark containers (Approach 1) — for elements that MUST stay dark:**
+   - Globe component → wrap in `bg-[#0a0a0a] rounded-3xl p-4`
+   - Made in India SVG → wrap in `bg-[#0a0a0a] rounded-3xl`
+   - Orbital Timeline → keep in dark container
+   - 3D animations → keep in dark container
+   - Any WebGL/Canvas element → keep in dark container
+
+6. **Shadows:**
+   - `shadow-[0_10px_40px_rgba(0,0,0,0.6)]` → add light variant: `shadow-lg dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)]`
+
+7. **Badge/Chip components:**
+   - `bg-emerald-500/8 text-emerald-400` → `bg-emerald-500/10 text-emerald-600 dark:text-emerald-400`
+
+8. **Mobile animations to hide (if applicable):**
+   - Heavy animations (globe, orbital, 3D) → hide on mobile with `hidden lg:block`
+   - Cursor glow effects → disable on touch devices
+   - Particle animations → simplify or hide below `md:`
+
+### PROCESS:
+1. Read the page file first
+2. Identify ALL child components imported
+3. Read each child component
+4. Convert the page file
+5. Convert each child component
+6. Do NOT touch components already converted (check if they use `text-foreground`, `bg-background` etc.)
+7. Verify the dev server has no errors after changes
+
+### DO NOT:
+- Change the Mission & Vision section (intentionally dark emerald)
+- Change any component in the orbital timeline (stays dark)
+- Break any existing dark mode appearance
+- Add new dependencies
+- Restructure component architecture
+
+### AFTER CONVERSION:
+- List all files changed
+- Note any components that were already theme-aware
+- Flag any components that need the "dark container" approach
+```
+
+---
+
+## Daily Schedule Suggestion:
+
+| Day | Page | Key Components |
+|-----|------|---------------|
+| Day 1 ✅ | About Page | Globe, CoreValues, MadeInIndia, Timeline |
+| Day 2 | Homepage | HeroSection, HeroBackground, TimelineSection, ModulesGrid |
+| Day 3 | Pricing Page | PricingCards, PricingToggle, FAQ |
+| Day 4 | Blog Page | BlogList, BlogCard, BlogSidebar |
+| Day 5 | Changelog Page | ChangelogList, ChangelogCard |
+| Day 6 | Compare Pages | CompareHub, CompareDetail |
+| Day 7 | Solutions Pages | SolutionDetail, StructuredContent |
+| Day 8 | Support Page | SupportPageClient, FAQAccordion |
+| Day 9 | Legal Pages | Privacy, Terms, Refund |
+| Day 10 | Shared Components | Navbar, Footer, AskAI Panel |

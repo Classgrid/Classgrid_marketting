@@ -1,0 +1,185 @@
+import { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import LinkedInProvider from "next-auth/providers/linkedin";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { connectMongo } from "@/lib/mongodb";
+import ForumUser from "@/lib/models/ForumUser";
+import ForumOTP from "@/lib/models/ForumOTP";
+import mongoose from "mongoose";
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID!,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+      authorization: {
+        params: { scope: 'openid profile email' },
+      },
+      issuer: 'https://www.linkedin.com',
+      jwks_endpoint: 'https://www.linkedin.com/oauth/openid/jwks',
+      profile(profile, tokens) {
+        const defaultImage =
+          'https://cdn-icons-png.flaticon.com/512/174/174857.png';
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture ?? defaultImage,
+        };
+      },
+    }),
+    CredentialsProvider({
+      name: "OTP",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        otp: { label: "OTP", type: "text" },
+        name: { label: "Name", type: "text" }, // Optional
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.otp) {
+          throw new Error("Missing email or OTP");
+        }
+
+        const email = String(credentials.email).trim().toLowerCase();
+        const otp = String(credentials.otp).trim();
+
+        await connectMongo();
+
+        const otpRecord = await ForumOTP.findOne({ email });
+
+        if (!otpRecord) {
+          throw new Error("Invalid or expired OTP");
+        }
+
+        if (otpRecord.expiresAt < new Date()) {
+          await ForumOTP.deleteOne({ _id: otpRecord._id });
+          throw new Error("OTP has expired");
+        }
+
+        if (otpRecord.attempts >= 3) {
+          await ForumOTP.deleteOne({ _id: otpRecord._id });
+          throw new Error("Too many attempts. Please request a new OTP.");
+        }
+
+        if (otpRecord.otp !== otp) {
+          otpRecord.attempts += 1;
+          await otpRecord.save();
+          throw new Error("Invalid OTP");
+        }
+
+        // OTP is valid, delete it
+        await ForumOTP.deleteOne({ _id: otpRecord._id });
+
+        // Find or create ForumUser
+        let user = await ForumUser.findOne({ email });
+
+        if (!user) {
+          user = await ForumUser.create({
+            email,
+            name: credentials.name || undefined,
+            provider: "email",
+            emailVerified: true,
+          });
+        } else if (credentials.name && !user.name) {
+          user.name = credentials.name;
+          await user.save();
+        }
+
+        return { id: user._id.toString(), email: user.email, name: user.name, image: user.avatar };
+      },
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  },
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google" || account?.provider === "github" || account?.provider === "linkedin") {
+        await connectMongo();
+        let forumUser = await ForumUser.findOne({ email: user.email });
+
+        if (!forumUser) {
+          forumUser = await ForumUser.create({
+            email: user.email,
+            name: user.name,
+            avatar: user.image,
+            provider: account.provider,
+            emailVerified: true,
+          });
+        } else if (!forumUser.avatar && user.image) {
+          forumUser.avatar = user.image;
+          await forumUser.save();
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        
+        // Check if user exists in the platform's User collection
+        try {
+          await connectMongo();
+          const db = mongoose.connection.db;
+          if (db) {
+            const platformUser = await db.collection("users").findOne({ email: user.email });
+            if (platformUser) {
+              token.isPlatformUser = true;
+              token.platformRole = platformUser.role;
+              
+              if (platformUser.organization_id) {
+                token.orgId = platformUser.organization_id.toString();
+                // Look up org name from organizations collection
+                const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
+                token.orgName = org?.name || null;
+              }
+
+              // Also update the ForumUser record
+              await ForumUser.updateOne(
+                { email: user.email },
+                { $set: { isPlatformUser: true } }
+              );
+            } else {
+              token.isPlatformUser = false;
+            }
+
+            // Get createdAt from ForumUser
+            const forumUser = await ForumUser.findOne({ email: user.email }).select("createdAt");
+            if (forumUser) {
+              token.forumCreatedAt = forumUser.createdAt?.toISOString();
+            }
+          }
+        } catch (error) {
+          console.error("Error checking platform user status:", error);
+          token.isPlatformUser = false;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.id as string;
+        (session.user as any).isPlatformUser = token.isPlatformUser as boolean;
+        (session.user as any).platformRole = token.platformRole as string | undefined;
+        (session.user as any).orgName = token.orgName as string | undefined;
+        (session.user as any).orgId = token.orgId as string | undefined;
+        (session.user as any).forumCreatedAt = token.forumCreatedAt as string | undefined;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};

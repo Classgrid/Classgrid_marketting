@@ -1,0 +1,3 @@
+# 
+
+{"query":"*[_type==\"homePage\"][0]{_id,\"showcaseSlidesCount\":count(showcaseSlides),showcaseSlides[0..1]{label,headline,\"imageUrl\":image.asset-\u003eurl},integrationLogos[0..2]{name}}","result":{"_id":"homePage","integrationLogos":null,"showcaseSlides":[{"headline":"All-in-One ERP for Schools, Colleges \u0026 Coaching Institutes","imageUrl":"https://cdn.sanity.io/images/a4wk6kp5/production/176eb2e1cb780cebe051e04f7dee754dad1df0a9-1586x992.png","label":"Overview"},{"headline":"Focus: Automation \u0026 Efficiency","imageUrl":"https://cdn.sanity.io/images/a4wk6kp5/production/4480e7f7b10a464feae9c145f8809b5c7afa4dba-1586x992.png","label":"Automation"}],"showcaseSlidesCount":5},"syncTags":["s1:rZTENA","s1:Y5RMKQ","s1:zbbJJQ"],"ms":11}

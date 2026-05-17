@@ -1,0 +1,17 @@
+# Project Development Rules
+
+This is a living document tracking rules and constraints for the ClassGrid marketing site development.
+
+## 1. Layout & Spacing
+> [!IMPORTANT]
+> **Never Create Huge Blank Spaces**
+> Avoid using massive viewport height values (like `500vh`) combined with `position: sticky` unless a complex, perfectly calibrated scroll-scrubbing animation is strictly required and explicitly approved. 
+> 
+> *Rationale*: Using large `vh` multipliers to mock scroll-driven animations often results in massive blank gaps on the screen before or after the component, breaking the layout flow and user experience. Always prioritize standard, in-flow stacking (e.g., `height: auto`, `padding: 100px 5%`) and static positioning by default.
+
+## 2. Code Modification Process
+> [!IMPORTANT]
+> **Use Manual Tool Edits, Not Scripts**
+> Never use bash/node/python scripts to generate, modify, or inject code into the project files. Always use the built-in file editing tools manually.
+>
+> *Rationale*: Automated script-based modifications can introduce syntax errors (like broken string interpolation) and bypass standard code review safeguards. Manual editing ensures greater precision and accountability for every change.

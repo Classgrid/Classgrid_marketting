@@ -1,0 +1,105 @@
+import { defineField, defineType } from 'sanity'
+
+export const websiteFeedbackType = defineType({
+  name: 'websiteFeedback',
+  title: 'Website Feedback (Was this helpful?)',
+  type: 'document',
+  icon: () => '💬',
+  fields: [
+    defineField({
+      name: 'pageUrl',
+      title: 'Page URL',
+      type: 'string',
+      description: 'The URL of the page where the feedback was submitted.',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'pageTitle',
+      title: 'Page Title',
+      type: 'string',
+      description: 'e.g., "Classgrid vs vmedulife"',
+    }),
+    defineField({
+      name: 'reaction',
+      title: 'Emoji Reaction',
+      type: 'string',
+      description: 'The emoji the user clicked.',
+      options: {
+        list: [
+          { title: '😭 Not helpful', value: 'terrible' },
+          { title: '😞 Somewhat', value: 'bad' },
+          { title: '😐 Okay', value: 'okay' },
+          { title: '🤩 Very helpful', value: 'great' },
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'message',
+      title: 'Feedback Message',
+      type: 'text',
+      rows: 4,
+      description: 'Optional text feedback from the visitor.',
+    }),
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: '🆕 New', value: 'new' },
+          { title: '✅ Reviewed', value: 'reviewed' },
+          { title: '📦 Archived', value: 'archived' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'new',
+    }),
+    defineField({
+      name: 'userAgent',
+      title: 'User Agent',
+      type: 'string',
+      description: 'Browser info (auto-captured).',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'submittedAt',
+      title: 'Submitted At',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+    }),
+  ],
+
+  preview: {
+    select: {
+      title: 'pageTitle',
+      reaction: 'reaction',
+      status: 'status',
+      submittedAt: 'submittedAt',
+    },
+    prepare({ title, reaction, status, submittedAt }) {
+      const emojiMap: Record<string, string> = {
+        terrible: '😭',
+        bad: '😞',
+        okay: '😐',
+        great: '🤩',
+      }
+      const statusEmoji = status === 'reviewed' ? '✅' : status === 'archived' ? '📦' : '🆕'
+      const date = submittedAt
+        ? new Date(submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : ''
+      return {
+        title: `${emojiMap[reaction] || '❓'} ${title || 'Unknown page'}`,
+        subtitle: `${statusEmoji} ${date}`,
+      }
+    },
+  },
+
+  orderings: [
+    {
+      title: 'Newest First',
+      name: 'submittedAtDesc',
+      by: [{ field: 'submittedAt', direction: 'desc' }],
+    },
+  ],
+})

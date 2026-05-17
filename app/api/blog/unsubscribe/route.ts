@@ -1,0 +1,70 @@
+import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
+import crypto from "crypto";
+
+// ─── Token generators ────────────────────────────────────────────────────────
+
+/** New token: SHA-256 HMAC (used by this Next.js app) */
+function generateUnsubscribeHash(email: string): string {
+  const secret = process.env.SANITY_WEBHOOK_SECRET || "classgrid_fallback";
+  return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
+}
+
+/** Legacy token: plain MD5 of email (used by old Express/Python backend) */
+function generateLegacyHash(email: string): string {
+  return crypto.createHash("md5").update(email).digest("hex");
+}
+
+/** Verify the token is valid via either scheme */
+function isTokenValid(email: string, token: string): boolean {
+  const hmacHash = generateUnsubscribeHash(email);
+  const md5Hash = generateLegacyHash(email);
+  return token === hmacHash || token === md5Hash;
+}
+
+// ─── Route ───────────────────────────────────────────────────────────────────
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
+    const token = searchParams.get("token");
+
+    if (!email || !token) {
+      return NextResponse.redirect(new URL("/blog", req.url));
+    }
+
+    // Verify the token (accepts both old MD5 and new HMAC tokens)
+    if (!isTokenValid(email, token)) {
+      return NextResponse.json(
+        { error: "Invalid or expired unsubscribe link." },
+        { status: 403 }
+      );
+    }
+
+    // Soft-delete: set is_active to false (don't remove the row)
+    const { error } = await supabaseAdmin
+      .from("blog_subscribers")
+      .update({ is_active: false })
+      .eq("email", email);
+
+    if (error) {
+      console.error("Unsubscribe DB Error:", error);
+      return NextResponse.json(
+        { error: "Failed to unsubscribe. Please try again." },
+        { status: 500 }
+      );
+    }
+
+    // Redirect to the confirmation page
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
+    return NextResponse.redirect(`${siteUrl}/blog/unsubscribed`);
+
+  } catch (error) {
+    console.error("Unsubscribe Error:", error);
+    return NextResponse.json(
+      { error: "Something went wrong." },
+      { status: 500 }
+    );
+  }
+}

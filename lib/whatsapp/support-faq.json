@@ -1,0 +1,32 @@
+[
+  {
+    "id": "what_is_classgrid",
+    "keywords": ["what is classgrid", "classgrid", "what's classgrid", "tell me about classgrid", "who are you"],
+    "reply": "ClassGrid is a platform for schools, colleges, and institutes to run classes, attendance, communication, and operations in one place. Learn more: https://classgrid.in"
+  },
+  {
+    "id": "create_account",
+    "keywords": ["create account", "sign up", "signup", "register", "new account", "how do i join", "book demo", "onboarding"],
+    "reply": "Institutions join Classgrid through Book a Demo, not self-serve sign-up. Visit https://classgrid.in/#demo, share your institution details and requirements, and the Classgrid team will review the request and connect to schedule a demo discussion."
+  },
+  {
+    "id": "colleges",
+    "keywords": ["college", "colleges", "university", "higher ed", "degree"],
+    "reply": "Yes — ClassGrid supports colleges and higher-ed workflows alongside schools and coaching centers. See https://classgrid.in/use-cases/college"
+  },
+  {
+    "id": "parents_login",
+    "keywords": ["parent", "parents", "mother", "father", "guardian", "parent login", "can parents"],
+    "reply": "Parent access depends on how your school configures ClassGrid. Many schools enable parent logins for notices, fees, and student progress. Ask your institution’s admin for an invite or parent portal link."
+  },
+  {
+    "id": "pricing",
+    "keywords": ["pricing", "price", "cost", "plan", "subscription", "how much", "fee"],
+    "reply": "Pricing is tailored to institution size and modules. See https://classgrid.in/pricing — or reply here with your school/city and we’ll route you to the team."
+  },
+  {
+    "id": "support_human",
+    "keywords": ["human", "agent", "support", "help me", "talk to someone", "call"],
+    "reply": "Thanks for reaching out. For account-specific help, email support@classgrid.in with your school name and phone number. We’ll get back to you as soon as we can."
+  }
+]

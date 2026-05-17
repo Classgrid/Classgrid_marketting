@@ -1,0 +1,1 @@
+{"name":"@classgrid/auth-service","private":true,"version":"1.0.0","description":"Authentication Service - JWT & User Management","scripts":{"dev":"node src/index.ts","start":"node src/index.ts"},"dependencies":{"express":"^4.21.2","jsonwebtoken":"^9.1.2","bcryptjs":"^2.4.3","@prisma/client":"^5.8.0"},"devDependencies":{"prisma":"^5.8.0"},"engines":{"node":">=20.0.0"}}

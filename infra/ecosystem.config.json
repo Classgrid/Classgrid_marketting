@@ -1,0 +1,134 @@
+{
+  "apps": [
+    {
+      "name": "gateway",
+      "script": "./server/gateway/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4000
+      },
+      "error_file": "/var/log/classgrid/gateway/error.log",
+      "out_file": "/var/log/classgrid/gateway/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "500M",
+      "autorestart": true,
+      "max_restarts": 10,
+      "min_uptime": "10s"
+    },
+    {
+      "name": "auth-service",
+      "script": "./server/services/auth-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4101
+      },
+      "error_file": "/var/log/classgrid/auth/error.log",
+      "out_file": "/var/log/classgrid/auth/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "autorestart": true
+    },
+    {
+      "name": "tenant-service",
+      "script": "./server/services/tenant-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4102
+      },
+      "error_file": "/var/log/classgrid/tenant/error.log",
+      "out_file": "/var/log/classgrid/tenant/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "autorestart": true
+    },
+    {
+      "name": "payment-service",
+      "script": "./server/services/payment-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4103
+      },
+      "error_file": "/var/log/classgrid/payment/error.log",
+      "out_file": "/var/log/classgrid/payment/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "autorestart": true
+    },
+    {
+      "name": "chat-service",
+      "script": "./server/services/chat-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4104
+      },
+      "error_file": "/var/log/classgrid/chat/error.log",
+      "out_file": "/var/log/classgrid/chat/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "500M",
+      "autorestart": true
+    },
+    {
+      "name": "notes-service",
+      "script": "./server/services/notes-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4105
+      },
+      "error_file": "/var/log/classgrid/notes/error.log",
+      "out_file": "/var/log/classgrid/notes/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "autorestart": true
+    },
+    {
+      "name": "notification-service",
+      "script": "./server/services/notification-service/src/index.ts",
+      "instances": 1,
+      "exec_mode": "fork",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 4106
+      },
+      "error_file": "/var/log/classgrid/notification/error.log",
+      "out_file": "/var/log/classgrid/notification/out.log",
+      "merge_logs": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "autorestart": true
+    }
+  ],
+  "deploy": {
+    "production": {
+      "user": "ubuntu",
+      "host": [
+        {
+          "host": "classgrid.in",
+          "port": 22
+        }
+      ],
+      "key": "/path/to/key.pem",
+      "ref": "origin/main",
+      "repo": "git@github.com:your-repo/classgrid.git",
+      "path": "/home/ubuntu/classgrid",
+      "post-deploy": "npm ci && pm2 restart ecosystem.config.json"
+    }
+  }
+}
