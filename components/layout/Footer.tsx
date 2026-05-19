@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Laptop, Mail, MapPin, Moon, Phone, Sun, Facebook, Instagram, Youtube, Linkedin } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Mail, MapPin, Phone, Facebook, Instagram, Youtube, Linkedin } from "lucide-react";
+
 import { normalizeAppHref } from "@/lib/route-maps";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import {
@@ -74,7 +74,6 @@ export function Footer({
   statusState,
   statusHref,
 }: FooterProps) {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [liveStatus, setLiveStatus] = useState<{ state: FooterStatusState; label: string } | null>(null);
 
@@ -389,50 +388,10 @@ export function Footer({
               </span>
             </div>
 
-            {/* RIGHT — language + theme */}
+            {/* RIGHT — language only (dark mode only site) */}
             {mounted ? (
               <div className="flex items-center gap-2.5">
-
-                {/* 🌐 Language pill */}
                 <LanguageSelector />
-
-                {/* ☀️🌙💻 Theme pill */}
-                <div className="flex items-center rounded-full bg-black/[0.06] p-[3px] dark:bg-white/[0.08]">
-                  <button
-                    onClick={() => setTheme("light")}
-                    title={dict.lightMode}
-                    className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                      theme === "light"
-                        ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Sun size={13} />
-                  </button>
-                  <button
-                    onClick={() => setTheme("dark")}
-                    title={dict.darkMode}
-                    className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                      theme === "dark"
-                        ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Moon size={13} />
-                  </button>
-                  <button
-                    onClick={() => setTheme("system")}
-                    title={dict.systemTheme}
-                    className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                      theme === "system"
-                        ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Laptop size={13} />
-                  </button>
-                </div>
-
               </div>
             ) : <div />}
 

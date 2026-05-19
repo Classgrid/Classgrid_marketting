@@ -37,11 +37,11 @@ export function VercelTable({ columns, rows, className }: VercelTableProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-border bg-card",
+        "overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-card scrollbar-hide",
         className
       )}
     >
-      <table className="w-full text-left text-sm">
+      <table className="w-full min-w-[600px] text-left text-sm md:min-w-0">
         <thead>
           <tr className="border-b border-border">
             {columns.map((col, i) => (

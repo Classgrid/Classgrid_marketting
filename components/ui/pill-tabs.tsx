@@ -37,7 +37,7 @@ export function PillTabs({
   return (
     <div
       className={cn(
-        "relative inline-flex flex-wrap items-center justify-center gap-1 rounded-full border border-zinc-200 bg-zinc-100/80 p-1.5 shadow-sm dark:border-white/10 dark:bg-[#0f0f0f]",
+        "relative flex max-w-[95vw] sm:max-w-full overflow-x-auto no-scrollbar items-center justify-start sm:justify-center sm:flex-wrap gap-1 rounded-3xl sm:rounded-full border border-border bg-muted/80 p-1.5 shadow-sm scroll-smooth",
         className
       )}
     >
@@ -51,7 +51,7 @@ export function PillTabs({
             type="button"
             onClick={() => onChange(tab.id)}
             className={cn(
-              "relative z-10 inline-flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold transition-colors duration-300 outline-none",
+              "relative z-10 inline-flex whitespace-nowrap shrink-0 items-center gap-2 rounded-full px-5 sm:px-6 py-2 text-sm font-semibold transition-colors duration-300 outline-none",
               isActive
                 ? "text-slate-900 dark:text-white"
                 : "text-zinc-600 hover:bg-zinc-200/50 hover:text-zinc-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"

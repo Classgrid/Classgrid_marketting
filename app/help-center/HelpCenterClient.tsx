@@ -408,7 +408,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
                 <Link
                   key={`${article.slug}-${index}`}
                   href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
-                  className="flex flex-col p-6 rounded-2xl bg-[#fafafa] dark:bg-[#171717] border border-zinc-200 dark:border-[#2a2a2a] hover:border-emerald-500/40 dark:hover:border-emerald-500/40 transition-colors group shadow-sm"
+                  className="flex flex-col p-6 rounded-2xl bg-card border border-border hover:border-emerald-500/40 transition-colors group shadow-sm"
                 >
                   <div className="mb-3">
                     <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">

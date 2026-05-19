@@ -43,7 +43,7 @@ const SocialIcon = ({ platform, url }: { platform: string, url: string }) => {
       href={url} 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`w-10 h-10 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 ${data.color}`}
+      className={`w-10 h-10 rounded-full flex items-center justify-center border border-border bg-background transition-colors duration-200 hover:bg-muted hover:border-border ${data.color}`}
     >
       {data.icon}
     </a>
@@ -88,7 +88,7 @@ const TeamSection = ({ title, icon: Icon, members }: { title: string, icon: any,
           <motion.div
             key={member._id}
             variants={fadeUpVariant}
-            className="w-full max-w-[320px] group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] px-8 pt-12 pb-8 transition-all duration-300 ease-out hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.15)] hover:border-emerald-500/50 hover:-translate-y-1 flex flex-col items-center text-center overflow-hidden"
+            className="w-full max-w-[320px] group relative bg-card border border-border rounded-[2.5rem] px-8 pt-12 pb-8 transition-all duration-300 ease-out hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.15)] hover:border-emerald-500/50 hover:-translate-y-1 flex flex-col items-center text-center overflow-hidden"
           >
             {/* Expanding Green Line — Pure CSS */}
             <div className="absolute top-0 left-0 w-full h-[3px] bg-emerald-500/10" />

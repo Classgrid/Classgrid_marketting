@@ -430,6 +430,14 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [thinking, setThinking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const userInitial = session?.user?.name ? session.user.name.charAt(0).toUpperCase() : null;
 
@@ -635,11 +643,19 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       <motion.aside
         aria-hidden={!open}
         className={cn(
-          "fixed right-0 top-0 z-[80] flex h-full w-full flex-col border-l border-border bg-background shadow-2xl sm:w-[400px]",
+          "fixed z-[80] flex flex-col border-border bg-background shadow-2xl",
+          // Mobile: full-screen bottom sheet
+          "inset-x-0 bottom-0 h-[100dvh] w-full border-t sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:h-full sm:w-[400px] sm:border-l sm:border-t-0",
           open ? "pointer-events-auto" : "pointer-events-none"
         )}
         initial={false}
-        animate={open ? { x: 0, opacity: 1 } : { x: "100%", opacity: 0.98 }}
+        animate={
+          open
+            ? { y: 0, x: 0, opacity: 1 }
+            : isMobile
+              ? { y: "100%", x: 0, opacity: 1 }
+              : { y: 0, x: "100%", opacity: 0.98 }
+        }
         transition={prefersReducedMotion ? { duration: 0 } : panelTransition}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-4">
@@ -772,23 +788,30 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
         <div className="border-t border-border px-4 py-4">
           <form onSubmit={handleSubmit} className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Input
+            <div className="relative w-full">
+              <textarea
                 id="ask-ai-input"
                 name="askAiQuestion"
                 suppressHydrationWarning
-                ref={inputRef}
+                ref={inputRef as any}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (canSubmit) void askQuestion(input);
+                  }
+                }}
                 placeholder="Ask a Classgrid question..."
                 autoComplete="off"
-                className="h-11 rounded-full border-border bg-card px-4"
+                className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-card pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 overflow-y-auto [scrollbar-width:thin] leading-relaxed"
               />
               <Button
                 type="submit"
+                variant="primary"
                 size="icon"
                 disabled={!canSubmit}
-                className="h-11 w-11 rounded-full bg-emerald-500 hover:bg-emerald-500/90"
+                className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl"
               >
                 <ArrowUp className="h-4 w-4" />
                 <span className="sr-only">Send question</span>

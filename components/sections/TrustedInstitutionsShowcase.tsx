@@ -31,7 +31,7 @@ export function TrustedInstitutionsShowcase({
   ];
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-2xl border border-emerald-900/40 bg-[linear-gradient(110deg,rgba(2,44,34,0.95),rgba(6,95,70,0.55),rgba(2,44,34,0.95))] py-12 md:py-14">
+    <div className="relative mt-8 overflow-hidden rounded-2xl border border-emerald-900/40 bg-[linear-gradient(110deg,rgba(2,44,34,0.95),rgba(6,95,70,0.55),rgba(2,44,34,0.95))] py-8 md:py-14">
       {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
       <style>{`
         .logo-wrap {
@@ -71,14 +71,14 @@ export function TrustedInstitutionsShowcase({
             const hasWordmark = inst.wordmarkUrl && inst.wordmarkUrl.trim() !== "";
 
             const content = (
-              <div className="flex shrink-0 items-center gap-4 px-10 md:gap-5 md:px-14">
+              <div className="flex shrink-0 items-center gap-3 px-8 md:gap-5 md:px-14">
                 {/* College logo (icon/crest) — wrapped for contrast */}
                 {hasLogo && (
                   <div className="logo-wrap">
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
-                      className="h-[100px] w-[100px] shrink-0 object-contain md:h-[120px] md:w-[120px]"
+                      className="h-[75px] w-[75px] shrink-0 object-contain md:h-[120px] md:w-[120px]"
                       loading="lazy"
                     />
                   </div>
@@ -95,7 +95,7 @@ export function TrustedInstitutionsShowcase({
                     <img
                       src={inst.wordmarkUrl}
                       alt={inst.wordmarkAlt ?? inst.name}
-                      className="h-[52px] w-auto max-w-[260px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
+                      className="h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
                       loading="lazy"
                     />
                   </div>

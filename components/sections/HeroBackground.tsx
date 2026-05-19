@@ -43,11 +43,7 @@ export function HeroBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <div
-        className="grid-container"
-        style={{
-          maskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 100%)",
-        }}
+        className="grid-container max-sm:[mask-image:linear-gradient(to_bottom,transparent_0%,black_15%,black_72%,transparent_72%)] max-sm:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_15%,black_72%,transparent_72%)] sm:[mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_100%)] sm:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_100%)]"
       >
         <div className="grid-motion" />
       </div>

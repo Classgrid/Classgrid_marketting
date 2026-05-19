@@ -308,7 +308,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
             h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-serif font-bold mt-12 mb-6 text-white leading-tight first:mt-0">{children}</h2>,
             h3: ({ children }: any) => <h3 className="text-2xl md:text-3xl font-serif font-semibold mt-10 mb-5 text-white leading-snug first:mt-0">{children}</h3>,
             h4: ({ children }: any) => <h4 className="text-xl font-semibold mt-8 mb-4 text-white first:mt-0">{children}</h4>,
-            normal: ({ children }: any) => <p className="text-lg md:text-xl text-zinc-300 mb-6 leading-9 antialiased">{children}</p>,
+            normal: ({ children }: any) => <p className="text-base md:text-lg text-zinc-300 mb-5 leading-7 md:leading-9 antialiased">{children}</p>,
             blockquote: ({ children }: any) => (
               <blockquote className="my-10 rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/5 py-5 pl-6 pr-5 text-lg leading-8 text-zinc-200 italic">{children}</blockquote>
             ),
@@ -536,8 +536,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
       {data.galleryImageUrls && data.galleryImageUrls.length > 0 && (
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-            <h2 className="text-2xl font-bold tracking-tight">Deployment Gallery</h2>
-            <p className="text-muted-foreground mt-2">Visual proof from the {data.clientName} campus.</p>
+            <h2 className="text-2xl font-bold tracking-tight">Gallery</h2>
           </div>
           <ImageGallery images={data.galleryImageUrls.map((url, i) => ({ 
             id: `gallery-${i}`, 

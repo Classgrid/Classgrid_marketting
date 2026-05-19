@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { DemoRequestForm } from "@/components/sections/DemoRequestForm";
 import { HomeDevScrollReset } from "@/components/layout/HomeDevScrollReset";
 import { HeroSection } from "@/components/sections/HeroSection";
+import { MobileStatsBridge } from "@/components/sections/MobileStatsBridge";
 import { Reveal } from "@/components/sections/Reveal";
 import { StatsStrip } from "@/components/sections/StatsStrip";
 import { TimelineSection } from "@/components/sections/TimelineSection";
@@ -1012,6 +1013,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
           heroSecondaryLabel={heroSecondaryLabel}
         />
       ) : null}
+      <MobileStatsBridge />
 
       {showShowcase ? (
         <Reveal>
@@ -1065,7 +1067,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showTrust ? (
         <Reveal>
-          <section className="bg-slate-50 py-10 md:py-14 dark:bg-[#0f0f0f]">
+          <section className="bg-muted py-10 md:py-14">
             <div className="mx-auto max-w-7xl px-4">
               {(trustedBy || trustSectionDescription) && (
                 <div className="mx-auto mb-4 max-w-3xl text-center">
@@ -1176,13 +1178,15 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showTimeline ? (
         <Reveal>
-          <TimelineSection
-            title={timelineSectionTitle}
-            subtitle={timelineSectionSubtitle}
-            tabs={timelineTabs}
-            defaultTab={defaultTimelineTab}
-            roleDataMap={timelineRoleDataMap}
-          />
+          <div className="hidden sm:block">
+            <TimelineSection
+              title={timelineSectionTitle}
+              subtitle={timelineSectionSubtitle}
+              tabs={timelineTabs}
+              defaultTab={defaultTimelineTab}
+              roleDataMap={timelineRoleDataMap}
+            />
+          </div>
         </Reveal>
       ) : null}
 

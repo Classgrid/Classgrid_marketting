@@ -98,6 +98,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedPage, setCopiedPage] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("intro");
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   // Feedback State
   const [feedbackState, setFeedbackState] = useState<'idle' | 'opened' | 'submitted' | 'error'>('idle');
@@ -197,7 +198,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
         The "Blueprint Box" Container
         max-w-[900px] centers it as a wide rectangle, while border-l and border-r create the vertical box shape.
       */}
-      <div className="relative mx-auto w-full max-w-[900px]">
+      <div className="relative mx-4 sm:mx-auto max-w-[900px]">
         
         {/* Right-Side Minimalist Table of Contents (Sticky) */}
         <div className="hidden xl:block absolute left-full top-32 ml-8 w-40 h-full z-50">
@@ -254,7 +255,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
         <div className="relative border-l border-r border-slate-200 dark:border-white/10">
           
           {/* Header Section */}
-          <section id="intro" className="relative px-6 md:px-12 pt-16 pb-20 text-center">
+          <section id="intro" className="relative px-4 md:px-12 pt-16 pb-20 text-center">
             {/* Top Border Line for Header */}
             <div className="absolute top-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
             <Crosshair className="-top-[8px] -left-[8px]" />
@@ -307,7 +308,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           </section>
 
           {/* Body Content Sections */}
-          <div className="relative px-6 md:px-12 py-16 [&_a:not(.toc-link)]:text-emerald-600 [&_a:not(.toc-link)]:dark:text-emerald-400 [&_a:not(.toc-link)]:underline [&_a:not(.toc-link)]:underline-offset-4 [&_a:not(.toc-link)]:decoration-emerald-500/40 [&_a:not(.toc-link)]:hover:decoration-emerald-500">
+          <div className="relative px-4 md:px-12 py-16 [&_a:not(.toc-link)]:text-emerald-600 [&_a:not(.toc-link)]:dark:text-emerald-400 [&_a:not(.toc-link)]:underline [&_a:not(.toc-link)]:underline-offset-4 [&_a:not(.toc-link)]:decoration-emerald-500/40 [&_a:not(.toc-link)]:hover:decoration-emerald-500">
             {/* Top Border Line for Content */}
             <div className="absolute top-0 left-0 w-full border-t border-dashed border-slate-200 dark:border-white/10" />
             <Crosshair className="-top-[8px] -left-[8px]" />
@@ -463,7 +464,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
             <Crosshair className="-top-[8px] -right-[8px]" />
             
             {/* Feedback Widget Wrapper — fixed width, no shape morph */}
-            <div className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-neutral-900 overflow-hidden w-[400px]">
+            <div className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-neutral-900 overflow-hidden w-full max-w-[400px]">
 
               {/* ── SUBMITTED OR ERROR STATE ── */}
               {feedbackState === 'submitted' || feedbackState === 'error' ? (
@@ -655,6 +656,65 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
         </div>
       </div>
+      {/* ── MOBILE STICKY TOC BUTTON — visible below xl only ── */}
+      <div className="xl:hidden">
+        {/* Backdrop */}
+        {mobileTocOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMobileTocOpen(false)}
+          />
+        )}
+
+        {/* Slide-up TOC panel — only mounted when open to avoid GPU layer conflicts */}
+        {mobileTocOpen && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/10 rounded-t-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+              <span className="text-[13px] font-semibold text-white tracking-wide">On this page</span>
+              <button
+                onClick={() => setMobileTocOpen(false)}
+                className="text-neutral-400 hover:text-white transition-colors"
+                aria-label="Close table of contents"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="px-5 py-4 space-y-1 max-h-[60vh] overflow-y-auto">
+              {tocItems.map((item) => (
+                <a
+                  key={`mobile-toc-${item.id}`}
+                  href={`#${item.id}`}
+                  onClick={() => setMobileTocOpen(false)}
+                  className={cn(
+                    "block px-3 py-2.5 rounded-lg text-[14px] transition-colors",
+                    activeSection === item.id
+                      ? "bg-emerald-500/15 text-emerald-400 font-medium"
+                      : "text-neutral-400 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            <div className="pb-6" />
+          </div>
+        )}
+
+        {/* Floating pill trigger button */}
+        <button
+          onClick={() => setMobileTocOpen((v) => !v)}
+          className="fixed bottom-5 right-4 z-40 flex items-center gap-2 rounded-full bg-[#111] border border-white/15 px-4 py-2.5 text-[13px] font-medium text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-emerald-500/40 hover:bg-[#1a1a1a] active:scale-95"
+          aria-label="Open table of contents"
+        >
+          <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h10M4 18h7" />
+          </svg>
+          On this page
+        </button>
+      </div>
+
     </main>
   );
 }

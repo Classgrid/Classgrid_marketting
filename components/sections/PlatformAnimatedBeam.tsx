@@ -80,19 +80,19 @@ export function PlatformAnimatedBeam({
       <div className="pointer-events-none absolute right-[-10%] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[#ff0080]/40 blur-[100px]" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-12 xl:flex-row xl:items-start xl:gap-16">
+        <div className="flex flex-col items-center justify-between gap-6 sm:gap-12 xl:flex-row xl:items-start xl:gap-16">
           <motion.div
-            className="relative flex h-[400px] w-full max-w-[520px] items-center justify-center overflow-visible xl:h-[420px] xl:w-[52%] xl:max-w-none"
+            className="relative flex h-[260px] sm:h-[400px] w-full max-w-[520px] items-center justify-center overflow-visible xl:h-[420px] xl:w-[52%] xl:max-w-none"
             ref={containerRef}
             initial={false}
             whileInView="visible"
             viewport={viewportOnce}
             variants={fadeInLeft}
           >
-            <div className="z-10 flex h-full w-full flex-row items-center justify-between gap-5 xl:gap-8">
-              <div className="flex w-[48%] min-w-[210px] max-w-[250px] flex-col rounded-2xl border border-gray-200 bg-[#fafafa] p-4 shadow-2xl backdrop-blur-md dark:border-[#222] dark:bg-[#0f0f0f]">
+            <div className="z-10 flex h-full w-full flex-row items-center justify-between gap-2 sm:gap-5 xl:gap-8">
+              <div className="flex w-[48%] min-w-[145px] sm:min-w-[210px] max-w-[250px] flex-col rounded-xl sm:rounded-2xl border border-border bg-card p-2 sm:p-4 shadow-2xl backdrop-blur-md">
                 {(systemLabel?.trim() || displayInputLabels.length > 0) ? (
-                  <div className="mb-4 flex items-center gap-3 border-b border-gray-100 px-2 pb-4 dark:border-[#222]">
+                  <div className="mb-2 sm:mb-4 flex items-center gap-2 sm:gap-3 border-b border-gray-100 px-1 sm:px-2 pb-2 sm:pb-4 dark:border-[#222]">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#1a1a1a]">
                       <svg
                         width="16"
@@ -101,13 +101,13 @@ export function PlatformAnimatedBeam({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
-                        className="text-gray-600 dark:text-gray-300"
+                        className="text-gray-600 dark:text-gray-300 h-3 w-3 sm:h-4 sm:w-4"
                       >
                         <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4" />
                       </svg>
                     </div>
                     {systemLabel?.trim() ? (
-                      <span className="text-base font-semibold tracking-tight text-foreground">
+                      <span className="text-[11px] sm:text-base font-semibold tracking-tight text-foreground">
                         {systemLabel}
                       </span>
                     ) : null}
@@ -120,10 +120,10 @@ export function PlatformAnimatedBeam({
                     return (
                       <div
                         key={`${label}-${index}`}
-                        className="relative flex min-h-[92px] items-center gap-3 rounded-xl border-2 border-[#00dfd8]/80 bg-[#00dfd8]/10 px-3 py-3 shadow-[0_0_25px_-5px_rgba(0,223,216,0.6)] transition-colors"
+                        className="relative flex min-h-[60px] sm:min-h-[92px] items-center gap-2 sm:gap-3 rounded-lg sm:rounded-xl border border-[#00dfd8]/80 sm:border-2 bg-[#00dfd8]/10 px-2 py-2 sm:px-3 sm:py-3 shadow-[0_0_15px_-5px_rgba(0,223,216,0.6)] sm:shadow-[0_0_25px_-5px_rgba(0,223,216,0.6)] transition-colors"
                       >
-                        <Icon className="h-5 w-5 text-[#00dfd8]" />
-                        <span className="text-base font-semibold leading-snug text-foreground">{label}</span>
+                        <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#00dfd8] shrink-0" />
+                        <span className="text-[10px] sm:text-base font-semibold leading-tight sm:leading-snug text-foreground">{label}</span>
                         <div
                           ref={inputRefs[index]}
                           className="absolute -right-[6px] top-1/2 z-20 h-2.5 w-2.5 -translate-y-1/2 rounded-full border-[2px] border-[#00dfd8] bg-[#00dfd8] shadow-[0_0_10px_#00dfd8]"
@@ -134,11 +134,11 @@ export function PlatformAnimatedBeam({
                 </div>
               </div>
 
-              <div className="relative ml-4 flex w-[46%] min-w-[230px] max-w-[340px] flex-col justify-center gap-8 xl:ml-8">
+              <div className="relative ml-2 sm:ml-4 flex w-[46%] min-w-[155px] sm:min-w-[230px] max-w-[340px] flex-col justify-center gap-3 sm:gap-8 xl:ml-8">
                 {displayAudienceCards.slice(0, 3).map((card, index) => (
                   <div
                     key={`${card.title}-${index}`}
-                    className="relative flex min-h-[124px] items-center gap-4 rounded-2xl border-2 border-[#ff0080]/80 bg-[#fafafa] p-4 shadow-[0_0_30px_-5px_rgba(255,0,128,0.7)] dark:bg-[#0f0f0f]"
+                    className="relative flex min-h-[70px] sm:min-h-[124px] items-center gap-2 sm:gap-4 rounded-xl sm:rounded-2xl border border-[#ff0080]/80 sm:border-2 bg-card p-2 sm:p-4 shadow-[0_0_20px_-5px_rgba(255,0,128,0.7)] sm:shadow-[0_0_30px_-5px_rgba(255,0,128,0.7)]"
                   >
                     <div
                       ref={audienceRefs[index]}
@@ -146,28 +146,28 @@ export function PlatformAnimatedBeam({
                     />
                     <div
                       className={cn(
-                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ff0080]/20",
+                        "flex h-7 w-7 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border border-[#ff0080]/20",
                         badgeStyles[index]
                       )}
                     >
                       {(() => {
                         const Icon = audienceIcons[index] || Users;
-                        return <Icon className="h-5 w-5" strokeWidth={2} />;
+                        return <Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" strokeWidth={2} />;
                       })()}
                     </div>
                     <div className="flex flex-col">
                       {card.badge?.trim() ? (
-                        <Chip variant="rose" className="mb-1.5 self-start">
-                          {card.badge}
-                        </Chip>
+                        <div className="mb-0.5 sm:mb-1.5 self-start scale-75 sm:scale-100 origin-left">
+                          <Chip variant="rose">{card.badge}</Chip>
+                        </div>
                       ) : null}
                       {card.title?.trim() ? (
-                        <span className="mb-1 text-base font-bold leading-tight text-foreground">
+                        <span className="mb-0 sm:mb-1 text-[11px] sm:text-base font-bold leading-tight text-foreground line-clamp-1">
                           {card.title}
                         </span>
                       ) : null}
                       {card.subtitle?.trim() ? (
-                        <span className="text-sm font-medium leading-snug text-gray-500">
+                        <span className="text-[9px] sm:text-sm font-medium leading-[1.2] sm:leading-snug text-gray-500 line-clamp-2">
                           {card.subtitle}
                         </span>
                       ) : null}

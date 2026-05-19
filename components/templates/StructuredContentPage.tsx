@@ -20,6 +20,10 @@ import {
   Users,
   Presentation,
   ShieldCheck,
+  Menu,
+  X,
+  FileText,
+  PanelLeft,
 } from "lucide-react";
 import { PortableTextBlock } from "@/components/PortableTextBlock";
 import { VercelTable } from "@/components/ui/vercel-table";
@@ -251,6 +255,9 @@ export function StructuredContentPage({
   relatedChangelogs = [],
 }: StructuredContentPageProps) {
   const [sidebarSearch, setSidebarSearch] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
   const filteredModules = useMemo(() => {
     if (!sidebarSearch.trim()) return allModules;
@@ -350,11 +357,210 @@ export function StructuredContentPage({
   const modeLabel = mode === "module" ? "Modules" : "Solutions";
 
   return (
-    <div className="flex w-full bg-background text-foreground antialiased">
+    <div className="flex w-full flex-col bg-background text-foreground antialiased">
+
+      {/* ── Mobile Nav Bar (only visible below lg) ── */}
+      <div className="sticky top-16 z-40 flex items-center justify-between border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur-sm lg:hidden">
+        {/* Left: Menu button */}
+        <button
+          type="button"
+          onClick={() => { setMobileMenuOpen(true); setMobileTocOpen(false); }}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground/80 hover:bg-white/[0.06] hover:text-white transition-colors"
+        >
+          <PanelLeft className="h-5 w-5" />
+        </button>
+
+        {/* Right: On this page button */}
+        {sections.length > 0 && (
+          <button
+            type="button"
+            onClick={() => { setMobileTocOpen((o) => !o); setMobileMenuOpen(false); }}
+            className="flex items-center justify-center h-8 w-8 rounded-lg text-foreground/70 hover:bg-white/[0.06] hover:text-white transition-colors"
+            aria-label="On this page"
+          >
+            <FileText className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* ── Mobile TOC Drawer (On this page) ── */}
+      <AnimatePresence>
+        {mobileTocOpen && sections.length > 0 && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="mobile-toc-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileTocOpen(false)}
+            />
+            {/* Drawer panel */}
+            <motion.div
+              key="mobile-toc-drawer"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 right-0 z-50 flex h-full w-[280px] flex-col bg-[#080808] shadow-2xl lg:hidden"
+            >
+              {/* Drawer header */}
+              <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
+                <span className="text-sm font-semibold text-white">On this page</span>
+                <button
+                  type="button"
+                  onClick={() => setMobileTocOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/70 hover:text-white transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-4 [scrollbar-width:thin]">
+                <ul className="space-y-0.5">
+                  {sections.map((section) => (
+                    <li key={section.id}>
+                      <a
+                        href={`#${section.id}`}
+                        onClick={() => setMobileTocOpen(false)}
+                        className={cn(
+                          "block rounded-md px-3 py-2.5 text-[13px] leading-snug transition-colors",
+                          activeSection === section.id
+                            ? "bg-emerald-500/10 font-semibold text-emerald-500"
+                            : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                        )}
+                      >
+                        <span className="line-clamp-2">{section.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Mobile Left Sidebar Drawer ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="mobile-menu-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            {/* Drawer panel */}
+            <motion.div
+              key="mobile-menu-drawer"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-[#080808] shadow-2xl lg:hidden"
+            >
+              {/* Drawer header */}
+              <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
+                <span className="text-sm font-semibold text-white">Menu</span>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/70 hover:text-white transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Drawer content */}
+              <div className="flex-1 overflow-y-auto px-3 py-4">
+                {mode === "module" && allModules.length > 0 ? (
+                  // Module mode: list all modules
+                  <nav className="space-y-5 text-sm">
+                    {Object.entries(groupedModules).map(([cat, mods]) => (
+                      <div key={cat}>
+                        <p className="mb-2 px-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
+                          {cat}
+                        </p>
+                        <ul className="space-y-0.5">
+                          {mods.map((m) => {
+                            const isActive = m.slug === currentSlug;
+                            return (
+                              <li key={m.slug}>
+                                <Link
+                                  href={`/product/modules/${m.slug}`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={cn(
+                                    "block rounded-md px-2.5 py-2 text-[13px] leading-snug transition-colors",
+                                    isActive
+                                      ? "bg-emerald-500/10 font-semibold text-emerald-500"
+                                      : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                                  )}
+                                >
+                                  {m.title}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                  </nav>
+                ) : (
+                  // Solution mode: show LEFT_NAV groups
+                  <nav className="space-y-6 text-sm">
+                    {LEFT_NAV.map((group) => (
+                      <div key={group.section}>
+                        <p className="mb-2 px-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                          {group.section}
+                        </p>
+                        <ul className="space-y-0.5">
+                          {group.items.map(({ label, href, icon: Icon }) => (
+                            <li key={href}>
+                              <Link
+                                href={href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="group flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-[13px] text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-white"
+                              >
+                                <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 group-hover:text-emerald-500 transition-colors" />
+                                {label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </nav>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       <div className="mx-auto flex w-full max-w-[1400px] items-start">
 
-        {/* ── Left Sidebar ── */}
-        <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-60 shrink-0 overflow-y-auto border-r border-border/60 px-4 py-6 lg:block">
+        {/* ── Left Sidebar (desktop, collapsible) ── */}
+        <AnimatePresence initial={false}>
+          {desktopSidebarOpen && (
+            <motion.aside
+              key="desktop-sidebar"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 240, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{
+                width: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+                opacity: { duration: 0.25, ease: "easeInOut" },
+              }}
+              className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 overflow-y-auto overflow-x-hidden border-r border-border/60 lg:block"
+              style={{ minWidth: 0 }}
+            >
+              <div className="w-60 px-4 py-6">
           {mode === "module" && allModules.length > 0 ? (
             <>
               {/* Search */}
@@ -422,11 +628,40 @@ export function StructuredContentPage({
               ))}
             </nav>
           )}
-        </aside>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
 
         {/* ── Center Content ── */}
-        <main className="min-w-0 flex-1 px-5 py-10 md:px-10 lg:px-14 xl:px-16">
-          <div className="mx-auto max-w-[740px] xl:mx-0">
+        <main
+          className="min-w-0 flex-1 px-5 py-10 md:px-10 lg:px-14 xl:px-16 flex justify-center xl:justify-start transition-all duration-300 ease-in-out"
+        >
+          <div 
+            className={cn(
+              "w-full transition-all duration-300 ease-in-out",
+              desktopSidebarOpen ? "max-w-[740px]" : "max-w-[900px] xl:ml-8"
+            )}
+          >
+
+            {/* Desktop sidebar toggle button — only on lg+ */}
+            <motion.button
+              type="button"
+              onClick={() => setDesktopSidebarOpen((o) => !o)}
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.07)" }}
+              whileTap={{ scale: 0.94 }}
+              transition={{ duration: 0.15 }}
+              className="mb-8 hidden h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/70 hover:text-white lg:flex"
+              aria-label="Toggle sidebar"
+            >
+              <motion.span
+                animate={{ rotate: desktopSidebarOpen ? 0 : 180 }}
+                transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                className="flex items-center"
+              >
+                <PanelLeft className="h-4 w-4" />
+              </motion.span>
+            </motion.button>
 
 
 

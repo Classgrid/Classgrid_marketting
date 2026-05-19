@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -22,7 +23,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { normalizeAppHref } from "@/lib/route-maps";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -418,15 +418,15 @@ export function Navbar({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-0 md:gap-4">
 
           {typeof onAskAiClick === "function" ? (
-            <div className="relative hidden md:inline-flex">
+            <div className="relative inline-flex">
               <Button
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
                   showAskAiPrompt ? "border-emerald-500/35 shadow-[0_0_18px_rgba(16,185,129,0.14)]" : ""
                 )}
                 onClick={onAskAiClick}
@@ -462,7 +462,7 @@ export function Navbar({
           ) : null}
 
           {primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
-            <Button asChild className="h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110">
+            <Button asChild className="hidden h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110 md:inline-flex">
               <Link
                 href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
                 prefetch={false}
@@ -483,212 +483,201 @@ export function Navbar({
           ) : null}
 
           <div className="md:hidden">
-            <Sheet
-              open={mobileOpen}
-              onOpenChange={(open) => {
-                setMobileOpen(open);
-                if (!open) setOpenSections({});
+            {/* Mobile hamburger / close toggle */}
+            <button
+              id="mobile-nav-toggle"
+              type="button"
+              suppressHydrationWarning
+              aria-label={mobileOpen ? "Close menu" : dict.toggleMenu}
+              onClick={() => {
+                setMobileOpen((prev) => {
+                  if (prev) setOpenSections({});
+                  return !prev;
+                });
               }}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/90 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
             >
-              <SheetTrigger
-                id="mobile-nav-sheet-trigger"
-                suppressHydrationWarning
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/90 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">{dict.toggleMenu}</span>
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                showCloseButton={false}
-                className="inset-0 flex h-[100dvh] max-h-[100dvh] w-screen max-w-none flex-col gap-0 overflow-hidden border-0 bg-[#080808] p-0 text-white shadow-2xl data-[side=right]:inset-0 data-[side=right]:h-[100dvh] data-[side=right]:w-screen data-[side=right]:border-0 sm:max-w-none sm:data-[side=right]:max-w-none"
-              >
-                <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/[0.08] px-4">
-                  <div className="flex items-center gap-2">
-                    {logoUrl ? (
-                      <Image src={logoUrl} alt={logoAlt || brandName || ""} width={28} height={28} className="h-7 w-auto object-contain" />
-                    ) : null}
-                    {brandName ? (
-                      <span className="text-base font-semibold tracking-tight text-white">{brandName}</span>
-                    ) : null}
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <span className="sr-only">{mobileOpen ? "Close menu" : dict.toggleMenu}</span>
+            </button>
+
+            {/* Full-screen dropdown overlay — starts below the 64px sticky header */}
+            <AnimatePresence>
+              {mobileOpen ? (
+                <motion.div
+                  key="mobile-nav-overlay"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  className="fixed inset-x-0 top-16 z-40 flex flex-col bg-[#080808] text-white"
+                  style={{ height: "calc(100dvh - 64px)" }}
+                >
+
+
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
+                  {/* Top Action Buttons (Vercel style) */}
+                  <div className="mb-8 flex flex-col gap-3">
+                    {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
+                      <Link
+                        href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
+                        onClick={closeMobileMenu}
+                        className="flex h-12 w-full items-center justify-center rounded-lg bg-white text-[15px] font-semibold text-black transition-transform active:scale-[0.98]"
+                      >
+                        {primaryCtaLabel}
+                      </Link>
+                    )}
+                    {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() && (
+                      <Link
+                        href={secondaryLinkHref}
+                        target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}
+                        rel={isExternalHref(secondaryLinkHref) ? "noopener noreferrer" : undefined}
+                        onClick={closeMobileMenu}
+                        className="flex h-12 w-full items-center justify-center rounded-lg bg-[#111] border border-white/10 text-[15px] font-medium text-white transition-transform active:scale-[0.98] active:bg-white/5"
+                      >
+                        {secondaryLinkLabel}
+                      </Link>
+                    )}
                   </div>
-                  <SheetClose
-                    onClick={closeMobileMenu}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
-                  >
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Close menu</span>
-                  </SheetClose>
-                </div>
 
-                <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain px-3 py-3">
-                  {typeof onAskAiClick === "function" && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeMobileMenu();
-                        onAskAiClick();
-                      }}
-                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
-                    >
-                      <Bot className="h-4 w-4 text-emerald-500 shrink-0" />
-                      {dict.askAi}
-                    </button>
-                  )}
-
-                  <Link
-                    href="/changelog"
-                    onClick={() => {
-                      handleChangelogClick();
-                      closeMobileMenu();
-                    }}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
-                      isHrefActive(pathname, "/changelog") && "bg-white/[0.1] text-white"
+                  <div className="flex flex-col">
+                    {/* Explicitly render Home first if it exists */}
+                    {navItems.length > 0 && navItems[0].label?.toLowerCase() === "home" && (
+                      <Link
+                        href={rewriteHref(navItems[0].href)}
+                        target={isExternalHref(navItems[0].href || "") ? "_blank" : undefined}
+                        rel={isExternalHref(navItems[0].href || "") ? "noopener noreferrer" : undefined}
+                        onClick={closeMobileMenu}
+                        className={cn(
+                          "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white border-b border-white/10",
+                          isNavItemActive(pathname, navItems[0]) && "text-white"
+                        )}
+                      >
+                        {navItems[0].label}
+                      </Link>
                     )}
-                  >
-                    <ArrowRight className="h-4 w-4 shrink-0 text-white/55" />
-                    <span className="flex-1">{dict.changelog}</span>
-                    {showNewBadge && (
-                      <span className="flex h-[18px] items-center rounded-full bg-emerald-500/10 px-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500 ring-1 ring-inset ring-emerald-500/20 animate-pulse">
-                        {dict.newBadge}
-                      </span>
-                    )}
-                  </Link>
 
-                  {navItems.map((item, idx) => {
-                    const hasSections = (item.sections?.length ?? 0) > 0;
-                    const sectionKey = item.label ?? `item-${idx}`;
-                    const isOpen = openSections[sectionKey] ?? false;
-                    const active = isNavItemActive(pathname, item);
+                    {navItems.map((item, idx) => {
+                      // Skip Home as it's rendered above
+                      if (item.label?.toLowerCase() === "home") return null;
 
-                    if (item.href && !hasSections) {
-                      return (
-                        <div key={`mobile-${sectionKey}-${idx}`} className="pt-1">
+                      const hasSections = (item.sections?.length ?? 0) > 0;
+                      const sectionKey = item.label ?? `item-${idx}`;
+                      const isOpen = openSections[sectionKey] ?? false;
+                      const active = isNavItemActive(pathname, item);
+                      const isLast = idx === navItems.length - 1;
+
+                      if (item.href && !hasSections) {
+                        return (
                           <Link
+                            key={`mobile-${sectionKey}-${idx}`}
                             href={rewriteHref(item.href)}
                             target={isExternalHref(item.href) ? "_blank" : undefined}
                             rel={isExternalHref(item.href) ? "noopener noreferrer" : undefined}
                             onClick={closeMobileMenu}
                             className={cn(
-                              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
-                              active && "bg-white/[0.1] text-white"
+                              "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
+                              !isLast && "border-b border-white/10",
+                              active && "text-white"
                             )}
                           >
                             {item.label}
                           </Link>
-                        </div>
-                      );
-                    }
+                        );
+                      }
 
-                    if (hasSections) {
-                      return (
-                        <div key={`mobile-${sectionKey}-${idx}`} className="pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setOpenSections(prev => ({ ...prev, [sectionKey]: !isOpen }))}
-                            className={cn(
-                              "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
-                              active && "bg-white/[0.1] text-white"
-                            )}
-                          >
-                            <span>{item.label}</span>
-                            <ChevronDown
+                      if (hasSections) {
+                        return (
+                          <div key={`mobile-${sectionKey}-${idx}`} className={cn("flex flex-col", !isLast && "border-b border-white/10")}>
+                            <button
+                              type="button"
+                              onClick={() => setOpenSections(prev => ({ ...prev, [sectionKey]: !isOpen }))}
                               className={cn(
-                                "h-4 w-4 text-white/55 transition-transform duration-200",
-                                isOpen && "rotate-180"
+                                "flex w-full items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
+                                active && "text-white"
                               )}
-                            />
-                          </button>
+                            >
+                              <span>{item.label}</span>
+                              <ChevronDown
+                                className={cn(
+                                  "h-5 w-5 text-white/40 transition-transform duration-300 ease-out",
+                                  isOpen && "rotate-180"
+                                )}
+                              />
+                            </button>
 
-                          {isOpen && (
-                            <div className="mt-1 space-y-0.5">
-                              {item.sections?.map(sec =>
-                                sec.links?.map((link, l_idx) => {
-                                  const ResolvedIcon = link.icon || ICON_MAP[link.label as string];
-                                  return (
-                                    <Link
-                                      key={`mobile-link-${link.label}-${l_idx}`}
-                                      href={rewriteHref(link.href!)}
-                                      target={isExternalHref(link.href ?? "") ? "_blank" : undefined}
-                                      rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
-                                      onClick={closeMobileMenu}
-                                      className={cn(
-                                        "flex items-center gap-3 rounded-lg py-2 pl-6 pr-3 text-sm font-medium tracking-tight text-white/65 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
-                                        isHrefActive(pathname, link.href) && "bg-white/[0.1] text-white"
-                                      )}
-                                    >
-                                      {ResolvedIcon && <ResolvedIcon className="h-4 w-4 shrink-0" strokeWidth={1.5} />}
-                                      {link.label}
-                                    </Link>
-                                  );
-                                })
+                            <AnimatePresence initial={false}>
+                              {isOpen && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="flex flex-col pb-4 pt-1">
+                                    {item.sections?.map(sec =>
+                                      sec.links?.map((link, l_idx) => {
+                                        const ResolvedIcon = link.icon || ICON_MAP[link.label as string];
+                                        return (
+                                          <Link
+                                            key={`mobile-link-${link.label}-${l_idx}`}
+                                            href={rewriteHref(link.href!)}
+                                            target={isExternalHref(link.href ?? "") ? "_blank" : undefined}
+                                            rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
+                                            onClick={closeMobileMenu}
+                                            className={cn(
+                                              "group flex items-center gap-3 rounded-xl py-2 pl-6 pr-2 text-[14px] font-medium text-white/70 transition-all duration-200 active:bg-white/5 active:text-white",
+                                              isHrefActive(pathname, link.href) && "text-white bg-white/5"
+                                            )}
+                                          >
+                                            {ResolvedIcon && (
+                                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/60 transition-colors group-active:bg-white/10 group-active:text-white border border-white/5">
+                                                <ResolvedIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                                              </div>
+                                            )}
+                                            {link.label}
+                                          </Link>
+                                        );
+                                      })
+                                    )}
+                                  </div>
+                                </motion.div>
                               )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
+                            </AnimatePresence>
+                          </div>
+                        );
+                      }
 
-                    return null;
-                  })}
-                </div>
+                        return null;
+                    })}
 
-                {themeMounted && (
-                  <div className="flex shrink-0 items-center justify-between border-t border-white/[0.08] px-4 py-3">
-                    <span className="text-sm font-medium tracking-tight text-white/65">Theme</span>
-                    <div className="flex items-center rounded-full bg-white/[0.08] p-[3px]">
-                      <button
-                        onClick={() => setTheme("light")}
-                        title="Light"
-                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                          theme === "light"
-                            ? "bg-white text-zinc-900 shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        <Sun size={13} />
-                      </button>
-                      <button
-                        onClick={() => setTheme("dark")}
-                        title="Dark"
-                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                          theme === "dark"
-                            ? "bg-white text-zinc-900 shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        <Moon size={13} />
-                      </button>
-                      <button
-                        onClick={() => setTheme("system")}
-                        title="System"
-                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
-                          theme === "system"
-                            ? "bg-white text-zinc-900 shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        <Laptop size={13} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
-                  <div className="shrink-0 border-t border-white/[0.08] px-3 py-3">
+                    {/* Changelog at the very end to match desktop order */}
                     <Link
-                      href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
-                      onClick={closeMobileMenu}
-                      className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold tracking-tight text-primary-foreground transition-opacity hover:opacity-90"
+                      href="/changelog"
+                      onClick={() => {
+                        handleChangelogClick();
+                        closeMobileMenu();
+                      }}
+                      className={cn(
+                        "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
+                        isHrefActive(pathname, "/changelog") && "text-white"
+                      )}
                     >
-                      {primaryCtaLabel}
-                      <ArrowRight className="h-4 w-4" />
+                      <div className="flex items-center gap-2">
+                        {dict.changelog}
+                        {showNewBadge && (
+                          <span className="flex h-[18px] items-center rounded-full bg-emerald-500/10 px-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500 ring-1 ring-inset ring-emerald-500/20 animate-pulse">
+                            {dict.newBadge}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   </div>
-                )}
-              </SheetContent>
-            </Sheet>
+                </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         </div>
       </div>

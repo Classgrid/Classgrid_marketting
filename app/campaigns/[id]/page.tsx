@@ -39,7 +39,7 @@ export default async function Page({ params }: CampaignPageProps) {
 				{(campaign as any)?.body ?? (campaign as any)?.subheadline ?? (campaignsCopy as any).fallbackBody}
 			</p>
 
-			<div className="mt-6 rounded-2xl border border-slate-200 bg-[#fafafa] p-6 dark:border-white/10 dark:bg-[#0A0A0A]">
+			<div className="mt-6 rounded-2xl border border-border bg-card p-6">
 				<p className="text-sm text-slate-700 dark:text-slate-200">{campaignsCopy.detailBody}</p>
 
 				<div className="mt-4 flex flex-wrap gap-3">

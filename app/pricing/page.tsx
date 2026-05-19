@@ -120,7 +120,7 @@ export default function PricingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7faf8] text-slate-950 dark:bg-[#0f0f0f] dark:text-white">
+    <main className="min-h-screen bg-background text-foreground">
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex min-h-[60vh] items-center overflow-hidden bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
@@ -171,7 +171,7 @@ export default function PricingPage() {
             Choose your institution type to see the modules included in Basic and Premium tiers.
           </p>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-2.5">
+          <div className="mt-8 flex flex-nowrap overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap justify-start sm:justify-center gap-2.5 scrollbar-hide">
             {INSTITUTION_TYPES.map((type) => {
               const Icon =
                 type === "School"
@@ -220,7 +220,7 @@ export default function PricingPage() {
           <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             
             {/* THE PREMIUM PLAN (Spans 2 columns) */}
-            <div className="relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-[#fafafa] p-8 shadow-xl shadow-slate-950/5 dark:border-white/[0.08] dark:bg-white/[0.03] dark:shadow-2xl dark:shadow-black/30 md:col-span-2 md:p-10">
+            <div className="relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30 md:col-span-2 md:p-10">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[90px] rounded-full pointer-events-none" />
               
               <div className="flex flex-col md:flex-row gap-8 justify-between items-start mb-8 relative z-10">
@@ -272,7 +272,7 @@ export default function PricingPage() {
               
               <div className="space-y-3 flex-1">
                 {/* Beautiful Mini Card 1 */}
-                <div className="p-4 rounded-2xl bg-[#fafafa] border border-slate-200 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.12)] dark:bg-white/[0.03] dark:border-white/[0.08] dark:hover:bg-white/[0.05] cursor-pointer">
+                <div className="p-4 rounded-2xl bg-card border border-border flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.12)] cursor-pointer">
                   <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-500/10 shrink-0">
                     <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
@@ -283,7 +283,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* Beautiful Mini Card 2 */}
-                <div className="p-4 rounded-2xl bg-[#fafafa] border border-slate-200 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)] dark:bg-white/[0.03] dark:border-white/[0.08] dark:hover:bg-white/[0.05] cursor-pointer">
+                <div className="p-4 rounded-2xl bg-card border border-border flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)] cursor-pointer">
                   <div className="p-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-500/10 shrink-0">
                     <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
@@ -294,7 +294,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* Beautiful Mini Card 3 */}
-                <div className="p-4 rounded-2xl bg-[#fafafa] border border-slate-200 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgba(217,70,239,0.12)] dark:bg-white/[0.03] dark:border-white/[0.08] dark:hover:bg-white/[0.05] cursor-pointer relative overflow-hidden">
+                <div className="p-4 rounded-2xl bg-card border border-border flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgba(217,70,239,0.12)] cursor-pointer relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/15 px-2 py-0.5 rounded-full">New</span>
                   </div>
@@ -308,7 +308,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* Beautiful Mini Card 4 */}
-                <div className="p-4 rounded-2xl bg-[#fafafa] border border-slate-200 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgba(16,185,129,0.12)] dark:bg-white/[0.03] dark:border-white/[0.08] dark:hover:bg-white/[0.05] cursor-pointer">
+                <div className="p-4 rounded-2xl bg-card border border-border flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgba(16,185,129,0.12)] cursor-pointer">
                   <div className="p-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 shrink-0">
                     <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
@@ -332,8 +332,8 @@ export default function PricingPage() {
               <p className="text-slate-600 dark:text-slate-400">Compare all modules available for {INSTITUTION_LABELS[activeTab]}.</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-[#fafafa] overflow-hidden shadow-xl shadow-slate-950/5 dark:border-white/[0.08] dark:bg-white/[0.03] dark:shadow-2xl dark:shadow-black/30">
-              <div className="overflow-x-auto">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30">
+              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-4">
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 dark:bg-white/[0.04] dark:border-white/[0.08]">

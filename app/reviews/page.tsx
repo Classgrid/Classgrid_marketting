@@ -223,17 +223,17 @@ export default function ReviewsPage() {
               <input
                 type="text" required placeholder="Full Name"
                 value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full h-14 bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
+                className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
               />
               <input
                 type="text" required placeholder="Institution / College"
                 value={formData.institution} onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                className="w-full h-14 bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
+                className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="bg-background dark:bg-[#0f0f0f] rounded-xl px-4 h-14 border border-border dark:border-white/10 flex items-center">
+              <div className="bg-background rounded-xl px-4 h-14 border border-border flex items-center">
                 <div className="flex gap-2 justify-center w-full">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -254,7 +254,7 @@ export default function ReviewsPage() {
                 <select
                   value={formData.moduleName}
                   onChange={(e) => setFormData({ ...formData, moduleName: e.target.value })}
-                  className="w-full h-14 bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 rounded-xl px-5 text-sm text-muted-foreground focus:border-emerald-500/50 transition-all outline-none appearance-none"
+                  className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm text-muted-foreground focus:border-emerald-500/50 transition-all outline-none appearance-none"
                 >
                   <option value="Overall">Overall Experience</option>
                   <option value="Attendance">Attendance Module</option>
@@ -269,13 +269,13 @@ export default function ReviewsPage() {
             <textarea
               required maxLength={2000} placeholder="How did Classgrid help your daily workflow?"
               value={formData.reviewText} onChange={(e) => setFormData({ ...formData, reviewText: e.target.value })}
-              className="w-full bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 rounded-xl px-5 py-4 text-sm min-h-[140px] resize-none focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
+              className="w-full bg-background border border-border rounded-xl px-5 py-4 text-sm min-h-[140px] resize-none focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
             />
 
             <textarea
               maxLength={1000} placeholder="Any suggestions for us? (Optional)"
               value={formData.suggestion} onChange={(e) => setFormData({ ...formData, suggestion: e.target.value })}
-              className="w-full bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 rounded-xl px-5 py-4 text-sm min-h-[100px] resize-none focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
+              className="w-full bg-background border border-border rounded-xl px-5 py-4 text-sm min-h-[100px] resize-none focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
             />
 
             <Button 
@@ -412,7 +412,7 @@ export default function ReviewsPage() {
                       {rev.adminReply && (
                         <div className="pt-6 border-t border-border dark:border-white/[0.05]">
                           <div className="flex gap-4 items-start">
-                            <div className="w-10 h-10 rounded-xl bg-background dark:bg-[#0f0f0f] border border-border dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
+                            <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
                               <img src="/logo.png" alt="CG" className="w-6 h-6 object-contain grayscale group-hover:grayscale-0 transition-all" />
                             </div>
                             <div className="flex-1">

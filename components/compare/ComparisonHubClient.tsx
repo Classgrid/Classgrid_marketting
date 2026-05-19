@@ -64,7 +64,7 @@ export function ComparisonHubClient({ hubData, comparisons }: ComparisonHubClien
                 {/* Top divider — very thin, nearly invisible */}
                 <div className="border-t border-slate-200/40 dark:border-white/[0.15] mb-10" />
                 
-                <div className="flex items-start justify-between gap-8">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-8">
                   <div className="space-y-3">
                     {/* Title — medium weight, not bold, calm */}
                     <h2 className="text-lg md:text-xl font-medium tracking-tight text-slate-700 dark:text-white/80 group-hover:text-slate-900 dark:group-hover:text-white/95 transition-colors duration-300">
@@ -78,9 +78,9 @@ export function ComparisonHubClient({ hubData, comparisons }: ComparisonHubClien
                   </div>
                   
                   {/* CTA — small, muted, subtle */}
-                  <div className="hidden sm:flex items-center gap-1.5 text-base font-normal text-slate-400 dark:text-neutral-500 group-hover:text-emerald-500/80 dark:group-hover:text-emerald-400/70 transition-all duration-300 mt-1 shrink-0">
+                  <div className="flex items-center gap-1.5 text-sm sm:text-base font-medium sm:font-normal text-emerald-500/90 dark:text-emerald-400/90 sm:text-slate-400 sm:dark:text-neutral-500 group-hover:text-emerald-500/80 dark:group-hover:text-emerald-400/70 transition-all duration-300 mt-2 sm:mt-1 shrink-0">
                     <span className="tracking-wide">View Audit</span>
-                    <ArrowRight className="w-3 h-3 transform group-hover:translate-x-1 transition-transform duration-300" />
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-3 sm:h-3 transform group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
                 </div>
 
