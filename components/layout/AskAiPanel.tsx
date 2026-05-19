@@ -80,10 +80,10 @@ function suggestedQuestionsForPage(pageContext?: PageContext) {
 
   if (path.startsWith("/support") || path.startsWith("/help-center")) {
     return [
-      "How can I get support?",
-      "What details should I share?",
-      "How do I report an issue?",
-      "Where can I contact Classgrid?",
+      "How do I raise a support ticket?",
+      "What is Classgrid Talk vs support tickets?",
+      "I'm from an institution — how do I get help?",
+      "Can I track my ticket status?",
     ];
   }
 

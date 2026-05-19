@@ -73,6 +73,17 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+// Extract a best-effort first name from an email address
+// e.g. nikhil.shinde@gmail.com → "Nikhil", john_doe@edu.in → "John"
+function firstNameFromEmail(emailAddress: string): string {
+  const local = emailAddress.split("@")[0] || "";
+  // Split by common separators, take first segment, strip digits, capitalize
+  const segment = local.split(/[._\-+]/)[0] || local;
+  const alpha = segment.replace(/[^a-zA-Z]/g, "");
+  if (alpha.length < 2) return "";
+  return alpha.charAt(0).toUpperCase() + alpha.slice(1).toLowerCase();
+}
+
 function renderRecentBlogs(
   blogs: Array<{ slug: string; resolvedTitle: string; resolvedExcerpt: string; imageUrl: string | null }>,
   siteUrl: string
@@ -151,7 +162,13 @@ function generateUnsubscribeHash(email: string): string {
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, name } = await req.json();
+    // Clean the name: trim whitespace, take just the first word as first name
+    const firstName = (name || "").trim().split(/\s+/)[0] || "";
+
+    if (!firstName) {
+      return NextResponse.json({ error: "Please enter your name to subscribe." }, { status: 400 });
+    }
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
@@ -191,8 +208,14 @@ export async function POST(req: Request) {
     const unsubHash = generateUnsubscribeHash(email);
     const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubHash}`;
 
-    const [recentBlogs, recentChangelogs] = await Promise.all([
-      client.fetch(`*[_type == "post"] | order(publishedAt desc)[0...4]{
+    // Date cutoff: 7 days ago
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const cutoff = sevenDaysAgo.toISOString();
+
+    // Fetch recent blogs and changelogs - get more than 3 so we can filter by date
+    const [allRecentBlogs, allRecentChangelogs] = await Promise.all([
+      client.fetch(`*[_type == "post"] | order(publishedAt desc)[0...10]{
         _id,
         title,
         "slug": slug.current,
@@ -200,7 +223,7 @@ export async function POST(req: Request) {
         publishedAt,
         coverImage
       }`),
-      client.fetch(`*[_type == "changelogEntry"] | order(releaseDate desc)[0...4]{
+      client.fetch(`*[_type == "changelogEntry"] | order(releaseDate desc)[0...10]{
         _id,
         title,
         "slug": slug.current,
@@ -211,7 +234,8 @@ export async function POST(req: Request) {
       }`),
     ]);
 
-    const blogsWithImages = ((recentBlogs as any[]) || [])
+    // Normalize and resolve images for blogs
+    const allBlogsWithImages = ((allRecentBlogs as any[]) || [])
       .map((blog: any) => ({
         ...blog,
         resolvedTitle: getLocalizedString(blog.title, "Blog Post"),
@@ -220,7 +244,8 @@ export async function POST(req: Request) {
       }))
       .filter((blog) => blog.slug && blog.resolvedTitle);
 
-    const changelogsWithImages = ((recentChangelogs as any[]) || [])
+    // Normalize and resolve images for changelogs
+    const allChangelogsWithImages = ((allRecentChangelogs as any[]) || [])
       .map((entry: any) => ({
         ...entry,
         resolvedTitle: getLocalizedString(entry.title, "Product Update"),
@@ -230,6 +255,28 @@ export async function POST(req: Request) {
         imageUrl: resolveImageUrl(entry.image, 520),
       }))
       .filter((entry) => entry.slug && entry.resolvedTitle);
+
+    // Priority 1: items from last 7 days (max 3 each)
+    let blogsWithImages = allBlogsWithImages
+      .filter((b) => b.publishedAt && b.publishedAt >= cutoff)
+      .slice(0, 3);
+
+    let changelogsWithImages = allChangelogsWithImages
+      .filter((e) => e.releaseDate && e.releaseDate >= cutoff)
+      .slice(0, 3);
+
+    // Priority 2: if nothing in last 7 days, show ONLY the single most recent one (not 3)
+    // Per spec: "if nothing is sent, then only the one before last"
+    if (blogsWithImages.length === 0) {
+      blogsWithImages = allBlogsWithImages.slice(0, 1);
+    }
+    if (changelogsWithImages.length === 0) {
+      changelogsWithImages = allChangelogsWithImages.slice(0, 1);
+    }
+
+    // Priority 3: if still nothing at all → hasContent stays false → show "stay tuned" message
+    const hasContent = blogsWithImages.length > 0 || changelogsWithImages.length > 0;
+
 
     const emailHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -273,29 +320,41 @@ export async function POST(req: Request) {
 <tr>
 <td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
 <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
-<h1 style="color:#ffffff;margin:0;font-size:22px;">Welcome to Classgrid Updates</h1>
-<p style="color:#34d399;margin-top:8px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">
-Subscription Confirmed
-</p>
+<h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">Welcome to Classgrid.</h1>
+<p style="color:#9ca3af;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">We are glad you are here.</p>
 </td>
 </tr>
 <tr>
-<td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;">
-<p>Hi there,</p>
-<p>Thanks for subscribing to updates from the <strong>Classgrid Unified Campus Platform</strong>. You will now receive our latest insights tailored for <strong>Schools, Junior Colleges, and Coaching Institutes</strong> straight into your inbox.</p>
-<p>Here's what you can expect from us:</p>
-<ul style="padding-left:20px;">
-  <li style="margin-bottom:6px;">Campus Administration & ERP Strategy</li>
-  <li style="margin-bottom:6px;">AI Workflow Integrations for Education</li>
-  <li style="margin-bottom:6px;">Platform Updates from the Classgrid Team</li>
-</ul>
+<td style="padding:32px 30px;color:#cccccc;font-size:14px;line-height:1.8;">
+<p style="color:#ffffff;font-size:16px;font-weight:600;margin:0 0 20px;">${firstName ? `Hi ${escapeHtml(firstName)},` : `Hi there,`}</p>
+<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 16px;">We are excited to have you as part of the growing community of <strong style="color:#ffffff;">Schools, Junior Colleges, and Coaching Institutes</strong> building smarter academic workflows with the <strong style="color:#ffffff;">Classgrid Unified Campus Platform</strong>.</p>
+<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 20px;">From this point forward, you will receive thoughtfully curated updates, product improvements, and practical insights designed to help institutions operate more efficiently and deliver a better student experience.</p>
+<p style="color:#ffffff;font-size:13px;font-weight:600;margin:0 0 14px;text-transform:uppercase;letter-spacing:0.5px;">Here's what you can expect from us:</p>
+<table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Modern Campus Administration &amp; ERP Workflows</span></td></tr>
+  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">AI-powered Automation for Educational Institutions</span></td></tr>
+  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Product Updates and New Platform Features</span></td></tr>
+  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Insights on Academic Operations, Attendance, Exams, and Communication</span></td></tr>
+  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Real-world Use Cases from Institutions using Classgrid</span></td></tr>
+</table>
+<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 8px;">Our goal is simple &#8212; to help educational institutions manage academics, operations, communication, and administration through one unified platform.</p>
 
 ${renderRecentBlogs(blogsWithImages, siteUrl)}
 ${renderRecentChangelogs(changelogsWithImages, siteUrl)}
 
+${!hasContent ? `
+<div style="margin-top:30px;padding-top:20px;border-top:1px solid #2a2a2a;background:#1a1a1a;border-radius:10px;padding:24px;text-align:center;">
+  <p style="color:#34d399;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Stay Tuned</p>
+  <p style="color:#cccccc;font-size:14px;margin:0 0 20px;line-height:1.7;">We are actively building new content and product updates. Check our blog and changelog regularly — we will keep updating!</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">Visit Our Blog</a>
+    <a href="${siteUrl}/changelog" style="background:#ffffff;color:#000;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">View Changelog</a>
+  </div>
+</div>` : `
 <div style="text-align:center;margin:30px 0;">
 <a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Read the Latest Insights</a>
-</div>
+</div>`}
+
 
 <div style="margin-top:40px;padding-top:20px;border-top:1px solid #2a2a2a;text-align:center;">
   <p style="color:#ffffff;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
@@ -312,10 +371,9 @@ ${renderRecentChangelogs(changelogsWithImages, siteUrl)}
   </div>
 </div>
 
-<div style="margin-top:30px;text-align:center;">
-<p style="color:#9ca3af;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
-</p>
+<div style="margin-top:32px;padding-top:24px;border-top:1px solid #2a2a2a;">
+<p style="color:#9ca3af;font-size:13px;margin:0 0 4px;">Need help? <a href="mailto:support@classgrid.in" style="color:#34d399;text-decoration:none;font-weight:600;">support@classgrid.in</a></p>
+<p style="color:#6b7280;font-size:13px;margin:0;">— Team Classgrid</p>
 </div>
 </td>
 </tr>
@@ -336,18 +394,33 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;te
     const emailText = [
       "Welcome to Classgrid Updates.",
       "",
-      "Recent blog posts:",
-      ...blogsWithImages.map((blog) => `- ${blog.resolvedTitle}: ${siteUrl}/blog/${blog.slug}`),
-      "",
-      "Recent changelog entries:",
-      ...changelogsWithImages.map((entry) => `- ${entry.resolvedTitle}: ${siteUrl}/changelog/${entry.slug}`),
+      ...(blogsWithImages.length > 0 ? [
+        "Recent blog posts:",
+        ...blogsWithImages.map((blog) => `- ${blog.resolvedTitle}: ${siteUrl}/blog/${blog.slug}`),
+        "",
+      ] : []),
+      ...(changelogsWithImages.length > 0 ? [
+        "Recent product updates:",
+        ...changelogsWithImages.map((entry) => `- ${entry.resolvedTitle}: ${siteUrl}/changelog/${entry.slug}`),
+        "",
+      ] : []),
+      ...(!hasContent ? [
+        "We are actively building content. Check our blog at: " + siteUrl + "/blog",
+        "And our changelog at: " + siteUrl + "/changelog",
+        "We will keep updating — stay tuned!",
+      ] : []),
     ].join("\n");
+
+    const emailSubject = firstName
+      ? `Welcome to Classgrid, ${firstName}.`
+      : "Welcome to Classgrid.";
+
 
     await transporter.sendMail({
       from: `"${senderName}" <${senderEmail}>`,
       replyTo: senderEmail,
       to: email,
-      subject: "Welcome to Classgrid Updates",
+      subject: emailSubject,
       text: emailText,
       html: emailHtml,
     });

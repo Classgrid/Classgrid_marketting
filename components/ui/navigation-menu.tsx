@@ -95,7 +95,7 @@ function NavigationMenuContent({
 function NavigationMenuPositioner({
   className,
   side = "bottom",
-  sideOffset = 8,
+  sideOffset = 4,
   align = "start",
   alignOffset = 0,
   ...props

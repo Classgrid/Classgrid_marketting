@@ -167,6 +167,14 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
     }
   }, [askAiOpen, promptStorageKey]);
 
+  // Signal to other components (e.g. scroll-to-top button) that AI panel is open
+  useEffect(() => {
+    document.body.dataset.askAiOpen = askAiOpen ? "true" : "false";
+    return () => {
+      document.body.dataset.askAiOpen = "false";
+    };
+  }, [askAiOpen]);
+
   const pageContext = useMemo<PageContext>(
     () => ({
       path: pathname,
