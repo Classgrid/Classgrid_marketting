@@ -246,8 +246,19 @@ echo -e "${YELLOW}Step 15: Setting up cron jobs...${NC}"
 # Health check every 5 minutes
 (sudo -u ubuntu crontab -l 2>/dev/null || echo "") | (cat; echo "*/5 * * * * bash $APP_DIR/health-check.sh > /tmp/health-check.log 2>&1") | sudo -u ubuntu crontab -
 
+# Email notification cron: process Sanity webhook queue every 10 minutes
+# This is REQUIRED for subscriber emails to actually be sent after Sanity publishes blog/changelog
+# Reads from Supabase email_notification_queue, fetches Sanity content, and sends via Brevo SMTP
+(sudo -u ubuntu crontab -l 2>/dev/null || echo "") | (cat; echo "*/10 * * * * curl -s -X GET 'https://${DOMAIN}/api/cron/send-notifications?type=all' -H 'Authorization: Bearer ${CRON_SECRET}' >> /var/log/classgrid/email-notifications.log 2>&1") | sudo -u ubuntu crontab -
+
+# Create log file for notifications
+mkdir -p /var/log/classgrid
+touch /var/log/classgrid/email-notifications.log
+chown ubuntu:ubuntu /var/log/classgrid/email-notifications.log
 
 echo -e "${GREEN}✓ Cron jobs configured${NC}"
+echo -e "${YELLOW}  → Health check: every 5 min${NC}"
+echo -e "${YELLOW}  → Email notifications: every 10 min (requires CRON_SECRET env var)${NC}"
 
 # ============================================================
 # COMPLETION

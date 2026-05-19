@@ -6,9 +6,9 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { getDictionary } from "@/lib/i18n-dictionary";
 import { 
-  Menu, X, ArrowRight, Bot, Target, Code2, 
-  School, Building2, GraduationCap, BookOpen, Cpu, User, UserCog, Building,
-  ArrowRightLeft, ShieldCheck,
+  Menu, X, ArrowRight, Bot, ChevronDown,
+  School, Building2, GraduationCap, BookOpen, Cpu, User, UserCog,
+  ShieldCheck, Sun, Moon, Laptop,
   type LucideIcon
 } from "lucide-react";
 
@@ -22,9 +22,10 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { normalizeAppHref } from "@/lib/route-maps";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 type NavLink = {
   label?: string;
@@ -79,6 +80,28 @@ function resolveCtaHref(label: string, href: string): string {
   return /book\s+a?\s*demo/i.test(label) ? "/#demo" : rewriteHref(href);
 }
 
+function comparablePath(href?: string | null): string {
+  if (!href) return "";
+  const rewrittenHref = rewriteHref(href);
+  if (isExternalHref(rewrittenHref)) return "";
+  const cleanPath = rewrittenHref.split("#")[0]?.split("?")[0] || "/";
+  return cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`;
+}
+
+function isHrefActive(pathname: string, href?: string | null): boolean {
+  const path = comparablePath(href);
+  if (!path) return false;
+  if (path === "/") return pathname === "/";
+  return pathname === path || pathname.startsWith(`${path}/`);
+}
+
+function isNavItemActive(pathname: string, item: NavItem): boolean {
+  if (isHrefActive(pathname, item.href)) return true;
+  return item.sections?.some((section) =>
+    section.links?.some((link) => isHrefActive(pathname, link.href))
+  ) ?? false;
+}
+
 const ICON_MAP: Record<string, any> = {
   "For Schools": School,
   "For Colleges": Building2,
@@ -91,7 +114,7 @@ const ICON_MAP: Record<string, any> = {
   "For Institutes": ShieldCheck,  // fallback alias
 };
 
-/** Runtime label renames — catches stale Sanity / cached placeholder data */
+/** Runtime label renames - catches stale Sanity / cached placeholder data */
 const LABEL_RENAME: Record<string, { label: string; href: string }> = {
   "For Institutes": { label: "For Admins", href: "/solutions/for-admins" },
 };
@@ -119,7 +142,6 @@ export function Navbar({
   secondaryLinkHref,
   primaryCtaLabel,
   primaryCtaHref,
-  mobileMenuTitle,
   latestReleaseDate,
   onAskAiClick,
   askAiPrompt,
@@ -127,6 +149,11 @@ export function Navbar({
 }: NavbarProps) {
   const [showNewBadge, setShowNewBadge] = React.useState(false);
   const [menuValue, setMenuValue] = React.useState("");
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({});
+  const { theme, setTheme } = useTheme();
+  const [themeMounted, setThemeMounted] = React.useState(false);
+  React.useEffect(() => { setThemeMounted(true); }, []);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang");
@@ -134,6 +161,8 @@ export function Navbar({
 
   React.useEffect(() => {
     setMenuValue("");
+    setMobileOpen(false);
+    setOpenSections({});
   }, [pathname]);
 
   React.useEffect(() => {
@@ -158,8 +187,16 @@ export function Navbar({
     }
     setShowNewBadge(false);
   };
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    setOpenSections({});
+  };
   const megaMenuPanelClass =
-    "grid w-[680px] min-h-[340px] grid-cols-2 gap-6 rounded-xl border border-border bg-popover p-6 shadow-2xl";
+    "grid w-[min(92vw,540px)] grid-cols-2 items-start gap-x-2 gap-y-2 rounded-xl border border-white/[0.08] bg-[#080808]/95 p-2.5 shadow-[0_16px_46px_rgba(0,0,0,0.42)] backdrop-blur-xl";
+  const desktopNavItemClass =
+    "h-9 rounded-lg px-3 text-sm font-medium tracking-tight text-white/85 transition-all duration-200 hover:bg-white/[0.08] hover:text-white focus:bg-white/[0.08] focus:text-white data-open:bg-white/[0.1] data-open:text-white data-popup-open:bg-white/[0.1] data-popup-open:text-white";
+  const desktopNavItemActiveClass =
+    "bg-white/[0.1] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]";
 
   const DEFAULT_NAV_ITEMS: NavItem[] = [
     {
@@ -212,7 +249,7 @@ export function Navbar({
     : [{ label: "Home", href: "/" }, ...baseItems];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-[#eef0f3]/80 dark:bg-black/70 backdrop-blur-md transition-colors duration-300">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (
@@ -227,7 +264,7 @@ export function Navbar({
                 />
               ) : null}
               {brandName ? (
-                <span className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:opacity-80">
+                <span className="text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-white/90">
                   {brandName}
                 </span>
               ) : null}
@@ -237,8 +274,9 @@ export function Navbar({
           {navItems.length > 0 ? (
             <div className="hidden md:flex items-center">
               <NavigationMenu value={menuValue} onValueChange={setMenuValue}>
-                <NavigationMenuList>
+                <NavigationMenuList className="gap-1.5">
                   {navItems.map((item, idx) => {
+                    const active = isNavItemActive(pathname, item);
                     const sections = Array.isArray(item.sections)
                       ? item.sections.filter((section) => section?.heading?.trim() || section?.links?.length)
                       : [];
@@ -254,7 +292,13 @@ export function Navbar({
                     if (sections.length > 0) {
                       return (
                         <NavigationMenuItem key={`${item.label}-${idx}`}>
-                          <NavigationMenuTrigger className="bg-transparent text-sm font-normal text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground focus:bg-transparent data-[state=open]:bg-transparent">
+                          <NavigationMenuTrigger
+                            className={cn(
+                              "bg-transparent",
+                              desktopNavItemClass,
+                              active && desktopNavItemActiveClass
+                            )}
+                          >
                             {item.label}
                           </NavigationMenuTrigger>
                           <NavigationMenuContent>
@@ -262,14 +306,14 @@ export function Navbar({
                               {shouldSplitSingleSection ? (
                                 <div className="col-span-2">
                                   {sections[0]?.heading?.trim() ? (
-                                    <h4 className="text-[13px] font-medium text-muted-foreground">
+                                    <h4 className="text-[13px] font-medium tracking-tight text-white/55">
                                       {sections[0].heading}
                                     </h4>
                                   ) : null}
 
-                                  <div className={cn("grid grid-cols-2 gap-x-12 gap-y-6", sections[0]?.heading?.trim() ? "mt-4" : "")}>
+                                  <div className={cn("grid grid-cols-2 gap-x-2 gap-y-1.5", sections[0]?.heading?.trim() ? "mt-1.5" : "")}>
                                     {splitColumns.map((columnLinks, c_idx) => (
-                                      <ul key={`${item.label}-split-col-${c_idx}`} className="grid gap-2 content-start">
+                                      <ul key={`${item.label}-split-col-${c_idx}`} className="grid content-start gap-0.5">
                                         {columnLinks.map((link) => {
                                           const ResolvedIcon = link.icon || ICON_MAP[link.label as string];
                                           return (
@@ -295,13 +339,13 @@ export function Navbar({
                                 if (!links.length) return null;
 
                                 return (
-                                  <div key={section.heading ? `${section.heading}-${s_idx}` : `${item.label}-${s_idx}`} className="flex flex-col space-y-4">
+                                  <div key={section.heading ? `${section.heading}-${s_idx}` : `${item.label}-${s_idx}`} className="flex flex-col gap-1.5">
                                     {section.heading?.trim() ? (
-                                      <h4 className="text-[13px] font-medium text-muted-foreground">
+                                      <h4 className="text-[13px] font-medium tracking-tight text-white/55">
                                         {section.heading}
                                       </h4>
                                     ) : null}
-                                    <ul className="grid gap-2">
+                                    <ul className="grid gap-0.5">
                                       {links.map((link) => {
                                         const ResolvedIcon = link.icon || ICON_MAP[link.label as string];
                                         return (
@@ -332,7 +376,9 @@ export function Navbar({
                         <NavigationMenuLink
                           className={cn(
                             navigationMenuTriggerStyle(),
-                            "bg-transparent text-sm font-normal text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                            "bg-transparent",
+                            desktopNavItemClass,
+                            active && desktopNavItemActiveClass
                           )}
                           render={
                             <Link
@@ -355,7 +401,10 @@ export function Navbar({
                 href="/changelog"
                 prefetch={false}
                 onClick={handleChangelogClick}
-                className="group relative hidden md:inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-normal text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                className={cn(
+                  "group relative hidden h-9 items-center justify-center rounded-lg px-3.5 text-sm font-medium tracking-tight text-white/85 transition-all duration-200 hover:bg-white/[0.08] hover:text-white focus:bg-white/[0.08] focus:text-white md:inline-flex",
+                  isHrefActive(pathname, "/changelog") && desktopNavItemActiveClass
+                )}
                 aria-label={dict.changelog}
               >
                 {dict.changelog}
@@ -377,7 +426,7 @@ export function Navbar({
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-9 border-border bg-card px-3 text-sm font-medium text-foreground rounded-md",
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
                   showAskAiPrompt ? "border-emerald-500/35 shadow-[0_0_18px_rgba(16,185,129,0.14)]" : ""
                 )}
                 onClick={onAskAiClick}
@@ -387,12 +436,12 @@ export function Navbar({
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-black" />
                   </span>
                 ) : null}
               </Button>
               {showAskAiPrompt && askAiPrompt ? (
-                <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden max-w-[190px] -translate-y-1/2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 py-1.5 text-[11px] font-medium text-foreground shadow-lg dark:bg-zinc-950 lg:inline-flex">
+                <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden max-w-[190px] -translate-y-1/2 whitespace-nowrap rounded-md border border-white/[0.08] bg-black/90 px-2.5 py-1.5 text-[11px] font-medium text-white/85 shadow-lg backdrop-blur-xl lg:inline-flex">
                   {askAiPrompt}
                 </span>
               ) : null}
@@ -400,7 +449,7 @@ export function Navbar({
           ) : null}
 
           {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
-            <Button asChild variant="outline" className="hidden h-9 border-border bg-muted/50 px-4 text-[13px] font-medium text-foreground hover:bg-muted lg:inline-flex rounded-md transition-colors shadow-sm">
+            <Button asChild variant="outline" className="hidden h-9 rounded-lg border-white/[0.12] bg-white/[0.04] px-4 text-[13px] font-medium tracking-tight text-white/90 shadow-sm transition-all duration-200 hover:border-white/[0.2] hover:bg-white/[0.08] hover:text-white lg:inline-flex">
               <Link
                 href={secondaryLinkHref}
                 prefetch={false}
@@ -413,7 +462,7 @@ export function Navbar({
           ) : null}
 
           {primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
-            <Button asChild className="h-9 px-4 text-xs font-medium rounded-md">
+            <Button asChild className="h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110">
               <Link
                 href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
                 prefetch={false}
@@ -434,74 +483,210 @@ export function Navbar({
           ) : null}
 
           <div className="md:hidden">
-            <Sheet>
+            <Sheet
+              open={mobileOpen}
+              onOpenChange={(open) => {
+                setMobileOpen(open);
+                if (!open) setOpenSections({});
+              }}
+            >
               <SheetTrigger
                 id="mobile-nav-sheet-trigger"
                 suppressHydrationWarning
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/90 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">{dict.toggleMenu}</span>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background border-border">
-                <SheetHeader>
-                  <SheetTitle className="text-left">{mobileMenuTitle}</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 py-6 overflow-y-auto max-h-[85vh]">
-                  {typeof onAskAiClick === "function" ? (
-                    <Button
+              <SheetContent
+                side="right"
+                showCloseButton={false}
+                className="inset-0 flex h-[100dvh] max-h-[100dvh] w-screen max-w-none flex-col gap-0 overflow-hidden border-0 bg-[#080808] p-0 text-white shadow-2xl data-[side=right]:inset-0 data-[side=right]:h-[100dvh] data-[side=right]:w-screen data-[side=right]:border-0 sm:max-w-none sm:data-[side=right]:max-w-none"
+              >
+                <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/[0.08] px-4">
+                  <div className="flex items-center gap-2">
+                    {logoUrl ? (
+                      <Image src={logoUrl} alt={logoAlt || brandName || ""} width={28} height={28} className="h-7 w-auto object-contain" />
+                    ) : null}
+                    {brandName ? (
+                      <span className="text-base font-semibold tracking-tight text-white">{brandName}</span>
+                    ) : null}
+                  </div>
+                  <SheetClose
+                    onClick={closeMobileMenu}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close menu</span>
+                  </SheetClose>
+                </div>
+
+                <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain px-3 py-3">
+                  {typeof onAskAiClick === "function" && (
+                    <button
                       type="button"
-                      variant="outline"
-                      className="h-9 justify-start border-border bg-card text-foreground"
-                      onClick={onAskAiClick}
+                      onClick={() => {
+                        closeMobileMenu();
+                        onAskAiClick();
+                      }}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
                     >
-                      <Bot className="mr-2 h-4 w-4 text-emerald-500" />
+                      <Bot className="h-4 w-4 text-emerald-500 shrink-0" />
                       {dict.askAi}
-                    </Button>
-                  ) : null}
+                    </button>
+                  )}
+
                   <Link
                     href="/changelog"
-                    onClick={handleChangelogClick}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-emerald-500 transition-colors"
+                    onClick={() => {
+                      handleChangelogClick();
+                      closeMobileMenu();
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
+                      isHrefActive(pathname, "/changelog") && "bg-white/[0.1] text-white"
+                    )}
                   >
-                    {dict.changelog}
-                    {showNewBadge ? (
+                    <ArrowRight className="h-4 w-4 shrink-0 text-white/55" />
+                    <span className="flex-1">{dict.changelog}</span>
+                    {showNewBadge && (
                       <span className="flex h-[18px] items-center rounded-full bg-emerald-500/10 px-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-500 ring-1 ring-inset ring-emerald-500/20 animate-pulse">
                         {dict.newBadge}
                       </span>
-                    ) : null}
+                    )}
                   </Link>
-                  {navItems.map((item, idx) => (
-                    <div key={`mobile-${item.label}-${idx}`} className="flex flex-col gap-2">
-                      {item.href ? (
-                        <Link
-                          href={rewriteHref(item.href)}
-                          target={isExternalHref(item.href) ? "_blank" : undefined}
-                          rel={isExternalHref(item.href) ? "noopener noreferrer" : undefined}
-                          className="font-medium text-foreground hover:text-emerald-500 transition-colors"
-                        >
-                          {item.label}
-                        </Link>
-                      ) : (
-                        <div className="font-medium text-foreground">{item.label}</div>
-                      )}
 
-                      {item.sections?.map(sec =>
-                        sec.links?.map((link, l_idx) => (
+                  {navItems.map((item, idx) => {
+                    const hasSections = (item.sections?.length ?? 0) > 0;
+                    const sectionKey = item.label ?? `item-${idx}`;
+                    const isOpen = openSections[sectionKey] ?? false;
+                    const active = isNavItemActive(pathname, item);
+
+                    if (item.href && !hasSections) {
+                      return (
+                        <div key={`mobile-${sectionKey}-${idx}`} className="pt-1">
                           <Link
-                            key={`mobile-link-${link.label}-${l_idx}`}
-                            href={rewriteHref(link.href!)}
-                            target={isExternalHref(link.href ?? "") ? "_blank" : undefined}
-                            rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
-                            className="text-sm text-muted-foreground hover:text-emerald-400 py-1 pl-4 transition-colors"
+                            href={rewriteHref(item.href)}
+                            target={isExternalHref(item.href) ? "_blank" : undefined}
+                            rel={isExternalHref(item.href) ? "noopener noreferrer" : undefined}
+                            onClick={closeMobileMenu}
+                            className={cn(
+                              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
+                              active && "bg-white/[0.1] text-white"
+                            )}
                           >
-                            {link.label}
+                            {item.label}
                           </Link>
-                        ))
-                      )}
-                    </div>
-                  ))}
+                        </div>
+                      );
+                    }
+
+                    if (hasSections) {
+                      return (
+                        <div key={`mobile-${sectionKey}-${idx}`} className="pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setOpenSections(prev => ({ ...prev, [sectionKey]: !isOpen }))}
+                            className={cn(
+                              "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium tracking-tight text-white/85 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
+                              active && "bg-white/[0.1] text-white"
+                            )}
+                          >
+                            <span>{item.label}</span>
+                            <ChevronDown
+                              className={cn(
+                                "h-4 w-4 text-white/55 transition-transform duration-200",
+                                isOpen && "rotate-180"
+                              )}
+                            />
+                          </button>
+
+                          {isOpen && (
+                            <div className="mt-1 space-y-0.5">
+                              {item.sections?.map(sec =>
+                                sec.links?.map((link, l_idx) => {
+                                  const ResolvedIcon = link.icon || ICON_MAP[link.label as string];
+                                  return (
+                                    <Link
+                                      key={`mobile-link-${link.label}-${l_idx}`}
+                                      href={rewriteHref(link.href!)}
+                                      target={isExternalHref(link.href ?? "") ? "_blank" : undefined}
+                                      rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
+                                      onClick={closeMobileMenu}
+                                      className={cn(
+                                        "flex items-center gap-3 rounded-lg py-2 pl-6 pr-3 text-sm font-medium tracking-tight text-white/65 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
+                                        isHrefActive(pathname, link.href) && "bg-white/[0.1] text-white"
+                                      )}
+                                    >
+                                      {ResolvedIcon && <ResolvedIcon className="h-4 w-4 shrink-0" strokeWidth={1.5} />}
+                                      {link.label}
+                                    </Link>
+                                  );
+                                })
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return null;
+                  })}
                 </div>
+
+                {themeMounted && (
+                  <div className="flex shrink-0 items-center justify-between border-t border-white/[0.08] px-4 py-3">
+                    <span className="text-sm font-medium tracking-tight text-white/65">Theme</span>
+                    <div className="flex items-center rounded-full bg-white/[0.08] p-[3px]">
+                      <button
+                        onClick={() => setTheme("light")}
+                        title="Light"
+                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
+                          theme === "light"
+                            ? "bg-white text-zinc-900 shadow-sm"
+                            : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        <Sun size={13} />
+                      </button>
+                      <button
+                        onClick={() => setTheme("dark")}
+                        title="Dark"
+                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
+                          theme === "dark"
+                            ? "bg-white text-zinc-900 shadow-sm"
+                            : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        <Moon size={13} />
+                      </button>
+                      <button
+                        onClick={() => setTheme("system")}
+                        title="System"
+                        className={`flex h-[26px] w-[30px] items-center justify-center rounded-full transition-all duration-150 ${
+                          theme === "system"
+                            ? "bg-white text-zinc-900 shadow-sm"
+                            : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        <Laptop size={13} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
+                  <div className="shrink-0 border-t border-white/[0.08] px-3 py-3">
+                    <Link
+                      href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
+                      onClick={closeMobileMenu}
+                      className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold tracking-tight text-primary-foreground transition-opacity hover:opacity-90"
+                    >
+                      {primaryCtaLabel}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                )}
               </SheetContent>
             </Sheet>
           </div>
@@ -531,7 +716,7 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
         <NavigationMenuLink
           ref={ref}
           className={cn(
-            "group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-foreground focus:bg-accent focus:text-foreground",
+            "group block select-none rounded-lg p-1.5 leading-none no-underline outline-none transition-colors duration-200 hover:bg-white/[0.04] hover:text-white focus:bg-white/[0.04] focus:text-white",
             className
           )}
           render={
@@ -550,21 +735,16 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
           }
           {...props}
         >
-          <div className="flex items-start gap-3.5">
+          <div className="flex min-h-7 items-center gap-2">
             {Icon && (
-              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] border border-border/50 bg-transparent text-muted-foreground/80 transition-colors group-hover:border-border group-hover:text-foreground">
-                <Icon size={16} strokeWidth={1.5} />
+              <div className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border border-white/[0.07] bg-white/[0.025] text-white/50 transition-colors group-hover:border-white/[0.14] group-hover:text-white/75">
+                <Icon size={13} strokeWidth={1.6} />
               </div>
             )}
-            <div className="flex flex-col gap-1.5">
-              <div className="text-sm font-medium leading-none text-foreground transition-colors">
+            <div className="flex min-w-0 flex-col">
+              <div className="text-[13px] font-medium leading-none tracking-tight text-white/90 transition-colors group-hover:text-white">
                 {title}
               </div>
-              {children ? (
-                <p className="line-clamp-2 text-[13px] leading-snug text-muted-foreground">
-                  {children}
-                </p>
-              ) : null}
             </div>
           </div>
         </NavigationMenuLink>

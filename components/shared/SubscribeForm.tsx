@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
  */
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export function SubscribeForm() {
       const response = await fetch("/api/blog/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, name: name.trim() }),
       });
 
       const data = await response.json();
@@ -46,6 +47,7 @@ export function SubscribeForm() {
 
       setMessage(data?.message ?? "Subscribed! You'll receive the latest updates in your inbox.");
       setEmail("");
+      setName("");
     } catch {
       setError("Could not subscribe right now. Please try again.");
     } finally {
@@ -55,31 +57,41 @@ export function SubscribeForm() {
 
   return (
     <div className="w-full space-y-3">
-      {/* Pill input + button */}
+      {/* Two-field layout: Name + Email + Button */}
       <form
-        className="relative flex items-center w-full max-w-2xl rounded-full bg-white/5 border border-white/10 p-1.5 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all"
+        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-2xl"
         onSubmit={handleSubmit}
       >
         <Input
-          type="email"
+          type="text"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email address"
-          className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/40 h-10 px-4"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name"
+          className="rounded-full bg-white/5 border border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 text-white placeholder:text-white/40 h-11 px-5 sm:w-44 shrink-0 transition-all"
         />
-        <Button
-          type="submit"
-          className="rounded-full bg-white text-black hover:bg-white/90 h-10 px-6 font-medium shrink-0 gap-2"
-          disabled={loading}
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
-          {loading ? "Subscribing..." : "Subscribe"}
-        </Button>
+        <div className="relative flex items-center flex-1 rounded-full bg-white/5 border border-white/10 p-1.5 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all">
+          <Input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email address"
+            className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/40 h-10 px-4"
+          />
+          <Button
+            type="submit"
+            className="rounded-full bg-white text-black hover:bg-white/90 h-10 px-6 font-medium shrink-0 gap-2"
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+            {loading ? "Subscribing..." : "Subscribe"}
+          </Button>
+        </div>
       </form>
 
       {/* Success banner */}

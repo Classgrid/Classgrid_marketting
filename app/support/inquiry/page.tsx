@@ -215,7 +215,7 @@ export default function InquiryPage() {
           
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
-            <div className="relative flex flex-col justify-center p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
+            <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
               <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-8">
@@ -244,7 +244,7 @@ export default function InquiryPage() {
             </div>
             
             {/* Right panel */}
-            <div className="flex flex-col items-center justify-center p-10 md:p-14 md:w-1/2 bg-card">
+            <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 bg-card">
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
                 <Sparkles className="w-7 h-7 text-primary" />
               </div>
@@ -275,7 +275,7 @@ export default function InquiryPage() {
           
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
-            <div className="relative flex flex-col justify-center p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
+            <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
               <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-8">
@@ -293,7 +293,7 @@ export default function InquiryPage() {
             </div>
             
             {/* Right panel */}
-            <div className="flex flex-col items-center justify-center p-10 md:p-14 md:w-1/2 gap-4 bg-card">
+            <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 gap-4 bg-card">
               <Link href="/support/ticket" className="w-full max-w-[320px]">
                 <Button className="h-14 w-full rounded-xl bg-amber-600 font-semibold text-white shadow-lg shadow-amber-600/20 hover:bg-amber-700 transition-all text-base">
                   Go to Platform Support
@@ -326,7 +326,7 @@ export default function InquiryPage() {
           
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
-            <div className="relative flex flex-col justify-center p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
+            <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
               <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-8">
@@ -350,7 +350,7 @@ export default function InquiryPage() {
             </div>
             
             {/* Right panel */}
-            <div className="flex flex-col items-center justify-center p-10 md:p-14 md:w-1/2 gap-4 bg-card">
+            <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 gap-4 bg-card">
               <Button 
                 onClick={() => setShowForm(true)} 
                 className="h-14 w-full max-w-[320px] rounded-xl bg-primary font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 text-base"
@@ -389,7 +389,7 @@ export default function InquiryPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          className="max-w-md w-full bg-card rounded-2xl p-10 text-center shadow-xl border border-border"
+          className="max-w-md w-full bg-card rounded-2xl p-8 sm:p-10 text-center shadow-xl border border-border"
         >
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-primary" />

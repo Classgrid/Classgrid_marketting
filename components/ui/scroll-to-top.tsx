@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -21,6 +22,15 @@ export function ScrollToTop() {
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
+  // Watch for AI panel open state via a body data attribute
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setAiPanelOpen(document.body.dataset.askAiOpen === "true");
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-ask-ai-open"] });
+    return () => observer.disconnect();
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -30,8 +40,9 @@ export function ScrollToTop() {
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {isVisible && !aiPanelOpen && (
         <motion.button
+          type="button"
           initial={{ opacity: 0, scale: 0.5, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.5, y: 20 }}

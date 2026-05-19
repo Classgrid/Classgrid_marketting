@@ -1,0 +1,143 @@
+# ClassGrid Marketing — Optimization Plan
+**Goal**: Mobile optimization + Light mode, 2 pages/day, 2 weeks  
+**Rule**: Each day → edit → test → commit → push ✅
+
+---
+
+## 📱 WEEK 1 — Mobile Optimization
+
+### Day 1 — Support Core
+| # | Page | File |
+|---|---|---|
+| 1 | `/support/ticket` | `app/support/ticket/page.tsx` |
+| 2 | `/support/inquiry` | `app/support/inquiry/page.tsx` |
+
+**Focus**: Form layout stacking on small screens, button sizes, input widths
+
+---
+
+### Day 2 — Support Portal
+| # | Page | File |
+|---|---|---|
+| 3 | `/support/requests` | `app/support/requests/page.tsx` |
+| 4 | `/support/requests/[id]` | `app/support/requests/[id]/page.tsx` |
+
+**Focus**: Table → card view on mobile, reply editor toolbar wrapping
+
+---
+
+### Day 3 — Homepage + Pricing
+| # | Page | File |
+|---|---|---|
+| 5 | `/` | `app/page.tsx` |
+| 6 | `/pricing` | `app/pricing/` |
+
+**Focus**: Hero section, feature grids, pricing card stacking
+
+---
+
+### Day 4 — Blog + Changelog
+| # | Page | File |
+|---|---|---|
+| 7 | `/blog` | `app/blog/` |
+| 8 | `/changelog` | `app/changelog/` |
+
+**Focus**: Article cards, filter bar, timeline layout
+
+---
+
+### Day 5 — Compare + Case Studies
+| # | Page | File |
+|---|---|---|
+| 9 | `/compare` | `app/compare/` |
+| 10 | `/case-studies` | `app/case-studies/` |
+
+**Focus**: Comparison table scrolling, editorial layout responsiveness
+
+---
+
+### Day 6 — About + Contact
+| # | Page | File |
+|---|---|---|
+| 11 | `/about` | `app/about/` |
+| 12 | `/contact` | `app/contact/` |
+
+**Focus**: Team grid, mission sections, contact form layout
+
+---
+
+### Day 7 — Help Center + Legal
+| # | Page | File |
+|---|---|---|
+| 13 | `/help-center` | `app/help-center/` |
+| 14 | `/privacy` + `/terms` | `app/privacy/` + `app/terms/` |
+
+**Focus**: Article layout, search bar, legal text readability on mobile
+
+---
+
+## ☀️ WEEK 2 — Light Mode Optimization
+
+> Same page order as Week 1. Replace hardcoded dark colors with theme tokens.
+
+**Key replacements**:
+- `bg-zinc-900` → `bg-card`
+- `bg-black` → `bg-background`
+- `text-white` → `text-foreground`
+- `text-zinc-400` → `text-muted-foreground`
+- `border-zinc-800` → `border-border`
+- `bg-[#141414]` → `bg-muted`
+
+---
+
+### Day 8 — Support Core (Light Mode)
+- `/support/ticket` + `/support/inquiry`
+
+### Day 9 — Support Portal (Light Mode)
+- `/support/requests` + `/support/requests/[id]`
+
+### Day 10 — Homepage + Pricing (Light Mode)
+- `/` + `/pricing`
+
+### Day 11 — Blog + Changelog (Light Mode)
+- `/blog` + `/changelog`
+
+### Day 12 — Compare + Case Studies (Light Mode)
+- `/compare` + `/case-studies`
+
+### Day 13 — About + Contact (Light Mode)
+- `/about` + `/contact`
+
+### Day 14 — Help Center + Legal (Light Mode)
+- `/help-center` + `/privacy` + `/terms`
+
+---
+
+## ✅ Daily Checklist (Every Session)
+- [ ] Open the 2 pages for today
+- [ ] Test on mobile (Chrome DevTools → iPhone 14 / 375px width)
+- [ ] Fix layout issues
+- [ ] Switch to light mode and check colors
+- [ ] `git add . && git commit -m "fix: mobile/light [page name]"`
+- [ ] `git push`
+
+---
+
+## 📊 Progress Tracker
+
+| Day | Pages | Mobile ✅ | Light Mode ✅ |
+|-----|-------|-----------|--------------|
+| 1 | ticket, inquiry | ✅ | — |
+| 2 | requests, requests/[id] | ⬜ | — |
+| 3 | homepage, pricing | ⬜ | — |
+| 4 | blog, changelog | ⬜ | — |
+| 5 | compare, case-studies | ⬜ | — |
+| 6 | about, contact | ⬜ | — |
+| 7 | help-center, legal | ⬜ | — |
+| 8 | ticket, inquiry | — | ⬜ |
+| 9 | requests, requests/[id] | — | ⬜ |
+| 10 | homepage, pricing | — | ⬜ |
+| 11 | blog, changelog | — | ⬜ |
+| 12 | compare, case-studies | — | ⬜ |
+| 13 | about, contact | — | ⬜ |
+| 14 | help-center, legal | — | ⬜ |
