@@ -134,7 +134,7 @@
 | 5 | compare, case-studies | ⬜ | — |
 | 6 | about, contact | ⬜ | — |
 | 7 | help-center, legal | ⬜ | — |
-| 8 | ticket, inquiry | — | ⬜ |
+| 8 | ticket, inquiry | — | ✅ |
 | 9 | requests, requests/[id] | — | ⬜ |
 | 10 | homepage, pricing | — | ⬜ |
 | 11 | blog, changelog | — | ⬜ |

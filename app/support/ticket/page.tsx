@@ -620,7 +620,7 @@ export default function RaiseTicketPage() {
                               const editor = document.getElementById("richEditor");
                               if (editor) editor.focus();
                               document.execCommand("insertHTML", false,
-                                `<img src="${result.url}" alt="${file.name}" data-path="${result.path}" style="max-width:200px;max-height:200px;border-radius:8px;margin:8px 4px;cursor:pointer;border:1px solid #333;" />`
+                                `<img src="${result.url}" alt="${file.name}" data-path="${result.path}" style="max-width:200px;max-height:200px;border-radius:8px;margin:8px 4px;cursor:pointer;" />`
                               );
                               if (editor) setDescription(editor.innerHTML);
                             }, 300);
@@ -726,14 +726,14 @@ export default function RaiseTicketPage() {
                   {/* Link Hover Tooltip */}
                   {linkTooltip && (
                     <div
-                      className="link-tooltip-popup absolute z-20 flex items-center gap-2 px-3 py-2 bg-zinc-900 dark:bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl text-xs text-white animate-in fade-in duration-150"
+                      className="link-tooltip-popup absolute z-20 flex items-center gap-2 px-3 py-2 bg-popover border border-border rounded-lg shadow-xl text-xs text-popover-foreground animate-in fade-in duration-150"
                       style={{ left: linkTooltip.x, top: linkTooltip.y }}
                       onMouseEnter={() => {
                         if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
                       }}
                       onMouseLeave={() => setLinkTooltip(null)}
                     >
-                      <span className="max-w-[200px] truncate text-zinc-300">{linkTooltip.url}</span>
+                      <span className="max-w-[200px] truncate text-muted-foreground">{linkTooltip.url}</span>
                       <a
                         href={linkTooltip.url}
                         target="_blank"
@@ -890,7 +890,7 @@ export default function RaiseTicketPage() {
       {/* ── Inline editor image preview ── */}
       {previewImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
           onClick={() => setPreviewImage(null)}
         >
           <div className="absolute top-5 right-5 flex items-center gap-3 z-10">
@@ -907,7 +907,7 @@ export default function RaiseTicketPage() {
                 }
                 setPreviewImage(null);
               }}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors shadow-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-lg"
             >
               <Trash2 className="w-5 h-5" />
             </button>
@@ -915,7 +915,7 @@ export default function RaiseTicketPage() {
               type="button"
               title="Close"
               onClick={() => setPreviewImage(null)}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors shadow-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-card border border-border text-foreground hover:bg-muted transition-colors shadow-lg"
             >
               <X className="w-5 h-5" />
             </button>
@@ -924,7 +924,7 @@ export default function RaiseTicketPage() {
           <img
             src={previewImage}
             alt="Preview"
-            className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+            className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg border border-border shadow-2xl bg-card"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
