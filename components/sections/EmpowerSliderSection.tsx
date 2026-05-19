@@ -48,14 +48,8 @@ function splitParagraph(text: string): string[] {
   const parts = text.split(/\n\n+/).filter(Boolean);
   if (parts.length >= 2) return parts;
 
-  // If single block, split roughly in half by sentences
-  const sentences = text.split(/(?<=\.)\s+/);
-  if (sentences.length <= 2) return [text];
-  const mid = Math.ceil(sentences.length / 2);
-  return [
-    sentences.slice(0, mid).join(" "),
-    sentences.slice(mid).join(" "),
-  ];
+  // Split by sentences to create the line-by-line structure
+  return text.split(/(?<=[.!?])\s+/).filter(Boolean);
 }
 
 export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderSectionProps) {
@@ -116,13 +110,13 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
               animate="visible"
               exit="exit"
             >
-              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-[16/10] w-full overflow-hidden rounded-lg border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
                 {active.imageUrl ? (
                   <Image
                     src={active.imageUrl}
                     alt={active.imageAlt || active.headline}
                     fill
-                    className="object-cover"
+                    className="object-contain md:object-cover"
                     sizes="(max-width: 1024px) 100vw, 55vw"
                     priority
                   />
@@ -143,14 +137,14 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                 <>
                   <button
                     onClick={prevSlide}
-                    className="absolute -left-5 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
+                    className="absolute left-2 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
                     aria-label="Previous slide"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="absolute -right-5 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
+                    className="absolute right-2 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
                     aria-label="Next slide"
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -186,7 +180,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                 </motion.h3>
 
                 {/* Split paragraphs for breathing room */}
-                <div className="mb-6 max-w-[550px] space-y-4">
+                <div className="mb-6 w-full space-y-4">
                   {paragraphs.map((para, idx) => (
                     <motion.p
                       key={idx}
@@ -194,7 +188,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                       variants={textFadeUp}
                       initial="hidden"
                       animate="visible"
-                      className="text-[15px] leading-[1.75] text-slate-600 dark:text-[#B0B7C3] md:text-base"
+                      className="text-[15px] leading-[1.6] text-slate-600 dark:text-[#B0B7C3] md:text-base border-l-2 border-emerald-500/30 pl-3 md:border-none md:pl-0 block"
                     >
                       {para}
                     </motion.p>

@@ -280,9 +280,12 @@ export function DemoRequestForm({
         ) : null}
         
         {subtitle?.trim() ? (
-          <div className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-500 dark:text-slate-400">
+          <div className="mx-auto mt-6 max-w-[90%] md:max-w-2xl text-center text-[15px] md:text-base leading-[1.75] text-slate-500 dark:text-slate-400 space-y-4">
             {subtitle.split('\n').map((line, i) => (
-              <p key={i} className={i > 0 ? "mt-2" : ""}>
+              <p 
+                key={i} 
+                className="text-balance"
+              >
                 {line}
               </p>
             ))}
@@ -291,7 +294,7 @@ export function DemoRequestForm({
       </div>
 
       {/* ── Bounded card ── */}
-      <div className="rounded-2xl border border-slate-200 bg-[#fafafa] px-8 py-10 shadow-xl dark:border-white/10 dark:bg-[#0f0f0f] md:px-12 md:py-14">
+      <div className="rounded-2xl border border-border bg-card px-8 py-10 shadow-xl md:px-12 md:py-14">
 
         {/* Form specific header / CTA line */}
         {ctaLine?.trim() ? (
@@ -429,7 +432,7 @@ export function DemoRequestForm({
             {/* Custom Captcha */}
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-3">
-                <div className="select-none rounded-md border border-slate-300 bg-white px-5 py-2.5 text-xl font-bold italic tracking-[0.4em] text-slate-800 dark:border-white/10 dark:bg-[#0f0f0f] dark:text-white">
+                <div className="select-none rounded-md border border-border bg-background px-5 py-2.5 text-xl font-bold italic tracking-[0.4em] text-foreground">
                   {captchaCode}
                 </div>
                 <button

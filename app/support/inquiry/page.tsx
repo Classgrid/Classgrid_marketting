@@ -208,8 +208,8 @@ export default function InquiryPage() {
   // ── STATE 1: Not logged in ──
   if (!knownEmail) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
           
@@ -268,8 +268,8 @@ export default function InquiryPage() {
   // ── STATE 1.5: Logged in as Platform User (Blocked from Inquiry) ──
   if (knownEmail && isPlatformUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
           
@@ -319,8 +319,8 @@ export default function InquiryPage() {
   // ── STATE 2: Logged in — choice card (open to non-platform users only) ──
   if (knownEmail && !showForm) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
           
@@ -424,7 +424,7 @@ export default function InquiryPage() {
           {/* ── Form Card ── */}
           <form 
             onSubmit={handleSubmit} 
-            className="space-y-8 bg-card border border-border p-6 md:p-10 rounded-2xl shadow-sm"
+            className="space-y-8 bg-card border border-border p-5 md:p-10 rounded-2xl shadow-sm"
           >
             {/* Form Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6 -mt-2">
@@ -577,7 +577,7 @@ export default function InquiryPage() {
               </Label>
               <div className="rounded-lg border border-input bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary transition-all">
                 {/* Working Toolbar */}
-                <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto">
+                <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto [scrollbar-width:none]">
                   <select
                     className="text-xs font-medium bg-transparent text-muted-foreground border-none focus:ring-0 pr-6 cursor-pointer"
                     onChange={(e) => {

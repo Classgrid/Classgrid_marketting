@@ -212,8 +212,8 @@ export default function RaiseTicketPage() {
   // ── STATE 1: Not logged in ──
   if (!knownEmail) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
           
@@ -268,8 +268,8 @@ export default function RaiseTicketPage() {
   // ── STATE 2: Logged in but NOT a platform user (no org) ──
   if (knownEmail && !isPlatformUser && !showForm) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-amber-500/30 bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-amber-500/30 bg-card shadow-2xl shadow-black/30">
           {/* Top accent - amber/warning */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500" />
           
@@ -331,8 +331,8 @@ export default function RaiseTicketPage() {
   // ── STATE 3: Logged in platform user — choice card ──
   if (knownEmail && isPlatformUser && !showForm) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-6 md:p-12">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
           
@@ -435,7 +435,7 @@ export default function RaiseTicketPage() {
           {/* ── Form Card ── */}
           <form 
             onSubmit={handleSubmit} 
-            className="space-y-8 bg-card border border-border p-6 md:p-10 rounded-2xl shadow-sm"
+            className="space-y-8 bg-card border border-border p-5 md:p-10 rounded-2xl shadow-sm"
           >
             {/* Form Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6 -mt-2">
@@ -566,7 +566,7 @@ export default function RaiseTicketPage() {
               </Label>
               <div className="rounded-lg border border-input bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary transition-all">
                 {/* Working Toolbar */}
-                <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto">
+                <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto [scrollbar-width:none]">
                   <Select
                     onValueChange={(val) => {
                       const editor = document.getElementById("richEditor");
@@ -784,7 +784,7 @@ export default function RaiseTicketPage() {
                 onDragOver={handleDrag}
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
-                className={`w-full border border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+                className={`w-full border border-dashed rounded-xl p-5 sm:p-8 text-center transition-all cursor-pointer ${
                   dragActive
                     ? "border-primary bg-primary/5"
                     : "border-border bg-muted/30 hover:bg-muted/60"

@@ -180,7 +180,7 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
 
 
         {/* ── FILTER BAR — 4 dropdowns, all from Sanity data ── */}
-        <section className="flex flex-wrap items-center gap-3 py-8 border-b border-border mb-12">
+        <section className="flex flex-nowrap sm:flex-wrap items-center gap-3 py-8 border-b border-border mb-12 overflow-x-auto scrollbar-hide">
           <Select value={yearFilter} onValueChange={(v) => { setYearFilter(v); setCurrentPage(1); }}>
             <SelectTrigger aria-label="Year" className="h-11 w-[130px] rounded-xl border border-border bg-card shadow-sm">
               <SelectValue placeholder="Year" />

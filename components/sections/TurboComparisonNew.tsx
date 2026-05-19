@@ -120,7 +120,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                 initial="cardHidden"
                 whileInView="cardVisible"
                 viewport={{ once: true, amount: 0.3 }}
-                className="w-[220px] rounded-[14px] bg-[#0d0d0d] border border-white/10 relative overflow-visible"
+                className="w-full sm:w-[220px] rounded-[14px] bg-[#0d0d0d] border border-white/10 relative overflow-visible"
             >
                 {/* Title bar */}
                 <div className="flex flex-row items-center px-4 pt-[14px] relative">
@@ -142,7 +142,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[0]}
                     </motion.p>
@@ -154,7 +154,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[1]}
                     </motion.p>
@@ -166,7 +166,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[2]}
                     </motion.p>
@@ -178,7 +178,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[15px] text-white/75 tracking-[0.01em] leading-none mt-0.5"
+                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mt-0.5"
                     >
                         {lines[3]}
                     </motion.p>
@@ -440,7 +440,8 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
 
             {/* ── BOTTOM TEXT (outside canvas so it never gets clipped) ── */}
             <motion.div custom={D.btm} variants={rcBtmV} initial="cardHidden" whileInView="cardVisible" viewport={vp}
-                style={{ marginTop: 24, textAlign: "center" }}>
+                style={{ marginTop: 24, textAlign: "center" }}
+                className="invisible sm:visible">
                 <div style={{ fontSize: "9.5px", letterSpacing: "5.5px", color: "#a855f7", textTransform: "uppercase", marginBottom: 10, fontWeight: 500, fontFamily: "Inter, sans-serif" }}>
                     {rightLabel || "With ClassGrid OS"}
                 </div>
@@ -529,17 +530,17 @@ export function TurboComparisonNew({
     return (
         <section
             style={{ backgroundColor: "var(--background)" }}
-            className="relative overflow-hidden py-24 md:py-32"
+            className="relative overflow-hidden py-10 md:py-24 lg:py-32"
         >
             <div className="relative mx-auto max-w-6xl px-6">
 
                 {/* Heading */}
-                <div className="mb-16 text-center">
-                    <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500" />
-                    <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+                <div className="mb-8 md:mb-16 text-center">
+                    <div className="mx-auto mb-4 md:mb-6 h-1.5 w-16 md:w-24 rounded-full bg-orange-500" />
+                    <h2 className="text-2xl font-extrabold tracking-tight text-white md:text-5xl">
                         {headline || "Close Admissions in Minutes, Not Days"}
                     </h2>
-                    <p className="mx-auto mt-4 max-w-2xl text-base text-zinc-400">
+                    <p className="mx-auto mt-3 max-w-2xl text-sm md:text-base text-zinc-400 px-2">
                         {subheadline || "Classgrid verifies documents, builds merit lists, issues PRNs, links fee ledgers, and syncs every dashboard automatically."}
                     </p>
                 </div>
@@ -550,8 +551,8 @@ export function TurboComparisonNew({
 
                     {/* ── LEFT COLUMN — Without ClassGrid ── */}
                     <div className="flex flex-col items-center">
-                        {/* Cards row */}
-                        <div className="flex flex-row items-start justify-center gap-12">
+                        {/* Cards row — stacked on mobile, side-by-side on sm+ */}
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6 sm:gap-12 w-full">
                             <TerminalCard cardIndex={0} lines={box1Lines} />
                             <TerminalCard cardIndex={1} lines={box2Lines} />
                         </div>
@@ -563,7 +564,7 @@ export function TurboComparisonNew({
                             initial="cardHidden"
                             whileInView="cardVisible"
                             viewport={{ once: true, amount: 0.3 }}
-                            className="mt-[52px] flex flex-col items-center gap-2"
+                            className="mt-[52px] flex flex-col items-center gap-2 invisible sm:visible"
                         >
                             <span
                                 className="text-[11.5px] font-medium text-white/40 tracking-[0.21em] uppercase"
@@ -580,8 +581,8 @@ export function TurboComparisonNew({
                         </motion.div>
                     </div>
 
-                    {/* ── RIGHT COLUMN — With ClassGrid OS ── */}
-                    <div className="flex flex-col items-center">
+                    {/* ── RIGHT COLUMN — With ClassGrid OS — full width on mobile ── */}
+                    <div className="flex flex-col items-center w-full">
                         <RightColumn
                             rightTermCmd={rightTermCmd}
                             rightTermLine1={rightTermLine1}

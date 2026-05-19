@@ -98,17 +98,31 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
       updatePath()
     })
 
-    // Observe the container element
+    // Observe the container and endpoint elements to catch all layout shifts
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current)
+    }
+    if (fromRef.current) {
+      resizeObserver.observe(fromRef.current)
+    }
+    if (toRef.current) {
+      resizeObserver.observe(toRef.current)
     }
 
     // Call the updatePath initially to set the initial path
     updatePath()
 
-    // Clean up the observer on component unmount
+    // Fallback timeouts to catch late layout shifts (e.g., custom fonts loading)
+    const timeouts = [
+      setTimeout(updatePath, 100),
+      setTimeout(updatePath, 500),
+      setTimeout(updatePath, 1000),
+    ]
+
+    // Clean up observers and timeouts on component unmount
     return () => {
       resizeObserver.disconnect()
+      timeouts.forEach(clearTimeout)
     }
   }, [
     containerRef,

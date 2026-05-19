@@ -31,7 +31,7 @@ export default function IntegrationHero() {
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-6 text-center">
-        <span className="inline-block px-3 py-1 mb-4 text-sm rounded-full border border-gray-200 dark:border-gray-700 bg-[#fafafa] dark:bg-[#0f0f0f] text-black dark:text-gray-300">
+        <span className="inline-block px-3 py-1 mb-4 text-sm rounded-full border border-border bg-muted text-muted-foreground">
           ⚡ Integrations
         </span>
         <SectionAccentBar />
@@ -41,7 +41,7 @@ export default function IntegrationHero() {
         <p className="mt-4 text-lg text-gray-500 dark:text-white max-w-xl mx-auto">
           250+ top apps are available to integrate seamlessly with your workflow.
         </p>
-        <Button variant="default" className="mt-8 rounded-lg bg-slate-900 px-6 py-3 font-medium text-white transition hover:bg-gray-800 dark:bg-[#0f0f0f]">
+        <Button variant="default" className="mt-8 rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:opacity-90">
           Get started
         </Button>
 

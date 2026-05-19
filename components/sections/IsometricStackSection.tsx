@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import "./isometric-stack.css";
 import { LayersSvg } from "./LayersSvg";
 
@@ -91,7 +92,20 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
   const PHASES = phases && phases.length > 0 ? phases : DEFAULT_PHASES;
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [expandedDot, setExpandedDot] = useState<number | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [slideDir, setSlideDir] = useState<'left' | 'right' | null>(null);
   const [stackEntryState, setStackEntryState] = useState<StackEntryState>("collapsed");
+
+  // Close overlay with animation
+  const handleCloseOverlay = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setExpandedDot(null);
+      setIsClosing(false);
+      setSlideDir(null);
+    }, 350);
+  };
   // visualIndex drives the SVG stretch visual; text always uses activeIndex
   const visualIndex = hoveredIndex ?? activeIndex;
   const sectionRef = useRef<HTMLElement>(null);
@@ -106,9 +120,18 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
   }, [activeIndex]);
 
   // Trigger the one-shot stack entry animation when the section reaches the viewport top.
+  // DISABLED on mobile — stack shows statically
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+
+    // Skip entry animation on mobile
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      setStackEntryState("expanded");
+      stackEntryTriggeredRef.current = true;
+      return;
+    }
 
     let frameId: number | null = null;
 
@@ -171,9 +194,14 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
 
   // 2. Intercept the scroll wheel — variable stuckness per card
   // Registered ONCE (no [activeIndex] dep) — reads from ref so it never has a gap
+  // DISABLED on mobile — users navigate with dot labels instead
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+
+    // Skip wheel interception on mobile — let page scroll freely
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) return;
 
     const handleWheel = (e: WheelEvent) => {
       const now = Date.now();
@@ -220,19 +248,19 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
       data-stack-entry={stackEntryState}
     >
       {/* ── flex-column wrapper so header sits above the two-column inner ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh', width: '100%', position: 'relative', zIndex: 2 }}>
+      <div className="cg-iso-content-wrapper" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%', position: 'relative', zIndex: 2 }}>
 
         {/* ═══ SECTION HEADER — above the two columns ═══ */}
         {(headline || subheadline) && (
-          <div style={{ maxWidth: 760, margin: '0 auto 52px', textAlign: 'center', width: '100%' }}>
+          <div className="cg-iso-section-header" style={{ maxWidth: 760, margin: '0 auto 52px', textAlign: 'center', width: '100%' }}>
             <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500" />
             {headline && (
-              <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.15, color: '#e2e8f0', marginBottom: 14 }}>
+              <h2 className="cg-iso-section-headline" style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.15, color: '#e2e8f0', marginBottom: 14 }}>
                 {headline}
               </h2>
             )}
             {subheadline && (
-              <p style={{ fontSize: 15, lineHeight: 1.8, color: '#94a3b8', maxWidth: 640, margin: '0 auto' }}>
+              <p className="cg-iso-section-subheadline" style={{ fontSize: 15, lineHeight: 1.8, color: '#94a3b8', maxWidth: 640, margin: '0 auto' }}>
                 {subheadline}
               </p>
             )}
@@ -293,7 +321,98 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
               setHoveredIndex={setHoveredIndex}
             />
           </div>
+
+          {/* Zoho-style dot labels — mobile only */}
+          <div className="cg-iso-dot-labels">
+            {PHASES.map((phase, idx) => {
+              const shortLabel = phase.title.split('\n')[0].replace(/\.$/, '').trim();
+              return (
+                <button
+                  key={idx}
+                  className={`cg-iso-dot-item ${activeIndex === idx ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveIndex(idx);
+                    // On mobile, dots 2-6 (index 1-5) open detail overlay
+                    if (idx > 0 && typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) {
+                      setExpandedDot(idx);
+                    }
+                  }}
+                  aria-label={shortLabel}
+                >
+                  <span className="cg-iso-dot" />
+                  <span className="cg-iso-dot-line" />
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* ═══ MOBILE DOT DETAIL OVERLAY (Portal to body) ═══ */}
+        {expandedDot !== null && expandedDot > 0 && typeof document !== 'undefined' && createPortal(
+          <div className={`cg-iso-detail-overlay ${isClosing ? 'closing' : ''}`}>
+            {/* Close button */}
+            <button
+              className="cg-iso-detail-close"
+              onClick={handleCloseOverlay}
+              aria-label="Close detail"
+            >
+              ✕
+            </button>
+
+            {/* Solo SVG layer card — individual images */}
+            <div className={`cg-iso-detail-svg ${slideDir ? `slide-${slideDir}` : ''}`} key={`svg-${expandedDot}`} data-solo={expandedDot}>
+              <img
+                src={`/layers/layer-${expandedDot}.svg`}
+                alt={PHASES[expandedDot].title.split('\n')[0]}
+              />
+            </div>
+
+            {/* Phase info */}
+            <div className={`cg-iso-detail-content ${slideDir ? `slide-${slideDir}` : ''}`} key={`content-${expandedDot}`}>
+              <h3>
+                {PHASES[expandedDot].title.split('\n').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i < PHASES[expandedDot].title.split('\n').length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </h3>
+              <p>{PHASES[expandedDot].body}</p>
+              <ul className="cg-iso-bullets">
+                {PHASES[expandedDot].bullets.map((b, i) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Prev / Next navigation */}
+            <div className="cg-iso-detail-nav">
+              <button
+                className="cg-iso-detail-nav-btn"
+                onClick={() => {
+                  setSlideDir('right');
+                  setExpandedDot(prev => prev !== null && prev > 1 ? prev - 1 : prev);
+                }}
+                disabled={expandedDot <= 1}
+                aria-label="Previous"
+              >
+                ‹
+              </button>
+              <button
+                className="cg-iso-detail-nav-btn"
+                onClick={() => {
+                  setSlideDir('left');
+                  setExpandedDot(prev => prev !== null && prev < PHASES.length - 1 ? prev + 1 : prev);
+                }}
+                disabled={expandedDot >= PHASES.length - 1}
+                aria-label="Next"
+              >
+                ›
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
 
         </div>
       </div>

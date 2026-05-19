@@ -128,7 +128,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
   }, [cardData.length]);
 
   return (
-    <div className="relative flex h-full w-full select-none flex-col items-center justify-start bg-[#fafafa] pt-4 dark:bg-[#0f0f0f]">
+    <div className="relative flex h-full w-full select-none flex-col items-center justify-start bg-background pt-4">
       <div
         className="relative flex aspect-[16/9] w-full max-w-4xl items-center justify-center group/section"
         onMouseEnter={() => setIsPaused(true)}
@@ -150,7 +150,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
             }}
             className="absolute inset-0 cursor-pointer"
           >
-            <div className="group/image relative flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border border-gray-200 bg-gray-50 shadow-2xl dark:border-[#222] dark:bg-[#0f0f0f] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+            <div className="group/image relative flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border border-border bg-card shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
               <div className="pointer-events-none absolute inset-0 z-10 rounded-3xl ring-1 ring-inset ring-white/10 dark:ring-white/5" />
 
               <img
@@ -164,7 +164,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
 
         <button
           onClick={goPrev}
-          className="absolute left-0 z-40 flex h-12 w-12 -translate-x-6 items-center justify-center rounded-full border border-gray-200 bg-white/50 text-gray-800 shadow-lg backdrop-blur-md transition-all hover:scale-110 hover:bg-white hover:opacity-100 group-hover/section:opacity-100 dark:border-[#333] dark:bg-black/50 dark:text-gray-300 dark:hover:bg-[#111] md:-translate-x-12 opacity-0"
+          className="absolute left-0 z-40 flex h-12 w-12 -translate-x-6 items-center justify-center rounded-full border border-border bg-background/50 text-foreground shadow-lg backdrop-blur-md transition-all hover:scale-110 hover:bg-accent hover:opacity-100 group-hover/section:opacity-100 md:-translate-x-12 opacity-0"
           aria-label="Previous card"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -173,7 +173,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
         </button>
         <button
           onClick={goNext}
-          className="absolute right-0 z-40 flex h-12 w-12 translate-x-6 items-center justify-center rounded-full border border-gray-200 bg-white/50 text-gray-800 shadow-lg backdrop-blur-md transition-all hover:scale-110 hover:bg-white hover:opacity-100 group-hover/section:opacity-100 dark:border-[#333] dark:bg-black/50 dark:text-gray-300 dark:hover:bg-[#111] md:translate-x-12 opacity-0"
+          className="absolute right-0 z-40 flex h-12 w-12 translate-x-6 items-center justify-center rounded-full border border-border bg-background/50 text-foreground shadow-lg backdrop-blur-md transition-all hover:scale-110 hover:bg-accent hover:opacity-100 group-hover/section:opacity-100 md:translate-x-12 opacity-0"
           aria-label="Next card"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -239,7 +239,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
             }}
             aria-label={`Go to card ${i + 1}`}
           >
-            <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${i === currentIndex ? "bg-black opacity-100 dark:bg-white" : "opacity-0"}`} />
+            <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${i === currentIndex ? "bg-foreground opacity-100" : "opacity-0"}`} />
           </button>
         ))}
       </div>

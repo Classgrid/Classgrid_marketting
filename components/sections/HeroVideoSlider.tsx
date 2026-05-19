@@ -270,6 +270,15 @@ export function HeroVideoSlider({
   const togglePlayPause = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setIsPlaying(!isPlaying);
+    
+    // Show arrows when tapped (especially useful for mobile)
+    setShowArrows(true);
+    if (arrowTimeoutRef.current) {
+      clearTimeout(arrowTimeoutRef.current);
+    }
+    arrowTimeoutRef.current = setTimeout(() => {
+      setShowArrows(false);
+    }, 3000);
   };
 
   const getInitials = (value?: string) => {
@@ -472,17 +481,25 @@ export function HeroVideoSlider({
                 <div className="absolute inset-0 z-10 bg-black/20 pointer-events-none" />
               )}
 
-              <div className="absolute bottom-20 left-6 z-20 max-w-xl pr-6 text-white md:bottom-24 md:left-8">
+              <div className="absolute bottom-[4.5rem] left-4 sm:left-6 z-20 max-w-[85%] sm:max-w-xl pr-4 sm:pr-6 text-white md:bottom-24 md:left-8">
                 {activeVideo.subtitle?.trim() ? (
                   <div className="max-w-xl">
                     {isCaptionVisible ? (
-                      <div className="rounded-xl bg-black/55 px-3 py-2 backdrop-blur-sm">
+                      <div className={cn(
+                        "rounded-xl backdrop-blur-md transition-all duration-300 custom-scrollbar",
+                        isCaptionExpanded 
+                          ? "bg-black/85 p-3 sm:p-4 max-h-[110px] sm:max-h-[160px] overflow-y-auto border border-white/20 shadow-2xl pointer-events-auto"
+                          : "bg-black/55 px-3 py-2 pointer-events-none"
+                      )}
+                      onClick={(e) => {
+                        if (isCaptionExpanded) e.stopPropagation(); // allow scrolling without pausing video
+                      }}>
                         <p
                           className={cn(
                             "text-sm font-medium leading-relaxed opacity-95 md:text-lg",
                             !isCaptionExpanded && (activeVideo.subtitle?.trim().length ?? 0) > 120
                               ? "line-clamp-2"
-                              : "line-clamp-none"
+                              : ""
                           )}
                         >
                           &ldquo;{activeVideo.subtitle}&rdquo;
@@ -493,7 +510,7 @@ export function HeroVideoSlider({
                     {(activeVideo.subtitle?.trim().length ?? 0) > 120 ? (
                       <button
                         type="button"
-                        className="mt-2 rounded-full border border-white/30 bg-black/45 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-black/65"
+                        className="hidden sm:block mt-2 rounded-full border border-white/30 bg-black/45 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-black/65"
                         onClick={(e) => {
                           e.stopPropagation();
 
@@ -543,12 +560,12 @@ export function HeroVideoSlider({
                     </div>
                     <div>
                       {activeVideo.name?.trim() ? (
-                        <p className="text-lg font-semibold tracking-tight text-white drop-shadow-md md:text-xl">
+                        <p className="text-sm font-semibold tracking-tight text-white drop-shadow-md sm:text-lg md:text-xl">
                           {activeVideo.name}
                         </p>
                       ) : null}
                       {activeVideo.role?.trim() ? (
-                        <p className="text-xs font-medium uppercase tracking-wide text-emerald-300 opacity-90 drop-shadow-sm md:text-sm">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-300 opacity-90 drop-shadow-sm sm:text-xs md:text-sm">
                           {activeVideo.role}
                         </p>
                       ) : null}
@@ -603,9 +620,37 @@ export function HeroVideoSlider({
                     </div>
                   </div>
 
-                  <button onClick={toggleFullscreen} className="hover:text-emerald-400">
-                    {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
-                  </button>
+                  <div className="flex items-center gap-3 md:gap-4">
+                    {/* Mobile-only Show More button */}
+                    {((activeVideo.subtitle?.trim().length ?? 0) > 120) ? (
+                      <button
+                        type="button"
+                        className="sm:hidden rounded border border-white/20 bg-white/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white backdrop-blur-sm transition hover:bg-white/20"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isCaptionVisible) {
+                            setIsCaptionVisible(true);
+                            setIsCaptionExpanded(true);
+                            scheduleCaptionHide(7000);
+                            return;
+                          }
+                          if (isCaptionExpanded) {
+                            setIsCaptionExpanded(false);
+                            scheduleCaptionHide(2500);
+                            return;
+                          }
+                          setIsCaptionExpanded(true);
+                          scheduleCaptionHide(7000);
+                        }}
+                      >
+                        {!isCaptionVisible ? "More" : isCaptionExpanded ? "Less" : "More"}
+                      </button>
+                    ) : null}
+
+                    <button onClick={toggleFullscreen} className="hover:text-emerald-400">
+                      {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -621,11 +666,11 @@ export function HeroVideoSlider({
                   prevVideo();
                 }}
                 className={cn(
-                  "absolute -left-5 md:-left-8 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-slate-900 shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20",
-                  showArrows ? "opacity-100" : "opacity-0 pointer-events-none"
+                  "absolute left-2 md:-left-8 top-1/2 z-20 flex h-10 w-10 md:h-14 md:w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-slate-900 shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20",
+                  showArrows ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                 )}
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
               </button>
               <button
                 onClick={(e) => {
@@ -633,11 +678,11 @@ export function HeroVideoSlider({
                   nextVideo();
                 }}
                 className={cn(
-                  "absolute -right-5 md:-right-8 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-slate-900 shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20",
-                  showArrows ? "opacity-100" : "opacity-0 pointer-events-none"
+                  "absolute right-2 md:-right-8 top-1/2 z-20 flex h-10 w-10 md:h-14 md:w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-slate-900 shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20",
+                  showArrows ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                 )}
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </>
           )}

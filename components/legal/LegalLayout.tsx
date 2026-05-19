@@ -213,7 +213,7 @@ export function LegalLayout({
       <LegalBodyClass />
 
       {/* Flex row: sticky sidebar + main content side by side */}
-      <div className="flex min-h-screen">
+      <div className="flex flex-col lg:flex-row min-h-screen">
         <LegalTOC sections={sections} />
 
         <main className="flex-1 min-w-0">

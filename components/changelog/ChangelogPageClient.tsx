@@ -161,10 +161,10 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
               LEFT  : [Sort ▼] [Month ▼] [Module ▼]  (Blog has [Latest ▼] [Month ▼], changelog adds Module too)
               RIGHT : [All] [New Feature] [Improvement] [Bug Fix]  (like Blog's category pills)
         */}
-        <section className="flex flex-col items-start justify-between gap-4 py-4 md:flex-row md:items-center">
+        <section className="flex flex-col items-start justify-between gap-3 py-4 md:flex-row md:items-center">
 
           {/* LEFT — three Select dropdowns (Sort + Month + Module) */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto">
             {/* Sort order — same as Blog */}
             <Select
               value={sortOrder}
@@ -353,9 +353,9 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
                       {/* Read more */}
                       <Link
                         href={href}
-                        className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-emerald-500 opacity-0 transition-opacity group-hover:opacity-100"
+                        className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-emerald-500 transition-colors hover:border-emerald-500/30 hover:bg-emerald-500/10"
                       >
-                        Read full update →
+                        Read full update &rarr;
                       </Link>
                     </div>
                   </MotionDiv>

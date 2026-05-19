@@ -195,7 +195,7 @@ export default async function ChangelogDetailPage({
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-4xl px-6 py-16">
+      <section className="mx-auto w-full max-w-4xl px-4 sm:px-6 py-10 sm:py-16">
         {entry.imageUrl ? (
           <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
         ) : null}
@@ -204,23 +204,23 @@ export default async function ChangelogDetailPage({
           <PortableTextBlock value={entry.content} showAccentBars={false} />
         </div>
 
-        <div className="mt-20 rounded-2xl border border-border bg-card p-8">
+        <div className="mt-12 sm:mt-20 rounded-2xl border border-border bg-card p-6 sm:p-8">
           <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-500">Next step</p>
-          <h3 className="mb-3 text-2xl font-extrabold tracking-tight text-foreground">See it in action</h3>
+          <h3 className="mb-3 text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">See it in action</h3>
           <p className="mb-6 text-sm leading-relaxed text-muted-foreground max-w-lg">
-            Book a demo to see how this update works in your institution's workflow.
+            Book a demo to see how this update works in your institution&apos;s workflow.
           </p>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
             <Link
               href={buildLangHref("/contact", lang)}
-              className="inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-80"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-80"
             >
               Book a Demo
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <Link
               href={buildLangHref("/changelog", lang)}
-              className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-6 text-sm font-semibold text-foreground transition-colors hover:border-emerald-500/40 hover:text-emerald-500"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-border px-6 text-sm font-semibold text-foreground transition-colors hover:border-emerald-500/40 hover:text-emerald-500"
             >
               View All Updates
             </Link>

@@ -50,12 +50,12 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div className="flex flex-col md:flex-row w-full h-full rounded-3xl bg-gradient-to-br from-[#f0fdf4] to-white dark:from-[#0a2418] dark:to-[#05130d] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] md:min-h-[420px] overflow-hidden border border-emerald-100 dark:border-white/[0.05]">
       {/* Left side – large avatar */}
-      <div className="w-full md:w-[35%] shrink-0 h-[280px] md:h-auto flex relative bg-emerald-100 dark:bg-emerald-950/50">
+      <div className="w-full md:w-[35%] shrink-0 h-[340px] md:h-auto flex relative bg-emerald-100 dark:bg-emerald-950/50">
         {testimonial.avatarUrl ? (
           <img
             src={testimonial.avatarUrl}
             alt={testimonial.avatarAlt ?? safeName}
-            className="w-full h-full object-cover object-center absolute inset-0"
+            className="w-full h-full object-cover object-[center_15%] md:object-center absolute inset-0"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-5xl font-bold text-white bg-gradient-to-br from-emerald-400 to-emerald-600 dark:from-emerald-800 dark:to-emerald-950">

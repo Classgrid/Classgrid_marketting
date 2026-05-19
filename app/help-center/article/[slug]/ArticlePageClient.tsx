@@ -3,13 +3,15 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Clock, Copy, Eye } from "lucide-react";
+import { Check, Clock, Copy, Eye, PanelLeft, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import urlBuilder from "@sanity/image-url";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { CmsFallback } from "@/components/ui/CmsErrorBoundary";
+import { cn } from "@/lib/utils";
 import { buildLangHref, extractLocaleString, extractLocaleValue, type SupportedLang } from "@/lib/locale";
 import { client } from "@/sanity/lib/client";
 
@@ -106,6 +108,7 @@ export default function ArticlePageClient({
   const [headings, setHeadings] = useState<{ id: string; title: string }[]>([]);
   const [viewCount, setViewCount] = useState(0);
   const [hasGivenFeedback, setHasGivenFeedback] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     async function loadArticle() {
@@ -214,7 +217,7 @@ export default function ArticlePageClient({
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#fafafa] dark:bg-[#0f0f0f] pt-8 pb-24 flex justify-center">
+      <main className="min-h-screen bg-background pt-8 pb-24 flex justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
       </main>
     );
@@ -231,9 +234,83 @@ export default function ArticlePageClient({
   }
 
   return (
-    <main className="min-h-screen bg-[#fafafa] dark:bg-[#0f0f0f] pb-24 selection:bg-emerald-500/30">
+    <main className="min-h-screen bg-background pb-24 selection:bg-emerald-500/30">
+      {/* ── Mobile Nav Bar (only visible below lg) ── */}
+      <div className="sticky top-16 z-40 flex w-full items-center justify-between border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur-sm lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+        >
+          <PanelLeft className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* ── Mobile Left Sidebar Drawer ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-[#080808] shadow-2xl lg:hidden"
+            >
+              <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
+                <span className="text-sm font-semibold text-white">In this article</span>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/70 hover:text-white transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 [scrollbar-width:thin]">
+                {headings.map((heading) => {
+                  const isActive = activeSection === heading.id;
+                  return (
+                    <a
+                      key={heading.id}
+                      href={`#${heading.id}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        "block rounded-md px-3 py-2.5 text-[13px] leading-snug transition-colors",
+                        isActive
+                          ? "bg-emerald-500/10 font-semibold text-emerald-500"
+                          : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                      )}
+                    >
+                      <span className="line-clamp-2">{heading.title}</span>
+                    </a>
+                  );
+                })}
+              </div>
+              <div className="mt-auto border-t border-zinc-200 dark:border-zinc-800 p-4">
+                <Link
+                  href={buildLangHref("/support/ticket", lang)}
+                  className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="text-lg">🙋</span> Have a question?
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8 pt-6 flex flex-col lg:flex-row gap-12 relative">
-        <aside className="w-full lg:w-56 shrink-0">
+        <aside className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-28 flex flex-col max-h-[calc(100vh-8rem)]">
             <h4 className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-4 shrink-0">
               In this article

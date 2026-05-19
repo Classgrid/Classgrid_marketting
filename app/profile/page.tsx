@@ -19,7 +19,7 @@ export default function ProfilePage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] flex items-center justify-center">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-[#888] animate-spin" />
       </div>
     );
@@ -34,7 +34,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 dark:bg-[#0f0f0f] dark:text-white flex flex-col relative">
+    <div className="min-h-screen bg-background text-foreground flex flex-col relative">
 
       {/* Top bar */}
       <div className="flex items-center justify-between px-8 py-5">
@@ -67,7 +67,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Profile card */}
-              <div className="rounded-xl border border-slate-200 bg-[#fafafa] p-6 space-y-5 dark:border-[#2a2a2a] dark:bg-[#161616]">
+              <div className="rounded-xl border border-border bg-card p-6 space-y-5">
 
                 {/* Avatar + name row */}
                 <div className="flex items-center gap-4">
@@ -126,7 +126,7 @@ export default function ProfilePage() {
                 <p className="text-sm text-slate-500 dark:text-[#888888]">You're signed in to the Classgrid community</p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-[#fafafa] p-6 dark:border-[#2a2a2a] dark:bg-[#161616]">
+              <div className="rounded-xl border border-border bg-card p-6">
                 <div className="flex items-center gap-4">
                   {user.image ? (
                     <Image

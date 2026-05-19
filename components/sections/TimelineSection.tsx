@@ -39,7 +39,7 @@ export function TimelineSection({ title, subtitle, tabs, defaultTab, roleDataMap
 
       {/* ── Segmented pill tabs — matches "Overview / Automation" sliding style ── */}
       <div className="mb-12 flex justify-center">
-        <div className="relative flex flex-wrap items-center justify-center gap-1 rounded-full border border-zinc-200 bg-zinc-100/80 p-1.5 shadow-sm dark:border-white/10 dark:bg-[#0f0f0f]">
+        <div className="relative flex flex-wrap items-center justify-center gap-1 rounded-full border border-border bg-muted/80 p-1.5 shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab.id}

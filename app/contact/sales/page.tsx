@@ -39,7 +39,7 @@ export default async function Page() {
     ? (cms as any).socialProof.names
     : (salesContactCopy as any).socialProof.names;
   return (
-    <div className="bg-white text-slate-900 dark:bg-[#0f0f0f] dark:text-white">
+    <div className="bg-background text-foreground">
       <section className="border-b border-slate-200 px-4 py-16 dark:border-white/10 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
           <div className="space-y-6">
@@ -60,7 +60,7 @@ export default async function Page() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {(metrics as any).map((metric) => (
-                <div key={metric.label} className="rounded-xl border border-slate-200 bg-[#fafafa] p-4 dark:border-white/10 dark:bg-zinc-950/80">
+                <div key={metric.label} className="rounded-xl border border-border bg-card p-4">
                   <p className="text-xs font-medium tracking-wide text-slate-500 dark:text-zinc-500">{metric.label}</p>
                   <p className="mt-2 text-2xl font-bold">{metric.value}</p>
                 </div>
@@ -68,7 +68,7 @@ export default async function Page() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-[#fafafa] p-6 dark:border-white/15 dark:bg-[#0A0A0A] sm:p-8">
+          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
             <SectionAccentBar align="left" className="mb-4" />
             <h2 className="text-xl font-semibold">{formTitle}</h2>
             <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400">{formSubtitle}</p>
