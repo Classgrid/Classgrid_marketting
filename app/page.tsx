@@ -32,7 +32,11 @@ import {
   getTurboClassgrid,
   getIsometricStack,
   getAppEcosystem,
+  getClassgridVideo,
+  getClassgridTeamVision,
 } from "@/sanity/lib/marketing";
+
+import { ClassgridVideoSection } from "@/components/sections/ClassgridVideoSection";
 
 import { WhyClassgridSection } from "@/components/sections/WhyClassgridSection";
 import { TeamVisionSection } from "@/components/sections/TeamVisionSection";
@@ -353,6 +357,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     cmsTurboClassgrid,
     cmsIsometricStack,
     cmsAppEcosystem,
+    cmsClassgridVideo,
+    cmsClassgridTeamVision,
   ] = await Promise.all([
     getHomePage(),
     getCircularTimeline(),
@@ -366,6 +372,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     getTurboClassgrid(),
     getIsometricStack(),
     getAppEcosystem(),
+    getClassgridVideo(),
+    getClassgridTeamVision(),
   ]);
 
   const cmsHome = (cms as any) ?? {};
@@ -963,14 +971,13 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
   const showVideoSection = (sectionSettings?.showTestimonialVideos !== false) && Boolean(videoSectionTitle || videoSectionDescription || testimonialVideos.length || productVideoUrl);
   const showTestimonials = (sectionSettings?.showClientTestimonials !== false) && Boolean(testimonials.length);
   const showWhyClassgrid = sectionSettings?.showWhyClassgrid === true;
-  const showTeamVision = sectionSettings?.showTeamVision === true;
+  const showClassgridVideo = (cmsClassgridVideo as any)?.isVisible === true;
+  const showTeamVision = (cmsClassgridTeamVision as any)?.isVisible === true;
   const showTurboComparison = true; // sectionSettings?.showTurboComparison === true;
   const showIsometricStack = true;  // sectionSettings?.showIsometricStack === true;
   const whyClassgridTitle = sectionSettings?.whyClassgridTitle;
   const whyClassgridDescription = sectionSettings?.whyClassgridDescription;
   const whyClassgridCards = Array.isArray(sectionSettings?.whyClassgridCards) ? sectionSettings.whyClassgridCards : [];
-  const teamVisionTitle = sectionSettings?.teamVisionTitle;
-  const teamVisionQuotes = Array.isArray(sectionSettings?.teamVisionQuotes) ? sectionSettings.teamVisionQuotes : [];
   const showIntegrations = Boolean(integrationLogos.length);
   const showFaq = Boolean(faqsLeft.length || faqsRight.length);
   const showDemoForm = Boolean(
@@ -1204,6 +1211,18 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
         </Reveal>
       ) : null}
 
+      {showClassgridVideo ? (
+        <ClassgridVideoSection 
+          label={(cmsClassgridVideo as any)?.label}
+          title={(cmsClassgridVideo as any)?.title}
+          description={(cmsClassgridVideo as any)?.description}
+          videoUrl={(cmsClassgridVideo as any)?.videoUrl}
+          highlights={(cmsClassgridVideo as any)?.highlights}
+          ctaLabel={(cmsClassgridVideo as any)?.ctaLabel}
+          ctaHref={(cmsClassgridVideo as any)?.ctaHref}
+        />
+      ) : null}
+
       {showTestimonials ? (
         <Reveal>
           <section className="mx-auto w-full max-w-7xl px-4 py-10 md:py-14">
@@ -1245,8 +1264,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       {showTeamVision ? (
         <Reveal>
           <TeamVisionSection
-            title={teamVisionTitle}
-            quotes={teamVisionQuotes}
+            title={(cmsClassgridTeamVision as any)?.title}
+            quotes={(cmsClassgridTeamVision as any)?.quotes}
           />
         </Reveal>
       ) : null}

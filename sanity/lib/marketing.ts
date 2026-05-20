@@ -49,6 +49,8 @@ import {
   sectionSettingsQuery,
   turboClassgridQuery,
   isometricStackQuery,
+  classgridVideoQuery,
+  classgridTeamVisionQuery,
 } from './queries'
 
 const SANITY_REVALIDATE_SECONDS = 300
@@ -193,3 +195,5 @@ export const getTurboClassgrid = () => safeFetch(turboClassgridQuery)
 export const getIsometricStack = () => safeFetch(isometricStackQuery)
 export const getAppEcosystem = () => safeFetch(appEcosystemQuery)
 export const getCaseStudySettings = () => safeFetch(caseStudySettingsQuery)
+export const getClassgridVideo = () => safeFetch(classgridVideoQuery)
+export const getClassgridTeamVision = () => safeFetch(classgridTeamVisionQuery)

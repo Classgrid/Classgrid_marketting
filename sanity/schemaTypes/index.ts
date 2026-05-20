@@ -88,6 +88,8 @@ import {
   circularTimelineTabType,
   circularTimelineType,
 } from './circularTimelineType'
+import { classgridVideoType } from './classgridVideoType'
+import { classgridTeamVisionType } from './classgridTeamVisionType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -174,5 +176,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     turboClassgridType,
     appEcosystemType,
     websiteFeedbackType,
+    classgridVideoType,
+    classgridTeamVisionType,
   ],
 }
