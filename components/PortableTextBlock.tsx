@@ -115,23 +115,72 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         </figure>
       );
     },
+    inlineImage: ({ value }) => {
+      if (!value?.asset?._ref && !value?.asset) return null;
+      const imgSrc = value.asset?._ref ? urlFor(value).url() : (value.asset?.url || '');
+      if (!imgSrc) return null;
+      const layout = value.layout || 'center';
+
+      if (layout === 'center') {
+        return (
+          <figure className="my-10 mx-auto max-w-[750px]">
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
+              <Image src={imgSrc} alt={value.caption || 'Image'} fill className="object-contain hover:scale-105 transition-transform duration-700" sizes="750px" />
+            </div>
+            {value.caption && <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">{value.caption}</figcaption>}
+          </figure>
+        );
+      }
+
+      // Left or Right layout
+      return (
+        <div className={`my-10 mx-auto max-w-[900px] flex flex-col ${layout === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 items-center`}>
+          <div className="w-full md:w-[55%]">
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
+              <Image src={imgSrc} alt={value.caption || 'Image'} fill className="object-cover hover:scale-105 transition-transform duration-700" sizes="500px" />
+            </div>
+          </div>
+          {value.caption && (
+            <div className="w-full md:w-[45%]">
+              <p className="text-base text-muted-foreground italic leading-relaxed">{value.caption}</p>
+            </div>
+          )}
+        </div>
+      );
+    },
     video: ({ value }) => {
       const videoSrc = value?.videoUrl || value?.url;
       if (!videoSrc) {
         return <div className="p-4 border-2 border-red-500 text-red-500 bg-red-100 rounded-md my-4">Error: Video block found but no URL or file attached.</div>;
       }
+      const layout = value.layout || 'center';
+
+      const videoElement = (
+        <HeroVideoSlider 
+          compact
+          videos={[{ 
+            url: videoSrc, 
+            subtitle: value.caption, 
+            name: value.speakerName, 
+            role: value.speakerRole,
+            avatarUrl: value.speakerImage ? urlFor(value.speakerImage).url() : undefined
+          }]} 
+        />
+      );
+
+      if (layout === 'center') {
+        return <div className="my-10 mx-auto max-w-[750px]">{videoElement}</div>;
+      }
+
+      // Left or Right layout
       return (
-        <div className="my-10 mx-auto max-w-[750px]">
-          <HeroVideoSlider 
-            compact
-            videos={[{ 
-              url: videoSrc, 
-              subtitle: value.caption, 
-              name: value.speakerName, 
-              role: value.speakerRole,
-              avatarUrl: value.speakerImage ? urlFor(value.speakerImage).url() : undefined
-            }]} 
-          />
+        <div className={`my-10 mx-auto max-w-[900px] flex flex-col ${layout === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 items-center`}>
+          <div className="w-full md:w-[60%]">{videoElement}</div>
+          {value.caption && (
+            <div className="w-full md:w-[40%]">
+              <p className="text-base text-muted-foreground italic leading-relaxed">{value.caption}</p>
+            </div>
+          )}
         </div>
       );
     },

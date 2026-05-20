@@ -76,8 +76,8 @@ export function SubscribeForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email address"
-            className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/40 h-10 px-4"
+            placeholder="Enter your email"
+            className="flex-1 bg-transparent border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/40 h-10 px-4"
           />
           <Button
             type="submit"

@@ -35,6 +35,7 @@ import rehypeRaw from 'rehype-raw';
 import { cn } from "@/lib/utils";
 import { DocumentHero } from "@/components/ui/DocumentHero";
 import { PageMetadataBox } from "@/components/ui/PageMetadataBox";
+import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 
 // ─────────────────────────────────────────────
 // Types
@@ -983,6 +984,11 @@ export function StructuredContentPage({
                 </div>
               </section>
             )}
+
+            {/* Feedback Widget */}
+            <div className="border-t border-border/60 pt-8 mt-12">
+              <FeedbackWidget pageTitle={title} pageType={mode} />
+            </div>
 
           </div>
         </main>

@@ -3,6 +3,7 @@ export const postsQuery = `*[_type == "post"] | order(publishedAt desc){
   title,
   "slug": slug.current,
   category,
+  tags,
   author,
   authorImage,
   authorBio,
@@ -17,10 +18,12 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{
   title,
   "slug": slug.current,
   category,
+  tags,
   author,
   authorImage,
   authorBio,
   authorProfileLink,
+  readingTimeOverride,
   references[]{title, url},
   excerpt,
   publishedAt,
@@ -64,7 +67,9 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{
     layout,
     "imageUrl": image.asset->url,
     "imageAlt": coalesce(image.alt, heading)
-  }
+  },
+  "prevPost": *[_type == "post" && publishedAt < ^.publishedAt] | order(publishedAt desc)[0]{ title, "slug": slug.current },
+  "nextPost": *[_type == "post" && publishedAt > ^.publishedAt] | order(publishedAt asc)[0]{ title, "slug": slug.current }
 }`;
 
 export const changelogSettingsQuery = `*[_type == "changelogSettings"][0]{
