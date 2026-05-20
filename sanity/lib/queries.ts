@@ -1222,4 +1222,10 @@ export const appEcosystemQuery = `
 }
 `;
 
+export const classgridVideoQuery = `*[_type == "classgridVideo"][0]{
+  isVisible, label, title, description, videoUrl, highlights[]{text}, ctaLabel, ctaHref
+}`;
 
+export const classgridTeamVisionQuery = `*[_type == "classgridTeamVision"][0]{
+  isVisible, label, title, description, quotes[]{name, role, quote, "avatarUrl": avatar.asset->url}
+}`;

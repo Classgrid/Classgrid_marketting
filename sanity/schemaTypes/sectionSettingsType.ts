@@ -84,49 +84,6 @@ export const sectionSettingsType = defineType({
     }),
 
     defineField({
-      name: 'showTeamVision',
-      title: 'Show Team Vision Section',
-      type: 'boolean',
-      initialValue: false,
-      description: 'Turn ON to show the new Team Vision section with founder/team quotes.',
-      group: 'teamVision',
-    }),
-    defineField({
-      name: 'teamVisionTitle',
-      title: 'Team Vision Title',
-      type: 'string',
-      initialValue: 'Our Vision',
-      group: 'teamVision',
-      hidden: ({ parent }) => !parent?.showTeamVision,
-    }),
-    defineField({
-      name: 'teamVisionQuotes',
-      title: 'Team Vision Quotes',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            { name: 'name', title: 'Name', type: 'string' },
-            { name: 'role', title: 'Role', type: 'string' },
-            { name: 'quote', title: 'Quote', type: 'text', rows: 3 },
-            { 
-              name: 'avatar', 
-              title: 'Photo', 
-              type: 'image', 
-              options: { hotspot: true },
-              fields: [
-                { name: 'alt', title: 'Alt text', type: 'string' }
-              ]
-            },
-          ],
-        },
-      ],
-      group: 'teamVision',
-      hidden: ({ parent }) => !parent?.showTeamVision,
-    }),
-
-    defineField({
       name: 'showTurboComparison',
       title: 'Show Speed Comparison Section',
       type: 'boolean',
