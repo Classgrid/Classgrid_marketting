@@ -37,6 +37,7 @@ interface Post {
   publishedAt?: string;
   category?: unknown;
   author?: string;
+  authorImage?: any;
 }
 
 interface PostMetric {
@@ -149,6 +150,7 @@ export function BlogClient({
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [monthFilter, setMonthFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const [isClientLoaded, setIsClientLoaded] = useState(false);
@@ -160,7 +162,7 @@ export function BlogClient({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab, searchQuery, monthFilter, sortOrder, posts]);
+  }, [activeTab, searchQuery, monthFilter, yearFilter, sortOrder, posts]);
 
   useEffect(() => {
     const slugs = Array.from(
@@ -217,6 +219,17 @@ export function BlogClient({
     return ["All", ...discovered];
   }, [lang, posts]);
 
+  const years = useMemo(() => {
+    const discovered = Array.from(
+      new Set(
+        (posts || [])
+          .map((post) => post.publishedAt ? new Date(post.publishedAt).getFullYear().toString() : null)
+          .filter(Boolean)
+      )
+    ).sort((a, b) => Number(b) - Number(a));
+    return ["all", ...discovered as string[]];
+  }, [posts]);
+
   const filteredAndSortedPosts = useMemo(() => {
     if (!posts) return [];
 
@@ -229,12 +242,18 @@ export function BlogClient({
         extractLocaleString(post.title, lang).toLowerCase().includes(searchQuery.toLowerCase());
 
       let matchesMonth = true;
-      if (monthFilter !== "all" && post.publishedAt) {
-        const postMonth = new Date(post.publishedAt).getMonth();
-        matchesMonth = postMonth === MONTH_MAP[monthFilter];
+      let matchesYear = true;
+      if (post.publishedAt) {
+        const postDate = new Date(post.publishedAt);
+        if (monthFilter !== "all") {
+          matchesMonth = postDate.getMonth() === MONTH_MAP[monthFilter];
+        }
+        if (yearFilter !== "all") {
+          matchesYear = postDate.getFullYear().toString() === yearFilter;
+        }
       }
 
-      return hasSlug && matchesTab && matchesSearch && matchesMonth;
+      return hasSlug && matchesTab && matchesSearch && matchesMonth && matchesYear;
     });
 
     return [...filtered].sort((a, b) => {
@@ -253,7 +272,7 @@ export function BlogClient({
       }
       return timeB - timeA;
     });
-  }, [posts, activeTab, searchQuery, monthFilter, sortOrder, metricsBySlug, lang]);
+  }, [posts, activeTab, searchQuery, monthFilter, yearFilter, sortOrder, metricsBySlug, lang]);
 
   if (!isClientLoaded || !posts) {
     return <LoadingDots />;
@@ -301,7 +320,7 @@ export function BlogClient({
         </div>
       </section>
 
-            <section className="flex flex-col items-start justify-between gap-4 py-4 md:flex-row md:items-center">
+      <section className="flex flex-col items-start justify-between gap-4 py-4 md:flex-row md:items-center">
         <div className="flex flex-wrap items-center gap-3">
           <Select value={sortOrder} onValueChange={setSortOrder}>
             <SelectTrigger
@@ -340,6 +359,22 @@ export function BlogClient({
               <SelectItem value="dec">December</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select value={yearFilter} onValueChange={setYearFilter}>
+            <SelectTrigger
+              aria-label="Year Filter"
+              className="h-11 w-[120px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+            >
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
+              {years.map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year === "all" ? "All Years" : year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="scrollbar-hide flex w-full gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
@@ -359,8 +394,6 @@ export function BlogClient({
           ))}
         </div>
       </section>
-
-
 
       {gridPosts.length > 0 ? (
         <MotionSection
@@ -420,19 +453,28 @@ export function BlogClient({
                     )}
 
                     {/* Footer row */}
-                    <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        {/* HIDDEN: Like icon — tell me when you want it back */}
-                        {metrics && (
-                          <span className="flex items-center gap-1">
-                            <Eye className="h-3.5 w-3.5 text-emerald-500" />
-                            {metrics.views}
-                          </span>
+                    <div className="mt-auto flex flex-col gap-3 border-t border-border pt-4">
+                      <div className="flex items-center gap-2">
+                        {post.authorImage ? (
+                          <Image src={urlFor(post.authorImage).url()} alt={post.author || "Author"} width={24} height={24} className="h-6 w-6 rounded-full object-cover" />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-500">{post.author ? post.author.charAt(0) : "C"}</div>
                         )}
+                        <span className="text-xs font-medium text-foreground">{post.author || "ClassGrid Team"}</span>
                       </div>
-                      <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500 transition-all group-hover:bg-emerald-500 group-hover:text-white">
-                        Read More →
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          {metrics && (
+                            <span className="flex items-center gap-1">
+                              <Eye className="h-3.5 w-3.5 text-emerald-500" />
+                              {metrics.views}
+                            </span>
+                          )}
+                        </div>
+                        <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500 transition-all group-hover:bg-emerald-500 group-hover:text-white">
+                          Read More →
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </MotionDiv>
@@ -454,6 +496,7 @@ export function BlogClient({
               setActiveTab("All");
               setSearchQuery("");
               setMonthFilter("all");
+              setYearFilter("all");
               setSortOrder("latest");
             }}
           >

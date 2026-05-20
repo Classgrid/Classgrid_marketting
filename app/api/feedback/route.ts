@@ -12,7 +12,7 @@ const sanityWriteClient = createClient({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { reaction, message, pageUrl, pageTitle } = body
+    const { reaction, message, pageUrl, pageTitle, pageType } = body
 
     if (!reaction || !pageUrl) {
       return NextResponse.json(
@@ -33,9 +33,14 @@ export async function POST(req: NextRequest) {
 
     const userAgent = req.headers.get('user-agent') || 'unknown'
 
+    // Valid page types
+    const validPageTypes = ['compare', 'blog', 'module', 'solution', 'case-study', 'use-case', 'general']
+    const resolvedPageType = validPageTypes.includes(pageType) ? pageType : 'general'
+
     // Create a new websiteFeedback document in Sanity
     const doc = await sanityWriteClient.create({
       _type: 'websiteFeedback',
+      pageType: resolvedPageType,
       pageUrl,
       pageTitle: pageTitle || '',
       reaction: reactionValue,

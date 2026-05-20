@@ -185,6 +185,13 @@
     line-height: 1.6;
   }
 
+  /* Mobile only: prevent horizontal scroll from glow blobs / SVGs */
+  @media (max-width: 768px) {
+    html, body {
+      overflow-x: clip;
+    }
+  }
+
   h1,
   h2,
   h3,

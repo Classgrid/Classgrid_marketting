@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
 import { ImageGallery } from "@/components/shared/ImageGallery";
+import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 
 type Metric = {
   _key: string;
@@ -545,6 +546,11 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
           }))} />
         </section>
       )}
+
+      {/* Feedback Widget */}
+      <section className="py-12 border-t border-border">
+        <FeedbackWidget pageTitle={`Case Study: ${data.title}`} pageType="case-study" />
+      </section>
 
       {/* MODULES STRIP */}
       {data.modules && data.modules.length > 0 && (

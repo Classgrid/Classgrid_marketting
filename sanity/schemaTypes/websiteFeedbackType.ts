@@ -7,6 +7,25 @@ export const websiteFeedbackType = defineType({
   icon: () => '💬',
   fields: [
     defineField({
+      name: 'pageType',
+      title: 'Page Type',
+      type: 'string',
+      description: 'The type of content page this feedback came from.',
+      options: {
+        list: [
+          { title: '⚔️ Compare', value: 'compare' },
+          { title: '📝 Blog Post', value: 'blog' },
+          { title: '🧩 Module', value: 'module' },
+          { title: '💡 Solution', value: 'solution' },
+          { title: '📊 Case Study', value: 'case-study' },
+          { title: '🎯 Use Case', value: 'use-case' },
+          { title: '🌐 General', value: 'general' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'general',
+    }),
+    defineField({
       name: 'pageUrl',
       title: 'Page URL',
       type: 'string',
@@ -17,7 +36,7 @@ export const websiteFeedbackType = defineType({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
-      description: 'e.g., "Classgrid vs vmedulife"',
+      description: 'e.g., "Classgrid vs vmedulife" or "Smart Attendance Module"',
     }),
     defineField({
       name: 'reaction',
@@ -75,14 +94,24 @@ export const websiteFeedbackType = defineType({
       title: 'pageTitle',
       reaction: 'reaction',
       status: 'status',
+      pageType: 'pageType',
       submittedAt: 'submittedAt',
     },
-    prepare({ title, reaction, status, submittedAt }) {
+    prepare({ title, reaction, status, pageType, submittedAt }) {
       const emojiMap: Record<string, string> = {
         terrible: '😭',
         bad: '😞',
         okay: '😐',
         great: '🤩',
+      }
+      const pageTypeEmoji: Record<string, string> = {
+        compare: '⚔️',
+        blog: '📝',
+        module: '🧩',
+        solution: '💡',
+        'case-study': '📊',
+        'use-case': '🎯',
+        general: '🌐',
       }
       const statusEmoji = status === 'reviewed' ? '✅' : status === 'archived' ? '📦' : '🆕'
       const date = submittedAt
@@ -90,7 +119,7 @@ export const websiteFeedbackType = defineType({
         : ''
       return {
         title: `${emojiMap[reaction] || '❓'} ${title || 'Unknown page'}`,
-        subtitle: `${statusEmoji} ${date}`,
+        subtitle: `${pageTypeEmoji[pageType] || '🌐'} ${pageType || 'general'} · ${statusEmoji} ${date}`,
       }
     },
   },
@@ -100,6 +129,11 @@ export const websiteFeedbackType = defineType({
       title: 'Newest First',
       name: 'submittedAtDesc',
       by: [{ field: 'submittedAt', direction: 'desc' }],
+    },
+    {
+      title: 'By Page Type',
+      name: 'pageTypeAsc',
+      by: [{ field: 'pageType', direction: 'asc' }, { field: 'submittedAt', direction: 'desc' }],
     },
   ],
 })

@@ -257,7 +257,12 @@ export function AboutTimeline({ timeline = defaultTimeline }: AboutTimelineProps
                     <h3 className="mb-1 text-base font-semibold text-foreground">{item.title}</h3>
                     <p className="mx-auto max-w-[260px] text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                     {index < items.length - 1 && (
-                      <div className="mt-4 h-10 w-px border-l border-dotted border-emerald-500/30" />
+                      <div className="mt-4 flex flex-col items-center">
+                        <div className="h-8 w-px bg-emerald-500/70" />
+                        <svg width="12" height="8" viewBox="0 0 12 8" className="text-emerald-500/70 -mt-px">
+                          <polygon points="6,8 0,0 12,0" fill="currentColor" />
+                        </svg>
+                      </div>
                     )}
                   </div>
                 );
