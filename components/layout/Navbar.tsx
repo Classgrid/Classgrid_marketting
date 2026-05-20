@@ -249,7 +249,7 @@ export function Navbar({
     : [{ label: "Home", href: "/" }, ...baseItems];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.18] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (

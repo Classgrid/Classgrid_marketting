@@ -105,7 +105,7 @@ export default function AboutPageClient({
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-[580px] mx-auto lg:mx-0 hidden lg:block"
+            className="w-full max-w-[320px] sm:max-w-[420px] mx-auto lg:max-w-[580px] lg:mx-0"
           >
             <Globe showLabel={true} />
           </MotionDiv>
