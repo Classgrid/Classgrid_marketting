@@ -37,6 +37,7 @@ import {
 } from "@/sanity/lib/marketing";
 
 import { ClassgridVideoSection } from "@/components/sections/ClassgridVideoSection";
+import { SectionHeader } from "@/components/sections/SectionHeader";
 
 import { WhyClassgridSection } from "@/components/sections/WhyClassgridSection";
 import { TeamVisionSection } from "@/components/sections/TeamVisionSection";
@@ -434,11 +435,19 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     lang,
     placeholderHomePage.showcaseTitle
   );
+  const normalizedShowcaseTitle =
+    showcaseTitle === "Core modules powering daily campus operations"
+      ? "Every campus workflow, connected"
+      : showcaseTitle;
   const showcaseSubtitle = getLocalized(
     cmsHome.showcaseSubtitle,
     lang,
     placeholderHomePage.showcaseSubtitle
   );
+  const normalizedShowcaseSubtitle =
+    showcaseSubtitle === "A quick look at the core product surfaces institutions use every day."
+      ? "Admissions, academics, fees, exams, and communication work from one calm, connected system."
+      : showcaseSubtitle;
   const showcaseCtaLabelTemplate = withFallbackString(
     home?.showcaseCtaLabelTemplate,
     placeholderHomePage.showcaseCtaLabelTemplate
@@ -641,11 +650,19 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     lang,
     placeholderHomePage.modulesSectionHeading
   );
+  const normalizedModulesTitle =
+    modulesTitle === "Core modules powering daily campus operations"
+      ? "Every campus workflow, connected"
+      : modulesTitle;
   const modulesSubtitle = getLocalized(
     cmsHome.modulesSectionSubtext || cmsHome.modulesSubtitle,
     lang,
     placeholderHomePage.modulesSectionSubtext
   );
+  const normalizedModulesSubtitle =
+    modulesSubtitle === "A quick look at the core product surfaces institutions use every day."
+      ? "Admissions, academics, fees, exams, and communication work from one calm, connected system."
+      : modulesSubtitle;
   const modulesAllTabLabel = withFallbackString(
     home?.modulesAllTabLabel,
     placeholderHomePage.modulesAllTabLabel
@@ -849,8 +866,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     ? cmsFaqItems
       .filter((item: any) => item?.question && item?.answer && (item?.displayPages || []).includes('home'))
       .map((item: any) => ({
-        question: item.question,
-        answer: toFaqAnswerText(item.answer),
+        question: getLocalized(item.question, lang, ""),
+        answer: toFaqAnswerText(getLocalized(item.answer, lang, "")),
         homeColumn: item.homeColumn,
         order: item.order ?? 99,
       }))
@@ -954,27 +971,27 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     Boolean(headline || subtext || heroPrimaryLabel || heroSecondaryLabel || badge);
   const showShowcase =
     (sectionSettings?.showModuleGrid !== false) &&
-    Boolean(showcaseKicker || showcaseTitle || showcaseSubtitle || showcaseSlides.length);
+    Boolean(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle || showcaseSlides.length);
   const showTrust =
     Boolean(trustedBy || trustSectionDescription || stats.length || trustedLogos.length);
   const showOrganization = Boolean(organizationSectionTitle && organizationCards.length);
   const showModules =
     Boolean(
-      modulesTitle ||
-      modulesSubtitle ||
+      normalizedModulesTitle ||
+      normalizedModulesSubtitle ||
       modules.length ||
       modulesCalloutTitle ||
       modulesCalloutBody ||
       modulesCalloutCtaLabel
     );
   const showTimeline = Boolean(timelineTabs.length);
-  const showVideoSection = (sectionSettings?.showTestimonialVideos !== false) && Boolean(videoSectionTitle || videoSectionDescription || testimonialVideos.length || productVideoUrl);
+  const showVideoSection = (sectionSettings?.showTestimonialVideos !== false) && Boolean(testimonialVideos?.length || productVideoUrl);
   const showTestimonials = (sectionSettings?.showClientTestimonials !== false) && Boolean(testimonials.length);
-  const showWhyClassgrid = sectionSettings?.showWhyClassgrid === true;
+  const showWhyClassgrid = true;
   const showClassgridVideo = (cmsClassgridVideo as any)?.isVisible === true;
   const showTeamVision = (cmsClassgridTeamVision as any)?.isVisible === true;
-  const showTurboComparison = true; // sectionSettings?.showTurboComparison === true;
-  const showIsometricStack = true;  // sectionSettings?.showIsometricStack === true;
+  const showTurboComparison = true;
+  const showIsometricStack = true;
   const whyClassgridTitle = sectionSettings?.whyClassgridTitle;
   const whyClassgridDescription = sectionSettings?.whyClassgridDescription;
   const whyClassgridCards = Array.isArray(sectionSettings?.whyClassgridCards) ? sectionSettings.whyClassgridCards : [];
@@ -1006,7 +1023,6 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
         />
         <div className="absolute left-[-5%] top-[15%] h-[500px] w-[500px] animate-pulse rounded-full bg-emerald-500/10 blur-[120px]" />
         <div className="absolute right-[-5%] top-[40%] h-[600px] w-[600px] rounded-full bg-blue-500/5 blur-[150px]" />
-        <div className="absolute left-[10%] top-[70%] h-[400px] w-[400px] rounded-full bg-orange-500/5 blur-[100px]" />
       </div>
 
       {showHero ? (
@@ -1025,24 +1041,15 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       {showShowcase ? (
         <Reveal>
           <div className="relative z-10 w-full bg-transparent">
-            {(showcaseKicker || showcaseTitle || showcaseSubtitle) ? (
-              <div className="mx-auto mt-4 mb-4 max-w-7xl px-4 text-center">
-                <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-                {showcaseKicker ? (
-                  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-500">
-                    {showcaseKicker}
-                  </p>
-                ) : null}
-                {showcaseTitle ? (
-                  <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-6xl">
-                    {showcaseTitle}
-                  </h2>
-                ) : null}
-                {showcaseSubtitle ? (
-                  <p className="mx-auto max-w-3xl text-lg leading-relaxed text-slate-600 dark:text-slate-400 md:text-xl">
-                    {showcaseSubtitle}
-                  </p>
-                ) : null}
+            {(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle) ? (
+              <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+                <SectionHeader
+                  label={showcaseKicker}
+                  title={normalizedShowcaseTitle}
+                  description={normalizedShowcaseSubtitle}
+                  titleClassName="mx-auto max-w-5xl"
+                  descriptionClassName="max-w-3xl"
+                />
               </div>
             ) : null}
             <EmpowerSliderSection
@@ -1074,22 +1081,10 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showTrust ? (
         <Reveal>
-          <section className="bg-muted py-10 md:py-14">
-            <div className="mx-auto max-w-7xl px-4">
+          <section className="bg-muted px-6 py-16 md:px-12 md:py-24 lg:px-16">
+            <div className="mx-auto max-w-7xl">
               {(trustedBy || trustSectionDescription) && (
-                <div className="mx-auto mb-4 max-w-3xl text-center">
-                  <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-                  {trustedBy ? (
-                    <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 md:text-5xl">
-                      {trustedBy}
-                    </h2>
-                  ) : null}
-                  {trustSectionDescription ? (
-                    <p className="mx-auto mt-4 max-w-xl text-base text-slate-500 dark:text-slate-400">
-                      {trustSectionDescription}
-                    </p>
-                  ) : null}
-                </div>
+                <SectionHeader title={trustedBy} description={trustSectionDescription} />
               )}
 
               {stats.length > 0 ? <StatsStrip stats={stats} /> : null}
@@ -1103,13 +1098,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showOrganization ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl px-4 py-10 md:py-14">
-            <div className="mb-10 text-center">
-              <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-                {organizationSectionTitle}
-              </h2>
-            </div>
+          <section className="mx-auto w-full max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
+            <SectionHeader title={organizationSectionTitle} />
             <BentoGrid className="auto-rows-auto gap-6 md:grid-cols-4 lg:grid-cols-4">
               {organizationCards.map((org, index: number) => {
                 const colors = [
@@ -1140,21 +1130,14 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showModules ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl border-t border-foreground/10 px-4 py-10 md:py-14">
-            {(modulesTitle || modulesSubtitle) && (
-              <div className="mb-10 text-center">
-                <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-                {modulesTitle ? (
-                  <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-                    {modulesTitle}
-                  </h2>
-                ) : null}
-                {modulesSubtitle ? (
-                  <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground">
-                    {modulesSubtitle}
-                  </p>
-                ) : null}
-              </div>
+          <section className="mx-auto w-full max-w-7xl border-t border-black/5 px-6 py-16 dark:border-white/10 md:px-12 md:py-24 lg:px-16">
+            {(normalizedModulesTitle || normalizedModulesSubtitle) && (
+              <SectionHeader
+                title={normalizedModulesTitle}
+                description={normalizedModulesSubtitle}
+                titleClassName="mx-auto max-w-5xl"
+                descriptionClassName="max-w-3xl"
+              />
             )}
 
             <ModulesGrid
@@ -1212,39 +1195,38 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       ) : null}
 
       {showClassgridVideo ? (
-        <ClassgridVideoSection 
-          label={(cmsClassgridVideo as any)?.label}
-          title={(cmsClassgridVideo as any)?.title}
-          description={(cmsClassgridVideo as any)?.description}
-          videoUrl={(cmsClassgridVideo as any)?.videoUrl}
-          highlights={(cmsClassgridVideo as any)?.highlights}
-          ctaLabel={(cmsClassgridVideo as any)?.ctaLabel}
-          ctaHref={(cmsClassgridVideo as any)?.ctaHref}
+        <ClassgridVideoSection
+          label={(cmsClassgridVideo as any)?.label ?? "See It In Action"}
+          title={(cmsClassgridVideo as any)?.title ?? "Built for Every Institution"}
+          description={(cmsClassgridVideo as any)?.description ?? "Watch how Classgrid transforms operations across your entire campus in this quick overview. From admissions to academics, see everything in one unified platform."}
+          videos={
+            Array.isArray((cmsClassgridVideo as any)?.videoPlaylist) &&
+            (cmsClassgridVideo as any).videoPlaylist.length > 0
+              ? (cmsClassgridVideo as any).videoPlaylist
+                  .map((v: any) => v?.videoUrl)
+                  .filter(Boolean)
+              : ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"]
+          }
+          highlights={(cmsClassgridVideo as any)?.highlights ?? [
+            { text: "Manage admissions, fees, attendance & exams in one place" },
+            { text: "Real-time analytics and reporting for administrators" },
+            { text: "Seamless communication between staff, students & parents" },
+            { text: "Scales from small coaching institutes to multi-campus universities" },
+          ]}
+          ctaLabel={(cmsClassgridVideo as any)?.ctaLabel ?? ""}
+          ctaHref={(cmsClassgridVideo as any)?.ctaHref ?? ""}
         />
       ) : null}
 
       {showTestimonials ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl px-4 py-10 md:py-14">
+          <section className="mx-auto w-full max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
             {(testimonialsLabel || testimonialsTitle || testimonialsSectionDescription) && (
-              <div className="mb-12 text-center">
-                <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-                {testimonialsLabel ? (
-                  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-400">
-                    {testimonialsLabel}
-                  </p>
-                ) : null}
-                {testimonialsTitle ? (
-                  <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-                    {testimonialsTitle}
-                  </h2>
-                ) : null}
-                {testimonialsSectionDescription ? (
-                  <p className="mx-auto mt-3 max-w-2xl text-base text-slate-600 dark:text-slate-400">
-                    {testimonialsSectionDescription}
-                  </p>
-                ) : null}
-              </div>
+              <SectionHeader
+                label={testimonialsLabel}
+                title={testimonialsTitle}
+                description={testimonialsSectionDescription}
+              />
             )}
             <TestimonialCarouselV2 testimonials={testimonials} useFallbackContent={false} />
           </section>
@@ -1262,12 +1244,25 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       ) : null}
 
       {showTeamVision ? (
-        <Reveal>
-          <TeamVisionSection
-            title={(cmsClassgridTeamVision as any)?.title}
-            quotes={(cmsClassgridTeamVision as any)?.quotes}
-          />
-        </Reveal>
+        <TeamVisionSection
+          quotes={
+            Array.isArray((cmsClassgridTeamVision as any)?.quotes) &&
+            (cmsClassgridTeamVision as any).quotes.length > 0
+              ? (cmsClassgridTeamVision as any).quotes
+              : [
+                  {
+                    name: "David T.",
+                    role: "Operations Director",
+                    quote: "Classgrid completely transformed how our multi-campus administration works. We went from fighting data silos to having one unified operating layer.",
+                  },
+                  {
+                    name: "Sarah M.",
+                    role: "Academic Dean",
+                    quote: "Finally, a platform that understands real academic workflows. The level of visibility we have into both student progress and faculty delivery is unprecedented.",
+                  }
+                ]
+          }
+        />
       ) : null}
 
       {showIsometricStack ? (
@@ -1304,7 +1299,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
               buttonHref={faqButtonHref}
               faqsLeft={faqsLeft}
               faqsRight={faqsRight}
-              className="border-t border-foreground/10"
+              className="border-t border-black/5 dark:border-white/10"
             />
           </div>
         </Reveal>
@@ -1314,9 +1309,9 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
         <Reveal>
           <section
             id="demo"
-            className="border-t border-border bg-muted/50 py-24 md:py-32"
+            className="border-t border-black/5 bg-muted/50 px-6 py-24 dark:border-white/10 md:px-12 md:py-32 lg:px-16"
           >
-            <div className="mx-auto max-w-7xl px-4">
+            <div className="mx-auto max-w-7xl">
               <DemoRequestForm
                 label={demoSectionLabel}
                 title={demoSectionHeading}

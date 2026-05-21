@@ -33,27 +33,32 @@ export const classgridTeamVisionType = defineType({
     }),
     defineField({
       name: 'quotes',
-      title: 'Team Member Quotes',
+      title: '💬 Team Vision Quotes (carousel)',
       type: 'array',
+      description: 'Add founder/team quotes. They cycle automatically every 12 seconds on the homepage.',
       of: [
         {
           type: 'object',
           fields: [
-            { name: 'name', title: 'Name', type: 'string' },
+            { name: 'name', title: 'Name', type: 'string', placeholder: 'e.g. Nikhil Shinde' },
             { name: 'role', title: 'Role / Title', type: 'string', placeholder: 'e.g. Founder & CEO' },
-            { name: 'quote', title: 'Quote', type: 'text', rows: 4 },
+            {
+              name: 'text',
+              title: 'Quote Text',
+              type: 'text',
+              rows: 4,
+              description: 'The quote displayed in italic serif font. Keep it 1–3 sentences.',
+            },
             {
               name: 'avatar',
               title: 'Photo',
               type: 'image',
+              description: 'Upload a small headshot photo of the person. Will be shown as a circle.',
               options: { hotspot: true },
-              fields: [
-                { name: 'alt', title: 'Alt text', type: 'string' }
-              ]
             },
           ],
           preview: {
-            select: { title: 'name', subtitle: 'role' },
+            select: { title: 'name', subtitle: 'role', media: 'avatar' },
           },
         },
       ],

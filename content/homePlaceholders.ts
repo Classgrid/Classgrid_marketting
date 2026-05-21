@@ -243,7 +243,7 @@ export const placeholderHomePage = {
   showcaseKicker: homeModuleGrid.kicker,
   showcaseTitle: homeModuleGrid.title,
   showcaseSubtitle:
-    "A quick look at the core product surfaces institutions use every day.",
+    "Admissions, academics, fees, exams, and communication work from one calm, connected system.",
   showcaseCtaLabelTemplate: "Explore {label}",
   showcaseSlides: [
     {
@@ -289,12 +289,12 @@ export const placeholderHomePage = {
   organizationSectionTitle: "Built for every type of institution",
   organizationCardCtaLabel: "Explore Use Case",
   organizationCards: orgTypes,
-  modulesSectionHeading: "One platform, one operating system",
+  modulesSectionHeading: "Every campus workflow, connected",
   modulesSectionSubtext:
-    "Manage academics, operations, and workflows in one unified platform",
-  modulesTitle: "One platform, one operating system",
+    "Admissions, academics, fees, exams, and communication work from one calm, connected system.",
+  modulesTitle: "Every campus workflow, connected",
   modulesSubtitle:
-    "Manage academics, operations, and workflows in one unified platform",
+    "Admissions, academics, fees, exams, and communication work from one calm, connected system.",
   modulesAudienceTabs: [
     { id: "school", label: "School" },
     { id: "junior-college", label: "Junior College" },
@@ -335,10 +335,17 @@ export const placeholderHomePage = {
   testimonialVideos: [
     {
       url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-      name: "Classgrid Product Tour",
-      role: "Placeholder Demo",
+      name: "Dr. Sharma",
+      role: "Principal, Vishwakarma Institute of Technology",
       subtitle:
-        "Preview how Classgrid brings academics, operations, communication, and analytics together in one platform.",
+        "Classgrid completely eliminated our administrative chaos. Managing 3,000 students across 40 divisions now runs on total autopilot.",
+    },
+    {
+      url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      name: "Anita Kulkarni",
+      role: "Director, Deccan Junior College",
+      subtitle:
+        "We replaced 6 scattered tools with one platform. Student and parent adoption went up immediately because everything became predictable.",
     },
   ],
   productVideo: {

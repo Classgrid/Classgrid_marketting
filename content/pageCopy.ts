@@ -79,7 +79,7 @@ export const homeMachine = {
 
 export const homeModuleGrid = {
   kicker: "Module Grid",
-  title: "Core modules powering daily campus operations",
+  title: "Every campus workflow, connected",
   cta: "Explore all 41 modules",
 };
 

@@ -49,7 +49,6 @@ import { classgridIntegrationType } from './classgridIntegrationType'
 import { legalPageType } from './legalPageType'
 import { clientLogoType } from './clientLogoType'
 import { homeStatsType } from './homeStatsType'
-import { pageSettingsType } from './pageSettingsType'
 
 import { postType } from './postType'
 import { pricingPageType, pricingPlanType } from './pricingPageType'
@@ -97,7 +96,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     localeStringType,
     localeTextType,
     localeRichBodyType,
-    pageSettingsType,
     homePillarType,
     homeEcosystemFeatureType,
     homeEcosystemRoleType,

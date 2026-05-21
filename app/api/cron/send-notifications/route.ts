@@ -355,7 +355,7 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
         replyTo: senderEmail,
         to: sub.email,
         subject,
-        text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead more: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
+        text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
         html: buildNotificationEmailHtml(resolvedPost, unsubscribeUrl, blogsWithImages, changelogsWithImages),
       });
 

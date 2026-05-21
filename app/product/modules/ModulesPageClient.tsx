@@ -199,7 +199,7 @@ export default function ModulesPageClient({ modules }: { modules: Module[] }) {
                               href={`/product/modules/${mod.slug}`}
                               className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary transition group-hover:gap-2"
                             >
-                              Read More <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                              Read <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                             </Link>
                           ) : null}
                         </div>

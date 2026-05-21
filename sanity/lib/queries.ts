@@ -1223,9 +1223,16 @@ export const appEcosystemQuery = `
 `;
 
 export const classgridVideoQuery = `*[_type == "classgridVideo"][0]{
-  isVisible, label, title, description, videoUrl, highlights[]{text}, ctaLabel, ctaHref
+  isVisible, label, title, description,
+  "videoUrl": coalesce(videoFile.asset->url, videoUrl),
+  videoPlaylist[]{
+    "videoUrl": coalesce(videoFile.asset->url, videoUrl),
+    label
+  },
+  highlights[]{text}, ctaLabel, ctaHref
 }`;
 
 export const classgridTeamVisionQuery = `*[_type == "classgridTeamVision"][0]{
-  isVisible, label, title, description, quotes[]{name, role, quote, "avatarUrl": avatar.asset->url}
+  isVisible, label, title, description,
+  quotes[]{name, role, "text": coalesce(text, quote), "avatarUrl": avatar.asset->url}
 }`;
