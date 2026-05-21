@@ -185,12 +185,8 @@
     line-height: 1.6;
   }
 
-  /* Mobile only: prevent horizontal scroll from glow blobs / SVGs */
-  @media (max-width: 768px) {
-    html, body {
-      overflow-x: clip;
-    }
-  }
+  /* NOTE: overflow-x:clip on html/body breaks position:sticky on real mobile devices.
+     Horizontal overflow is clipped at the <main> level in AppChrome.tsx instead. */
 
   h1,
   h2,
