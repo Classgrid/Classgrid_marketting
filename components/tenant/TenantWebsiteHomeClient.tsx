@@ -1836,7 +1836,7 @@ function BlogPage({ data, tenantSlug }: { data: TenantSiteData; tenantSlug?: str
                 {featured.author} - {formatDate(featured.date)}
               </p>
               <Button asChild className="mt-4" style={{ backgroundColor: data.theme.primary }}>
-                <Link href={buildTenantHref(`/blog/${featured.slug}`, tenantSlug)}>Read More</Link>
+                <Link href={buildTenantHref(`/blog/${featured.slug}`, tenantSlug)}>Read</Link>
               </Button>
             </CardContent>
           </div>
@@ -1857,7 +1857,7 @@ function BlogPage({ data, tenantSlug }: { data: TenantSiteData; tenantSlug?: str
                 {post.author} - {formatDate(post.date)}
               </p>
               <Link href={buildTenantHref(`/blog/${post.slug}`, tenantSlug)} className="mt-3 inline-flex text-sm font-semibold text-slate-800">
-                Read More
+                Read
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </CardContent>

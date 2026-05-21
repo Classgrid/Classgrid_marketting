@@ -428,9 +428,81 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+
+  // Load chat history from session storage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("classgrid_ai_chat_history");
+      if (saved) {
+        setMessages(JSON.parse(saved));
+      }
+    } catch (_) {}
+  }, []);
+
+  // Save chat history to session storage whenever it updates
+  useEffect(() => {
+    if (messages.length > 0) {
+      sessionStorage.setItem("classgrid_ai_chat_history", JSON.stringify(messages));
+    }
+  }, [messages]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isTerminated, setIsTerminated] = useState(false);
+  const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
+  const [countdown, setCountdown] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+
+  // Live countdown timer for ban expiry
+  useEffect(() => {
+    if (!bannedUntil) {
+      setCountdown("");
+      return;
+    }
+
+    const tick = () => {
+      const now = Date.now();
+      const diff = bannedUntil.getTime() - now;
+
+      if (diff <= 0) {
+        // Ban expired — unlock the chat!
+        setIsTerminated(false);
+        setBannedUntil(null);
+        setCountdown("");
+        return;
+      }
+
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      setCountdown(`${mins}m ${secs.toString().padStart(2, "0")}s`);
+    };
+
+    tick(); // run immediately
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [bannedUntil]);
+
+  // Check if user is already banned on page load
+  useEffect(() => {
+    async function checkBanStatus() {
+      try {
+        const res = await fetch("/api/ask-ai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: "__ban_check__" }),
+        });
+        if (res.status === 403) {
+          const data = await res.json().catch(() => ({}));
+          setIsTerminated(true);
+          if (data?.bannedUntil) {
+            setBannedUntil(new Date(data.bannedUntil));
+          }
+        }
+      } catch (_) {
+        // silently ignore network errors
+      }
+    }
+    if (open) void checkBanStatus();
+  }, [open]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -568,23 +640,32 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
     setMessages(nextMessages);
 
+    let wasTerminated = false;
+
     try {
       const response = await fetch("/api/ask-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: trimmed,
-          userName: session?.user?.name || undefined,
-          pageContext,
-          history: nextMessages.slice(-8).map((message) => ({
-            role: message.role,
-            content: message.content,
-          })),
+          userName: session?.user?.name ?? undefined,
+          history: nextMessages
+            .filter((m) => m.role === "user" || m.role === "assistant")
+            .slice(-6)
+            .map((m) => ({ role: m.role, content: m.content })),
+          pageContext: pageContext,
         }),
       });
 
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
+        if (response.status === 403) {
+          setIsTerminated(true);
+          wasTerminated = true;
+          if (payload?.bannedUntil) {
+            setBannedUntil(new Date(payload.bannedUntil));
+          }
+        }
         throw new Error(
           typeof payload?.error === "string" && payload.error.trim().length > 0
             ? payload.error
@@ -603,10 +684,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       await wait(prefersReducedMotion ? 0 : 100);
       await typeAssistantResponse(answer);
     } catch (apiError: unknown) {
-      const fallback =
+      const rawMessage =
         apiError instanceof Error && apiError.message.trim().length > 0
           ? apiError.message
           : "Unable to answer right now. Please try again.";
+
+      // If terminated, add support info to the message shown in chat
+      const fallback = wasTerminated || rawMessage.includes("terminated") || rawMessage.includes("restricted")
+        ? `${rawMessage}\n\nIf you believe this is a mistake, please contact us at support@classgrid.in.\n\nTo understand why this action was taken, please read our [Privacy Policy](/privacy) and [Terms of Service](/terms).`
+        : rawMessage;
 
       setThinking(false);
       await wait(prefersReducedMotion ? 0 : 100);
@@ -787,38 +873,49 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         </div>
 
         <div className="border-t border-border px-4 py-4">
-          <form onSubmit={handleSubmit} className="space-y-2">
-            <div className="relative w-full">
-              <textarea
-                id="ask-ai-input"
-                name="askAiQuestion"
-                suppressHydrationWarning
-                ref={inputRef as any}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    if (canSubmit) void askQuestion(input);
-                  }
-                }}
-                placeholder="Ask a Classgrid question..."
-                autoComplete="off"
-                className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-card pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 overflow-y-auto [scrollbar-width:thin] leading-relaxed"
-              />
-              <Button
-                type="submit"
-                variant="primary"
-                size="icon"
-                disabled={!canSubmit}
-                className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl"
-              >
-                <ArrowUp className="h-4 w-4" />
-                <span className="sr-only">Send question</span>
-              </Button>
+          {isTerminated ? (
+            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-sm font-medium text-red-500">
+              <p>This conversation has been terminated.</p>
+              {countdown && (
+                <p className="mt-1 text-xs text-red-400">
+                  Access resumes in: <span className="font-mono font-bold">{countdown}</span>
+                </p>
+              )}
             </div>
-            {error ? <p className="text-xs text-destructive">{error}</p> : null}
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-2">
+              <div className="relative w-full">
+                <textarea
+                  id="ask-ai-input"
+                  name="askAiQuestion"
+                  suppressHydrationWarning
+                  ref={inputRef as any}
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      if (canSubmit) void askQuestion(input);
+                    }
+                  }}
+                  placeholder="Ask a Classgrid question..."
+                  autoComplete="off"
+                  className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-card pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 overflow-y-auto [scrollbar-width:thin] leading-relaxed"
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="icon"
+                  disabled={!canSubmit}
+                  className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
+                >
+                  <ArrowUp className="h-4 w-4 text-white" />
+                  <span className="sr-only">Send question</span>
+                </Button>
+              </div>
+            </form>
+          )}
+
         </div>
       </motion.aside>
     </>

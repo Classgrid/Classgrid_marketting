@@ -297,7 +297,7 @@ export default function RadialOrbitalTimeline({ activeTab, rings, roleDataMap = 
   const CY = 275;
 
   return (
-    <div className="relative w-full rounded-[40px] border border-emerald-500/30 bg-white/50 py-10 px-2 lg:px-4 shadow-xl overflow-hidden backdrop-blur-sm dark:bg-[#071a16]/95">
+    <div className="relative w-full rounded-[40px] border border-emerald-500/30 bg-white/50 py-10 px-2 lg:px-4 shadow-xl backdrop-blur-sm dark:bg-[#071a16]/95">
 
       {/* Dynamic styles */}
       <style suppressHydrationWarning>

@@ -1,96 +1,172 @@
 "use client";
 
-import React from "react";
-import { Reveal } from "@/components/sections/Reveal";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
+import { Reveal } from "@/components/sections/Reveal";
+import { SectionHeader } from "@/components/sections/SectionHeader";
+import { BlueprintBox } from "@/components/ui/BlueprintBox";
+import { cn } from "@/lib/utils";
 
 interface TeamVisionQuote {
   name?: string;
   role?: string;
+  text?: string;
   quote?: string;
   avatarUrl?: string;
 }
 
 interface TeamVisionSectionProps {
+  label?: string;
   title?: string;
+  description?: string;
   quotes?: TeamVisionQuote[];
 }
 
+const DEFAULT_QUOTES: TeamVisionQuote[] = [
+  {
+    text: "We built Classgrid because every institution — whether a 50-student coaching centre or a 5,000-student university — deserves the same infrastructure-grade tools.",
+    name: "Nikhil Shinde",
+    role: "Founder & CEO",
+  },
+  {
+    text: "Every feature we ship is obsessively designed around one question: does this make someone's job easier today?",
+    name: "Classgrid Team",
+    role: "Engineering & Design",
+  },
+  {
+    text: "Our mission is simple — eliminate the friction between teaching and learning so educators can focus on what truly matters.",
+    name: "Classgrid Team",
+    role: "Product Vision",
+  },
+];
+
+const AUTOPLAY_INTERVAL = 12000;
+
 export function TeamVisionSection({
+  label = "From Our Team",
   title = "Our Vision",
-  quotes = [],
+  description = "The people behind Classgrid — why we built it, what drives us, and where we're taking education next.",
+  quotes: propQuotes,
 }: TeamVisionSectionProps) {
-  if (!quotes || quotes.length === 0) return null;
+  const quotes = propQuotes && propQuotes.length > 0 ? propQuotes : DEFAULT_QUOTES;
+  const total = quotes.length;
+
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goNext = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const goTo = useCallback((index: number) => {
+    setCurrent(index);
+  }, []);
+
+  // Auto-play: slide every 12 seconds, never pauses
+  useEffect(() => {
+    if (total <= 1) return;
+    timerRef.current = setInterval(goNext, AUTOPLAY_INTERVAL);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [total, goNext]);
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-16 md:py-24">
-      <Reveal>
-        <div className="mb-12 text-center md:mb-16">
-          <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-            {title}
-          </h2>
-        </div>
-      </Reveal>
+    <section className="relative py-20" style={{ overflowX: 'clip' }}>
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionHeader
+            title={title}
+            badge={label}
+            description={description}
+          />
+        </Reveal>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        {quotes.map((quote, index) => {
-          const safeName = quote.name?.trim() || "";
-          
-          return (
-            <Reveal key={index} delay={index * 0.1}>
-              <div className="flex h-full w-full flex-col overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-[#f0fdf4] to-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:flex-row dark:border-white/[0.05] dark:from-[#0a2418] dark:to-[#05130d] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
-                {/* Left side – avatar */}
-                <div className="relative flex h-[280px] w-full shrink-0 bg-emerald-100 md:h-auto md:w-[35%] dark:bg-emerald-950/50">
-                  {quote.avatarUrl ? (
-                    <img
-                      src={quote.avatarUrl}
-                      alt={safeName}
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-emerald-600 text-5xl font-bold text-white dark:from-emerald-800 dark:to-emerald-950">
-                      {safeName ? safeName.charAt(0).toUpperCase() : "U"}
-                    </div>
-                  )}
-                </div>
-
-                {/* Right side – content */}
-                <div className="flex w-full flex-col justify-between p-7 md:w-[65%] md:p-10">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-start justify-end">
+        {/* BlueprintBox is FIXED — only content inside slides */}
+        <BlueprintBox maxWidth="max-w-6xl" className="mt-12 py-4 px-2 md:px-8 bg-emerald-950/20 dark:bg-emerald-950/25">
+          {/* Overflow hidden clips the sliding text track */}
+          <div className="overflow-hidden w-full" style={{ contain: 'layout' }}>
+            {/* Spring track — same pattern as testimonial-carousel-v2 */}
+            <motion.div
+              className="flex"
+              style={{ width: `${total * 100}%` }}
+              animate={{ x: `-${current * (100 / total)}%` }}
+              transition={{ type: "spring", stiffness: 280, damping: 20, mass: 1 }}
+            >
+              {quotes.map((quote, idx) => {
+                const text = (quote.text || quote.quote || "").trim();
+                return (
+                  <div
+                    key={idx}
+                    className="shrink-0 flex flex-col items-center text-center py-1 px-4"
+                    style={{ width: `${100 / total}%` }}
+                  >
+                    {/* Quote SVG at top — fixed position inside card */}
+                    <div className="mb-4">
                       <Quote
-                        className="h-10 w-10 shrink-0 rotate-180 text-emerald-500/30 md:h-12 md:w-12 dark:text-emerald-400/20"
+                        className="h-14 w-14 rotate-180 text-emerald-500/30 dark:text-emerald-400/20"
                         fill="currentColor"
                       />
                     </div>
 
-                    {/* Quote body */}
-                    {quote.quote ? (
-                      <div className="text-[15px] leading-relaxed text-slate-600 md:text-lg dark:text-slate-300">
-                        <p>{quote.quote.trim()}</p>
-                      </div>
-                    ) : null}
-                  </div>
+                    {/* The quote text */}
+                    <p className="font-serif text-xl leading-[1.6] italic text-slate-800 md:text-2xl lg:text-3xl dark:text-slate-200 max-w-3xl">
+                      "{text.replace(/^["'"]+|["'"]+$/g, '')}"
+                    </p>
 
-                  {/* Footer: name & role */}
-                  <div className="mt-8 flex flex-col gap-1">
-                    {safeName ? (
-                      <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">
-                        - {safeName}
-                      </p>
-                    ) : null}
-                    {quote.role ? (
-                      <div className="mt-1 text-base font-medium text-slate-700 dark:text-slate-300">
-                        <p>{quote.role}</p>
+                    {/* Author section */}
+                    <div className="mt-6 flex flex-col items-center gap-2">
+                      {/* Always show avatar — photo from Sanity or initials fallback */}
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-emerald-500/30 bg-emerald-950/60">
+                        {quote.avatarUrl ? (
+                          <img
+                            src={quote.avatarUrl}
+                            alt={quote.name || "Avatar"}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-lg font-bold text-emerald-400">
+                            {quote.name ? quote.name.charAt(0).toUpperCase() : "C"}
+                          </div>
+                        )}
                       </div>
-                    ) : null}
+                      {/* Green line divider */}
+                      <div className="h-[2px] w-10 rounded-full bg-emerald-500" />
+                      <div>
+                        <h4 className="text-base font-bold text-foreground">
+                          {quote.name}
+                        </h4>
+                        <p className="text-sm text-emerald-500 dark:text-emerald-400 font-medium">
+                          {quote.role}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Reveal>
-          );
-        })}
+                );
+              })}
+            </motion.div>
+          </div>
+        </BlueprintBox>
+
+        {/* Dots — outside and below the BlueprintBox */}
+        {total > 1 && (
+          <div className="flex justify-center mt-8 gap-2.5">
+            {quotes.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={cn(
+                  "rounded-full transition-all duration-300",
+                  i === current
+                    ? "h-2.5 w-8 bg-emerald-500"
+                    : "h-2.5 w-2.5 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500"
+                )}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

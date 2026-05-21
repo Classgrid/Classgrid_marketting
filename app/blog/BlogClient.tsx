@@ -472,7 +472,7 @@ export function BlogClient({
                           )}
                         </div>
                         <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500 transition-all group-hover:bg-emerald-500 group-hover:text-white">
-                          Read More →
+                          Read →
                         </span>
                       </div>
                     </div>

@@ -438,7 +438,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                           </div>
                           <h3 className="text-xl font-bold text-foreground mb-3 leading-snug group-hover:text-emerald-500 transition-colors line-clamp-2">{(extractLocaleString(relatedPost.title, lang) || "").replace(/\.\s*$/, "")}</h3>
                           {relatedPost.excerpt && <p className="text-muted-foreground text-base line-clamp-2 mb-6 flex-grow">{extractLocaleString(relatedPost.excerpt, lang)}</p>}
-                          <div className="flex items-center text-sm font-medium text-emerald-500 group-hover:translate-x-1 transition-transform mt-auto">Read More <ArrowRight className="w-4 h-4 ml-1.5" /></div>
+                          <div className="flex items-center text-sm font-medium text-emerald-500 group-hover:translate-x-1 transition-transform mt-auto">Read <ArrowRight className="w-4 h-4 ml-1.5" /></div>
                         </div>
                       </MotionDiv>
                     </Link>
