@@ -159,7 +159,7 @@ export async function POST(req: Request) {
 
     // --- 2. RATE LIMITING (Preventing Token Spam) ---
     const identifier = userEmail || ip;
-    const MAX_MESSAGES = 20; // Allow 20 messages per 2 hours
+    const MAX_MESSAGES = 11; // Allow 11 messages per 2 hours
     const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
     const rateLimitRecord = await AiRateLimit.findOne({ identifier });
