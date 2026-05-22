@@ -36,7 +36,7 @@ export async function PUT(
           otpExpiresAt: oneMinuteFromNow
         }
       },
-      { new: true } // Return the updated document
+      { returnDocument: "after" } // Return the updated document
     );
 
     if (!updatedLead) {
