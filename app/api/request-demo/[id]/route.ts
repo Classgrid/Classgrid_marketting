@@ -5,11 +5,12 @@ import { DemoRequest } from "@/lib/models/DemoRequest";
 // GET lead details for the verification cover page
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     await connectMongo();
-    const lead = await DemoRequest.findById(params.id);
+    const lead = await DemoRequest.findById(id);
 
     if (!lead) {
       return NextResponse.json({ message: "Lead not found" }, { status: 404 });

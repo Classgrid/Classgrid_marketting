@@ -4,10 +4,11 @@ import { DemoRequest } from "@/lib/models/DemoRequest";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await req.json();
+    const { id } = await params;
     await connectMongo();
 
     // Atomic Rate Limit: prevent concurrent spamming (race conditions)
@@ -17,7 +18,7 @@ export async function PUT(
 
     const updatedLead = await DemoRequest.findOneAndUpdate(
       { 
-        _id: params.id,
+        _id: id,
         $or: [
           { otpExpiresAt: { $exists: false } },
           { otpExpiresAt: null },
@@ -40,7 +41,7 @@ export async function PUT(
 
     if (!updatedLead) {
       // If it returned null, it means either the lead doesn't exist OR the rate limit blocked it
-      const existingLead = await DemoRequest.findById(params.id);
+      const existingLead = await DemoRequest.findById(id);
       if (!existingLead) {
         return NextResponse.json({ message: "Lead not found" }, { status: 404 });
       }
