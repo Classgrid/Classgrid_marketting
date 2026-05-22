@@ -163,7 +163,7 @@ export default function PricingPage() {
           </Chip>
 
           <SectionAccentBar />
-          <h1 className="mx-auto max-w-[900px] text-[clamp(1.75rem,5vw,3.5rem)] font-extrabold leading-[1.18] tracking-tight text-slate-900 dark:text-white text-balance break-words">
+          <h1 className="mx-auto max-w-[900px] text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.18] tracking-tight text-slate-900 dark:text-white break-words hyphens-auto">
             One operating system for every kind of institution
           </h1>
 

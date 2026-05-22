@@ -430,7 +430,7 @@ export function Navbar({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-0 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
 
           {typeof onAskAiClick === "function" ? (
             <div className="relative inline-flex">
@@ -443,8 +443,8 @@ export function Navbar({
                 )}
                 onClick={onAskAiClick}
               >
-                <Bot className="mr-2 h-4 w-4 text-emerald-500" />
-                {dict.askAi}
+                <Bot className="h-4 w-4 text-emerald-500 sm:mr-2" />
+                <span className="hidden sm:inline">{dict.askAi}</span>
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
