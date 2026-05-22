@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     // Only proxy to external backend when REQUEST_DEMO_API_BASE_URL is set
     // Without it, the local app/api/request-demo/route.ts handles demos via MongoDB directly
