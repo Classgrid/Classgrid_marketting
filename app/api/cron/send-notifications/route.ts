@@ -377,16 +377,22 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
 //
 // Protected by CRON_SECRET header to prevent unauthorized access.
 export async function GET(req: Request) {
-  // 1. Auth check
+  // 1. Auth check (supports both header and query param for cron-job.org free tier)
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.get("authorization");
+  const { searchParams } = new URL(req.url);
+  const querySecret = searchParams.get("secret");
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  const isAuthorized =
+    !cronSecret ||
+    authHeader === `Bearer ${cronSecret}` ||
+    querySecret === cronSecret;
+
+  if (!isAuthorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // 2. Parse type filter
-  const { searchParams } = new URL(req.url);
   const typeFilter = searchParams.get("type") || "all";
 
   const validTypes = ["all", "post", "changelogEntry"];

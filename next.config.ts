@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 const requestDemoApiBase =
-  (process.env.REQUEST_DEMO_API_BASE_URL || process.env.BACKEND_URL || "http://localhost:5000")
+  (process.env.REQUEST_DEMO_API_BASE_URL || process.env.BACKEND_URL || "")
     .replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
     root: projectRoot,
   },
   async rewrites() {
+    // Only proxy to external backend when REQUEST_DEMO_API_BASE_URL is set
+    // Without it, the local app/api/request-demo/route.ts handles demos via MongoDB directly
+    if (!requestDemoApiBase) return [];
     return [
       {
         source: "/api/request-demo",

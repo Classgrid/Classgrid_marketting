@@ -274,6 +274,13 @@ export async function retrieveClassgridContext(
   if (!query) {
     return { chunks: [], contextText: "", usedFallbackSearch: false };
   }
+
+  // Skip RAG embedding when disabled (e.g. Vercel Hobby 10s timeout can't load @xenova/transformers)
+  // AI still works via Groq + platform knowledge + guardrails, just without document-level context
+  if (process.env.RAG_ENABLED !== "true") {
+    return { chunks: [], contextText: "", usedFallbackSearch: false };
+  }
+
   const retrievalQuery = expandRetrievalQueryForIntent(query);
 
   const topK = options.topK ?? DEFAULT_TOP_K;

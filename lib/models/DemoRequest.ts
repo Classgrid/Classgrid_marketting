@@ -10,6 +10,18 @@ export interface IDemoRequest extends Document {
   city: string;
   message?: string;
   status: "pending" | "contacted" | "demo_scheduled" | "rejected";
+  
+  // Meeting Details
+  provider?: string;
+  scheduledAt?: string;
+  meetingUrl?: string;
+  timezone?: string;
+  notes?: string;
+
+  otp?: string;
+  otpExpiresAt?: Date;
+  isEmailVerified: boolean;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,6 +41,14 @@ const DemoRequestSchema = new Schema<IDemoRequest>(
       enum: ["pending", "contacted", "demo_scheduled", "rejected"],
       default: "pending",
     },
+    provider: { type: String },
+    scheduledAt: { type: String },
+    meetingUrl: { type: String },
+    timezone: { type: String },
+    notes: { type: String },
+    otp: { type: String },
+    otpExpiresAt: { type: Date },
+    isEmailVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
