@@ -157,7 +157,7 @@ export default function PricingPage() {
           <div className="absolute left-[-35%] top-[-70%] h-[210%] w-[165%] rotate-[32deg] bg-gradient-to-r from-transparent via-emerald-300/20 to-transparent" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-[920px] text-center">
+        <div className="relative z-10 mx-auto w-full max-w-[920px] text-center">
           <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-emerald-200 bg-white/80 text-emerald-700 dark:border-white/10 dark:bg-white/10 dark:text-emerald-100">
             Flexible ERP Pricing
           </Chip>
