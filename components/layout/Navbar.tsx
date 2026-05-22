@@ -426,7 +426,7 @@ export function Navbar({
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
                   showAskAiPrompt ? "border-emerald-500/35 shadow-[0_0_18px_rgba(16,185,129,0.14)]" : ""
                 )}
                 onClick={onAskAiClick}
