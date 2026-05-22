@@ -162,7 +162,7 @@ export function Footer({
           grid-cols-3  gap-12  py-16
       ══════════════════════════════════════ */}
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-10">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+        <div className="hidden sm:grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
 
           {/* CMS columns (Quick Links, Resources…) */}
           {footerColumns.map((column) => {
