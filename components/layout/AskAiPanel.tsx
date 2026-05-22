@@ -739,8 +739,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           open
             ? { y: 0, x: 0, opacity: 1 }
             : isMobile
-              ? { y: "100%", x: 0, opacity: 1 }
-              : { y: 0, x: "100%", opacity: 0.98 }
+              ? { y: "100%", x: 0, opacity: 0 }
+              : { y: 0, x: "100%", opacity: 0 }
         }
         transition={prefersReducedMotion ? { duration: 0 } : panelTransition}
       >
