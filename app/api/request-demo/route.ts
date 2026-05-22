@@ -9,21 +9,21 @@ export async function POST(req: Request) {
     // 1. Connect to MongoDB Atlas (Vercel talks directly to the DB)
     await connectMongo();
 
-    // 2. Save the Lead
+    // 2. Save the Lead WITHOUT OTP (Wait for user to request it on cover page)
     const lead = await DemoRequest.create({
       institutionName: body.institutionName,
       orgType: body.orgType,
       adminName: body.adminName,
       adminEmail: body.adminEmail,
       adminPhone: body.adminPhone,
-      state: body.state,
-      city: body.city,
+      state: body.state, // Missing required field!
+      city: body.city,   // Missing required field!
+      role: body.role,
       message: body.message,
+      source: body.source,
       status: "pending",
+      isEmailVerified: false,
     });
-
-    // NOTE: You can also add Brevo / Sendgrid email sending logic here later 
-    // to email yourself when a new demo is booked!
 
     return NextResponse.json(
       {

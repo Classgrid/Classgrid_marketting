@@ -4,6 +4,7 @@ export const demoOrgTypes = [
   "junior_college",
   "coaching",
   "diploma",
+  "tutor",
   "other",
 ] as const;
 
