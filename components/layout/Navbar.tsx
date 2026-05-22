@@ -187,21 +187,9 @@ export function Navbar({
     }
     setShowNewBadge(false);
   };
-  const closeMobileMenu = (e?: React.MouseEvent, href?: string) => {
+  const closeMobileMenu = () => {
     setMobileOpen(false);
     setOpenSections({});
-    // For hash links on the current page, manually scroll after the overlay closes
-    if (href?.includes('#')) {
-      const targetPath = href.split('#')[0] || '/';
-      if (targetPath === '/' && pathname === '/' || targetPath === pathname) {
-        e?.preventDefault();
-        const hash = href.split('#')[1];
-        setTimeout(() => {
-          const el = document.getElementById(hash);
-          el?.scrollIntoView({ behavior: 'smooth' });
-        }, 280);
-      }
-    }
   };
   const megaMenuPanelClass =
     "grid w-[min(92vw,540px)] grid-cols-2 items-start gap-x-2 gap-y-2 rounded-xl border border-white/[0.08] bg-[#080808]/95 p-2.5 shadow-[0_16px_46px_rgba(0,0,0,0.42)] backdrop-blur-xl";
@@ -430,7 +418,7 @@ export function Navbar({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-0 md:gap-4">
 
           {typeof onAskAiClick === "function" ? (
             <div className="relative inline-flex">
@@ -443,8 +431,8 @@ export function Navbar({
                 )}
                 onClick={onAskAiClick}
               >
-                <Bot className="h-4 w-4 text-emerald-500 sm:mr-2" />
-                <span className="hidden sm:inline">{dict.askAi}</span>
+                <Bot className="mr-2 h-4 w-4 text-emerald-500" />
+                {dict.askAi}
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
@@ -533,7 +521,19 @@ export function Navbar({
                     {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
                       <Link
                         href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
-                        onClick={(e) => closeMobileMenu(e, resolveCtaHref(primaryCtaLabel, primaryCtaHref))}
+                        onClick={(e) => {
+                          closeMobileMenu();
+                          // For hash links on the same page (e.g. /#demo), manually scroll after closing
+                          const resolved = resolveCtaHref(primaryCtaLabel, primaryCtaHref);
+                          if (resolved.includes('#') && pathname === '/') {
+                            e.preventDefault();
+                            const hash = resolved.split('#')[1];
+                            setTimeout(() => {
+                              const el = document.getElementById(hash);
+                              el?.scrollIntoView({ behavior: 'smooth' });
+                            }, 250);
+                          }
+                        }}
                         className="flex h-12 w-full items-center justify-center rounded-lg bg-white text-[15px] font-semibold text-black transition-transform active:scale-[0.98]"
                       >
                         {primaryCtaLabel}
@@ -544,7 +544,7 @@ export function Navbar({
                         href={secondaryLinkHref}
                         target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}
                         rel={isExternalHref(secondaryLinkHref) ? "noopener noreferrer" : undefined}
-                        onClick={(e) => closeMobileMenu(e, secondaryLinkHref)}
+                        onClick={closeMobileMenu}
                         className="flex h-12 w-full items-center justify-center rounded-lg bg-[#111] border border-white/10 text-[15px] font-medium text-white transition-transform active:scale-[0.98] active:bg-white/5"
                       >
                         {secondaryLinkLabel}
@@ -559,7 +559,7 @@ export function Navbar({
                         href={rewriteHref(navItems[0].href)}
                         target={isExternalHref(navItems[0].href || "") ? "_blank" : undefined}
                         rel={isExternalHref(navItems[0].href || "") ? "noopener noreferrer" : undefined}
-                        onClick={(e) => closeMobileMenu(e, rewriteHref(navItems[0].href))}
+                        onClick={closeMobileMenu}
                         className={cn(
                           "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white border-b border-white/10",
                           isNavItemActive(pathname, navItems[0]) && "text-white"
@@ -586,7 +586,7 @@ export function Navbar({
                             href={rewriteHref(item.href)}
                             target={isExternalHref(item.href) ? "_blank" : undefined}
                             rel={isExternalHref(item.href) ? "noopener noreferrer" : undefined}
-                            onClick={(e) => closeMobileMenu(e, rewriteHref(item.href!))}
+                            onClick={closeMobileMenu}
                             className={cn(
                               "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
                               !isLast && "border-b border-white/10",
@@ -637,7 +637,7 @@ export function Navbar({
                                             href={rewriteHref(link.href!)}
                                             target={isExternalHref(link.href ?? "") ? "_blank" : undefined}
                                             rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
-                                            onClick={(e) => closeMobileMenu(e, rewriteHref(link.href!))}
+                                            onClick={closeMobileMenu}
                                             className={cn(
                                               "group flex items-center gap-3 rounded-xl py-2 pl-6 pr-2 text-[14px] font-medium text-white/70 transition-all duration-200 active:bg-white/5 active:text-white",
                                               isHrefActive(pathname, link.href) && "text-white bg-white/5"
