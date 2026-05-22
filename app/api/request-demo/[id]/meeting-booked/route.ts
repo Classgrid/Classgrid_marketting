@@ -56,7 +56,7 @@ export async function POST(
       try {
         const response = await calendar.events.insert({
           calendarId: "primary",
-          resource: event,
+          requestBody: event,
           conferenceDataVersion: 1,
           sendUpdates: "none"
         });
