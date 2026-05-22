@@ -387,7 +387,7 @@ export function ViewPlatformPreview() {
                 ref={mobileRef}
                 className={cn(
                   "flex flex-col items-center gap-24 bg-[#030712] transition-all relative",
-                  isFullscreen ? "w-full h-screen overflow-hidden p-10 lg:p-20 pt-16 lg:pt-24 justify-center rounded-none" : "pt-12 pb-24 rounded-3xl"
+                  isFullscreen ? "w-full min-h-screen md:h-screen md:overflow-hidden p-10 lg:p-20 pt-16 lg:pt-24 justify-center rounded-none" : "pt-12 pb-24 rounded-3xl"
                 )}
               >
                 {/* Fullscreen Grid Animation Background */}
