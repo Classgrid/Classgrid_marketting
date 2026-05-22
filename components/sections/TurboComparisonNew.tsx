@@ -530,7 +530,7 @@ export function TurboComparisonNew({
     return (
         <section
             style={{ backgroundColor: "var(--muted)" }}
-            className="relative overflow-hidden py-10 pb-32 md:py-24 lg:py-32"
+            className="relative overflow-hidden py-10 pb-44 md:py-24 lg:py-32"
         >
             <div className="relative mx-auto max-w-6xl px-6">
 
