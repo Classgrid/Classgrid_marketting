@@ -115,11 +115,20 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
     const nextPromptStorageKey = `classgrid:ask-ai-prompt-seen:v1:${routeSlug}`;
     setPromptStorageKey(nextPromptStorageKey);
 
+    // Delay prompt bubble appearance to prevent visual flash during hydration.
+    // The 600ms wait ensures the page has fully painted before the glow appears.
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      setShowPromptBubble(sessionStorage.getItem(nextPromptStorageKey) !== "true");
+      if (sessionStorage.getItem(nextPromptStorageKey) !== "true") {
+        timer = setTimeout(() => setShowPromptBubble(true), 600);
+      } else {
+        setShowPromptBubble(false);
+      }
     } catch {
-      setShowPromptBubble(true);
+      timer = setTimeout(() => setShowPromptBubble(true), 600);
     }
+
+    return () => { if (timer) clearTimeout(timer); };
   }, [pathname, chromeContent?.brandName]);
 
   useEffect(() => {
