@@ -6,6 +6,13 @@ export const sectionSettingsType = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'showTrustedInstitutions',
+      title: 'Show Trusted Institutions',
+      type: 'boolean',
+      initialValue: true,
+      description: 'Turn ON to show the Trusted Institutions marquee. Turn OFF to hide.',
+    }),
+    defineField({
       name: 'showClientTestimonials',
       title: 'Show Client Messages',
       type: 'boolean',

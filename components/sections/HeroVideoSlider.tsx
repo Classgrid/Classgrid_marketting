@@ -391,7 +391,7 @@ export function HeroVideoSlider({
     <motion.section
       className={compact
         ? "w-full"
-        : "bg-gradient-to-b from-slate-50 to-white dark:from-[#0f0f0f] dark:to-[#0f0f0f] py-10"}
+        : "bg-gradient-to-b from-slate-50 to-white dark:bg-muted dark:from-transparent dark:to-transparent py-10"}
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}

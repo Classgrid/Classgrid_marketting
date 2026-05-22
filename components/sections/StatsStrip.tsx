@@ -37,9 +37,9 @@ export function StatsStrip({ stats }: { stats: Stat[] }) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
-      className="mx-auto mt-6 mb-14 max-w-[1100px] rounded-2xl bg-emerald-50 px-4 py-12 shadow-2xl dark:bg-[#022c22]"
+      className="mx-auto mt-6 mb-14 max-w-[1200px] overflow-visible rounded-2xl bg-emerald-50 px-4 py-12 shadow-2xl dark:bg-[#022c22]"
     >
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
         {stats.map((stat, i) => (
           <motion.div
             key={i}
@@ -47,10 +47,8 @@ export function StatsStrip({ stats }: { stats: Stat[] }) {
             className="flex flex-col items-center text-center"
           >
             {/* White bordered box */}
-            <motion.div
-              whileHover={{ scale: 1.04, borderColor: "rgba(52,211,153,0.7)" }}
-              transition={{ duration: 0.2 }}
-              className="flex min-h-[120px] w-full items-center justify-center border-[2.5px] border-emerald-200 px-1 dark:border-white sm:px-4"
+            <div
+              className="flex min-h-[140px] w-full cursor-default select-none items-center justify-center border-4 border-emerald-200 px-1 dark:border-white sm:px-4 transition-all duration-300 ease-out hover:scale-[1.08] hover:-translate-y-2 hover:border-emerald-400 hover:dark:border-emerald-400 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4),0_0_24px_rgba(52,211,153,0.35)]"
             >
               {stat.textValue ? (
                 <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-4xl text-center px-2 leading-tight">
@@ -62,7 +60,7 @@ export function StatsStrip({ stats }: { stats: Stat[] }) {
                   {stat.suffix}
                 </span>
               )}
-            </motion.div>
+            </div>
             {/* Label below */}
             <span className="mt-4 text-base font-bold uppercase tracking-widest text-slate-600 dark:text-white">
               {stat.label}

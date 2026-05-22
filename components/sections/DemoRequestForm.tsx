@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,9 +25,12 @@ import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { Turnstile } from "@marsidev/react-turnstile";
 
 type DemoRequestFormCopy = {
@@ -176,6 +179,7 @@ export function DemoRequestForm({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<DemoFormValues>({
     resolver: zodResolver(demoSchema),
@@ -373,18 +377,37 @@ export function DemoRequestForm({
                 />
               </IconInput>
 
-              <IconInput icon={Search} label={copy?.solutionLabel || ""} error={errors.orgType?.message}>
-                <NativeSelect
-                  className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
-                  {...register("orgType")}
-                >
-                  {solutionOptions.map((option) => (
-                    <NativeSelectOption key={option.value} value={option.value}>
-                      {option.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </IconInput>
+              <div className="space-y-1.5">
+                {(copy?.solutionLabel || "").trim() ? (
+                  <Label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    {copy?.solutionLabel} <span className="text-rose-500">*</span>
+                  </Label>
+                ) : null}
+                <Controller
+                  name="orgType"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                          <Search className="h-4 w-4" />
+                        </div>
+                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between border-0 bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                      </div>
+                      <SelectContent>
+                        {solutionOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.orgType?.message && <p className="text-[10px] text-rose-500">{errors.orgType.message}</p>}
+              </div>
 
               <IconInput icon={MapPin} label={copy?.cityLabel || ""} error={errors.city?.message}>
                 <Input

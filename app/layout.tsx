@@ -134,9 +134,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          forcedTheme={forcedTheme}
-          enableSystem
-          themes={["light", "dark", "system"]}
+          forcedTheme={forcedTheme ?? "dark"}
+          themes={["light", "dark"]}
           disableTransitionOnChange
         >
           <NextAuthProvider>
