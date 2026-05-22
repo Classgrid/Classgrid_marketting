@@ -20,5 +20,5 @@ const ModerationFlagSchema = new Schema<IModerationFlag>(
 );
 
 export const ModerationFlag =
-  mongoose.models.ModerationFlag ||
+  (mongoose.models.ModerationFlag as mongoose.Model<IModerationFlag>) ||
   mongoose.model<IModerationFlag>("ModerationFlag", ModerationFlagSchema);
