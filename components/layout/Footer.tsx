@@ -162,7 +162,7 @@ export function Footer({
           grid-cols-3  gap-12  py-16
       ══════════════════════════════════════ */}
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-10">
-        <div className="hidden sm:grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
 
           {/* CMS columns (Quick Links, Resources…) */}
           {footerColumns.map((column) => {
@@ -333,22 +333,25 @@ export function Footer({
             {/* RIGHT — legal links */}
             {legalItems.length > 0 && (
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                {legalItems.map((link, idx) => (
+                {legalItems.map((link, idx) => {
+                  const isSitemap = link.label?.toLowerCase() === 'sitemap';
+                  return (
                   <React.Fragment key={link.label}>
                     <Link
                       href={link.href!}
                       prefetch={false}
                       target={isExternal(link.href!) ? "_blank" : undefined}
                       rel={isExternal(link.href!) ? "noopener noreferrer" : undefined}
-                      className="whitespace-nowrap transition-colors hover:text-emerald-500"
+                      className={`whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
                     >
                       {link.label}
                     </Link>
                     {idx < legalItems.length - 1 && (
-                      <span className="select-none text-border">|</span>
+                      <span className={`select-none text-border ${isSitemap ? "hidden sm:inline" : ""}`}>|</span>
                     )}
                   </React.Fragment>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
