@@ -521,7 +521,19 @@ export function Navbar({
                     {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
                       <Link
                         href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
-                        onClick={closeMobileMenu}
+                        onClick={(e) => {
+                          closeMobileMenu();
+                          // For hash links on the same page (e.g. /#demo), manually scroll after closing
+                          const resolved = resolveCtaHref(primaryCtaLabel, primaryCtaHref);
+                          if (resolved.includes('#') && pathname === '/') {
+                            e.preventDefault();
+                            const hash = resolved.split('#')[1];
+                            setTimeout(() => {
+                              const el = document.getElementById(hash);
+                              el?.scrollIntoView({ behavior: 'smooth' });
+                            }, 250);
+                          }
+                        }}
                         className="flex h-12 w-full items-center justify-center rounded-lg bg-white text-[15px] font-semibold text-black transition-transform active:scale-[0.98]"
                       >
                         {primaryCtaLabel}
