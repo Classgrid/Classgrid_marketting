@@ -120,7 +120,7 @@ export default function PricingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
