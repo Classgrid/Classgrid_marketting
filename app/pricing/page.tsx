@@ -163,7 +163,7 @@ export default function PricingPage() {
           </Chip>
 
           <SectionAccentBar />
-          <h1 className="mx-auto max-w-[900px] text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.18] tracking-tight text-slate-900 dark:text-white break-words hyphens-auto">
+          <h1 className="mx-auto w-full max-w-[900px] text-2xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.2] tracking-tight text-slate-900 dark:text-white whitespace-normal">
             One operating system for every kind of institution
           </h1>
 
@@ -171,7 +171,7 @@ export default function PricingPage() {
             Choose your institution type to see the modules included in Basic and Premium tiers.
           </p>
 
-          <div className="mt-8 flex flex-nowrap overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap justify-start sm:justify-center gap-2.5 scrollbar-hide">
+          <div className="mt-8 flex w-full flex-nowrap overflow-x-auto pb-4 sm:flex-wrap justify-start sm:justify-center gap-2.5 scrollbar-hide">
             {INSTITUTION_TYPES.map((type) => {
               const Icon =
                 type === "School"
@@ -333,7 +333,7 @@ export default function PricingPage() {
             </div>
 
             <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30">
-              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-4">
+              <div className="w-full overflow-x-auto pb-4">
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 dark:bg-white/[0.04] dark:border-white/[0.08]">
