@@ -100,7 +100,7 @@ export default function AcknowledgementClient({ contributors, mentors, family }:
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-          className="font-serif text-[clamp(3.5rem,8vw,7rem)] font-light italic leading-[0.9] text-[#0d0e12] dark:text-[#f5f2ec] mb-12"
+          className="font-serif text-[clamp(2rem,8vw,7rem)] font-light italic leading-[0.9] text-[#0d0e12] dark:text-[#f5f2ec] mb-12 break-words"
         >
           Acknowl<em className="not-italic text-emerald-600 dark:text-emerald-500">edg</em>ement
         </motion.h1>

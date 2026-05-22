@@ -123,7 +123,7 @@ export default function PricingPage() {
     <main className="min-h-screen bg-background text-foreground">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex min-h-[60vh] items-center overflow-hidden bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
+      <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
         {/* 1. Base Deep Gradient Layer */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-white via-emerald-50 to-white dark:from-[#021E16] dark:via-[#063D2E] dark:to-[#021E16]" />
         <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(255,255,255,0.92)_0%,rgba(209,250,229,0.55)_38%,rgba(240,253,250,0.92)_100%)] dark:bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
@@ -163,7 +163,7 @@ export default function PricingPage() {
           </Chip>
 
           <SectionAccentBar />
-          <h1 className="mx-auto max-w-[900px] text-4xl font-extrabold leading-[1.18] tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-[56px]">
+          <h1 className="mx-auto max-w-[900px] text-[clamp(1.75rem,5vw,3.5rem)] font-extrabold leading-[1.18] tracking-tight text-slate-900 dark:text-white text-balance break-words">
             One operating system for every kind of institution
           </h1>
 
