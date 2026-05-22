@@ -280,8 +280,8 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
 
     return (
         <div className="w-full flex flex-col items-center">
-            {/* Fixed-aspect canvas */}
-            <div style={{ position: "relative", width: "100%", aspectRatio: "928/672" }}>
+            {/* Fixed-aspect canvas — taller on mobile so terminals fit */}
+            <div className="relative w-full aspect-[928/900] sm:aspect-[928/672]">
 
                 {/* ── ATMOSPHERE LAYERS — emerald + pink glow ── */}
                 <motion.div custom={D.atmL} variants={rcAtmV} initial="cardHidden" whileInView="cardVisible" viewport={vp}
