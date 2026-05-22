@@ -4,13 +4,14 @@ import { DemoRequest } from "@/lib/models/DemoRequest";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { otp } = await req.json();
     await connectMongo();
+    const { id } = await params;
 
-    const lead = await DemoRequest.findById(params.id);
+    const lead = await DemoRequest.findById(id);
     if (!lead) {
       return NextResponse.json({ ok: false, message: "Lead not found" }, { status: 404 });
     }
