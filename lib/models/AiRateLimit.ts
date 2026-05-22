@@ -19,5 +19,5 @@ const AiRateLimitSchema = new Schema<IAiRateLimit>(
 AiRateLimitSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 export const AiRateLimit =
-  mongoose.models.AiRateLimit ||
+  (mongoose.models.AiRateLimit as mongoose.Model<IAiRateLimit>) ||
   mongoose.model<IAiRateLimit>("AiRateLimit", AiRateLimitSchema);

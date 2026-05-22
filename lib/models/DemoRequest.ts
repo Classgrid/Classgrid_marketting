@@ -54,5 +54,5 @@ const DemoRequestSchema = new Schema<IDemoRequest>(
 );
 
 export const DemoRequest =
-  mongoose.models.DemoRequest ||
+  (mongoose.models.DemoRequest as mongoose.Model<IDemoRequest>) ||
   mongoose.model<IDemoRequest>("DemoRequest", DemoRequestSchema);
