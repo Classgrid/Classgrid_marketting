@@ -441,7 +441,7 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
             {/* ── BOTTOM TEXT (outside canvas so it never gets clipped) ── */}
             <motion.div custom={D.btm} variants={rcBtmV} initial="cardHidden" whileInView="cardVisible" viewport={vp}
                 style={{ marginTop: 24, textAlign: "center" }}
-                className="invisible sm:visible">
+                className="hidden sm:block">
                 <div style={{ fontSize: "9.5px", letterSpacing: "5.5px", color: "#a855f7", textTransform: "uppercase", marginBottom: 10, fontWeight: 500, fontFamily: "Inter, sans-serif" }}>
                     {rightLabel || "With ClassGrid OS"}
                 </div>
@@ -564,7 +564,7 @@ export function TurboComparisonNew({
                             initial="cardHidden"
                             whileInView="cardVisible"
                             viewport={{ once: true, amount: 0.3 }}
-                            className="mt-[52px] flex flex-col items-center gap-2 invisible sm:visible"
+                            className="mt-[52px] hidden sm:flex flex-col items-center gap-2"
                         >
                             <span
                                 className="text-[11.5px] font-medium text-white/40 tracking-[0.21em] uppercase"
