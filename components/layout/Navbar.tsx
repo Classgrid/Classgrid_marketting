@@ -249,7 +249,7 @@ export function Navbar({
     : [{ label: "Home", href: "/" }, ...baseItems];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.18] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 will-change-transform">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.18] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (
@@ -426,7 +426,7 @@ export function Navbar({
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-colors duration-200 hover:bg-white/[0.08] hover:text-white",
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
                   showAskAiPrompt ? "border-emerald-500/35 shadow-[0_0_18px_rgba(16,185,129,0.14)]" : ""
                 )}
                 onClick={onAskAiClick}
@@ -521,19 +521,7 @@ export function Navbar({
                     {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
                       <Link
                         href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
-                        onClick={(e) => {
-                          closeMobileMenu();
-                          // For hash links on the same page (e.g. /#demo), manually scroll after closing
-                          const resolved = resolveCtaHref(primaryCtaLabel, primaryCtaHref);
-                          if (resolved.includes('#') && pathname === '/') {
-                            e.preventDefault();
-                            const hash = resolved.split('#')[1];
-                            setTimeout(() => {
-                              const el = document.getElementById(hash);
-                              el?.scrollIntoView({ behavior: 'smooth' });
-                            }, 250);
-                          }
-                        }}
+                        onClick={closeMobileMenu}
                         className="flex h-12 w-full items-center justify-center rounded-lg bg-white text-[15px] font-semibold text-black transition-transform active:scale-[0.98]"
                       >
                         {primaryCtaLabel}
