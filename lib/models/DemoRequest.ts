@@ -8,6 +8,8 @@ export interface IDemoRequest extends Document {
   adminPhone: string;
   state: string;
   city: string;
+  role?: string;
+  source?: string;
   message?: string;
   status: "pending" | "contacted" | "demo_scheduled" | "rejected";
   
@@ -35,6 +37,8 @@ const DemoRequestSchema = new Schema<IDemoRequest>(
     adminPhone: { type: String, required: true },
     state: { type: String, required: true },
     city: { type: String, required: true },
+    role: { type: String },
+    source: { type: String },
     message: { type: String },
     status: {
       type: String,
