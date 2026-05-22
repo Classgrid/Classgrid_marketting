@@ -242,7 +242,16 @@ export default function AcknowledgementClient({ contributors, mentors, family }:
                   </p>
                   {mentor.message && (
                     <p className="font-serif text-lg md:text-xl italic text-[#6a6258] dark:text-[#c8c0b8] leading-[1.9]">
-                      {mentor.message}
+                      {mentor.message.split(mentor.name).map((part: string, i: number, arr: string[]) => (
+                        <span key={i}>
+                          {part}
+                          {i < arr.length - 1 && (
+                            <span className="text-emerald-600 dark:text-emerald-400 not-italic font-medium">
+                              {mentor.name}
+                            </span>
+                          )}
+                        </span>
+                      ))}
                     </p>
                   )}
                 </motion.div>

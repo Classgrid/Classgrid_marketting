@@ -75,7 +75,7 @@ export function PlatformAnimatedBeam({
   }
 
   return (
-    <section className="relative flex w-full flex-col items-center overflow-hidden bg-background py-10 xl:py-14">
+    <section className="relative flex w-full flex-col items-center overflow-hidden bg-muted py-10 xl:py-14">
       <div className="pointer-events-none absolute left-[-10%] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[#00dfd8]/40 blur-[100px]" />
       <div className="pointer-events-none absolute right-[-10%] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[#ff0080]/40 blur-[100px]" />
 

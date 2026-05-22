@@ -2,9 +2,9 @@ export const homeCopy = {
   headline: "The Operating System for Modern Education",
   subheadline:
     "One platform to manage academics, operations, and growth—ClassGrid helps institutions run smarter, faster, and without the chaos of disconnected systems.",
-  trustedBy: "Trusted by 1,000+ forward-thinking institutions across India",
+  trustedBy: "Trusted by institutions across India",
   machineShowcase:
-    "One synchronized system across web dashboard and Android app, with the same classroom, attendance, assignment, and analytics data in real time.",
+    "Web dashboard and Android app — both powered by the same live data layer for classroom, attendance, assignments, and analytics.",
   footerCta: "Ready to transform your institution?",
   whatsNew: "⚡ Built for modern, scalable education systems",
 };
@@ -44,7 +44,6 @@ export const headerNav = {
     { label: "Institutions", href: "/institutions/college" },
     { label: "Platform", href: "/pricing" },
     { label: "Demo", href: "/#demo" },
-
     { label: "Status", href: "https://classgrid1.statuspage.io" },
     { label: "Support", href: "/support" },
   ],

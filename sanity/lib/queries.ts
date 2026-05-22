@@ -1163,6 +1163,7 @@ export const homeStatsQuery = `*[_type == "homeStats"][0]{
 }`;
 
 export const sectionSettingsQuery = `*[_type == "sectionSettings"][0]{
+  showTrustedInstitutions,
   showClientTestimonials,
   showTestimonialVideos,
   showWhyClassgrid,

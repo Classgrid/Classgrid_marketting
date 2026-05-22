@@ -590,28 +590,16 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
   ];
 
 
-  const trustedLogos: TrustLogo[] = withFallbackItems(
-    (Array.isArray(cmsClientLogos) ? cmsClientLogos : []).map((logo: any) => ({
-      name: logo?.name ?? "",
-      subtitle: logo?.subtitle ?? "",
-      href: logo?.href,
-      imageUrl: logo?.imageUrl,
-      imageAlt: logo?.imageAlt ?? logo?.name,
-      wordmarkUrl: logo?.wordmarkUrl,
-      wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
-      color: logo?.color,
-    })),
-    placeholderHomePage.trustedLogos.map((logo: any) => ({
-      name: logo?.name ?? "",
-      subtitle: logo?.subtitle ?? "",
-      href: logo?.href,
-      imageUrl: logo?.imageUrl,
-      imageAlt: logo?.imageAlt ?? logo?.name,
-      wordmarkUrl: logo?.wordmarkUrl,
-      wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
-      color: logo?.color,
-    }))
-  );
+  const trustedLogos: TrustLogo[] = (Array.isArray(cmsClientLogos) ? cmsClientLogos : []).map((logo: any) => ({
+    name: logo?.name ?? "",
+    subtitle: logo?.subtitle ?? "",
+    href: logo?.href,
+    imageUrl: logo?.imageUrl,
+    imageAlt: logo?.imageAlt ?? logo?.name,
+    wordmarkUrl: logo?.wordmarkUrl,
+    wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
+    color: logo?.color,
+  }));
 
   const organizationSectionTitle = withFallbackString(
     home?.organizationSectionTitle,
@@ -867,7 +855,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       .filter((item: any) => item?.question && item?.answer && (item?.displayPages || []).includes('home'))
       .map((item: any) => ({
         question: getLocalized(item.question, lang, ""),
-        answer: toFaqAnswerText(getLocalized(item.answer, lang, "")),
+        answer: toFaqAnswerText(item.answer),
         homeColumn: item.homeColumn,
         order: item.order ?? 99,
       }))
@@ -1010,7 +998,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
   );
 
   return (
-    <div className="relative overflow-x-clip bg-background text-foreground selection:bg-[#ff0080]/30">
+    <div className="relative overflow-x-clip bg-muted text-foreground selection:bg-[#ff0080]/30">
       <ScrollToTop />
       <HomeDevScrollReset />
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -1081,14 +1069,14 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showTrust ? (
         <Reveal>
-          <section className="bg-muted px-6 py-16 md:px-12 md:py-24 lg:px-16">
+          <section className="px-6 py-16 md:px-12 md:py-24 lg:px-16">
             <div className="mx-auto max-w-7xl">
               {(trustedBy || trustSectionDescription) && (
                 <SectionHeader title={trustedBy} description={trustSectionDescription} />
               )}
 
               {stats.length > 0 ? <StatsStrip stats={stats} /> : null}
-              {trustedLogos.length > 0 ? (
+              {sectionSettings?.showTrustedInstitutions !== false ? (
                 <TrustedInstitutionsShowcase title={trustedBy} institutions={trustedLogos} />
               ) : null}
             </div>
