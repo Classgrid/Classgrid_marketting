@@ -576,7 +576,7 @@ export default function DemoSuccessPage() {
 
             {/* RIGHT PANEL */}
             {date && (
-              <div className="p-6 md:p-8 w-full md:w-[320px] bg-black/40 h-[400px] md:h-[500px] overflow-y-auto overscroll-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] animate-in slide-in-from-right-8 duration-300 relative">
+              <div className="p-6 md:p-8 w-full md:w-[320px] bg-black/40 md:h-[500px] md:overflow-y-auto md:overscroll-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] animate-in slide-in-from-right-8 duration-300 relative">
                 {lead.status === "demo_scheduled" ? (
                   <div className="flex flex-col h-full text-left animate-in fade-in zoom-in duration-500">
                     <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
