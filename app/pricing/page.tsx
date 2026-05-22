@@ -171,7 +171,7 @@ export default function PricingPage() {
             Choose your institution type to see the modules included in Basic and Premium tiers.
           </p>
 
-          <div className="mt-8 flex w-full flex-nowrap overflow-x-auto pb-4 sm:flex-wrap justify-start sm:justify-center gap-2.5 scrollbar-hide">
+          <div className="mt-8 flex w-full flex-nowrap overflow-x-auto pb-4 pr-4 sm:pr-0 sm:flex-wrap justify-start sm:justify-center gap-2.5 scrollbar-hide">
             {INSTITUTION_TYPES.map((type) => {
               const Icon =
                 type === "School"
@@ -191,7 +191,7 @@ export default function PricingPage() {
                     setActiveTab(type);
                     scrollToMatrix();
                   }}
-                  className={`relative overflow-hidden rounded-full border px-4 py-2.5 text-sm font-semibold transition-all ${
+                  className={`relative shrink-0 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-all ${
                     isActive
                       ? "border-emerald-300 bg-white text-emerald-950 shadow-lg shadow-emerald-950/20"
                       : "border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-white dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/30 dark:hover:bg-white/15"
@@ -205,7 +205,7 @@ export default function PricingPage() {
                     />
                   ) : null}
                   <span className="relative z-10 flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4 shrink-0" />
                     {type}
                   </span>
                 </button>
