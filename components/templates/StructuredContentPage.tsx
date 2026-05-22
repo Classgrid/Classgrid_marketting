@@ -562,73 +562,73 @@ export function StructuredContentPage({
               style={{ minWidth: 0 }}
             >
               <div className="w-60 px-4 py-6">
-          {mode === "module" && allModules.length > 0 ? (
-            <>
-              {/* Search */}
-              <div className="relative mb-4">
-                <input
-                  type="text"
-                  value={sidebarSearch}
-                  onChange={(e) => setSidebarSearch(e.target.value)}
-                  placeholder="Search modules..."
-                  className="h-8 w-full rounded-lg border border-border bg-muted/40 pl-3 pr-3 text-[12px] text-foreground placeholder:text-muted-foreground focus:border-emerald-500/50 focus:outline-none"
-                />
-              </div>
-              {/* Module list grouped by category */}
-              <nav className="space-y-5 text-sm">
-                {Object.entries(groupedModules).map(([cat, mods]) => (
-                  <div key={cat}>
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
-                      {cat}
-                    </p>
-                    <ul className="space-y-0.5">
-                      {mods.map((m) => {
-                        const isActive = m.slug === currentSlug;
-                        return (
-                          <li key={m.slug}>
-                            <Link
-                              href={`/product/modules/${m.slug}`}
-                              className={cn(
-                                "block rounded-md px-2.5 py-1.5 text-[12px] leading-snug transition-colors",
-                                isActive
-                                  ? "bg-emerald-500/10 font-semibold text-emerald-500"
-                                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                              )}
-                            >
-                              {m.title}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ))}
-              </nav>
-            </>
-          ) : (
-            <nav className="space-y-7 text-sm">
-              {LEFT_NAV.map((group) => (
-                <div key={group.section}>
-                  <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                    {group.section}
-                  </p>
-                  <ul className="space-y-1">
-                    {group.items.map(({ label, href, icon: Icon }) => (
-                      <li key={href}>
-                        <Link
-                          href={href}
-                          className="group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                        >
-                          <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 group-hover:text-emerald-500 transition-colors" />
-                          {label}
-                        </Link>
-                      </li>
+                {mode === "module" && allModules.length > 0 ? (
+                  <>
+                    {/* Search */}
+                    <div className="relative mb-4">
+                      <input
+                        type="text"
+                        value={sidebarSearch}
+                        onChange={(e) => setSidebarSearch(e.target.value)}
+                        placeholder="Search modules..."
+                        className="h-8 w-full rounded-lg border border-border bg-muted/40 pl-3 pr-3 text-[12px] text-foreground placeholder:text-muted-foreground focus:border-emerald-500/50 focus:outline-none"
+                      />
+                    </div>
+                    {/* Module list grouped by category */}
+                    <nav className="space-y-5 text-sm">
+                      {Object.entries(groupedModules).map(([cat, mods]) => (
+                        <div key={cat}>
+                          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
+                            {cat}
+                          </p>
+                          <ul className="space-y-0.5">
+                            {mods.map((m) => {
+                              const isActive = m.slug === currentSlug;
+                              return (
+                                <li key={m.slug}>
+                                  <Link
+                                    href={`/product/modules/${m.slug}`}
+                                    className={cn(
+                                      "block rounded-md px-2.5 py-1.5 text-[12px] leading-snug transition-colors",
+                                      isActive
+                                        ? "bg-emerald-500/10 font-semibold text-emerald-500"
+                                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                    )}
+                                  >
+                                    {m.title}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ))}
+                    </nav>
+                  </>
+                ) : (
+                  <nav className="space-y-7 text-sm">
+                    {LEFT_NAV.map((group) => (
+                      <div key={group.section}>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                          {group.section}
+                        </p>
+                        <ul className="space-y-1">
+                          {group.items.map(({ label, href, icon: Icon }) => (
+                            <li key={href}>
+                              <Link
+                                href={href}
+                                className="group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                              >
+                                <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 group-hover:text-emerald-500 transition-colors" />
+                                {label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
-                </div>
-              ))}
-            </nav>
-          )}
+                  </nav>
+                )}
               </div>
             </motion.aside>
           )}
@@ -638,7 +638,7 @@ export function StructuredContentPage({
         <main
           className="min-w-0 flex-1 px-5 py-10 md:px-10 lg:px-14 xl:px-16 flex justify-center xl:justify-start transition-all duration-300 ease-in-out"
         >
-          <div 
+          <div
             className={cn(
               "w-full transition-all duration-300 ease-in-out",
               desktopSidebarOpen ? "max-w-[740px]" : "max-w-[900px] xl:ml-8"
