@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       const previousStrike = await ModerationFlag.findOne({
         userEmail: userEmail,
         createdAt: { $gte: fifteenMinutesAgo }
-      });
+      } as any);
       if (previousStrike) {
         bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 15 * 60 * 1000);
       }
