@@ -105,6 +105,14 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" || account?.provider === "github" || account?.provider === "linkedin") {
+        console.log(`[NextAuth] ${account.provider} sign-in — email: ${user.email}, name: ${user.name}`);
+        
+        // LinkedIn sometimes doesn't return email — reject if missing
+        if (!user.email) {
+          console.error(`[NextAuth] ${account.provider} sign-in failed: no email returned`);
+          return false;
+        }
+
         await connectMongo();
         let forumUser = await ForumUser.findOne({ email: user.email });
 
