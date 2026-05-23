@@ -35,6 +35,7 @@ type CaseStudyData = {
   championHeadshotUrl?: string;
   championQuote?: string;
   championSocialLink?: string;
+  champions?: { name: string; role?: string; headshotUrl?: string; socialLink?: string }[];
   overview?: string;
   conclusion?: string;
   body?: any[];
@@ -503,15 +504,65 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
         </section>
       )}
 
+      {/* TEAM MEMBERS CREDITS */}
+      {data.champions && data.champions.length > 0 && (
+        <section className="py-20 border-t border-border">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <p className="text-emerald-500 font-semibold uppercase tracking-widest text-sm mb-3">Team</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Case Study Done By</h2>
+            </motion.div>
+            <div className={`grid gap-8 justify-items-center ${data.champions.length <= 3 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'}`}>
+              {data.champions.slice(0, 5).map((member, idx) => {
+                const headshot = member.headshotUrl ? (
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-emerald-500/20 hover:ring-emerald-500 transition-all duration-300 hover:scale-105 mx-auto mb-3">
+                    <Image src={member.headshotUrl} alt={member.name} fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-2xl font-bold text-emerald-500 ring-2 ring-emerald-500/20 mx-auto mb-3">
+                    {member.name.charAt(0)}
+                  </div>
+                );
+
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    className="text-center"
+                  >
+                    {member.socialLink ? (
+                      <a href={member.socialLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
+                        {headshot}
+                      </a>
+                    ) : headshot}
+                    <p className="text-foreground font-semibold text-sm">{member.name}</p>
+                    {member.role && <p className="text-muted-foreground text-xs mt-0.5">{member.role}</p>}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CHAMPION QUOTE */}
       {data.championQuote && (
-        <section className="bg-zinc-950 py-32 border-y border-border relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900 via-transparent to-transparent"></div>
+        <section className="py-32 border-y border-border relative overflow-hidden bg-emerald-950/20 dark:bg-emerald-950/25">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900 via-transparent to-transparent"></div>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
             <svg className="w-12 h-12 text-emerald-500/30 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
               <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
             </svg>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white leading-tight mb-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-foreground leading-tight mb-12">
               &quot;{data.championQuote}&quot;
             </h2>
             <div className="flex flex-col items-center">
@@ -526,7 +577,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                   </div>
                 )
               )}
-              <p className="text-white font-semibold text-lg">{data.championName}</p>
+              <p className="text-foreground font-semibold text-lg">{data.championName}</p>
               <p className="text-muted-foreground text-sm uppercase tracking-wider mt-1">{data.championRole} · {data.clientName}</p>
             </div>
           </div>
