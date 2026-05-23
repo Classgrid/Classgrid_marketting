@@ -113,7 +113,6 @@ function LoginContent() {
     signIn("github", { callbackUrl: oauthCallbackUrl });
   };
 
-  };
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
