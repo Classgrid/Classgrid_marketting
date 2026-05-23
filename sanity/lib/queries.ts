@@ -7,6 +7,12 @@ export const postsQuery = `*[_type == "post"] | order(publishedAt desc){
   author,
   authorImage,
   authorBio,
+  authors[]{
+    name,
+    image,
+    profileLink,
+    bio
+  },
   references[]{title, url},
   excerpt,
   publishedAt,
@@ -23,6 +29,12 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{
   authorImage,
   authorBio,
   authorProfileLink,
+  authors[]{
+    name,
+    image,
+    profileLink,
+    bio
+  },
   readingTimeOverride,
   references[]{title, url},
   excerpt,

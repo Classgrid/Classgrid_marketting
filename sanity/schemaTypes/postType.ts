@@ -204,6 +204,38 @@ export const postType = defineType({
       rows: 3,
     }),
     defineField({
+      name: 'authors',
+      title: '✍️ Authors (Multi-Author Support)',
+      description: 'Add up to 3 authors for this post. If filled, this overrides the single Author fields above.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'blogAuthor',
+          title: 'Author',
+          fields: [
+            defineField({ name: 'name', title: 'Author Name', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'image', title: 'Author Image (Passport Size)', type: 'image', options: { hotspot: true } }),
+            defineField({
+              name: 'profileLink',
+              title: '🔗 Author Profile Link',
+              description: 'Paste any URL — clicking the author image will open this. (e.g. Twitter, LinkedIn, Instagram)',
+              type: 'url',
+              validation: (rule) => rule.uri({ scheme: ['http', 'https'] }),
+            }),
+            defineField({ name: 'bio', title: 'Author Bio (Short Description)', type: 'text', rows: 3 }),
+          ],
+          preview: {
+            select: { title: 'name', media: 'image' },
+            prepare({ title, media }: any) {
+              return { title: title || 'Unnamed Author', media };
+            },
+          },
+        },
+      ],
+      validation: (rule) => rule.max(3),
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'object',

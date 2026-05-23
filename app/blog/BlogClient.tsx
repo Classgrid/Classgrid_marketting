@@ -38,6 +38,7 @@ interface Post {
   category?: unknown;
   author?: string;
   authorImage?: any;
+  authors?: { name?: string; image?: any; profileLink?: string; bio?: string }[];
 }
 
 interface PostMetric {
@@ -454,14 +455,49 @@ export function BlogClient({
 
                     {/* Footer row */}
                     <div className="mt-auto flex flex-col gap-3 border-t border-border pt-4">
-                      <div className="flex items-center gap-2">
-                        {post.authorImage ? (
-                          <Image src={urlFor(post.authorImage).url()} alt={post.author || "Author"} width={24} height={24} className="h-6 w-6 rounded-full object-cover" />
-                        ) : (
-                          <div className="h-6 w-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-500">{post.author ? post.author.charAt(0) : "C"}</div>
-                        )}
-                        <span className="text-xs font-medium text-foreground">{post.author || "ClassGrid Team"}</span>
-                      </div>
+                      {(() => {
+                        // Build authors list: prefer new multi-author array, fallback to legacy single author
+                        const authorsList = (post.authors && post.authors.length > 0)
+                          ? post.authors.slice(0, 3)
+                          : [{ name: post.author || 'ClassGrid Team', image: post.authorImage }];
+
+                        // Build display name string
+                        const names = authorsList.map(a => a.name || 'Unknown');
+                        let displayName = '';
+                        if (names.length === 1) displayName = names[0];
+                        else if (names.length === 2) displayName = `${names[0]} and ${names[1]}`;
+                        else displayName = `${names[0]}, ${names[1]}, and ${names[2]}`;
+
+                        return (
+                          <div className="flex items-center gap-2">
+                            {/* Stacked overlapping avatars */}
+                            <div className="flex items-center -space-x-2">
+                              {authorsList.map((a, idx) => (
+                                a.image ? (
+                                  <Image
+                                    key={idx}
+                                    src={urlFor(a.image).url()}
+                                    alt={a.name || 'Author'}
+                                    width={24}
+                                    height={24}
+                                    className="h-6 w-6 rounded-full object-cover ring-2 ring-card"
+                                    style={{ zIndex: authorsList.length - idx }}
+                                  />
+                                ) : (
+                                  <div
+                                    key={idx}
+                                    className="h-6 w-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-500 ring-2 ring-card"
+                                    style={{ zIndex: authorsList.length - idx }}
+                                  >
+                                    {(a.name || 'C').charAt(0)}
+                                  </div>
+                                )
+                              ))}
+                            </div>
+                            <span className="text-xs font-medium text-foreground truncate">{displayName}</span>
+                          </div>
+                        );
+                      })()}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           {metrics && (
