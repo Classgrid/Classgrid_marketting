@@ -56,8 +56,8 @@ function LoginContent() {
     if (user.isPlatformUser) {
       router.replace("/support/ticket");
     } else {
-      // Non-platform (community) users → Classgrid Talk / Community
-      router.replace(process.env.NEXT_PUBLIC_FORUM_URL || "/community");
+      // Non-platform (community) users → Classgrid Talk
+      router.replace("/community");
     }
   }, [status, session, router, searchParams, sso, sig, returnTo]);
 
