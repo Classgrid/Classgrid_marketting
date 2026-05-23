@@ -5,6 +5,6 @@ export const siteMeta = {
   domain: "https://classgrid.in",
   appDomain: "https://app.classgrid.in",
   supportEmail: "support@classgrid.in",
-  salesEmail: "nikhil.shinde@classgrid.in",
+  salesEmail: "contact@classgrid.in",
   helloEmail: "support@classgrid.in",
 };
