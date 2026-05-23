@@ -18,29 +18,28 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    LinkedInProvider({
+    {
+      id: "linkedin",
+      name: "LinkedIn",
+      type: "oidc",
       clientId: process.env.LINKEDIN_CLIENT_ID!,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+      issuer: "https://www.linkedin.com/oauth",
+      wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
       authorization: {
-        params: { scope: 'openid profile email' },
+        params: { scope: "openid profile email" },
       },
-      issuer: 'https://www.linkedin.com/oauth',
-      jwks_endpoint: 'https://www.linkedin.com/oauth/openid/jwks',
-      profile(profile, tokens) {
-        // DEBUG: Log the full profile to see what LinkedIn returns via OpenID Connect
+      checks: ["state"],
+      profile(profile: any) {
         console.log('[LinkedIn OIDC] Full profile:', JSON.stringify(profile, null, 2));
-        console.log('[LinkedIn OIDC] Email from profile:', profile.email);
-
-        const defaultImage =
-          'https://cdn-icons-png.flaticon.com/512/174/174857.png';
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
-          image: profile.picture ?? defaultImage,
+          image: profile.picture ?? 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
         };
       },
-    }),
+    },
     CredentialsProvider({
       name: "OTP",
       credentials: {
