@@ -21,17 +21,14 @@ export const authOptions: NextAuthOptions = {
     {
       id: "linkedin",
       name: "LinkedIn",
-      type: "oidc",
+      type: "oauth",
+      authorization: "https://www.linkedin.com/oauth/v2/authorization?scope=openid+profile+email",
+      token: "https://www.linkedin.com/oauth/v2/accessToken",
+      userinfo: "https://api.linkedin.com/v2/userinfo",
       clientId: process.env.LINKEDIN_CLIENT_ID!,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-      issuer: "https://www.linkedin.com/oauth",
-      wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
-      authorization: {
-        params: { scope: "openid profile email" },
-      },
-      checks: ["state"],
       profile(profile: any) {
-        console.log('[LinkedIn OIDC] Full profile:', JSON.stringify(profile, null, 2));
+        console.log('[LinkedIn OAuth] Full profile:', JSON.stringify(profile, null, 2));
         return {
           id: profile.sub,
           name: profile.name,
