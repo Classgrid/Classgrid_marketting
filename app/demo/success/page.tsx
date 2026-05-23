@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isBefore, startOfDay, addMonths, subMonths } from "date-fns";
 import { Clock, Video, Globe, CheckSquare, User, CheckCircle2, Edit2, Loader2, ArrowRight, ChevronLeftIcon, ChevronRightIcon, LayoutGrid, MessageCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,6 +53,16 @@ export default function DemoSuccessPage() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
   const [showTalkPopup, setShowTalkPopup] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+  const thankYouRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showThankYou && thankYouRef.current) {
+      setTimeout(() => {
+        thankYouRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+  }, [showThankYou]);
 
   useEffect(() => {
     if (!requestId) return;
@@ -690,6 +700,64 @@ export default function DemoSuccessPage() {
           </div>
         </div>
       )}
+      {/* Thank You Section — appears after Classgrid Talk popup is closed */}
+      <AnimatePresence>
+        {showThankYou && (
+          <motion.div
+            ref={thankYouRef}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.1 }}
+            className="w-full max-w-[500px] mx-auto mt-10 mb-6"
+          >
+            <div className="relative text-center py-10 px-8 rounded-2xl border border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-sm overflow-hidden">
+              {/* Subtle top glow line */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+
+              {/* Animated checkmark */}
+              <motion.div
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.25 }}
+                className="w-14 h-14 mx-auto mb-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"
+              >
+                <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+              </motion.div>
+
+              <motion.h3
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+                className="text-xl font-bold text-white mb-2 tracking-tight"
+              >
+                Thank You! 😊
+              </motion.h3>
+
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+                className="text-sm text-zinc-400 font-medium mb-1"
+              >
+                for Showing Interest.
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.4 }}
+                className="text-sm text-zinc-500"
+              >
+                Our representative will call you soon.
+              </motion.p>
+
+              {/* Subtle ambient glow */}
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-40 h-20 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Toaster />
 
       {/* Classgrid Talk Popup Modal */}
@@ -721,7 +789,7 @@ export default function DemoSuccessPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.45 }}
-                onClick={() => setShowTalkPopup(false)}
+                onClick={() => { setShowTalkPopup(false); setShowThankYou(true); }}
                 className="absolute top-4 right-4 p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded-full hover:bg-white/5 z-10"
               >
                 <X className="w-4 h-4" />
@@ -815,7 +883,7 @@ export default function DemoSuccessPage() {
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-600" />
                   </a>
                   <button
-                    onClick={() => setShowTalkPopup(false)}
+                    onClick={() => { setShowTalkPopup(false); setShowThankYou(true); }}
                     className="w-full py-3 px-4 text-zinc-500 hover:text-zinc-300 text-sm font-medium rounded-xl text-center transition-colors hover:bg-white/5"
                   >
                     Maybe Later
