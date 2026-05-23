@@ -27,6 +27,10 @@ export const authOptions: NextAuthOptions = {
       issuer: 'https://www.linkedin.com',
       jwks_endpoint: 'https://www.linkedin.com/oauth/openid/jwks',
       profile(profile, tokens) {
+        // DEBUG: Log the full profile to see what LinkedIn returns via OpenID Connect
+        console.log('[LinkedIn OIDC] Full profile:', JSON.stringify(profile, null, 2));
+        console.log('[LinkedIn OIDC] Email from profile:', profile.email);
+
         const defaultImage =
           'https://cdn-icons-png.flaticon.com/512/174/174857.png';
         return {
