@@ -25,23 +25,18 @@ Classgrid supports 5 institution types with dedicated workflows:
 
 1. **College** — Complete Digital System for Colleges
    - CAP round admission workflows, Placement and alumni readiness pipelines, NAAC/NBA accreditation reporting
-   - 5,000+ students managed, 1,200,000+ exam attempts, 1,000,000+ attendance records
 
 2. **Junior College (XI-XII)** — Unified Operations for XI-XII Programs
    - Subject-group and stream setup, Board exam readiness tracking, Parent and student communication hub
-   - 120+ streams managed, 180,000+ daily attendance scans, 240,000+ parent updates
 
 3. **Coaching Institute** — Run Your Institute Like a Platform
    - Course-batch hierarchy automation, Test series and rank intelligence, Rapid fee and parent communication loops
-   - 180,000+ batch sessions, 900,000+ quiz submissions, 350,000+ parent updates
 
 4. **School** — Unified Infrastructure for Modern Schools
    - Class-section academic control, Parent and student communication hub, Attendance and calendar continuity
-   - 250,000+ daily attendance scans, 500,000+ assignments processed, 200,000+ institution updates
 
 5. **Engineering** — Purpose-Built Platform for Engineering Institutions
    - Department and semester architecture controls, Lab, internal assessment, and backlog tracking, NBA/NAAC-aligned compliance reporting
-   - 80+ departments onboarded, 650,000+ semester records, 12,000+ accreditation exports
 
 ACADEMIC HIERARCHY:
 Classgrid supports 13 structure types including engineering (degree-branch-year-semester-division), school (standard-section), coaching (course-batch), junior college (stream-division), and custom models. The hierarchy dynamically enforces structure correctness per institution type.
