@@ -18,17 +18,13 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    {
-      id: "linkedin",
-      name: "LinkedIn",
-      type: "oauth",
-      authorization: "https://www.linkedin.com/oauth/v2/authorization?scope=openid+profile+email",
-      token: "https://www.linkedin.com/oauth/v2/accessToken",
-      userinfo: "https://api.linkedin.com/v2/userinfo",
+    LinkedInProvider({
       clientId: process.env.LINKEDIN_CLIENT_ID!,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-      profile(profile: any) {
-        console.log('[LinkedIn OAuth] Full profile:', JSON.stringify(profile, null, 2));
+      authorization: {
+        params: { scope: "openid profile email" },
+      },
+      profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
@@ -36,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           image: profile.picture ?? 'https://cdn-icons-png.flaticon.com/512/174/174857.png',
         };
       },
-    },
+    }),
     CredentialsProvider({
       name: "OTP",
       credentials: {
