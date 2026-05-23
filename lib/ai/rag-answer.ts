@@ -1,4 +1,5 @@
 import { CLASSGRID_AI_GUARDRAILS } from "@/lib/classgrid-ai-guardrails";
+import { STATIC_CLASSGRID_KNOWLEDGE } from "@/lib/ai/static-knowledge";
 import {
   FORBIDDEN_ONBOARDING_PHRASES,
   PREFERRED_ONBOARDING_PHRASES,
@@ -88,7 +89,10 @@ function buildSystemPrompt(params: {
   const isWhatsApp = params.channel === "whatsapp";
   const isTelegram = params.channel === "telegram";
   const retrievedContext = params.retrievedContext.trim();
-  const fallbackBehaviorRules = retrievedContext ? "" : CLASSGRID_AI_GUARDRAILS;
+  const hasRagContext = retrievedContext.length > 0;
+  const fallbackBehaviorRules = hasRagContext ? "" : CLASSGRID_AI_GUARDRAILS;
+  // When RAG is unavailable (e.g. Vercel Hobby), inject static knowledge so the AI isn't clueless
+  const staticKnowledge = hasRagContext ? "" : STATIC_CLASSGRID_KNOWLEDGE;
   const resourceDirectory = formatPlatformResourceDirectory(params.channel);
   const userRule = params.userName
     ? `You are currently talking to a user named "${params.userName}". Use their name naturally if appropriate, but do not make a big deal out of knowing it.`
@@ -191,6 +195,11 @@ function buildSystemPrompt(params: {
     "RETRIEVED MONGODB RAG CONTEXT:",
     retrievedContext || "No MongoDB vector chunks matched this question.",
     "",
+    ...(staticKnowledge ? [
+      "STATIC PLATFORM KNOWLEDGE (use as primary source when RAG context is empty):",
+      staticKnowledge,
+      "",
+    ] : []),
     "PLATFORM RESOURCE DIRECTORY (use for clickable fallback links and resource references):",
     resourceDirectory,
     "",
