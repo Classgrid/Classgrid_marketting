@@ -36,18 +36,14 @@ function LoginContent() {
   const sso = searchParams.get("sso");
   const sig = searchParams.get("sig");
 
-  // Build the post-login destination based on user role
-  // SSO / explicit next → honour it; otherwise → /login (let useEffect decide)
   const ssoReturnTo = (sso && sig)
     ? `/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
     : null;
   const explicitNext = searchParams.get("next");
 
-  // OAuth callbackUrl: redirect back to /login so the role-based redirect logic runs
-  const oauthCallbackUrl = ssoReturnTo || explicitNext || "/login";
-
-  // OTP success redirect: same logic
-  const otpSuccessUrl = ssoReturnTo || explicitNext || "/login";
+  // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
+  const oauthCallbackUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
+  const otpSuccessUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
 
   // ── Redirect already-logged-in users ──
   useEffect(() => {
