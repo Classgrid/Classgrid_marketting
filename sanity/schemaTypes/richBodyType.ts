@@ -1,4 +1,5 @@
 import { defineArrayMember, defineType } from 'sanity'
+import { QuickTableInput } from '../components/QuickTableInput'
 
 /**
  * richBodyType — Global reusable rich text block.
@@ -119,6 +120,7 @@ export const richBodyType = defineType({
       type: 'object',
       name: 'richTable',
       title: 'Table',
+      components: { input: QuickTableInput },
       fields: [
         {
           name: 'headers',
