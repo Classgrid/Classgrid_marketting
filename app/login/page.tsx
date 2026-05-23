@@ -35,9 +35,19 @@ function LoginContent() {
   // If Discourse sent SSO params (sso + sig), complete the handshake after login
   const sso = searchParams.get("sso");
   const sig = searchParams.get("sig");
-  const returnTo = (sso && sig)
+
+  // Build the post-login destination based on user role
+  // SSO / explicit next → honour it; otherwise → /login (let useEffect decide)
+  const ssoReturnTo = (sso && sig)
     ? `/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
-    : searchParams.get("next") || process.env.NEXT_PUBLIC_FORUM_URL || "http://localhost:4200";
+    : null;
+  const explicitNext = searchParams.get("next");
+
+  // OAuth callbackUrl: redirect back to /login so the role-based redirect logic runs
+  const oauthCallbackUrl = ssoReturnTo || explicitNext || "/login";
+
+  // OTP success redirect: same logic
+  const otpSuccessUrl = ssoReturnTo || explicitNext || "/login";
 
   // ── Redirect already-logged-in users ──
   useEffect(() => {
@@ -46,9 +56,12 @@ function LoginContent() {
     const user = session.user as any;
 
     // If there's an explicit "next" param or SSO, honour it
-    const explicitNext = searchParams.get("next");
-    if (explicitNext || (sso && sig)) {
-      router.replace(returnTo);
+    if (ssoReturnTo) {
+      router.replace(ssoReturnTo);
+      return;
+    }
+    if (explicitNext) {
+      router.replace(explicitNext);
       return;
     }
 
@@ -59,7 +72,7 @@ function LoginContent() {
       // Non-platform (community) users → Classgrid Talk
       router.replace("/support/inquiry");
     }
-  }, [status, session, router, searchParams, sso, sig, returnTo]);
+  }, [status, session, router, ssoReturnTo, explicitNext]);
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "otp">("email");
@@ -97,15 +110,15 @@ function LoginContent() {
   };
 
   const handleGoogle = () => {
-    signIn("google", { callbackUrl: returnTo });
+    signIn("google", { callbackUrl: oauthCallbackUrl });
   };
 
   const handleGithub = () => {
-    signIn("github", { callbackUrl: returnTo });
+    signIn("github", { callbackUrl: oauthCallbackUrl });
   };
 
   const handleLinkedIn = () => {
-    signIn("linkedin", { callbackUrl: returnTo });
+    signIn("linkedin", { callbackUrl: oauthCallbackUrl });
   };
 
   const handleSendOTP = async (e: React.FormEvent) => {
@@ -182,8 +195,8 @@ function LoginContent() {
         return;
       }
 
-      // Success — navigate
-      window.location.href = returnTo;
+      // Success — navigate (go to /login so role-based redirect kicks in)
+      window.location.href = otpSuccessUrl;
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
       setLoading(false);
