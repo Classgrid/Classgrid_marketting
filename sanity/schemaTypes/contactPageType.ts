@@ -34,7 +34,7 @@ export const contactPageType = defineType({
         }),
       ],
       initialValue: [
-        { department: 'Primary Contact', email: 'nikhil.shinde@classgrid.in', phone: '+91 8623947038', description: 'Sales, onboarding, and general communication.' },
+        { department: 'Primary Contact', email: 'contact@classgrid.in', phone: '+91 8623947038', description: 'Sales, onboarding, and general communication.' },
         { department: 'Technical Support', email: 'support@classgrid.in', phone: '+91 8149277038', description: 'Platform support and operational assistance.' },
       ],
     }),

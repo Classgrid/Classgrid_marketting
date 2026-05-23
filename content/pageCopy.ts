@@ -722,7 +722,7 @@ export const faqItems = [
   },
   {
     q: "How do we request support?",
-    a: "Use support@classgrid.in or nikhil.shinde@classgrid.in for technical help and coordination.",
+    a: "Use support@classgrid.in or contact@classgrid.in for technical help and coordination.",
   },
   {
     q: "Does Classgrid use ad tracking cookies?",
@@ -770,7 +770,7 @@ export const contactCopy = {
   cards: [
     {
       kicker: "Primary Contact",
-      address: "nikhil.shinde@classgrid.in",
+      address: "contact@classgrid.in",
       body: "General communication, onboarding, and coordination.",
     },
     {
