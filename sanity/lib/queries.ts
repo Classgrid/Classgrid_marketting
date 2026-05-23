@@ -195,6 +195,12 @@ export const caseStudyBySlugQuery = `*[_type == "caseStudy" && slug.current == $
   "championHeadshotUrl": championHeadshot.asset->url,
   championQuote,
   championSocialLink,
+  champions[]{
+    name,
+    role,
+    "headshotUrl": headshot.asset->url,
+    socialLink
+  },
   body[]{ 
     ...,
     _type == "video" => {

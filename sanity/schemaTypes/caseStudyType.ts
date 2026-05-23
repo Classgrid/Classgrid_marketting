@@ -161,6 +161,39 @@ export const caseStudyType = defineType({
       group: 'detailPage',
     }),
     defineField({
+      name: 'champions',
+      title: '👥 Case Study Team Members',
+      description: 'Add 2–5 people who worked on this case study. These appear as a team credits section. The main quote stays separate above.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'caseStudyChampion',
+          title: 'Team Member',
+          fields: [
+            defineField({ name: 'name', title: 'Name', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'role', title: 'Role / Designation', type: 'string' }),
+            defineField({ name: 'headshot', title: 'Headshot Photo', type: 'image', options: { hotspot: true } }),
+            defineField({
+              name: 'socialLink',
+              title: '🔗 Social Profile Link',
+              description: 'URL to redirect to when clicking the headshot (e.g. LinkedIn, X/Twitter)',
+              type: 'url',
+              validation: (rule) => rule.uri({ scheme: ['http', 'https'] }),
+            }),
+          ],
+          preview: {
+            select: { title: 'name', subtitle: 'role', media: 'headshot' },
+            prepare({ title, subtitle, media }: any) {
+              return { title: title || 'Unnamed Member', subtitle: subtitle || '', media };
+            },
+          },
+        },
+      ],
+      validation: (rule) => rule.max(5),
+      group: 'detailPage',
+    }),
+    defineField({
       name: 'overview',
       title: 'Overview / Executive Summary',
       name: 'conclusion',
