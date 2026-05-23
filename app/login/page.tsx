@@ -57,7 +57,7 @@ function LoginContent() {
       router.replace("/support/ticket");
     } else {
       // Non-platform (community) users → Classgrid Talk
-      router.replace("/community");
+      router.replace("/support/inquiry");
     }
   }, [status, session, router, searchParams, sso, sig, returnTo]);
 
