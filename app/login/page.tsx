@@ -1,14 +1,25 @@
 "use client";
 
 import { useState, Suspense, useEffect, useRef } from "react";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 const OTP_TTL_SECONDS = 60;
+
+/** Map NextAuth URL error codes to user-friendly messages */
+const OAUTH_ERROR_MAP: Record<string, string> = {
+  OAuthCallback: "Sign-in was interrupted. Please try again.",
+  OAuthAccountNotLinked: "This email is already linked to another sign-in method.",
+  OAuthSignin: "Could not start the sign-in flow. Please try again.",
+  OAuthCreateAccount: "Could not create your account. Please try again.",
+  Callback: "Something went wrong during sign-in. Please try again.",
+  AccessDenied: "Access denied. You may not have permission to sign in.",
+  default: "An unexpected error occurred. Please try again.",
+};
 
 function formatCountdown(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -17,7 +28,10 @@ function formatCountdown(seconds: number) {
 }
 
 function LoginContent() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const searchParams = useSearchParams();
+
   // If Discourse sent SSO params (sso + sig), complete the handshake after login
   const sso = searchParams.get("sso");
   const sig = searchParams.get("sig");
@@ -25,10 +39,38 @@ function LoginContent() {
     ? `/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
     : searchParams.get("next") || process.env.NEXT_PUBLIC_FORUM_URL || "http://localhost:4200";
 
+  // ── Redirect already-logged-in users ──
+  useEffect(() => {
+    if (status !== "authenticated" || !session?.user) return;
+
+    const user = session.user as any;
+
+    // If there's an explicit "next" param or SSO, honour it
+    const explicitNext = searchParams.get("next");
+    if (explicitNext || (sso && sig)) {
+      router.replace(returnTo);
+      return;
+    }
+
+    // Platform users (student / faculty / admin) → raise ticket page
+    if (user.isPlatformUser) {
+      router.replace("/support/ticket");
+    } else {
+      // Non-platform (community) users → Classgrid Talk
+      router.replace("/community");
+    }
+  }, [status, session, router, searchParams, sso, sig, returnTo]);
+
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "otp">("email");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // ── Show friendly error from URL params (e.g. ?error=OAuthCallback) ──
+  const urlError = searchParams.get("error");
+  const friendlyUrlError = urlError
+    ? OAUTH_ERROR_MAP[urlError] || OAUTH_ERROR_MAP.default
+    : "";
 
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -148,6 +190,20 @@ function LoginContent() {
     }
   };
 
+  // While checking session or redirecting, show spinner
+  if (status === "loading" || status === "authenticated") {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin mx-auto" />
+          <p className="text-sm text-muted-foreground">
+            {status === "authenticated" ? "Redirecting you..." : "Loading..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative font-sans">
       
@@ -165,6 +221,13 @@ function LoginContent() {
             <h1 className="text-3xl font-medium tracking-tight text-slate-900 dark:text-[#f1f1f1]">Welcome to Classgrid</h1>
             <p className="text-[15px] text-slate-500 dark:text-[#888888]">Unified ERP infrastructure for modern institutions</p>
           </div>
+
+          {/* Show OAuth error from URL (e.g. OAuthCallback) */}
+          {friendlyUrlError && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400">
+              {friendlyUrlError}
+            </div>
+          )}
 
           <div className="flex flex-col gap-3 mb-8">
             <button
