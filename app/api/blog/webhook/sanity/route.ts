@@ -103,10 +103,26 @@ export async function POST(req: Request) {
       );
     }
 
-    // 4. Extract a displayable title
+    // 4. Check if sendSubscriberNotification is enabled
+    //    Only queue the email if the author explicitly turned the toggle ON
+    const { client: sanityWriteClient } = await import("@/sanity/lib/client");
+    const fullDoc = await sanityWriteClient.fetch(
+      `*[_id == $docId || _id == "drafts." + $docId][0]{ sendSubscriberNotification }`,
+      { docId: documentId }
+    );
+
+    if (!fullDoc?.sendSubscriberNotification) {
+      console.log(`⏭️ Webhook received for "${slug}" but sendSubscriberNotification is OFF. Skipping.`);
+      return NextResponse.json(
+        { message: "Webhook received but notification toggle is OFF. No email queued." },
+        { status: 202 }
+      );
+    }
+
+    // 5. Extract a displayable title
     const title = getLocalizedString(payload.title, "Untitled");
 
-    // 5. Insert into the queue (upsert to handle duplicate webhook fires)
+    // 6. Insert into the queue (upsert to handle duplicate webhook fires)
     const { error: queueError } = await supabaseAdmin
       .from("email_notification_queue")
       .upsert(
@@ -126,6 +142,22 @@ export async function POST(req: Request) {
     if (queueError) {
       console.error("Queue insert error:", queueError);
       return NextResponse.json({ error: "Failed to queue notification" }, { status: 500 });
+    }
+
+    // 7. Reset the toggle so it doesn't fire again on next publish
+    try {
+      const { createClient } = await import("@sanity/client");
+      const writeClient = createClient({
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "a4wk6kp5",
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+        apiVersion: "2026-05-01",
+        token: process.env.SANITY_API_WRITE_TOKEN,
+        useCdn: false,
+      });
+      await writeClient.patch(documentId).set({ sendSubscriberNotification: false }).commit();
+      console.log(`🔄 Reset sendSubscriberNotification for "${slug}"`);
+    } catch (resetErr) {
+      console.warn("⚠️ Could not reset notification toggle:", resetErr);
     }
 
     console.log(`📬 Queued ${documentType} notification: "${title}" (${slug})`);
