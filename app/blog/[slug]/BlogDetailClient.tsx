@@ -235,7 +235,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                     src={section.imageUrl}
                     alt={section.imageAlt || section.heading || 'Blog section image'}
                     fill
-                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    className={`object-cover transition-transform duration-700 ${!isMobile ? 'hover:scale-105' : ''}`}
                     sizes="(max-width: 768px) 100vw, 55vw"
                   />
                 </div>
@@ -254,7 +254,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
 
               if (layout === 'center') {
                 return (
-                  <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
+                  <MotionDiv key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
                     {imageElement}
                     <div className="text-center max-w-2xl mx-auto">
                       {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
@@ -265,7 +265,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
               }
 
               return (
-                <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
+                <MotionDiv key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
                   <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
                     {imageElement || (
                       <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">

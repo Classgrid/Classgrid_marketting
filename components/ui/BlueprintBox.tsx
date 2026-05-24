@@ -64,8 +64,8 @@ export function BlueprintBox({
         {showTopBorder && (
           <>
             <div className="absolute top-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
-            <BlueprintCrosshair className="-top-[8px] -left-[8px] hidden sm:block" />
-            <BlueprintCrosshair className="-top-[8px] -right-[8px] hidden sm:block" />
+            <BlueprintCrosshair className="-top-[6px] -left-[6px] sm:-top-[8px] sm:-left-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
+            <BlueprintCrosshair className="-top-[6px] -right-[6px] sm:-top-[8px] sm:-right-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
           </>
         )}
 
@@ -75,8 +75,8 @@ export function BlueprintBox({
         {showBottomBorder && (
           <>
             <div className="absolute bottom-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
-            <BlueprintCrosshair className="-bottom-[8px] -left-[8px] hidden sm:block" />
-            <BlueprintCrosshair className="-bottom-[8px] -right-[8px] hidden sm:block" />
+            <BlueprintCrosshair className="-bottom-[6px] -left-[6px] sm:-bottom-[8px] sm:-left-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
+            <BlueprintCrosshair className="-bottom-[6px] -right-[6px] sm:-bottom-[8px] sm:-right-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
           </>
         )}
       </div>
@@ -115,8 +115,8 @@ export function BlueprintSection({
       />
       {showCrosshairs && (
         <>
-          <BlueprintCrosshair className="-top-[8px] -left-[8px] hidden sm:block" />
-          <BlueprintCrosshair className="-top-[8px] -right-[8px] hidden sm:block" />
+          <BlueprintCrosshair className="-top-[6px] -left-[6px] sm:-top-[8px] sm:-left-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
+          <BlueprintCrosshair className="-top-[6px] -right-[6px] sm:-top-[8px] sm:-right-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
         </>
       )}
       {children}
