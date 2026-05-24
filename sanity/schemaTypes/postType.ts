@@ -307,29 +307,71 @@ export const postType = defineType({
               type: 'string',
             }),
             defineField({
+              name: 'topText',
+              title: 'Top Text (Full Width)',
+              description: 'Optional paragraph shown ABOVE the media and side text layout.',
+              type: 'text',
+              rows: 3,
+            }),
+            defineField({
               name: 'text',
-              title: 'Section Text',
+              title: 'Side Text',
+              description: 'Text shown NEXT to the image/video.',
               type: 'text',
               rows: 5,
+            }),
+            defineField({
+              name: 'bottomText',
+              title: 'Bottom Text (Full Width)',
+              description: 'Optional paragraph shown BELOW the media and side text layout.',
+              type: 'text',
+              rows: 3,
+            }),
+            defineField({
+              name: 'mediaType',
+              title: 'Media Type',
+              type: 'string',
+              options: {
+                list: [
+                  { title: '🖼️ Image', value: 'image' },
+                  { title: '🎬 Video', value: 'video' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'image',
             }),
             defineField({
               name: 'image',
               title: 'Section Image',
               type: 'image',
               options: { hotspot: true },
+              hidden: ({ parent }) => parent?.mediaType === 'video',
               fields: [
                 defineField({ name: 'alt', title: 'Alt Text', type: 'string' }),
               ],
             }),
             defineField({
+              name: 'videoUrl',
+              title: 'Video URL (YouTube/Vimeo)',
+              type: 'url',
+              hidden: ({ parent }) => parent?.mediaType !== 'video',
+            }),
+            defineField({
+              name: 'videoFile',
+              title: 'Upload Video File',
+              type: 'file',
+              options: { accept: 'video/*' },
+              hidden: ({ parent }) => parent?.mediaType !== 'video',
+            }),
+            defineField({
               name: 'layout',
-              title: 'Image Position',
+              title: 'Media Position',
               type: 'string',
               options: {
                 list: [
-                  { title: '🖼️ Image Left, Text Right', value: 'left' },
-                  { title: '🖼️ Image Right, Text Left', value: 'right' },
-                  { title: '🖼️ Image Center (Full Width)', value: 'center' },
+                  { title: '← Media Left, Text Right', value: 'left' },
+                  { title: 'Media Right, Text Left →', value: 'right' },
+                  { title: '↔ Media Center (Full Width)', value: 'center' },
                 ],
                 layout: 'radio',
               },
@@ -340,14 +382,16 @@ export const postType = defineType({
             select: {
               title: 'heading',
               subtitle: 'layout',
-              media: 'image',
+              mediaType: 'mediaType',
+              image: 'image',
             },
-            prepare({ title, subtitle, media }: any) {
-              const layoutLabel = subtitle === 'left' ? '← Image Left' : subtitle === 'right' ? 'Image Right →' : '↔ Center';
+            prepare({ title, subtitle, mediaType, image }: any) {
+              const layoutLabel = subtitle === 'left' ? '← Media Left' : subtitle === 'right' ? 'Media Right →' : '↔ Center';
+              const isVideo = mediaType === 'video';
               return {
                 title: title || 'Untitled Section',
-                subtitle: layoutLabel,
-                media,
+                subtitle: `${isVideo ? '🎬 Video' : '🖼️ Image'} | ${layoutLabel}`,
+                media: !isVideo ? image : undefined,
               };
             },
           },
