@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { DM_Sans, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { siteMeta } from "@/content/siteContent";
 import { Navbar } from "@/components/layout/Navbar";
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Footer />
           </div>
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
