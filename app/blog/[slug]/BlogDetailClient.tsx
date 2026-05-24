@@ -459,7 +459,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
               <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-sky-600/30 bg-sky-600/10 hover:bg-sky-600/20 px-4 py-2 text-sm font-medium transition-colors text-sky-500 flex-1 sm:flex-auto justify-center">
                 <Linkedin className="w-4 h-4" /> <span className="hidden xs:inline">LinkedIn</span>
               </a>
-              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out this post:\n\n${canonicalUrl}`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-600/10 hover:bg-emerald-600/20 px-4 py-2 text-sm font-medium transition-colors text-emerald-500 flex-1 sm:flex-auto justify-center">
+              <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this blog post from Classgrid:\n${canonicalUrl}`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-600/10 hover:bg-emerald-600/20 px-4 py-2 text-sm font-medium transition-colors text-emerald-500 flex-1 sm:flex-auto justify-center">
                 <WhatsappIcon className="w-4 h-4" /> <span className="hidden xs:inline">WhatsApp</span>
               </a>
             </div>
