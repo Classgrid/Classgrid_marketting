@@ -19,7 +19,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { BlogFloatingSocialBar } from "@/components/blog/BlogFloatingSocialBar";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { urlFor } from "@/sanity/lib/image";
 import { buildLangHref, extractLocaleString, type SupportedLang } from "@/lib/locale";
@@ -289,8 +288,6 @@ export function BlogClient({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-      <BlogFloatingSocialBar />
-
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
         <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm tracking-wide text-emerald-500">
           Blog
