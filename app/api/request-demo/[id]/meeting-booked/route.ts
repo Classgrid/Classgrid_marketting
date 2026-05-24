@@ -86,13 +86,17 @@ export async function POST(
         const { getSmtpTransporter, getSenderAddress } = await import("@/lib/smtp-mailer");
         const { getDemoConfirmationEmailHtml } = await import("@/lib/email-templates");
         const transporter = getSmtpTransporter();
-        const { format } = await import("date-fns");
-        
         const scheduledDate = new Date(lead.scheduledAt);
-        const formatStr = scheduledDate.getFullYear() === new Date().getFullYear() 
-          ? "EEEE, MMMM d 'at' h:mm a" 
-          : "EEEE, MMMM d, yyyy 'at' h:mm a";
-        const dateStr = format(scheduledDate, formatStr);
+        const dateStr = scheduledDate.toLocaleString("en-IN", {
+          weekday: "long",
+          year: scheduledDate.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: "Asia/Kolkata",
+        });
 
         await transporter.sendMail({
           from: getSenderAddress(),
