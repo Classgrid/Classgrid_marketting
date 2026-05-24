@@ -321,13 +321,22 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
           <div className="py-12 px-4 sm:px-6 space-y-16 md:space-y-20">
             {post.contentSections.map((section: any, i: number) => {
               const layout = section.layout || 'left';
+              const mediaType = section.mediaType || 'image';
               const imageFirst = layout === 'left';
 
-              const imageElement = section.imageUrl ? (
+              const mediaElement = mediaType === 'video' && section.videoUrl ? (
+                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10`}>
+                  <video
+                    src={section.videoUrl}
+                    controls
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : section.imageUrl ? (
                 <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10`}>
                   <Image
                     src={section.imageUrl}
-                    alt={section.imageAlt || section.heading || 'Blog section image'}
+                    alt={section.imageAlt || section.heading || 'Blog section media'}
                     fill
                     className={`object-cover transition-transform duration-700 ${!isMobile ? 'hover:scale-105' : ''}`}
                     sizes="(max-width: 768px) 100vw, 55vw"
@@ -350,30 +359,44 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 ? `section-${i}-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`
                 : `section-${i}`;
 
+              const topTextElement = section.topText ? (
+                <p className="text-base text-muted-foreground leading-7 antialiased mb-4 md:mb-6">{section.topText}</p>
+              ) : null;
+              
+              const bottomTextElement = section.bottomText ? (
+                <p className="text-base text-muted-foreground leading-7 antialiased mt-4 md:mt-6">{section.bottomText}</p>
+              ) : null;
+
               if (layout === 'center') {
                 return (
                   <MotionDiv id={sectionId} key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
-                    {imageElement}
+                    {topTextElement}
+                    {mediaElement}
                     <div className="text-center max-w-2xl mx-auto">
                       {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
                       {section.text && <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>}
                     </div>
+                    {bottomTextElement}
                   </MotionDiv>
                 );
               }
 
               return (
-                <MotionDiv id={sectionId} key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
-                  <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
-                    {imageElement || (
-                      <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
-                        <p className="text-zinc-500">No image</p>
-                      </div>
-                    )}
-                  </MotionDiv>
-                  <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
-                    {textElement}
-                  </MotionDiv>
+                <MotionDiv id={sectionId} key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className="flex flex-col gap-6 md:gap-8">
+                  {topTextElement}
+                  <div className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
+                    <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
+                      {mediaElement || (
+                        <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
+                          <p className="text-zinc-500">No media</p>
+                        </div>
+                      )}
+                    </MotionDiv>
+                    <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
+                      {textElement}
+                    </MotionDiv>
+                  </div>
+                  {bottomTextElement}
                 </MotionDiv>
               );
             })}

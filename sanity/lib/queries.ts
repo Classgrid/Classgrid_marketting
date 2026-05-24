@@ -75,10 +75,14 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{
   ),
   contentSections[]{
     heading,
+    topText,
     text,
+    bottomText,
+    mediaType,
     layout,
     "imageUrl": image.asset->url,
-    "imageAlt": coalesce(image.alt, heading)
+    "imageAlt": coalesce(image.alt, heading),
+    "videoUrl": coalesce(videoFile.asset->url, videoUrl)
   },
   "prevPost": *[_type == "post" && publishedAt < ^.publishedAt] | order(publishedAt desc)[0]{ title, "slug": slug.current },
   "nextPost": *[_type == "post" && publishedAt > ^.publishedAt] | order(publishedAt asc)[0]{ title, "slug": slug.current }
