@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectMongo } from "@/lib/mongodb";
 import { DemoRequest } from "@/lib/models/DemoRequest";
 import { google } from "googleapis";
+import { cookies } from "next/headers";
 
 export async function POST(
   req: Request,
@@ -10,6 +11,13 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await req.json();
+
+    // Security: Validate browser session cookie
+    const cookieStore = await cookies();
+    const session = cookieStore.get("demo_session");
+    if (!session || session.value !== id) {
+      return NextResponse.json({ ok: false, message: "Unauthorized or expired session." }, { status: 401 });
+    }
 
     await connectMongo();
 
@@ -20,6 +28,10 @@ export async function POST(
 
     if (!lead.isEmailVerified) {
       return NextResponse.json({ ok: false, message: "Email not verified." }, { status: 403 });
+    }
+
+    if (lead.status === "demo_scheduled") {
+      return NextResponse.json({ ok: false, message: "A meeting has already been scheduled for this request." }, { status: 400 });
     }
 
     let meetingUrl = "";

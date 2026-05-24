@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectMongo } from "@/lib/mongodb";
 import { DemoRequest } from "@/lib/models/DemoRequest";
+import { cookies } from "next/headers";
 
 export async function PUT(
   req: Request,
@@ -9,6 +10,14 @@ export async function PUT(
   try {
     const body = await req.json();
     const { id } = await params;
+
+    // Security: Validate browser session cookie
+    const cookieStore = await cookies();
+    const session = cookieStore.get("demo_session");
+    if (!session || session.value !== id) {
+      return NextResponse.json({ ok: false, message: "Unauthorized or expired session." }, { status: 401 });
+    }
+
     await connectMongo();
 
     // Atomic Rate Limit: prevent concurrent spamming (race conditions)
