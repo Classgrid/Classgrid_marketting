@@ -170,11 +170,16 @@ function buildNotificationEmailHtml(
   const metaLine = isChangelog
     ? [formatUpdateType(post.updateType), post.versionLabel ? `Version ${post.versionLabel}` : "", formatDate(post.releaseDate)]
         .filter(Boolean).join(" | ")
-    : [`By ${post.author || "Classgrid Team"}`, formatDate(post.publishedAt)].filter(Boolean).join(" | ");
+    : (() => {
+        const names = (post.authorNames && post.authorNames.length > 0)
+          ? post.authorNames.join(' & ')
+          : (post.author || 'Classgrid Team');
+        return [`By ${names}`, formatDate(post.publishedAt)].filter(Boolean).join(' | ');
+      })();
   const summary = post.resolvedSummary || (isChangelog
     ? "We just published a new product update. Click below to view the full changelog entry."
     : "We just published a new article on our blog. Click below to read the full post.");
-  const ctaLabel = isChangelog ? "View Product Update" : "Read Full Article";
+  const ctaLabel = isChangelog ? "View Product Update" : "Read Blog";
   const eyebrow = isChangelog ? "New product update from Classgrid" : "A new insight from Classgrid";
 
   return `<!DOCTYPE html>
@@ -266,7 +271,7 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
     item.document_type === "post"
       ? client.fetch(
           `*[_type == "post" && _id == $documentId][0]{
-            _id, _type, title, "slug": slug.current, excerpt, publishedAt, coverImage, author
+            _id, _type, title, "slug": slug.current, excerpt, publishedAt, coverImage, author, "authorNames": authors[].name
           }`,
           { documentId: item.document_id }
         )
