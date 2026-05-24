@@ -708,7 +708,7 @@ export default function DemoSuccessPage() {
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.1 }}
-            className="w-full max-w-[500px] mx-auto mt-10 mb-6"
+            className="w-full max-w-[500px] mx-auto mt-10 mb-6 px-4 sm:px-0"
           >
             <div className="relative text-center py-10 px-8 rounded-2xl border border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-sm overflow-hidden">
               {/* Subtle top glow line */}
