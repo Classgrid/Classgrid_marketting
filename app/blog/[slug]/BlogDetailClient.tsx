@@ -62,6 +62,12 @@ const slideUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
+// Directional slide animation — matches case study storyblock feel
+const fadeSlide = (fromLeft: boolean) => ({
+  hidden: { opacity: 0, x: fromLeft ? -40 : 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+});
+
 interface BlogDetailClientProps {
   post: any;
   relatedPosts: any[];
@@ -201,12 +207,10 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             <PortableTextBlock value={post.body} showAccentBars={false} />
           </div>
         </article>
-      </BlueprintBox>
 
-      {/* ── VISUAL CONTENT SECTIONS (Case-Study Style Alternating Layouts) ── */}
-      {post.contentSections && post.contentSections.length > 0 && (
-        <section className="py-16">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-28">
+        {/* ── VISUAL CONTENT SECTIONS (inside BlueprintBox) ── */}
+        {post.contentSections && post.contentSections.length > 0 && (
+          <div className="py-12 px-4 sm:px-6 space-y-16 md:space-y-20">
             {post.contentSections.map((section: any, i: number) => {
               const layout = section.layout || 'left';
               const imageFirst = layout === 'left';
@@ -226,44 +230,44 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
               const textElement = (
                 <div>
                   {section.heading && (
-                    <h3 className="text-2xl font-semibold mb-4 text-white leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>
+                    <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>
                   )}
                   {section.text && (
-                    <p className="text-base text-zinc-300 leading-7 antialiased">{section.text}</p>
+                    <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>
                   )}
                 </div>
               );
 
               if (layout === 'center') {
                 return (
-                  <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="max-w-4xl mx-auto space-y-6">
+                  <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
                     {imageElement}
                     <div className="text-center max-w-2xl mx-auto">
-                      {section.heading && <h3 className="text-2xl font-semibold mb-4 text-white leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
-                      {section.text && <p className="text-base text-zinc-300 leading-7 antialiased">{section.text}</p>}
+                      {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
+                      {section.text && <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>}
                     </div>
                   </MotionDiv>
                 );
               }
 
               return (
-                <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-10 md:gap-16 items-center`}>
-                  <div className="w-full md:w-[60%]">
+                <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-12 items-center`}>
+                  <MotionDiv variants={fadeSlide(imageFirst)} className="w-full md:w-[55%]">
                     {imageElement || (
                       <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
                         <p className="text-zinc-500">No image</p>
                       </div>
                     )}
-                  </div>
-                  <div className="w-full md:w-[40%] flex flex-col max-w-sm">
+                  </MotionDiv>
+                  <MotionDiv variants={fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
                     {textElement}
-                  </div>
+                  </MotionDiv>
                 </MotionDiv>
               );
             })}
           </div>
-        </section>
-      )}
+        )}
+      </BlueprintBox>
 
       {/* Back to narrow column for references & author */}
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 relative">
