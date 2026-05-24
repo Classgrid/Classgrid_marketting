@@ -261,7 +261,7 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;te
 }
 
 // ─── Cron Processing Logic ───────────────────────────────────────────────────
-async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed: number }> {
+async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promise<{ sent: number; failed: number; done: boolean; totalProcessed?: number }> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
   const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
   const senderEmail = process.env.BREVO_SENDER_EMAIL || "support@classgrid.in";
@@ -339,10 +339,21 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
 
   if (subError) throw subError;
   if (!subscribers || subscribers.length === 0) {
-    return { sent: 0, failed: 0 };
+    return { sent: 0, failed: 0, done: true };
   }
 
-  // 5. Build subject and send to each subscriber
+  // 5. Build subject and send to a BATCH of subscribers
+  // We only send BATCH_SIZE emails per cron invocation to stay under the 10s timeout.
+  // The `alreadySent` offset tells us where to resume from the previous cron run.
+  const BATCH_SIZE = 3;
+  const startIndex = alreadySent;
+  const batch = subscribers.slice(startIndex, startIndex + BATCH_SIZE);
+
+  if (batch.length === 0) {
+    // All subscribers already emailed
+    return { sent: 0, failed: 0, done: true };
+  }
+
   const subject = item.document_type === "changelogEntry"
     ? `Product Update: ${resolvedPost.resolvedTitle}`
     : `New Post: ${resolvedPost.resolvedTitle}`;
@@ -350,7 +361,7 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
   let sentCount = 0;
   let failCount = 0;
 
-  for (const sub of subscribers) {
+  for (const sub of batch) {
     try {
       const hash = generateUnsubscribeHash(sub.email);
       const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(sub.email)}&token=${hash}`;
@@ -371,7 +382,10 @@ async function processQueueItem(item: QueueItem): Promise<{ sent: number; failed
     }
   }
 
-  return { sent: sentCount, failed: failCount };
+  const totalProcessed = startIndex + sentCount + failCount;
+  const allDone = totalProcessed >= subscribers.length;
+
+  return { sent: sentCount, failed: failCount, done: allDone, totalProcessed };
 }
 
 // ─── GET handler (Cron endpoint) ─────────────────────────────────────────────
@@ -448,30 +462,56 @@ export async function GET(req: Request) {
         .eq("id", item.id);
 
       try {
-        const { sent, failed } = await processQueueItem(item as QueueItem);
+        // Pass sent_count as offset so we resume from where the last cron run left off
+        const alreadySent = item.sent_count || 0;
+        const { sent, failed, done, totalProcessed } = await processQueueItem(item as QueueItem, alreadySent);
 
-        // Mark as sent
-        await supabaseAdmin
-          .from("email_notification_queue")
-          .update({
+        if (done) {
+          // All subscribers have been emailed — mark as sent
+          await supabaseAdmin
+            .from("email_notification_queue")
+            .update({
+              status: "sent",
+              sent_count: (alreadySent + sent),
+              failed_count: (item.failed_count || 0) + failed,
+              processed_at: new Date().toISOString(),
+              error_message: null,
+            })
+            .eq("id", item.id);
+
+          results.push({
+            id: item.id,
+            documentType: item.document_type,
+            slug: item.slug,
             status: "sent",
-            sent_count: sent,
-            failed_count: failed,
-            processed_at: new Date().toISOString(),
-            error_message: null,
-          })
-          .eq("id", item.id);
+            sent: alreadySent + sent,
+            failed: (item.failed_count || 0) + failed,
+          });
 
-        results.push({
-          id: item.id,
-          documentType: item.document_type,
-          slug: item.slug,
-          status: "sent",
-          sent,
-          failed,
-        });
+          console.log(`✅ Completed ${item.document_type} "${item.title}" — total ${alreadySent + sent} sent`);
+        } else {
+          // More subscribers remain — keep as "pending" so next cron picks it up
+          await supabaseAdmin
+            .from("email_notification_queue")
+            .update({
+              status: "pending",
+              sent_count: totalProcessed || (alreadySent + sent),
+              failed_count: (item.failed_count || 0) + failed,
+              processed_at: new Date().toISOString(),
+              error_message: null,
+            })
+            .eq("id", item.id);
 
-        console.log(`✅ Sent ${item.document_type} "${item.title}" to ${sent} subscribers (${failed} failed)`);
+          results.push({
+            id: item.id,
+            documentType: item.document_type,
+            slug: item.slug,
+            status: "partial",
+            sent: alreadySent + sent,
+          });
+
+          console.log(`⏳ Partial ${item.document_type} "${item.title}" — ${totalProcessed}/${alreadySent + sent + failed} done, resuming next cron`);
+        }
       } catch (processError: any) {
         const errorMsg = processError?.message || "Unknown error";
         const newRetryCount = (item.retry_count || 0) + 1;
