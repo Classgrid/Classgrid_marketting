@@ -479,39 +479,38 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
 
             return (
               <MotionDiv id="blog-author" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 border-t border-border pt-10 pb-6">
-                {authorsList.map((authorItem: any, idx: number) => {
-                  const aName = authorItem.name || 'ClassGrid Team';
-                  const aImage = authorItem.image;
-                  const aLink = authorItem.profileLink;
-                  const aBio = authorItem.bio || (idx === 0 ? "Exploring how modern technology integrates directly into global education. Dedicated to bringing scalable solutions to administration through ClassGrid." : undefined);
+                <div className="text-center mb-8">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">
+                    {authorsList.length > 1 ? 'Content Writers' : 'Content Writer'}
+                  </span>
+                </div>
+                <div className={`flex flex-wrap items-start justify-center ${authorsList.length > 1 ? 'gap-10 md:gap-14' : 'gap-6'}`}>
+                  {authorsList.map((authorItem: any, idx: number) => {
+                    const aName = authorItem.name || 'ClassGrid Team';
+                    const aImage = authorItem.image;
+                    const aLink = authorItem.profileLink;
+                    const aBio = authorItem.bio || (idx === 0 ? "Exploring how modern technology integrates directly into global education. Dedicated to bringing scalable solutions to administration through ClassGrid." : undefined);
 
-                  const avatarEl = (
-                    <Avatar className="h-20 w-20 ring-2 ring-emerald-500/20 hover:ring-emerald-500 hover:scale-105 transition-all duration-300 cursor-pointer">
-                      {aImage && <AvatarImage src={urlFor(aImage).url()} alt={aName} className="object-cover" />}
-                      <AvatarFallback className="bg-emerald-500/10 text-emerald-500 text-2xl font-bold">{aName.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  );
+                    const avatarEl = (
+                      <Avatar className="h-20 w-20 ring-2 ring-emerald-500/20 hover:ring-emerald-500 hover:scale-105 transition-all duration-300 cursor-pointer">
+                        {aImage && <AvatarImage src={urlFor(aImage).url()} alt={aName} className="object-cover" />}
+                        <AvatarFallback className="bg-emerald-500/10 text-emerald-500 text-2xl font-bold">{aName.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    );
 
-                  return (
-                    <div key={idx}>
-                      {idx > 0 && <div className="my-8 border-t border-border/50" />}
-                      <div className={`flex flex-col md:flex-row items-center md:items-start gap-6 ${idx > 0 ? '' : ''}`}>
+                    return (
+                      <div key={idx} className="flex flex-col items-center text-center max-w-[200px]">
                         {aLink ? <a href={aLink} target="_blank" rel="noreferrer" title={`Visit ${aName}'s profile`}>{avatarEl}</a> : avatarEl}
-                        <div className="text-center md:text-left">
-                          <h3 className="text-xl font-bold text-foreground flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
-                            {aName}
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full w-fit">Content Writer</span>
-                          </h3>
-                          {aBio && (
-                            <p className="text-base text-muted-foreground mt-2 max-w-lg leading-relaxed">
-                              {aBio}
-                            </p>
-                          )}
-                        </div>
+                        <h3 className="text-base font-bold text-foreground mt-3">{aName}</h3>
+                        {aBio && (
+                          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed line-clamp-3">
+                            {aBio}
+                          </p>
+                        )}
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </MotionDiv>
             );
           })()}
