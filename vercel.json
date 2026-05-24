@@ -7,7 +7,7 @@
       "maxDuration": 10
     },
     "app/api/cron/send-notifications/route.ts": {
-      "maxDuration": 60
+      "maxDuration": 10
     },
     "app/api/blog/subscribe/route.ts": {
       "maxDuration": 10
@@ -18,11 +18,5 @@
     "app/api/webhooks/telegram/route.ts": {
       "maxDuration": 10
     }
-  },
-  "crons": [
-    {
-      "path": "/api/cron/send-notifications?secret=classgrid-cron-2026-secret",
-      "schedule": "*/5 * * * *"
-    }
-  ]
+  }
 }
