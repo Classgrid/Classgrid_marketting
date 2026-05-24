@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, notFound } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,11 +17,7 @@ import {
 } from "@/components/ui/input-otp";
 import { toast, Toaster } from "sonner";
 
-const TIME_SLOTS = [
-  "11:00am", "11:30am", "12:00pm", "12:30pm", 
-  "1:00pm", "1:30pm", "2:00pm", "2:30pm", 
-  "3:00pm", "3:30pm",
-];
+
 
 export default function DemoSuccessPage() {
   const searchParams = useSearchParams();
@@ -48,6 +44,8 @@ export default function DemoSuccessPage() {
 
   // Calendar State
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
   const [slideDir, setSlideDir] = useState(0);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -75,10 +73,38 @@ export default function DemoSuccessPage() {
     }
   }, [isVerified]);
 
+  useEffect(() => {
+    if (!date) return;
+    const fetchSlots = async () => {
+      setIsLoadingSlots(true);
+      try {
+        const res = await fetch(`/api/calendar/freebusy?date=${date.toISOString()}`);
+        const data = await res.json();
+        if (data.ok) {
+          setAvailableSlots(data.availableSlots);
+        } else {
+          setAvailableSlots(["11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm"]);
+        }
+      } catch (err) {
+        setAvailableSlots(["11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm"]);
+      } finally {
+        setIsLoadingSlots(false);
+      }
+    };
+    fetchSlots();
+    setSelectedTime(null);
+  }, [date]);
+
   const fetchLead = async () => {
     try {
       const res = await fetch(`/api/request-demo/${requestId}`);
       const data = await res.json();
+      
+      if (!res.ok) {
+        setLead(null);
+        return;
+      }
+      
       if (data.lead) {
         setLead(data.lead);
         setEditForm({
@@ -236,18 +262,15 @@ export default function DemoSuccessPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+      <main className="min-h-screen flex items-center justify-center bg-background text-foreground flex-col">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mb-4" />
+        <p className="text-muted-foreground animate-pulse text-sm">Verifying secure session...</p>
       </main>
     );
   }
 
   if (!lead) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <p className="text-muted-foreground">Invalid Request ID.</p>
-      </main>
-    );
+    notFound();
   }
 
   return (
@@ -290,7 +313,7 @@ export default function DemoSuccessPage() {
                     {isSavingEdit ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save"}
                   </Button>
                 </div>
-              ) : (
+              ) : !otpSent ? (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -299,7 +322,7 @@ export default function DemoSuccessPage() {
                 >
                   <Edit2 className="w-3.5 h-3.5 mr-1.5" /> Edit
                 </Button>
-              )}
+              ) : null}
             </div>
             
             {!isEditing ? (
@@ -642,31 +665,17 @@ export default function DemoSuccessPage() {
                       {format(date, date.getFullYear() === new Date().getFullYear() ? "EEE dd" : "EEE dd, yyyy")}
                     </h3>
                     <div className="flex flex-col gap-2">
-                      {(() => {
-                        const availableSlots = TIME_SLOTS.filter(time => {
-                          if (!isSameDay(date, new Date())) return true;
-                          const match = time.match(/(\d+):(\d+)(am|pm)/i);
-                          if (!match) return true;
-                          let hours = parseInt(match[1]);
-                          const minutes = parseInt(match[2]);
-                          const ampm = match[3].toLowerCase();
-                          if (ampm === "pm" && hours < 12) hours += 12;
-                          if (ampm === "am" && hours === 12) hours = 0;
-                          const slotDate = new Date();
-                          slotDate.setHours(hours, minutes, 0, 0);
-                          return slotDate > new Date();
-                        });
-
-                        if (availableSlots.length === 0) {
-                          return (
-                            <div className="text-center py-8 px-4 text-muted-foreground border rounded-lg bg-black/20 border-white/5">
-                              <p className="text-sm font-medium">No time slots available today.</p>
-                              <p className="text-xs mt-1">Please select tomorrow or a later date.</p>
-                            </div>
-                          );
-                        }
-
-                        return availableSlots.map((time) => {
+                      {isLoadingSlots ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
+                        </div>
+                      ) : availableSlots.length === 0 ? (
+                        <div className="text-center py-8 px-4 text-muted-foreground border rounded-lg bg-black/20 border-white/5">
+                          <p className="text-sm font-medium">No time slots available today.</p>
+                          <p className="text-xs mt-1">Please select tomorrow or a later date.</p>
+                        </div>
+                      ) : (
+                        availableSlots.map((time) => {
                           const isSelected = selectedTime === time;
                           return isSelected ? (
                             <div key={time} className="flex gap-2 w-full">
@@ -690,8 +699,8 @@ export default function DemoSuccessPage() {
                               {time}
                             </button>
                           );
-                        });
-                      })()}
+                        })
+                      )}
                     </div>
                   </>
                 )}
