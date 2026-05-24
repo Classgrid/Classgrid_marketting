@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
@@ -14,11 +14,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DocumentHero } from "@/components/ui/DocumentHero";
 import { ContentCoverImage } from "@/components/ui/ContentCoverImage";
-import { ContentCoverImage } from "@/components/ui/ContentCoverImage";
 import { SubscribeStrip } from "@/components/shared/SubscribeStrip";
 import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 import { buildLangHref, extractLocaleString, type SupportedLang } from "@/lib/locale";
 import { BlueprintBox, BlueprintSection } from "@/components/ui/BlueprintBox";
+import { cn } from "@/lib/utils";
 
 const MotionDiv = motion.div as any;
 const MotionHr = motion.hr as any;
@@ -92,6 +92,8 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [relatedPage, setRelatedPage] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("blog-intro");
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
   const RELATED_PAGE_SIZE = 3;
 
   // 1. Reading Progress Bar Logic
@@ -137,6 +139,46 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
     return () => window.removeEventListener('resize', checkMobile);
   }, [post]);
 
+  // ── Build TOC items from contentSections headings ──
+  const tocItems = useMemo(() => {
+    const items: { id: string; label: string }[] = [
+      { id: "blog-intro", label: "Introduction" },
+      { id: "blog-content", label: "Article" },
+    ];
+    if (Array.isArray(post?.contentSections)) {
+      post.contentSections.forEach((section: any, i: number) => {
+        if (section.heading) {
+          const slug = `section-${i}-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
+          items.push({ id: slug, label: section.heading.replace(/\.\s*$/, '') });
+        }
+      });
+    }
+    if (post?.references && post.references.length > 0) {
+      items.push({ id: "blog-references", label: "References" });
+    }
+    items.push({ id: "blog-author", label: "Author" });
+    return items;
+  }, [post]);
+
+  // ── Scroll Spy ──
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -60% 0px" }
+    );
+    tocItems.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [tocItems]);
+
   const pubDate = post?.publishedAt ? formatDate(new Date(post.publishedAt), "MMM dd, yyyy") : "Mar 15, 2024";
   const authorName = post?.author || "ClassGrid Team";
   const categoryName = extractLocaleString(post?.category, lang) || "Insight";
@@ -154,7 +196,8 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         className="fixed top-0 left-0 right-0 h-1 bg-emerald-500 origin-left z-[100]"
         style={{ scaleX }}
       />
-      {/* Progress Reading Bar */}
+
+      {/* ── FULL-WIDTH COVER IMAGE HERO ── */}
       {post.coverImage && (
         <section className="relative w-full bg-background overflow-hidden">
           <div className="mx-auto max-w-5xl px-4 py-8">
@@ -173,8 +216,56 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
       )}
 
       {/* Blueprint-framed article body */}
+      <div className="relative mx-auto max-w-4xl">
+
+        {/* ── Right-Side Sticky TOC (Desktop xl+) ── */}
+        <div className="hidden xl:block absolute left-full top-32 ml-8 w-40 h-full z-50">
+          <div className="sticky top-32 pointer-events-auto">
+            <div className="group relative inline-flex items-center gap-2 mb-6 text-[13px] font-medium text-slate-500 dark:text-neutral-400 cursor-pointer">
+              On this page
+              <div className="absolute top-full right-0 mt-2 w-56 max-h-[300px] overflow-y-auto overscroll-contain rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[999] p-2">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
+                {tocItems.map(item => (
+                  <a key={`dropdown-${item.id}`} href={`#${item.id}`} className={cn(
+                    "block px-2 py-1.5 text-[13px] rounded hover:bg-slate-100 dark:hover:bg-white/5",
+                    activeSection === item.id ? "text-emerald-500 font-medium" : "text-slate-600 dark:text-neutral-300"
+                  )}>
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {tocItems.map((item) => {
+                const isActive = activeSection === item.id;
+                return (
+                  <a
+                    key={`tick-${item.id}`}
+                    href={`#${item.id}`}
+                    className="group relative flex items-center h-4 w-full"
+                    aria-label={`Scroll to ${item.label}`}
+                    aria-current={isActive ? "true" : undefined}
+                  >
+                    <div
+                      className={cn(
+                        "h-[1px] transition-all duration-300 ease-in-out",
+                        isActive
+                          ? "w-6 bg-emerald-500 dark:bg-emerald-400"
+                          : "w-3 bg-slate-300 dark:bg-white/20 group-hover:w-4 group-hover:bg-slate-400 dark:group-hover:bg-white/40"
+                      )}
+                    />
+                    <span className="absolute right-full mr-3 px-2 py-1 bg-slate-800 dark:bg-white text-white dark:text-black text-[11px] font-medium rounded opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-lg z-[999] max-w-[180px] truncate">
+                      {item.label}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
       <BlueprintBox maxWidth="max-w-4xl" className="pt-2 pb-16">
-        <article className="mt-0 w-full px-4 sm:px-8 md:px-12">
+        <article id="blog-intro" className="mt-0 w-full px-4 sm:px-8 md:px-12">
           {/* Hero */}
           <div className="mb-8 mt-8">
             <DocumentHero
@@ -220,7 +311,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
           </div>
 
           {/* ---------------- 3. BLOG CONTENT ---------------- */}
-          <div className="my-8">
+          <div id="blog-content" className="my-8">
             <PortableTextBlock value={post.body} showAccentBars={false} />
           </div>
         </article>
@@ -255,9 +346,13 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 </div>
               );
 
+              const sectionId = section.heading
+                ? `section-${i}-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`
+                : `section-${i}`;
+
               if (layout === 'center') {
                 return (
-                  <MotionDiv key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
+                  <MotionDiv id={sectionId} key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
                     {imageElement}
                     <div className="text-center max-w-2xl mx-auto">
                       {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
@@ -268,7 +363,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
               }
 
               return (
-                <MotionDiv key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
+                <MotionDiv id={sectionId} key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
                   <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
                     {imageElement || (
                       <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
@@ -291,7 +386,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         <article className="w-full">
           {/* ---------------- 4. REFERENCES ---------------- */}
           {post.references && post.references.length > 0 && (
-            <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-10 rounded-xl border border-border bg-card/50 overflow-hidden">
+            <MotionDiv id="blog-references" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-10 rounded-xl border border-border bg-card/50 overflow-hidden">
               <div className="px-6 py-4 border-b border-surface-container-low">
                 <h3 className="text-base font-semibold text-foreground flex items-center">
                   <Link2 className="w-4 h-4 mr-2 text-emerald-500" /> References & Sources
@@ -383,7 +478,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 }];
 
             return (
-              <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 border-t border-border pt-10 pb-6">
+              <MotionDiv id="blog-author" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 border-t border-border pt-10 pb-6">
                 {authorsList.map((authorItem: any, idx: number) => {
                   const aName = authorItem.name || 'ClassGrid Team';
                   const aImage = authorItem.image;
@@ -443,6 +538,61 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             </MotionDiv>
           )}
         </article>
+      </div>
+      </div>{/* close relative wrapper for sticky TOC */}
+
+      {/* ── MOBILE STICKY TOC — visible below xl only ── */}
+      <div className="xl:hidden">
+        {mobileTocOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMobileTocOpen(false)}
+          />
+        )}
+        {mobileTocOpen && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/10 rounded-t-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+              <span className="text-[13px] font-semibold text-white tracking-wide">On this page</span>
+              <button
+                onClick={() => setMobileTocOpen(false)}
+                className="text-neutral-400 hover:text-white transition-colors"
+                aria-label="Close table of contents"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="px-5 py-4 space-y-1 max-h-[60vh] overflow-y-auto">
+              {tocItems.map((item) => (
+                <a
+                  key={`mobile-toc-${item.id}`}
+                  href={`#${item.id}`}
+                  onClick={() => setMobileTocOpen(false)}
+                  className={cn(
+                    "block px-3 py-2.5 rounded-lg text-[14px] transition-colors",
+                    activeSection === item.id
+                      ? "bg-emerald-500/15 text-emerald-400 font-medium"
+                      : "text-neutral-400 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            <div className="pb-6" />
+          </div>
+        )}
+        <button
+          onClick={() => setMobileTocOpen((v) => !v)}
+          className="fixed bottom-5 right-4 z-40 flex items-center gap-2 rounded-full bg-[#111] border border-white/15 px-4 py-2.5 text-[13px] font-medium text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-emerald-500/40 hover:bg-[#1a1a1a] active:scale-95"
+          aria-label="Open table of contents"
+        >
+          <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h10M4 18h7" />
+          </svg>
+          On this page
+        </button>
       </div>
 
       {/* ── SUBSCRIBE STRIP ── */}
