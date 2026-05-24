@@ -18,5 +18,11 @@
     "app/api/webhooks/telegram/route.ts": {
       "maxDuration": 10
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/send-notifications?secret=classgrid-cron-2026-secret",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
