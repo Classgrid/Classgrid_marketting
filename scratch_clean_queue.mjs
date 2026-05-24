@@ -24,8 +24,8 @@ async function cleanQueue() {
   
   const { error } = await supabase
     .from('email_notification_queue')
-    .delete()
-    .neq('status', 'pending'); // Deletes everything that is already sent/failed
+    .update({ status: 'pending', retry_count: 0 })
+    .eq('status', 'processing');
     
   if (error) {
     console.error('❌ Failed to delete:', error.message);
