@@ -433,10 +433,10 @@ export default function DemoSuccessPage() {
                   <button 
                     onClick={handleSendOtp} 
                     disabled={cooldown > 0 || isSendingOtp}
-                    className="mt-4 text-xs text-muted-foreground hover:text-emerald-500 transition-colors flex items-center justify-center gap-2 disabled:hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2 disabled:hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSendingOtp ? (
-                      <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
                     ) : cooldown > 0 ? (
                       `Didn't receive code? Resend in ${cooldown}s`
                     ) : (
