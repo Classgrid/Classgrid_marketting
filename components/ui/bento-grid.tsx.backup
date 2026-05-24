@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import React, { type ComponentPropsWithoutRef, type ReactNode, useRef, useState, useCallback } from "react";
+import React, { type ComponentPropsWithoutRef, type ReactNode, useRef, useState } from "react";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -9,14 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 
 import { IconRenderer } from "./icon-renderer";
-
-function darkenColor(hex: string, factor = 0.5): string {
-  const h = hex.replace("#", "");
-  const r = Math.round(parseInt(h.substring(0, 2), 16) * factor);
-  const g = Math.round(parseInt(h.substring(2, 4), 16) * factor);
-  const b = Math.round(parseInt(h.substring(4, 6), 16) * factor);
-  return `rgb(${r}, ${g}, ${b})`;
-}
 
 interface BentoGridProps extends ComponentPropsWithoutRef<"div"> {
   children: ReactNode;
@@ -78,29 +70,11 @@ const BentoCard = ({
     mouseY.set(clientY - top);
   }
 
-  // ── Rotating border ring state ──
-  const [ringPhase, setRingPhase] = useState<"idle" | "flash" | "orbit">("idle");
-  const ringTimer = useRef<NodeJS.Timeout | null>(null);
-  const borderColorDark = darkenColor(iconColor, 0.35);
-
-  const handleMouseEnter = useCallback(() => {
-    setRingPhase("flash");
-    if (ringTimer.current) clearTimeout(ringTimer.current);
-    ringTimer.current = setTimeout(() => setRingPhase("orbit"), 300);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setRingPhase("idle");
-    if (ringTimer.current) clearTimeout(ringTimer.current);
-  }, []);
-
   const showCta = Boolean(cta?.trim() && href?.trim());
 
   return (
     <motion.div
       onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className={cn(
         "group relative flex flex-col justify-between overflow-hidden rounded-xl border transition-all duration-300",
         "bg-card border-black/20 shadow-sm dark:shadow-none dark:border-white/20",
@@ -109,39 +83,6 @@ const BentoCard = ({
       )}
       {...(props as any)}
     >
-      {/* ── Rotating border ring (Vercel-style) ── */}
-      <style>{`
-        @property --border-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-        @keyframes flashBorder { 0% { --border-angle: 0deg; } 100% { --border-angle: 360deg; } }
-        @keyframes orbitBorder { 0% { --border-angle: 0deg; } 100% { --border-angle: 360deg; } }
-      `}</style>
-      <div
-        className="absolute inset-0 rounded-xl pointer-events-none"
-        style={{
-          opacity: ringPhase !== "idle" ? 1 : 0,
-          transition: "opacity 0.2s ease",
-          border: "2.5px solid transparent",
-          backgroundImage: `
-            linear-gradient(var(--card, #111111), var(--card, #111111)),
-            conic-gradient(
-              from var(--border-angle),
-              transparent 0%,
-              ${borderColorDark} 10%,
-              ${iconColor} 20%,
-              transparent 40%
-            )
-          `,
-          backgroundOrigin: "border-box",
-          backgroundClip: "padding-box, border-box",
-          animation:
-            ringPhase === "flash"
-              ? "flashBorder 0.3s linear forwards"
-              : ringPhase === "orbit"
-              ? "orbitBorder 4s linear infinite"
-              : "none",
-        }}
-      />
-
       {/* Background Glow */}
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100 dark:hidden"
@@ -149,7 +90,7 @@ const BentoCard = ({
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${springX}px ${springY}px,
-              rgba(16, 185, 129, 0.025),
+              rgba(16, 185, 129, 0.05),
               transparent 80%
             )
           `,
@@ -162,7 +103,7 @@ const BentoCard = ({
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${springX}px ${springY}px,
-              rgba(16, 185, 129, 0.08),
+              rgba(16, 185, 129, 0.15),
               transparent 80%
             )
           `,
