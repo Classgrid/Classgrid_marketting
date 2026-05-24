@@ -81,7 +81,7 @@ const BentoCard = ({
   // ── Rotating border ring state ──
   const [ringPhase, setRingPhase] = useState<"idle" | "flash" | "orbit">("idle");
   const ringTimer = useRef<NodeJS.Timeout | null>(null);
-  const borderColorDark = darkenColor(iconColor, 0.35);
+  const borderColorDark = darkenColor(iconColor, 0.15);
 
   const handleMouseEnter = useCallback(() => {
     setRingPhase("flash");
@@ -149,7 +149,7 @@ const BentoCard = ({
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${springX}px ${springY}px,
-              rgba(16, 185, 129, 0.025),
+              rgba(16, 185, 129, 0.02),
               transparent 80%
             )
           `,
@@ -162,7 +162,7 @@ const BentoCard = ({
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${springX}px ${springY}px,
-              rgba(16, 185, 129, 0.08),
+              rgba(16, 185, 129, 0.06),
               transparent 80%
             )
           `,
@@ -190,7 +190,7 @@ const BentoCard = ({
       {background && <div className="absolute inset-0 opacity-10 pointer-events-none -z-10">{background}</div>}
 
       <div className="p-6 relative z-20 flex flex-col h-full bg-transparent">
-        <div className="flex transform-gpu flex-col gap-2 transition-all duration-300 lg:group-hover:-translate-y-2">
+        <div className="flex transform-gpu flex-col gap-2 transition-all duration-300 lg:group-hover:-translate-y-4">
           <div className="flex h-10 w-10 items-center justify-center mb-1" style={{ color: iconColor, filter: `drop-shadow(0 0 6px ${iconColor}99)` }}>
             {typeof Icon === "string" ? <IconRenderer name={Icon} className="h-7 w-7" /> : <Icon className="h-7 w-7" />}
           </div>
