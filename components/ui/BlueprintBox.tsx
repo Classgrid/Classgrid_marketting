@@ -52,11 +52,11 @@ export function BlueprintBox({
   showBottomBorder = true,
 }: BlueprintBoxProps) {
   return (
-    <div className={cn("relative mx-2 sm:mx-4 md:mx-auto", maxWidth)}>
-      {/* Left/Right vertical border lines — hidden on mobile */}
+    <div className={cn("relative mx-3 sm:mx-4 md:mx-auto", maxWidth)}>
+      {/* Left/Right vertical border lines — visible on all screens */}
       <div
         className={cn(
-          "relative border-slate-200 dark:border-white/10 sm:border-l sm:border-r",
+          "relative border-l border-r border-slate-200 dark:border-white/10",
           className
         )}
       >

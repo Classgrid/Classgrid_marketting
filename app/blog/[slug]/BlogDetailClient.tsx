@@ -62,7 +62,13 @@ const slideUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
-// Directional slide animation — matches case study storyblock feel
+// Light fade-up for mobile — no horizontal movement
+const mobileSlide = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+// Directional slide animation — matches case study storyblock feel (desktop only)
 const fadeSlide = (fromLeft: boolean) => ({
   hidden: { opacity: 0, x: fromLeft ? -40 : 40 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
@@ -79,6 +85,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
   const [viewCount, setViewCount] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [relatedPage, setRelatedPage] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const RELATED_PAGE_SIZE = 3;
 
   // 1. Reading Progress Bar Logic
@@ -91,6 +98,12 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
 
   useEffect(() => {
     setCurrentUrl(window.location.href);
+
+    // Detect mobile for lighter animations
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     const slugId = post?.slug?.current || post?.slug;
     if (!slugId) return;
 
@@ -114,7 +127,8 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
           sessionStorage.setItem(viewKey, "true");
         })
         .catch(console.error);
-    }
+    };
+    return () => window.removeEventListener('resize', checkMobile);
   }, [post]);
 
   const pubDate = post?.publishedAt ? formatDate(new Date(post.publishedAt), "MMM dd, yyyy") : "Mar 15, 2024";
@@ -251,15 +265,15 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
               }
 
               return (
-                <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-12 items-center`}>
-                  <MotionDiv variants={fadeSlide(imageFirst)} className="w-full md:w-[55%]">
+                <MotionDiv key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
+                  <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
                     {imageElement || (
                       <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
                         <p className="text-zinc-500">No image</p>
                       </div>
                     )}
                   </MotionDiv>
-                  <MotionDiv variants={fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
+                  <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
                     {textElement}
                   </MotionDiv>
                 </MotionDiv>
