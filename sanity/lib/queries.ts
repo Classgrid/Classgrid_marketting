@@ -40,7 +40,7 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{
   excerpt,
   publishedAt,
   coverImage,
-  "ogImageUrl": coverImage.asset->url,
+  "ogImageUrl": coverImage.asset->url + "?w=1200&h=630&fit=crop&fm=jpg",
   "body": select(
     defined(body.en) || defined(body.hi) || defined(body.mr) => {
       "en": body.en[]{
@@ -188,7 +188,7 @@ export const caseStudyBySlugQuery = `*[_type == "caseStudy" && slug.current == $
   overview,
   overviewDivider,
   conclusion,
-  "heroImageUrl": heroImage.asset->url,
+  "heroImageUrl": heroImage.asset->url + "?w=1200&h=630&fit=crop&fm=jpg",
   metrics,
   championName,
   championRole,
