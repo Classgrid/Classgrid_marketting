@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import RichReplyEditor, { type RichReplyEditorRef } from "@/app/support/components/RichReplyEditor";
+import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -113,6 +114,7 @@ export default function TicketDetailPage() {
   const [replyError, setReplyError] = useState("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
 
   // ── Strict session guard — must be logged in ──────────────────────────────
   // If not authenticated, redirect to sign-in page immediately.
@@ -377,23 +379,30 @@ export default function TicketDetailPage() {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="mb-3">
+                      <div className="mb-3 flex items-center">
                         <span className="font-bold text-sm text-foreground">
-                          {msg.author}
+                          {msg.role === "admin" ? "Classgrid Support" : msg.author}
                         </span>
                         {msg.role === "admin" && (
-                          <span className="ml-2 inline-flex items-center gap-1 text-xs font-bold text-foreground">
-                            Classgrid Support
+                          <span className="ml-1.5 inline-flex items-center" title="Verified Support Team">
                             <BadgeCheck className="w-4 h-4 text-white fill-[#1DA1F2] dark:text-[#0f0f0f]" />
                           </span>
                         )}
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-muted-foreground ml-3">
                           {formatDate(msg.date)}
                         </p>
                       </div>
                       <div
-                        className="space-y-3 text-sm text-foreground/80 leading-relaxed"
+                        className="text-sm text-foreground/90 leading-relaxed [&>p]:mb-3 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-3 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-3 [&>li]:mb-1 [&>strong]:font-semibold [&>h1]:text-xl [&>h1]:font-bold [&>h1]:mb-3 [&>h2]:text-lg [&>h2]:font-bold [&>h2]:mb-3 [&>h3]:text-base [&>h3]:font-bold [&>h3]:mb-2 [&>blockquote]:border-l-4 [&>blockquote]:border-primary/50 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-3 [&>pre]:bg-muted [&>pre]:p-3 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>code]:bg-muted [&>code]:px-1 [&>code]:rounded"
                         dangerouslySetInnerHTML={{ __html: msg.body }}
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName === "IMG") {
+                            const src = (target as HTMLImageElement).src;
+                            const alt = (target as HTMLImageElement).alt || "Image preview";
+                            setPreviewFile({ name: alt, src });
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -504,8 +513,9 @@ export default function TicketDetailPage() {
                       </dt>
                       <div className="space-y-2">
                         {ticket.attachments.map((path, idx) => {
-                          const fileName = path.split('/').pop() || `File ${idx + 1}`;
-                          const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || 'http://localhost:8000';
+                          const fullFileName = path.split('/').pop() || `File ${idx + 1}`;
+                          // Storage service now prepends UUID: uuid_filename.ext
+                          const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
                           const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
                           return (
                             <div
@@ -516,15 +526,17 @@ export default function TicketDetailPage() {
                               <span className="truncate flex-1 text-foreground" title={fileName}>
                                 {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
                               </span>
-                              <a
-                                href={`${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co'}/storage/v1/object/public/support-attachments/${path}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <button
+                                onClick={() => {
+                                  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co';
+                                  const fileUrl = `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
+                                  setPreviewFile({ name: fileName, src: fileUrl });
+                                }}
                                 className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
                                 title="View file"
                               >
                                 <Eye className="w-3.5 h-3.5" />
-                              </a>
+                              </button>
                             </div>
                           );
                         })}
@@ -537,6 +549,10 @@ export default function TicketDetailPage() {
           </div>
         </div>
       </div>
+      <FilePreviewModal
+        file={previewFile}
+        onClose={() => setPreviewFile(null)}
+      />
     </main>
   );
 }
