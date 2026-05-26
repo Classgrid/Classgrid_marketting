@@ -94,6 +94,14 @@ function statusLabel(status: string) {
   }
 }
 
+function getInitials(name: string) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+
 // ─── Page Component ──────────────────────────────────────────────────────────
 
 export default function TicketDetailPage() {
@@ -359,7 +367,7 @@ export default function TicketDetailPage() {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.role === "admin"
                           ? "bg-emerald-100 dark:bg-emerald-900/40"
-                          : "bg-muted"
+                          : "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold text-sm"
                           }`}
                       >
                         {msg.avatar ? (
@@ -368,7 +376,7 @@ export default function TicketDetailPage() {
                         ) : msg.role === "admin" ? (
                           <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         ) : (
-                          <User className="w-5 h-5 text-muted-foreground" />
+                          <span>{getInitials(msg.author)}</span>
                         )}
                       </div>
                       {msg.role === "admin" && (

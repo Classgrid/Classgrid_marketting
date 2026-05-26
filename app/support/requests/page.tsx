@@ -26,15 +26,32 @@ function normalizeSupportEmail(value?: string | null) {
   return next && next !== "undefined" ? next : "";
 }
 
-function formatShortDate(value?: string) {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
-  return date.toLocaleDateString("en-IN", {
-    month: "short",
-    day: "numeric",
+function formatDate(iso?: string) {
+  if (!iso) return "-";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "-";
+  return d.toLocaleString("en-IN", {
     year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
+}
+
+function statusLabel(status: string) {
+  switch (status) {
+    case "in_progress":
+      return "In Progress";
+    case "open":
+      return "Open";
+    case "closed":
+      return "Closed";
+    case "resolved":
+      return "Resolved";
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
+  }
 }
 
 export default function MyRequestsPage() {
@@ -290,7 +307,7 @@ export default function MyRequestsPage() {
                   <CircleCheck className="h-5 w-5 text-emerald-500" />
                   <div>
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Last activity</p>
-                    <p className="text-sm font-semibold text-foreground">{formatShortDate(latestActivity)}</p>
+                    <p className="text-sm font-semibold text-foreground">{formatDate(latestActivity)}</p>
                   </div>
                 </div>
               </div>
@@ -415,10 +432,10 @@ export default function MyRequestsPage() {
                             #{req._id?.substring(0, 8)}
                           </td>
                           <td className="p-4 text-sm text-muted-foreground">
-                            {new Date(req.createdAt).toLocaleDateString()}
+                            {formatDate(req.createdAt)}
                           </td>
                           <td className="p-4 text-sm text-muted-foreground">
-                            {new Date(req.lastComment).toLocaleDateString()}
+                            {formatDate(req.lastComment)}
                           </td>
                           <td className="p-4">
                             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground/80">
@@ -431,7 +448,7 @@ export default function MyRequestsPage() {
                                     : "bg-amber-500"
                                 }`}
                               />
-                              {req.status}
+                              {statusLabel(req.status)}
                             </div>
                           </td>
                         </tr>
@@ -489,16 +506,16 @@ export default function MyRequestsPage() {
                                 : "bg-amber-500"
                             }`}
                           />
-                          {req.status}
+                          {statusLabel(req.status)}
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-muted-foreground">
                         <span className="font-mono bg-muted px-1.5 py-0.5 rounded">#{req._id?.substring(0, 8)}</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-medium">Created:</span> {new Date(req.createdAt).toLocaleDateString()}
+                          <span className="font-medium">Created:</span> {formatDate(req.createdAt)}
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-medium">Last reply:</span> {new Date(req.lastComment).toLocaleDateString()}
+                          <span className="font-medium">Last reply:</span> {formatDate(req.lastComment)}
                         </div>
                       </div>
                     </div>
