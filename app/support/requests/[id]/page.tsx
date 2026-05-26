@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -173,7 +173,14 @@ export default function TicketDetailPage() {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
+  };
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleManualRefresh = () => {
+    setIsRefreshing(true);
+    fetchTicket();
   };
 
   useEffect(() => {
@@ -317,6 +324,15 @@ export default function TicketDetailPage() {
           <span className={`px-3 py-1 text-xs font-bold text-white rounded-full ${statusBadgeBg(ticket.status)}`}>
             {statusLabel(ticket.status)}
           </span>
+          
+          <button
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-full transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            {isRefreshing ? "Refreshing..." : "Refresh"}
+          </button>
         </motion.div>
 
         {/* ── Content Grid ── */}

@@ -165,6 +165,9 @@ export default function InquiryPage() {
       const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/api/support/public/tickets`, {
         method: "POST",
+        headers: {
+          "ngrok-skip-browser-warning": "true"
+        },
         body: formData,
       });
 
