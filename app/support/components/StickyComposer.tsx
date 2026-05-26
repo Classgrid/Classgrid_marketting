@@ -41,7 +41,7 @@ export default function StickyComposer({
 
   if (isClosed) {
     return (
-      <div className="sticky bottom-0 z-10 mt-8 border-t border-border bg-background/95 py-5 backdrop-blur-xl">
+      <div className="mt-8 pt-8 border-t border-border">
         <div className="rounded-lg border border-border bg-card p-5 text-center">
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
             <Lock className="h-4 w-4 text-muted-foreground" />
@@ -55,7 +55,7 @@ export default function StickyComposer({
 
   return (
     <div
-      className="sticky bottom-0 z-10 mt-8 border-t border-border bg-background/95 py-4 backdrop-blur-xl"
+      className="mt-8 pt-8 border-t border-border"
       onKeyDown={(event) => {
         if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && text && !isSending) {
           event.preventDefault();
