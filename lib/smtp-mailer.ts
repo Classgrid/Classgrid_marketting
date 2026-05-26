@@ -6,8 +6,6 @@ const REQUIRED_SMTP_ENV = [
   "BREVO_SMTP_PASS",
 ] as const;
 
-let cachedTransporter: ReturnType<typeof nodemailer.createTransport> | null = null;
-
 function redact(value: string, message: string) {
   return value ? message.split(value).join("[redacted]") : message;
 }
@@ -32,24 +30,24 @@ export function getSmtpConfig() {
 }
 
 export function getSmtpTransporter() {
-  if (!cachedTransporter) {
-    const config = getSmtpConfig();
-    cachedTransporter = nodemailer.createTransport({
-      host: config.host,
-      port: config.port,
-      secure: config.secure,
-      requireTLS: config.port === 587,
-      connectionTimeout: 10_000,
-      greetingTimeout: 10_000,
-      socketTimeout: 45_000,
-      auth: {
-        user: config.user,
-        pass: config.pass,
-      },
-    });
-  }
-
-  return cachedTransporter;
+  // IMPORTANT: Always create a fresh transporter on Vercel serverless.
+  // Cached/pooled connections go stale when functions cold-start,
+  // causing silent email delivery failures (4 out of 5 emails lost).
+  const config = getSmtpConfig();
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    pool: false, // No connection pooling on serverless
+    requireTLS: config.port === 587,
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 45_000,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
 }
 
 export function getSenderAddress() {

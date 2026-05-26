@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     await ForumOTP.findOneAndUpdate(
       { email: normalizedEmail },
       { otp, expiresAt, attempts: 0 },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
     const mongoMs = Date.now() - mongoStartedAt;
 

@@ -519,7 +519,10 @@ export default function TicketDetailPage() {
                         Attachments ({ticket.attachments.length})
                       </dt>
                       <div className="space-y-2">
-                        {ticket.attachments.map((path, idx) => {
+                        {ticket.attachments.map((attachmentItem: any, idx) => {
+                          const path = typeof attachmentItem === 'string' ? attachmentItem : (attachmentItem?.url || attachmentItem?.path || '');
+                          if (!path || typeof path !== 'string') return null;
+
                           const fullFileName = path.split('/').pop() || `File ${idx + 1}`;
                           // Storage service now prepends UUID: uuid_filename.ext
                           const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
