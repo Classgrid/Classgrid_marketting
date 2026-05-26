@@ -31,12 +31,14 @@ import {
   LogOut,
   Send,
   ShieldCheck,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import LinkModal from "@/app/support/components/LinkModal";
+import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 
 function normalizeSupportEmail(value?: string | null) {
@@ -66,6 +68,7 @@ export default function InquiryPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-fill from session once loaded
@@ -770,6 +773,14 @@ export default function InquiryPage() {
                         </span>
                         <button
                           type="button"
+                          title={file.type.startsWith("image/") ? "Preview image" : "Open file"}
+                          onClick={() => setPreviewFile({ name: file.name, src: file, mimeType: file.type })}
+                          className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => removeFile(idx)}
                           className="p-1 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                         >
@@ -805,6 +816,15 @@ export default function InquiryPage() {
           </form>
         </motion.div>
       </div>
+      {/* ── File Preview Modal (attachments) ── */}
+      <FilePreviewModal
+        file={previewFile}
+        onClose={() => setPreviewFile(null)}
+        onDelete={() => {
+          setFiles(prev => prev.filter(f => f.name !== previewFile?.name));
+          setPreviewFile(null);
+        }}
+      />
       <AnimatePresence>
         {previewImage && (
           <motion.div
