@@ -422,7 +422,7 @@ export default function MyRequestsPage() {
                           <td className="p-4">
                             <Link
                               href={`/support/requests/${req._id}?email=${encodeURIComponent(email)}`}
-                              className="text-sm font-semibold text-foreground hover:text-emerald-600 dark:hover:text-emerald-400 inline-flex items-center gap-1.5"
+                              className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/40 underline-offset-2 hover:decoration-emerald-500 inline-flex items-center gap-1.5"
                             >
                               {req.subject}
                               <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -492,7 +492,7 @@ export default function MyRequestsPage() {
                       <div className="flex items-start justify-between gap-4">
                         <Link
                           href={`/support/requests/${req._id}?email=${encodeURIComponent(email)}`}
-                          className="text-sm font-semibold text-foreground hover:text-emerald-600"
+                          className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/40 underline-offset-2 hover:decoration-emerald-500"
                         >
                           {req.subject}
                         </Link>
