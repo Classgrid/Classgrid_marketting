@@ -73,7 +73,7 @@ export default function RaiseTicketPage() {
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [isPlainText, setIsPlainText] = useState(false);
-  const [linkTooltip, setLinkTooltip] = useState<{url: string; x: number; y: number} | null>(null);
+  const [linkTooltip, setLinkTooltip] = useState<{ url: string; x: number; y: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const savedEditorHTML = useRef<string>("");
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -216,11 +216,11 @@ export default function RaiseTicketPage() {
         <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
-          
+
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
             <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
-              <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-8">
                   <Shield className="w-8 h-8 text-primary" />
@@ -242,7 +242,7 @@ export default function RaiseTicketPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Right panel */}
             <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 bg-card">
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
@@ -272,11 +272,11 @@ export default function RaiseTicketPage() {
         <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-amber-500/30 bg-card shadow-2xl shadow-black/30">
           {/* Top accent - amber/warning */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500" />
-          
+
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
             <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-amber-500/5 to-transparent">
-              <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-8">
                   <Building2 className="w-8 h-8 text-amber-500" />
@@ -288,7 +288,7 @@ export default function RaiseTicketPage() {
                 </p>
               </div>
             </div>
-            
+
             {/* Right panel */}
             <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 bg-card">
               <h3 className="text-xl font-semibold text-foreground mb-6 text-center">What you can do</h3>
@@ -312,7 +312,7 @@ export default function RaiseTicketPage() {
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 showGlow={false}
@@ -335,11 +335,11 @@ export default function RaiseTicketPage() {
         <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/30">
           {/* Top accent */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
-          
+
           <div className="flex flex-col md:flex-row min-h-[400px]">
             {/* Left panel */}
             <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-primary/5 to-transparent">
-              <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px'}} />
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-8">
                   <Shield className="w-8 h-8 text-primary" />
@@ -360,11 +360,11 @@ export default function RaiseTicketPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Right panel */}
             <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 gap-4 bg-card">
-              <Button 
-                onClick={() => setShowForm(true)} 
+              <Button
+                onClick={() => setShowForm(true)}
                 className="h-14 w-full max-w-[320px] rounded-xl bg-primary font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 text-base"
               >
                 <Send className="w-5 h-5" />
@@ -376,7 +376,7 @@ export default function RaiseTicketPage() {
                   View My Tickets
                 </Button>
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 showGlow={false}
@@ -433,8 +433,8 @@ export default function RaiseTicketPage() {
           transition={{ duration: 0.4 }}
         >
           {/* ── Form Card ── */}
-          <form 
-            onSubmit={handleSubmit} 
+          <form
+            onSubmit={handleSubmit}
             className="space-y-8 bg-card border border-border p-5 md:p-10 rounded-2xl shadow-sm"
           >
             {/* Form Header */}
@@ -485,11 +485,10 @@ export default function RaiseTicketPage() {
                   onChange={(e) => setName(e.target.value)}
                   readOnly={!!session?.user?.name}
                   placeholder="John Doe"
-                  className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${
-                    session?.user?.name 
-                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input" 
+                  className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${session?.user?.name
+                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
                       : "bg-background text-foreground placeholder:text-muted-foreground"
-                  }`}
+                    }`}
                 />
               </div>
               <div className="space-y-2">
@@ -503,11 +502,10 @@ export default function RaiseTicketPage() {
                   required
                   readOnly={!!knownEmail}
                   placeholder="you@company.com"
-                  className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${
-                    knownEmail
-                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input" 
+                  className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${knownEmail
+                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
                       : "bg-background text-foreground placeholder:text-muted-foreground"
-                  }`}
+                    }`}
                 />
               </div>
             </div>
@@ -784,11 +782,10 @@ export default function RaiseTicketPage() {
                 onDragOver={handleDrag}
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
-                className={`w-full border border-dashed rounded-xl p-5 sm:p-8 text-center transition-all cursor-pointer ${
-                  dragActive
+                className={`w-full border border-dashed rounded-xl p-5 sm:p-8 text-center transition-all cursor-pointer ${dragActive
                     ? "border-primary bg-primary/5"
                     : "border-border bg-muted/30 hover:bg-muted/60"
-                }`}
+                  }`}
               >
                 <input
                   ref={fileInputRef}
@@ -954,11 +951,10 @@ function ToolBtn({ icon, active, onClick }: { icon: React.ReactNode; active?: bo
       type="button"
       onClick={onClick}
       onMouseDown={(e) => e.preventDefault()}
-      className={`p-1.5 rounded transition-colors ${
-        active
+      className={`p-1.5 rounded transition-colors ${active
           ? "bg-accent text-accent-foreground"
           : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-      }`}
+        }`}
     >
       {icon}
     </button>
