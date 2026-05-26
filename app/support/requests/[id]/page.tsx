@@ -153,7 +153,12 @@ export default function TicketDetailPage() {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
       const res = await fetch(
-        `${apiUrl}/api/support/public/tickets/${ticketId}?email=${encodeURIComponent(verifiedEmail)}`
+        `${apiUrl}/api/support/public/tickets/${ticketId}?email=${encodeURIComponent(verifiedEmail)}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true"
+          }
+        }
       );
       const data = await res.json();
 
@@ -334,8 +339,8 @@ export default function TicketDetailPage() {
                     <div className="relative shrink-0">
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.role === "admin"
-                            ? "bg-emerald-100 dark:bg-emerald-900/40"
-                            : "bg-muted"
+                          ? "bg-emerald-100 dark:bg-emerald-900/40"
+                          : "bg-muted"
                           }`}
                       >
                         {msg.role === "admin" ? (
@@ -369,7 +374,7 @@ export default function TicketDetailPage() {
                           {formatDate(msg.date)}
                         </p>
                       </div>
-                      <div 
+                      <div
                         className="space-y-3 text-sm text-foreground/80 leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: msg.body }}
                       />

@@ -88,7 +88,11 @@ export default function MyRequestsPage() {
     setError("");
     try {
       const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiUrl}/api/support/public/tickets?email=${encodeURIComponent(validEmail)}`);
+      const res = await fetch(`${apiUrl}/api/support/public/tickets?email=${encodeURIComponent(validEmail)}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true"
+        }
+      });
       const data = await res.json();
       
       if (data.success) {
@@ -121,7 +125,11 @@ export default function MyRequestsPage() {
     
     try {
       const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiUrl}/api/support/public/tickets?email=${encodeURIComponent(validEmail)}`);
+      const res = await fetch(`${apiUrl}/api/support/public/tickets?email=${encodeURIComponent(validEmail)}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true"
+        }
+      });
       const data = await res.json();
       
       if (res.status === 403) {
