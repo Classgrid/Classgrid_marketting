@@ -148,6 +148,10 @@ export default function InquiryPage() {
       setError("Email, subject, and description are required.");
       return;
     }
+    if (subject.trim().length > 200) {
+      setError(`Subject is too long (${subject.trim().length}/200 characters). Please shorten it.`);
+      return;
+    }
     setIsSubmitting(true);
     setError("");
 
@@ -558,16 +562,22 @@ export default function InquiryPage() {
 
             {/* Subject */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">
-                Subject <span className="text-destructive">*</span>
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold text-foreground">
+                  Subject <span className="text-destructive">*</span>
+                </Label>
+                <span className={`text-xs font-medium ${subject.length > 200 ? 'text-destructive' : subject.length > 160 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                  {subject.length}/200
+                </span>
+              </div>
               <input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
+                maxLength={200}
                 required
                 placeholder="Brief summary of your question"
-                className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+                className={`w-full h-11 px-4 rounded-lg border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${subject.length > 200 ? 'border-destructive' : 'border-input'}`}
               />
             </div>
 
