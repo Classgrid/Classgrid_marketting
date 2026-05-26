@@ -362,12 +362,11 @@ export default function TicketDetailPage() {
                           : "bg-muted"
                           }`}
                       >
-                        {msg.role === "admin" ? (
-                          msg.avatar ? (
-                            <img src={msg.avatar} alt={msg.author} className="w-full h-full object-cover" />
-                          ) : (
-                            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          )
+                        {msg.avatar ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={msg.avatar} alt={msg.author} className="w-full h-full object-cover" />
+                        ) : msg.role === "admin" ? (
+                          <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         ) : (
                           <User className="w-5 h-5 text-muted-foreground" />
                         )}
