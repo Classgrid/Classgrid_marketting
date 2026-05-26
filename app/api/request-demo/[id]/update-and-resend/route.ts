@@ -21,8 +21,8 @@ export async function PUT(
     await connectMongo();
 
     // Atomic Rate Limit: prevent concurrent spamming (race conditions)
-    // We only update if `otpExpiresAt` doesn't exist, OR it has expired (which is 60 seconds).
-    const oneMinuteFromNow = new Date(Date.now() + 60 * 1000);
+    // We only update if `otpExpiresAt` doesn't exist, OR it has expired.
+    const twoMinutesFromNow = new Date(Date.now() + 60 * 1000);
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     const updatedLead = await DemoRequest.findOneAndUpdate(
@@ -42,7 +42,7 @@ export async function PUT(
           adminEmail: body.adminEmail,
           adminPhone: body.adminPhone,
           otp: newOtp,
-          otpExpiresAt: oneMinuteFromNow
+          otpExpiresAt: twoMinutesFromNow
         }
       },
       { returnDocument: "after" } // Return the updated document
