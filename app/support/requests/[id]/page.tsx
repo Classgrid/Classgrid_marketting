@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { AlertCircle, ArrowLeft, Clock3, Loader2, RefreshCw, Tag } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
-import RichReplyEditor, { type RichReplyEditorRef } from "@/app/support/components/RichReplyEditor";
+import type { RichReplyEditorRef } from "@/app/support/components/RichReplyEditor";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
+import DayDivider, { getDayLabel } from "@/app/support/components/DayDivider";
+import MessageBubble from "@/app/support/components/MessageBubble";
+import StickyComposer from "@/app/support/components/StickyComposer";
+import TicketSidebar from "@/app/support/components/TicketSidebar";
+import { InlineTimelineEvent, type TicketEvent } from "@/app/support/components/TicketTimeline";
+import type { SupportAttachment } from "@/app/support/components/InlineAttachment";
 
 type TicketMessage = {
   _id?: string;
@@ -20,6 +23,7 @@ type TicketMessage = {
   body: string;
   date: string;
   footer?: string;
+  attachments?: SupportAttachment[];
 };
 
 type TicketData = {
@@ -31,24 +35,31 @@ type TicketData = {
   createdAt: string;
   lastComment: string;
   messages: TicketMessage[];
-  attachments?: string[];
+  events?: TicketEvent[];
+  attachments?: SupportAttachment[];
   requester: { name: string; email: string };
   assignedTo?: { name: string; email: string } | null;
+  slaStatus?: string;
+  lastAdminReplyAt?: string;
+  lastUserReplyAt?: string;
+  satisfaction?: { rating?: number; comment?: string; createdAt?: string };
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+type ThreadItem =
+  | { kind: "message"; id: string; date: string; message: TicketMessage }
+  | { kind: "event"; id: string; date: string; event: TicketEvent };
 
-function formatDate(iso: string) {
+function relativeTime(iso?: string) {
   if (!iso) return "-";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return "-";
-  return d.toLocaleString("en-IN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const mins = Math.floor((Date.now() - d.getTime()) / 60000);
+  const hrs = Math.floor(mins / 60);
+  const days = Math.floor(hrs / 24);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${days}d ago`;
 }
 
 function normalizeSupportEmail(value?: string | null) {
@@ -56,18 +67,13 @@ function normalizeSupportEmail(value?: string | null) {
   return next && next !== "undefined" ? next : "";
 }
 
-function statusColor(status: string) {
-  switch (status) {
-    case "resolved":
-    case "closed":
-      return "bg-muted-foreground";
-    case "open":
-      return "bg-emerald-500";
-    case "in_progress":
-      return "bg-amber-500";
-    default:
-      return "bg-muted-foreground";
-  }
+function cleanLabel(value?: string) {
+  if (!value) return "-";
+  return value
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function statusBadgeBg(status: string) {
@@ -75,26 +81,34 @@ function statusBadgeBg(status: string) {
     case "resolved":
       return "bg-emerald-500";
     case "closed":
-      return "bg-muted0";
+      return "bg-muted";
     case "in_progress":
       return "bg-amber-500";
     case "open":
       return "bg-blue-500";
     default:
-      return "bg-muted0";
+      return "bg-muted";
+  }
+}
+
+function priorityBadgeBg(priority: string) {
+  switch (priority) {
+    case "critical":
+      return "bg-red-500";
+    case "high":
+      return "bg-orange-500";
+    case "medium":
+      return "bg-amber-500";
+    case "low":
+      return "bg-sky-500";
+    default:
+      return "bg-muted";
   }
 }
 
 function statusLabel(status: string) {
-  switch (status) {
-    case "in_progress":
-      return "In Progress";
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1);
-  }
+  return cleanLabel(status);
 }
-
-// ─── Page Component ──────────────────────────────────────────────────────────
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -115,36 +129,28 @@ export default function TicketDetailPage() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // ── Strict session guard — must be logged in ──────────────────────────────
-  // If not authenticated, redirect to sign-in page immediately.
-  // The email query param is ONLY for display; the session email is the authority.
   useEffect(() => {
-    if (sessionStatus === "loading") return; // wait for session to resolve
+    if (sessionStatus === "loading") return;
 
     if (sessionStatus === "unauthenticated") {
-      // Not logged in — redirect to sign-in, return here after login
       const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
       window.location.href = `/auth/signin?callbackUrl=${returnUrl}`;
       return;
     }
 
-    // Logged in — verify the session email matches the query email (ownership check)
     const sessionEmail = normalizeSupportEmail(session?.user?.email);
     const paramEmail = normalizeSupportEmail(queryEmail);
 
     if (paramEmail && sessionEmail && sessionEmail.toLowerCase() !== paramEmail.toLowerCase()) {
-      // Logged in but trying to access someone else's ticket via URL
       setAccessDenied(true);
       setLoading(false);
       return;
     }
   }, [sessionStatus, session, queryEmail]);
 
-  // The email to use for all API calls — always from session, never from URL alone
   const verifiedEmail = normalizeSupportEmail(session?.user?.email);
-
-  // ── Fetch ticket ──────────────────────────────────────────────────────────
 
   const fetchTicket = async () => {
     if (!ticketId || !verifiedEmail) {
@@ -159,8 +165,8 @@ export default function TicketDetailPage() {
         `${apiUrl}/api/support/public/tickets/${ticketId}?email=${encodeURIComponent(verifiedEmail)}`,
         {
           headers: {
-            "ngrok-skip-browser-warning": "true"
-          }
+            "ngrok-skip-browser-warning": "true",
+          },
         }
       );
       const data = await res.json();
@@ -180,19 +186,16 @@ export default function TicketDetailPage() {
     }
   };
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const handleManualRefresh = () => {
     setIsRefreshing(true);
     fetchTicket();
   };
 
   useEffect(() => {
-    // Only fetch once session is confirmed and email is available
     if (sessionStatus !== "authenticated" || !verifiedEmail || accessDenied) return;
     fetchTicket();
   }, [sessionStatus, verifiedEmail, ticketId, accessDenied]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     if (ticket?.messages?.length) {
       setTimeout(() => {
@@ -200,8 +203,6 @@ export default function TicketDetailPage() {
       }, 100);
     }
   }, [ticket?.messages?.length]);
-
-  // ── Send reply ────────────────────────────────────────────────────────────
 
   const handleReply = async () => {
     if (!replyText.trim() || isSending || !ticket) return;
@@ -211,18 +212,15 @@ export default function TicketDetailPage() {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
-      const res = await fetch(
-        `${apiUrl}/api/support/public/tickets/${ticketId}/reply`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: verifiedEmail,
-            message: replyText.trim(),
-            name: ticket.requester?.name || "User",
-          }),
-        }
-      );
+      const res = await fetch(`${apiUrl}/api/support/public/tickets/${ticketId}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: verifiedEmail,
+          message: replyText.trim(),
+          name: ticket.requester?.name || "User",
+        }),
+      });
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -230,11 +228,9 @@ export default function TicketDetailPage() {
       } else {
         setReplyText("");
         editorRef.current?.clear();
-        // Update with the latest ticket data from response
         if (data.ticket) {
           setTicket(data.ticket);
         } else {
-          // Fallback: re-fetch
           await fetchTicket();
         }
       }
@@ -245,9 +241,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // ── Loading / Error states ────────────────────────────────────────────────
-
-  // Still waiting for session to resolve
   if (sessionStatus === "loading" || (sessionStatus === "authenticated" && loading)) {
     return (
       <main className="min-h-screen bg-background py-24 px-4 md:px-12 transition-colors duration-300">
@@ -259,324 +252,148 @@ export default function TicketDetailPage() {
     );
   }
 
-  // Logged in but this ticket belongs to a different account
   if (accessDenied) {
-    return (
-      <main className="min-h-screen bg-background py-24 px-4 md:px-12 transition-colors duration-300">
-        <div className="max-w-md mx-auto mt-10 bg-card border border-border rounded-2xl p-8 shadow-sm text-center">
-          <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Access Denied</h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            This ticket belongs to a different account. Please sign in with the correct account to view it.
-          </p>
-          <Link
-            href="/support/requests"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to My Requests
-          </Link>
-        </div>
-      </main>
-    );
+    return <TicketNotice title="Access Denied" message="This ticket belongs to a different account. Please sign in with the correct account to view it." />;
   }
 
   if (error || !ticket) {
-    return (
-      <main className="min-h-screen bg-background py-24 px-4 md:px-12 transition-colors duration-300">
-        <div className="max-w-md mx-auto mt-10 bg-card border border-border rounded-2xl p-8 shadow-sm text-center">
-          <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Unable to load ticket</h2>
-          <p className="text-sm text-muted-foreground mb-6">{error || "Ticket not found."}</p>
-          <Link
-            href="/support/requests"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to My Requests
-          </Link>
-        </div>
-      </main>
-    );
+    return <TicketNotice title="Unable to load ticket" message={error || "Ticket not found."} />;
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   const messages = ticket.messages || [];
-  const isClosedOrResolved = ticket.status === "closed" || ticket.status === "resolved";
+  const events = ticket.events || [];
+  const threadItems: ThreadItem[] = [
+    ...messages.map((message, index) => ({
+      kind: "message" as const,
+      id: message._id || `message-${index}`,
+      date: message.date,
+      message,
+    })),
+    ...events.map((event, index) => ({
+      kind: "event" as const,
+      id: event.id || event._id || `event-${index}`,
+      date: event.createdAt || ticket.createdAt,
+      event,
+    })),
+  ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <main className="min-h-screen bg-background pt-8 pb-24 px-4 md:px-12 selection:bg-emerald-500/30 transition-colors duration-300">
-      <div className="max-w-[960px] mx-auto">
-
-        {/* ── Title + Status Badge ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="flex flex-wrap items-center gap-3 mb-10"
-        >
-          <SectionAccentBar align="left" className="mb-0 basis-full" />
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-            {ticket.subject}
-          </h1>
-          <span className={`px-3 py-1 text-xs font-bold text-white rounded-full ${statusBadgeBg(ticket.status)}`}>
-            {statusLabel(ticket.status)}
-          </span>
-          
-          <button
-            onClick={handleManualRefresh}
-            disabled={isRefreshing}
-            className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-full transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing..." : "Refresh"}
-          </button>
-        </motion.div>
-
-        {/* ── Content Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left: Message Thread */}
-          <div className="lg:col-span-2 space-y-0">
-            <AnimatePresence>
-              {messages.map((msg, idx) => (
-                <motion.div
-                  key={msg._id || `msg-${idx}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.3) }}
-                >
-                  {idx > 0 && (
-                    <hr className="border-border my-0" />
-                  )}
-                  <div className="flex gap-4 py-8">
-                    {/* Avatar */}
-                    <div className="relative shrink-0">
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.role === "admin"
-                          ? "bg-emerald-100 dark:bg-emerald-900/40"
-                          : "bg-muted"
-                          }`}
-                      >
-                        {msg.avatar ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={msg.avatar} alt={msg.author} className="w-full h-full object-cover" />
-                        ) : msg.role === "admin" ? (
-                          <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                        ) : (
-                          <User className="w-5 h-5 text-muted-foreground" />
-                        )}
-                      </div>
-                      {msg.role === "admin" && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-background" />
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="mb-3 flex items-center">
-                        <span className="font-bold text-sm text-foreground">
-                          {msg.author}
-                        </span>
-                        {msg.role === "admin" && (
-                          <span className="ml-1.5 inline-flex items-center" title="Verified Admin">
-                            <BadgeCheck className="w-4 h-4 text-white fill-[#1DA1F2] dark:text-[#0f0f0f]" />
-                          </span>
-                        )}
-                        <p className="text-xs text-muted-foreground ml-3">
-                          {formatDate(msg.date)}
-                        </p>
-                      </div>
-                      <div
-                        className="text-sm text-foreground/90 leading-relaxed [&>p]:mb-3 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-3 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-3 [&>li]:mb-1 [&>strong]:font-semibold [&>h1]:text-xl [&>h1]:font-bold [&>h1]:mb-3 [&>h2]:text-lg [&>h2]:font-bold [&>h2]:mb-3 [&>h3]:text-base [&>h3]:font-bold [&>h3]:mb-2 [&>blockquote]:border-l-4 [&>blockquote]:border-primary/50 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-3 [&>pre]:bg-muted [&>pre]:p-3 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>code]:bg-muted [&>code]:px-1 [&>code]:rounded"
-                        dangerouslySetInnerHTML={{ __html: msg.body }}
-                        onClick={(e) => {
-                          const target = e.target as HTMLElement;
-                          if (target.tagName === "IMG") {
-                            const src = (target as HTMLImageElement).src;
-                            const alt = (target as HTMLImageElement).alt || "Image preview";
-                            setPreviewFile({ name: alt, src });
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            <div ref={bottomRef} />
-
-            {/* ── Reply Box ── */}
-            {!isClosedOrResolved ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-                className="mt-8 pt-8 border-t border-border"
-              >
-                <div className="space-y-3">
-                  <RichReplyEditor
-                    ref={editorRef}
-                    onChange={setReplyText}
-                    placeholder="Type your reply here..."
-                    minHeight={120}
-                    onSubmit={handleReply}
-                  />
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-xs text-muted-foreground">
-                      Press Enter to send, Shift+Enter for new line.
-                    </p>
-                    <button
-                      onClick={handleReply}
-                      disabled={!replyText.trim() || isSending}
-                      className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
-                    >
-                      {isSending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          Send Reply
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  {replyError && (
-                    <p className="text-sm text-red-500">{replyError}</p>
-                  )}
-                </div>
-              </motion.div>
-            ) : (
-              <div className="mt-8 pt-8 border-t border-border text-center py-6">
-                <p className="text-sm text-muted-foreground">
-                  This ticket has been <strong>{ticket.status}</strong>. If you need further help,{" "}
-                  <Link href="/support/ticket" className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
-                    submit a new ticket
-                  </Link>.
-                </p>
-              </div>
-            )}
+      <div className="max-w-[1120px] mx-auto">
+        <div className="mb-10 rounded-lg border border-border bg-card p-5 shadow-sm">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <Link href="/support/requests" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" />
+              Back to My Requests
+            </Link>
+            <button
+              onClick={handleManualRefresh}
+              disabled={isRefreshing}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing..." : "Refresh"}
+            </button>
           </div>
 
-          {/* Right: Metadata Sidebar */}
+          <SectionAccentBar align="left" className="mb-4" />
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="rounded-md border border-border bg-muted px-2.5 py-1 font-mono text-xs font-semibold text-muted-foreground">#{ticket._id?.substring(0, 8)}</span>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold text-white ${statusBadgeBg(ticket.status)}`}>{statusLabel(ticket.status)}</span>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold text-white ${priorityBadgeBg(ticket.priority)}`}>{cleanLabel(ticket.priority)}</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">
+                  <Tag className="w-3 h-3" />
+                  {cleanLabel(ticket.category)}
+                </span>
+              </div>
+              <h1 className="break-words text-2xl font-bold text-foreground md:text-3xl">{ticket.subject}</h1>
+            </div>
+            <div className="grid gap-2 text-sm sm:grid-cols-2 lg:min-w-[260px] lg:grid-cols-1">
+              <HeaderStat label="SLA" value={cleanLabel(ticket.slaStatus)} />
+              <HeaderStat
+                label="Last response"
+                value={ticket.lastAdminReplyAt ? relativeTime(ticket.lastAdminReplyAt) : relativeTime(ticket.lastComment)}
+                icon={<Clock3 className="w-3.5 h-3.5" />}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            {threadItems.length > 0 ? (
+              threadItems.map((item, index) => {
+                const previous = threadItems[index - 1];
+                const showDivider = !previous || getDayLabel(previous.date) !== getDayLabel(item.date);
+                return (
+                  <React.Fragment key={`${item.kind}-${item.id}`}>
+                    {showDivider && <DayDivider date={item.date} />}
+                    {item.kind === "message" ? (
+                      <MessageBubble message={item.message} onPreview={setPreviewFile} />
+                    ) : (
+                      <InlineTimelineEvent event={item.event} />
+                    )}
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">
+                <p className="text-sm font-bold text-foreground">No replies yet</p>
+                <p className="mt-1 text-sm text-muted-foreground">Support replies will appear here.</p>
+              </div>
+            )}
+
+            <div ref={bottomRef} />
+            <StickyComposer
+              editorRef={editorRef}
+              replyText={replyText}
+              status={ticket.status}
+              isSending={isSending}
+              replyError={replyError}
+              onChange={setReplyText}
+              onSubmit={handleReply}
+            />
+          </div>
+
           <div className="lg:col-span-1">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.15 }}
-              className="bg-card border border-border rounded-lg p-5 mt-2 lg:mt-0 lg:sticky lg:top-28"
-            >
-              <dl className="space-y-4">
-                <MetaRow label="Id" value={`#${ticket._id?.substring(0, 8)}`} mono />
-                <MetaRow label="Requester" value={ticket.requester?.name || "-"} />
-                <MetaRow label="Email" value={ticket.requester?.email || "-"} />
-                <MetaRow label="Created" value={formatDate(ticket.createdAt)} />
-                <MetaRow label="Assigned to" value={ticket.assignedTo?.name || "Unassigned"} />
-
-                <hr className="border-border" />
-
-                <MetaRow label="Category" value={ticket.category || "-"} />
-                <MetaRow label="Priority" value={ticket.priority || "-"} />
-                <MetaRow label="Last activity" value={formatDate(ticket.lastComment)} />
-
-                <hr className="border-border" />
-
-                <div className="grid grid-cols-[1fr_auto] gap-3 items-center">
-                  <dt className="font-semibold text-sm text-foreground">Status</dt>
-                  <dd className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-foreground/80">
-                    <div className={`w-2 h-2 rounded-full ${statusColor(ticket.status)}`} />
-                    {statusLabel(ticket.status)}
-                  </dd>
-                </div>
-
-                <div className="text-xs text-muted-foreground pt-2">
-                  {messages.length} message{messages.length !== 1 ? "s" : ""} in this thread
-                </div>
-
-                {/* Attachments */}
-                {ticket.attachments && ticket.attachments.length > 0 && (
-                  <>
-                    <hr className="border-border" />
-                    <div>
-                      <dt className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
-                        <Paperclip className="w-3.5 h-3.5" />
-                        Attachments ({ticket.attachments.length})
-                      </dt>
-                      <div className="space-y-2">
-                        {ticket.attachments.map((path, idx) => {
-                          const fullFileName = path.split('/').pop() || `File ${idx + 1}`;
-                          // Storage service now prepends UUID: uuid_filename.ext
-                          const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
-                          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
-                          return (
-                            <div
-                              key={idx}
-                              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs"
-                            >
-                              <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                              <span className="truncate flex-1 text-foreground" title={fileName}>
-                                {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co';
-                                  const fileUrl = `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
-                                  setPreviewFile({ name: fileName, src: fileUrl });
-                                }}
-                                className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-                                title="View file"
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </dl>
-            </motion.div>
+            <TicketSidebar ticket={ticket} onPreview={setPreviewFile} />
           </div>
         </div>
       </div>
-      <FilePreviewModal
-        file={previewFile}
-        onClose={() => setPreviewFile(null)}
-      />
+
+      <FilePreviewModal file={previewFile} onClose={() => setPreviewFile(null)} />
     </main>
   );
 }
 
-// ─── Sidebar Row Helper ──────────────────────────────────────────────────────
-
-function MetaRow({
-  label,
-  value,
-  mono,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
+function HeaderStat({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-2 min-w-0">
-      <dt className="font-semibold text-sm text-foreground shrink-0">
+    <div className="rounded-lg border border-border bg-background/60 p-3">
+      <p className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {icon}
         {label}
-      </dt>
-      <dd
-        className={`text-right text-muted-foreground min-w-0 break-all ${mono ? "font-mono" : ""} text-sm`}
-      >
-        {value}
-      </dd>
+      </p>
+      <p className="font-semibold text-foreground">{value || "-"}</p>
     </div>
+  );
+}
+
+function TicketNotice({ title, message }: { title: string; message: string }) {
+  return (
+    <main className="min-h-screen bg-background py-24 px-4 md:px-12 transition-colors duration-300">
+      <div className="max-w-md mx-auto mt-10 bg-card border border-border rounded-lg p-8 shadow-sm text-center">
+        <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+        </div>
+        <h2 className="text-xl font-bold text-foreground mb-2">{title}</h2>
+        <p className="text-sm text-muted-foreground mb-6">{message}</p>
+        <Link href="/support/requests" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+          <ArrowLeft className="w-4 h-4" />
+          Back to My Requests
+        </Link>
+      </div>
+    </main>
   );
 }
