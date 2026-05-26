@@ -395,13 +395,6 @@ export default function TicketDetailPage() {
                         className="space-y-3 text-sm text-foreground/80 leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: msg.body }}
                       />
-                      {msg.footer && (
-                        <div className="pt-4 mt-4 border-t border-border">
-                          <p className="text-xs text-muted-foreground whitespace-pre-line">
-                            {msg.footer}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </motion.div>
