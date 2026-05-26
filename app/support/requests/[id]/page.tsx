@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck, RefreshCw } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -30,6 +30,7 @@ type TicketData = {
   createdAt: string;
   lastComment: string;
   messages: TicketMessage[];
+  attachments?: string[];
   requester: { name: string; email: string };
   assignedTo?: { name: string; email: string } | null;
 };
@@ -498,6 +499,46 @@ export default function TicketDetailPage() {
                 <div className="text-xs text-muted-foreground pt-2">
                   {messages.length} message{messages.length !== 1 ? "s" : ""} in this thread
                 </div>
+
+                {/* Attachments */}
+                {ticket.attachments && ticket.attachments.length > 0 && (
+                  <>
+                    <hr className="border-border" />
+                    <div>
+                      <dt className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
+                        <Paperclip className="w-3.5 h-3.5" />
+                        Attachments ({ticket.attachments.length})
+                      </dt>
+                      <div className="space-y-2">
+                        {ticket.attachments.map((path, idx) => {
+                          const fileName = path.split('/').pop() || `File ${idx + 1}`;
+                          const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || 'http://localhost:8000';
+                          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
+                          return (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                              <span className="truncate flex-1 text-foreground" title={fileName}>
+                                {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
+                              </span>
+                              <a
+                                href={`${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co'}/storage/v1/object/public/support-attachments/${path}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                                title="View file"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
               </dl>
             </motion.div>
           </div>
