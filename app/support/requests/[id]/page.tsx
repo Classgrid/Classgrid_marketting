@@ -381,10 +381,10 @@ export default function TicketDetailPage() {
                     <div className="flex-1 min-w-0">
                       <div className="mb-3 flex items-center">
                         <span className="font-bold text-sm text-foreground">
-                          {msg.role === "admin" ? "Classgrid Support" : msg.author}
+                          {msg.author}
                         </span>
                         {msg.role === "admin" && (
-                          <span className="ml-1.5 inline-flex items-center" title="Verified Support Team">
+                          <span className="ml-1.5 inline-flex items-center" title="Verified Admin">
                             <BadgeCheck className="w-4 h-4 text-white fill-[#1DA1F2] dark:text-[#0f0f0f]" />
                           </span>
                         )}
