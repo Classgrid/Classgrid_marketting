@@ -162,14 +162,8 @@ export default function TicketDetailPage() {
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
       const res = await fetch(
-        `${apiUrl}/api/support/public/tickets/${ticketId}?email=${encodeURIComponent(verifiedEmail)}`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "true"
-          }
-        }
+        `/api/support-proxy/tickets/${ticketId}?email=${encodeURIComponent(verifiedEmail)}`
       );
       const data = await res.json();
 
@@ -218,9 +212,8 @@ export default function TicketDetailPage() {
     setReplyError("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
       const res = await fetch(
-        `${apiUrl}/api/support/public/tickets/${ticketId}/reply`,
+        `/api/support-proxy/tickets/${ticketId}/reply`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
