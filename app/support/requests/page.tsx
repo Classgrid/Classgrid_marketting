@@ -11,7 +11,6 @@ import {
   Mail,
   Loader2,
   PlusCircle,
-  PlusCircle,
   Ticket,
   Shield,
   MessageSquare,
