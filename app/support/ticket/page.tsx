@@ -159,8 +159,7 @@ export default function RaiseTicketPage() {
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
 
-      const apiUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiUrl}/api/support/public/tickets`, {
+      const res = await fetch(`/api/support-proxy/tickets`, {
         method: "POST",
         body: formData,
       });
