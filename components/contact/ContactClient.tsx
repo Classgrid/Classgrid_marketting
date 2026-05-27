@@ -37,12 +37,21 @@ export default function ContactClient() {
     setIsSubmitting(true)
     
     try {
-      const response = await fetch("https://formspree.io/f/xeevljno", {
+      const formData = new FormData(e.currentTarget)
+      const payload = {
+        fullName: formData.get("fullName") as string,
+        email: formData.get("email") as string,
+        phoneNumber: formData.get("phoneNumber") as string,
+        message: formData.get("message") as string,
+      }
+
+      const response = await fetch("/api/contact", {
         method: "POST",
-        body: new FormData(e.currentTarget),
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
+        body: JSON.stringify(payload),
       })
       if (response.ok) {
         setIsSuccess(true)
