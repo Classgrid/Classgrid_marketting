@@ -101,6 +101,21 @@ function getInitials(name: string) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+const avatarColors = [
+  "bg-emerald-500", "bg-emerald-600", "bg-green-500", 
+  "bg-green-600", "bg-teal-500", "bg-teal-600"
+];
+
+function getAvatarColor(name: string) {
+  if (!name) return "bg-emerald-500";
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % avatarColors.length;
+  return avatarColors[index];
+}
+
 
 // ─── Page Component ──────────────────────────────────────────────────────────
 
@@ -360,7 +375,7 @@ export default function TicketDetailPage() {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.role === "admin"
                           ? "bg-emerald-100 dark:bg-emerald-900/40"
-                          : "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold text-sm"
+                          : `${getAvatarColor(msg.author)} text-white font-bold text-sm`
                           }`}
                       >
                         {msg.avatar ? (
