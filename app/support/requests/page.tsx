@@ -11,7 +11,11 @@ import {
   Mail,
   Loader2,
   PlusCircle,
+  PlusCircle,
   Ticket,
+  Shield,
+  MessageSquare,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -62,7 +66,8 @@ export default function MyRequestsPage() {
   // Auth state
   const [email, setEmail] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const isPlatformUser = (session?.user as any)?.isPlatformUser === true;
+  const [isPlatformUserApi, setIsPlatformUserApi] = useState(false);
+  const isPlatformUser = (session?.user as any)?.isPlatformUser === true || isPlatformUserApi;
   
   // Data state
   const [tickets, setTickets] = useState<any[]>([]);
@@ -114,6 +119,7 @@ export default function MyRequestsPage() {
       
       if (data.success) {
         setTickets(data.tickets);
+        setIsPlatformUserApi(!!data.isPlatformUser);
       } else if (res.status === 403) {
         // Email not registered — kick back to login screen
         localStorage.removeItem("support_email");
@@ -160,6 +166,7 @@ export default function MyRequestsPage() {
         setEmail(validEmail);
         setIsAuthenticated(true);
         setTickets(data.tickets);
+        setIsPlatformUserApi(!!data.isPlatformUser);
       } else {
         setError(data.message || "Something went wrong.");
       }
@@ -255,9 +262,22 @@ export default function MyRequestsPage() {
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent" />
               <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-300">
-                    <Activity className="h-3.5 w-3.5" />
-                    Support workspace
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-emerald-600 dark:text-emerald-300">
+                      <Activity className="h-3 w-3" />
+                      Support workspace
+                    </div>
+                    {isPlatformUser ? (
+                      <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-indigo-600 dark:text-indigo-400">
+                        <Shield className="h-3 w-3" />
+                        Platform User
+                      </div>
+                    ) : (
+                      <div className="inline-flex items-center gap-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-orange-600 dark:text-orange-400">
+                        <MessageSquare className="h-3 w-3" />
+                        Classgrid Talk
+                      </div>
+                    )}
                   </div>
                   <h1 className="text-3xl font-bold tracking-tight text-foreground">
                     My requests
@@ -286,6 +306,15 @@ export default function MyRequestsPage() {
                   <span className="relative">{isPlatformUser ? "New Support Ticket" : "New Inquiry"}</span>
                   <ArrowRight className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
+              </div>
+
+              {/* Informational Reminder */}
+              <div className="mt-6 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex gap-3 text-sm text-blue-800 dark:text-blue-300">
+                <Info className="h-5 w-5 shrink-0 text-blue-500" />
+                <p>
+                  <strong>Note on Replies:</strong> When you send a reply, we do not spam your inbox with an automated email. 
+                  Please check back on this dashboard from time to time to see when the Classgrid Support Team has responded to your issue.
+                </p>
               </div>
 
               <div className="mt-6 grid gap-4 border-t border-border pt-5 dark:border-[#2a2a2a] sm:grid-cols-3">
