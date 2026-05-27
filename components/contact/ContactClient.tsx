@@ -237,6 +237,8 @@ export default function ContactClient() {
                             type="email"
                             name="email"
                             placeholder="you@institution.edu"
+                            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                            title="Please enter a valid email address (e.g. name@gmail.com)"
                             className="bg-transparent border-0 focus-visible:ring-0 px-2"
                             required
                           />
@@ -245,7 +247,7 @@ export default function ContactClient() {
 
                       <div className="space-y-2">
                         <Label htmlFor="message" className="font-semibold text-zinc-700 dark:text-zinc-300">Your Message</Label>
-                        <InputGroup className="min-h-[140px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300 overflow-hidden">
+                        <InputGroup className="min-h-[140px] max-h-[300px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300 overflow-y-auto">
                           <InputGroupAddon align="block-start">
                             <InputGroupText className="bg-transparent border-0 pl-4 pt-4">
                               <MessageSquare className="h-4 w-4 text-emerald-500" />
@@ -256,7 +258,7 @@ export default function ContactClient() {
                             name="message"
                             rows={5}
                             placeholder="How can we help you?"
-                            className="bg-transparent border-0 focus-visible:ring-0 p-3 pt-4 resize-none"
+                            className="bg-transparent border-0 focus-visible:ring-0 p-3 pt-4 resize-y"
                             required
                           />
                         </InputGroup>
