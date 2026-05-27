@@ -323,7 +323,7 @@ export default function TicketDetailPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   const messages = ticket.messages || [];
-  const isClosedOrResolved = ticket.status === "closed" || ticket.status === "resolved";
+  const isClosed = ticket.status === "closed";
 
   return (
     <main className="min-h-screen bg-background pt-8 pb-24 px-4 md:px-12 selection:bg-emerald-500/30 transition-colors duration-300">
@@ -428,7 +428,7 @@ export default function TicketDetailPage() {
             <div ref={bottomRef} />
 
             {/* ── Reply Box ── */}
-            {!isClosedOrResolved ? (
+            {!isClosed ? (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
