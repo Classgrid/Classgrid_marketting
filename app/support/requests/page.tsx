@@ -208,7 +208,6 @@ export default function MyRequestsPage() {
             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
               <Mail className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <SectionAccentBar />
             <h2 className="text-2xl font-bold text-foreground mb-2">Track Your Tickets</h2>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
               Enter the email address you used to submit your request to view your conversation history and reply.
@@ -332,7 +331,6 @@ export default function MyRequestsPage() {
             </div>
 
             {/* ── Title ── */}
-            <SectionAccentBar align="left" />
             <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">
