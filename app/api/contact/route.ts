@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail({
       from: getSenderAddress(),
-      to: "support@classgrid.in",
+      to: "nikhilsubsun123@gmail.com",
       subject: `📬 New Contact Form Submission from ${sanitizedName}`,
       text: `New Contact Form:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPhone: +91 ${sanitizedPhone}\nMessage:\n${(message || "").trim()}`,
       html: `<!DOCTYPE html>
