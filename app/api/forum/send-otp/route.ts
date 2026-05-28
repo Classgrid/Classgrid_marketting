@@ -3,7 +3,7 @@ import { connectMongo } from "@/lib/mongodb";
 import ForumOTP from "@/lib/models/ForumOTP";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getForumOtpEmailHtml } from "@/lib/email-templates";
-import { getSenderAddress, getSmtpConfig, getSmtpTransporter, sanitizeMailerError } from "@/lib/smtp-mailer";
+import { getNoReplyAddress, getSupportAddress, getSmtpConfig, getSmtpTransporter, sanitizeMailerError } from "@/lib/smtp-mailer";
 
 const OTP_TTL_SECONDS = 60;
 
@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     const smtpStartedAt = Date.now();
 
     const result = await transporter.sendMail({
-      from: getSenderAddress(),
-      replyTo: smtpConfig.senderEmail,
+      from: getNoReplyAddress(),
+      replyTo: getSupportAddress(),
       to: normalizedEmail,
       subject: "Your Classgrid Login Code",
       text: `Your Classgrid login code is ${otp}. It expires in 60 seconds.`,

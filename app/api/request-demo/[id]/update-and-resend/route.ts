@@ -65,12 +65,13 @@ export async function PUT(
     // Send new OTP via Brevo using existing Classgrid SMTP Mailer
     if (process.env.BREVO_SMTP_HOST) {
       try {
-        const { getSmtpTransporter, getSenderAddress } = await import("@/lib/smtp-mailer");
+        const { getSmtpTransporter, getNoReplyAddress, getSupportAddress } = await import("@/lib/smtp-mailer");
         const { getDemoOtpEmailHtml } = await import("@/lib/email-templates");
         const transporter = getSmtpTransporter();
 
         await transporter.sendMail({
-          from: getSenderAddress(),
+          from: getNoReplyAddress(),
+          replyTo: getSupportAddress(),
           to: lead.adminEmail,
           subject: "Your New Classgrid Demo Verification Code",
           html: getDemoOtpEmailHtml(lead.adminName, newOtp),
