@@ -95,7 +95,7 @@ export async function POST(
     // Send custom Classgrid confirmation email
     if (process.env.BREVO_SMTP_HOST) {
       try {
-        const { getSmtpTransporter, getNoReplyAddress, getSupportAddress } = await import("@/lib/smtp-mailer");
+        const { getSmtpTransporter, getNoReplyAddress, getSupportEmail } = await import("@/lib/smtp-mailer");
         const { getDemoConfirmationEmailHtml } = await import("@/lib/email-templates");
         const transporter = getSmtpTransporter();
         const scheduledDate = new Date(lead.scheduledAt);
@@ -111,8 +111,8 @@ export async function POST(
         });
 
         await transporter.sendMail({
-          from: getSupportAddress(),
-          replyTo: getSupportAddress(),
+          from: getNoReplyAddress(),
+          replyTo: getSupportEmail(),
           to: lead.adminEmail,
           subject: "Classgrid Demo Confirmed - Meeting Details Inside",
           html: getDemoConfirmationEmailHtml(lead.adminName, dateStr, meetingUrl),

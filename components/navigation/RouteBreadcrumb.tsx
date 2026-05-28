@@ -48,13 +48,6 @@ function formatSegmentLabel(segment: string): string {
 export function RouteBreadcrumb() {
   const pathname = usePathname();
 
-  // Hide breadcrumb on top-level pages where it's redundant (just shows the page name)
-  // Keep it for nested routes like /solutions/for-schools, /changelog/slug, /case-studies/slug
-  const topLevelHidden = ["/team", "/acknowledgement", "/community", "/about", "/pricing", "/blog", "/changelog", "/contact", "/case-studies"];
-  const isHidden = topLevelHidden.includes(pathname) || pathname.startsWith("/compare");
-  if (isHidden) {
-    return null;
-  }
 
   const items = useMemo<BreadcrumbEntry[]>(() => {
     const segments = pathname.split("/").filter(Boolean);
@@ -69,7 +62,12 @@ export function RouteBreadcrumb() {
     });
   }, [pathname]);
 
-  if (items.length === 0) return null;
+  // Hide breadcrumb on top-level pages where it's redundant (just shows the page name)
+  // Keep it for nested routes like /solutions/for-schools, /changelog/slug, /case-studies/slug
+  const topLevelHidden = ["/team", "/acknowledgement", "/community", "/about", "/pricing", "/blog", "/changelog", "/contact", "/case-studies"];
+  const isHidden = topLevelHidden.includes(pathname) || pathname.startsWith("/compare");
+
+  if (isHidden || items.length === 0) return null;
 
   return (
     <div className="border-b border-border/40 bg-background/80">
