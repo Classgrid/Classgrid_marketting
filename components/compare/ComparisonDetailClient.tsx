@@ -370,10 +370,6 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                 </ul>
               </div>
               
-              {/* Intro Text */}
-              <p className="text-[17px] leading-relaxed text-slate-700 dark:text-neutral-300">
-                {comparison.metaDescription || `Classgrid and ${comparison.competitorName} are both institutional platforms that aim to digitize campus operations. This guide compares their architecture, feature depth, and operational readiness to help your evaluation team make an informed decision.`}
-              </p>
 
               {/* === CMS Body (replaces hardcoded sections when available) === */}
               {Array.isArray(comparison.body) && comparison.body.length > 0 ? (
