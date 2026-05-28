@@ -378,7 +378,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
               {/* === CMS Body (replaces hardcoded sections when available) === */}
               {Array.isArray(comparison.body) && comparison.body.length > 0 ? (
-                <section id="cms-body" className="space-y-2 pt-4">
+                <section id="cms-body" className="pt-4 overflow-hidden">
                   <PortableTextBlock value={comparison.body} showAccentBars={false} />
                 </section>
               ) : (
