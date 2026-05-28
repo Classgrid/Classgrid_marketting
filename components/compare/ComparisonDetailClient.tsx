@@ -12,6 +12,7 @@ import { FAQSection } from "@/components/ui/faqsection";
 import { TrackedCtaButton } from "@/components/compare/TrackedCtaButton";
 import { VercelTable } from "@/components/ui/vercel-table";
 import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
+import { PortableTextBlock } from "@/components/PortableTextBlock";
 
 type ComparisonDetailClientProps = {
   comparison: {
@@ -68,6 +69,39 @@ const Crosshair = ({ className }: { className?: string }) => (
 );
 
 const getTocItems = (comparison: ComparisonDetailClientProps["comparison"]) => {
+  const bodyBlocks = comparison.body as Array<{ _type?: string; style?: string; children?: Array<{ text?: string }> }> | null | undefined;
+  const hasBody = Array.isArray(bodyBlocks) && bodyBlocks.length > 0;
+
+  if (hasBody) {
+    // Extract real headings from body blocks
+    const items: { id: string; label: string }[] = [];
+    bodyBlocks.forEach((block) => {
+      if (block._type === "block" && (block.style === "h2" || block.style === "h3")) {
+        const text = (block.children ?? []).map((c) => c.text ?? "").join("");
+        if (text.trim()) {
+          const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          items.push({ id, label: text });
+        }
+      }
+    });
+
+    // Append dynamic sections that come after the body
+    if ((comparison.featureMatrix ?? []).length > 0) {
+      items.push({ id: "competitor-comparison", label: `${comparison.competitorName} comparison` });
+    }
+    if ((comparison.ratingBadges ?? []).length > 0) {
+      items.push({ id: "expert-ratings", label: "Expert ratings" });
+    }
+    if (comparison.migrationTestimonial?.quoteText) {
+      items.push({ id: "migration", label: "Migration perspective" });
+    }
+    if ((comparison.faqs ?? []).length > 0) {
+      items.push({ id: "faqs", label: "FAQ" });
+    }
+    return items;
+  }
+
+  // Fallback: hardcoded TOC for pages without Sanity body
   const items = [
     { id: "intro", label: "Introduction" },
     { id: "strengths", label: "Strengths of each platform" },
@@ -123,6 +157,19 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
     return () => observer.disconnect();
   }, [tocItems]);
+
+  // Assign IDs to headings rendered by PortableTextBlock (for scroll spy + TOC linking)
+  useEffect(() => {
+    const cmsBody = document.getElementById("cms-body");
+    if (!cmsBody) return;
+    const headings = cmsBody.querySelectorAll("h2, h3");
+    headings.forEach((el) => {
+      if (!el.id) {
+        const text = (el.textContent ?? "").trim();
+        el.id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      }
+    });
+  });
 
   const handleCopyUrl = async () => {
     try {
@@ -316,38 +363,65 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               
               {/* Intro Text */}
               <p className="text-[17px] leading-relaxed text-slate-700 dark:text-neutral-300">
-                Classgrid and {comparison.competitorName} are both institutional platforms that aim to digitize campus operations. This guide compares their architecture, feature depth, and operational readiness to help your evaluation team make an informed decision.
+                {comparison.metaDescription || `Classgrid and ${comparison.competitorName} are both institutional platforms that aim to digitize campus operations. This guide compares their architecture, feature depth, and operational readiness to help your evaluation team make an informed decision.`}
               </p>
 
-              {/* Strengths */}
-              <section id="strengths" className="space-y-6 pt-4">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Strengths of each platform</h2>
-                <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
-                  Each platform has distinct strengths depending on your institutional requirements and architecture patterns.
-                </p>
-              </section>
+              {/* === CMS Body (replaces hardcoded sections when available) === */}
+              {Array.isArray(comparison.body) && comparison.body.length > 0 ? (
+                <section id="cms-body" className="space-y-2 pt-4">
+                  <PortableTextBlock value={comparison.body} showAccentBars={false} />
+                </section>
+              ) : (
+                /* === Hardcoded fallback (for pages without Sanity body) === */
+                <>
+                  {/* Strengths */}
+                  <section id="strengths" className="space-y-6 pt-4">
+                    <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Strengths of each platform</h2>
+                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                      Each platform has distinct strengths depending on your institutional requirements and architecture patterns.
+                    </p>
+                  </section>
 
-              {/* When to choose Classgrid */}
-              <section id="when-to-choose" className="space-y-6 pt-4">
-                <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
-                <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
-                  Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
-                </p>
-                <VercelTable
-                  columns={[
-                    { key: "module", header: "Module", accent: true, width: "w-[200px]" },
-                    { key: "capabilities", header: "Capabilities" },
-                  ]}
-                  rows={[
-                    { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
-                    { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
-                    { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
-                    { module: "NAAC/NBA", capabilities: "Auto-generated compliance reports, criterion-wise data aggregation, audit trails" },
-                  ]}
-                />
-              </section>
+                  {/* When to choose Classgrid */}
+                  <section id="when-to-choose" className="space-y-6 pt-4">
+                    <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
+                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                      Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
+                    </p>
+                    <VercelTable
+                      columns={[
+                        { key: "module", header: "Module", accent: true, width: "w-[200px]" },
+                        { key: "capabilities", header: "Capabilities" },
+                      ]}
+                      rows={[
+                        { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
+                        { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
+                        { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
+                        { module: "NAAC/NBA", capabilities: "Auto-generated compliance reports, criterion-wise data aggregation, audit trails" },
+                      ]}
+                    />
+                  </section>
 
-              {/* Competitor Comparison */}
+                  {/* AI Tools */}
+                  <section id="ai-tools" className="space-y-6 pt-4">
+                    <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">AI-powered institutional tools</h3>
+                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                      <span className="font-medium text-slate-900 dark:text-white">Classgrid AI</span> accelerates institutional workflows with AI assistance.
+                    </p>
+                    <div className="space-y-4">
+                      <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
+                      <ul className="ml-4 space-y-2 text-[15px] text-slate-600 dark:text-neutral-400">
+                        <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
+                        <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
+                        <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
+                      </ul>
+                    </div>
+                  </section>
+                </>
+              )}
+
+
+              {/* Competitor Comparison (always from Sanity data) */}
               {featureMatrix.length > 0 && (
                 <section id="competitor-comparison" className="space-y-6 pt-4">
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">{comparison.competitorName} comparison</h3>
@@ -369,7 +443,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                 </section>
               )}
 
-              {/* Expert Ratings */}
+              {/* Expert Ratings (always from Sanity data) */}
               {(comparison.ratingBadges ?? []).length > 0 && (
                 <section id="expert-ratings" className="space-y-6 pt-4">
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Expert ratings</h3>
@@ -386,22 +460,6 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   </div>
                 </section>
               )}
-
-              {/* AI Tools */}
-              <section id="ai-tools" className="space-y-6 pt-4">
-                <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">AI-powered institutional tools</h3>
-                <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
-                  <span className="font-medium text-slate-900 dark:text-white">Classgrid AI</span> accelerates institutional workflows with AI assistance.
-                </p>
-                <div className="space-y-4">
-                  <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
-                  <ul className="ml-4 space-y-2 text-[15px] text-slate-600 dark:text-neutral-400">
-                    <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
-                    <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
-                    <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
-                  </ul>
-                </div>
-              </section>
 
               {/* Migration Testimonial */}
               {comparison.migrationTestimonial?.quoteText && (
