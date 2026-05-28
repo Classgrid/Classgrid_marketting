@@ -68,37 +68,43 @@ const Crosshair = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const getTocItems = (comparison: ComparisonDetailClientProps["comparison"]) => {
+const getTocData = (comparison: ComparisonDetailClientProps["comparison"]) => {
   const bodyBlocks = comparison.body as Array<{ _type?: string; style?: string; children?: Array<{ text?: string }> }> | null | undefined;
   const hasBody = Array.isArray(bodyBlocks) && bodyBlocks.length > 0;
 
   if (hasBody) {
-    // Extract real headings from body blocks
-    const items: { id: string; label: string }[] = [];
+    const mainItems: { id: string; label: string }[] = []; // H2s only — for inline body TOC
+    const fullItems: { id: string; label: string }[] = []; // H2+H3 — for right-side TOC + scroll spy
+
     bodyBlocks.forEach((block) => {
-      if (block._type === "block" && block.style === "h2") {
+      if (block._type === "block" && (block.style === "h2" || block.style === "h3")) {
         const text = (block.children ?? []).map((c) => c.text ?? "").join("");
         if (text.trim()) {
           const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-          items.push({ id, label: text });
+          fullItems.push({ id, label: text });
+          if (block.style === "h2") {
+            mainItems.push({ id, label: text });
+          }
         }
       }
     });
 
-    // Append dynamic sections that come after the body
+    // Append hardcoded sections that render after the body
+    const extraItems: { id: string; label: string }[] = [];
     if ((comparison.featureMatrix ?? []).length > 0) {
-      items.push({ id: "competitor-comparison", label: `${comparison.competitorName} comparison` });
+      extraItems.push({ id: "competitor-comparison", label: `${comparison.competitorName} comparison` });
     }
     if ((comparison.ratingBadges ?? []).length > 0) {
-      items.push({ id: "expert-ratings", label: "Expert ratings" });
+      extraItems.push({ id: "expert-ratings", label: "Expert ratings" });
     }
     if (comparison.migrationTestimonial?.quoteText) {
-      items.push({ id: "migration", label: "Migration perspective" });
+      extraItems.push({ id: "migration", label: "Migration perspective" });
     }
     if ((comparison.faqs ?? []).length > 0) {
-      items.push({ id: "faqs", label: "FAQ" });
+      extraItems.push({ id: "faqs", label: "FAQ" });
     }
-    return items;
+
+    return { mainItems, fullItems: [...fullItems, ...extraItems] };
   }
 
   // Fallback: hardcoded TOC for pages without Sanity body
@@ -126,7 +132,7 @@ const getTocItems = (comparison: ComparisonDetailClientProps["comparison"]) => {
     items.push({ id: "faqs", label: "FAQ" });
   }
 
-  return items;
+  return { mainItems: items, fullItems: items };
 };
 
 export function ComparisonDetailClient({ comparison }: ComparisonDetailClientProps) {
@@ -135,9 +141,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
-  const tocItems = useMemo(() => getTocItems(comparison), [comparison]);
-
-
+  const { mainItems: mainTocItems, fullItems: tocItems } = useMemo(() => getTocData(comparison), [comparison]);
 
   // Scroll Spy Logic
   useEffect(() => {
@@ -149,16 +153,16 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           }
         });
       },
-      { rootMargin: "-20% 0px -40% 0px" } // Wider trigger area
+      { rootMargin: "-20% 0px -40% 0px" }
     );
 
-    // Give DOM a tick to finish mounting PortableText components
+    // Wait for PortableText to fully render before observing
     const timeout = setTimeout(() => {
       tocItems.forEach((item) => {
         const el = document.getElementById(item.id);
         if (el) observer.observe(el);
       });
-    }, 100);
+    }, 500);
 
     return () => {
       clearTimeout(timeout);
@@ -343,7 +347,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               <div>
                 <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-5">Table of contents</h2>
                 <ul className="space-y-2.5">
-                  {tocItems.map((item) => (
+                  {mainTocItems.map((item) => (
                     <li key={`toc-body-${item.id}`}>
                       <a
                         href={`#${item.id}`}

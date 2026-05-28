@@ -11,6 +11,34 @@ const client = createClient({
   token: process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN,
 });
 
+/** Parse a text string and split [text](url) links into proper Portable Text spans + markDefs */
+function parseTextWithLinks(text) {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const children = [];
+  const markDefs = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      children.push({ _type: 'span', text: text.substring(lastIndex, match.index), marks: [], _key: `span-${Math.random().toString(36).substring(7)}` });
+    }
+    const linkKey = `link-${Math.random().toString(36).substring(7)}`;
+    markDefs.push({ _key: linkKey, _type: 'link', href: match[2] });
+    children.push({ _type: 'span', text: match[1], marks: [linkKey], _key: `span-${Math.random().toString(36).substring(7)}` });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    children.push({ _type: 'span', text: text.substring(lastIndex), marks: [], _key: `span-${Math.random().toString(36).substring(7)}` });
+  }
+  if (children.length === 0) {
+    children.push({ _type: 'span', text, marks: [], _key: `span-${Math.random().toString(36).substring(7)}` });
+  }
+
+  return { children, markDefs };
+}
+
 function parseMarkdownToBlocks(markdown) {
   const blocks = [];
   const lines = markdown.split('\n');
@@ -60,39 +88,44 @@ function parseMarkdownToBlocks(markdown) {
       });
       continue;
     }
+    // Skip H1 title — page header already displays it
     if (line.startsWith('# ')) {
-      blocks.push({
-        _key: `block-${Math.random().toString(36).substring(7)}`,
-        _type: 'block', style: 'h2',
-        children: [{ _type: 'span', text: line.replace('# ', ''), marks: [], _key: `span-${Math.random().toString(36).substring(7)}` }]
-      });
       continue;
     }
 
     // Bullet Lists
     if (line.startsWith('- ') || line.startsWith('* ')) {
-      blocks.push({
+      const { children, markDefs } = parseTextWithLinks(line.substring(2));
+      const block = {
         _key: `block-${Math.random().toString(36).substring(7)}`,
         _type: 'block', style: 'normal', listItem: 'bullet',
-        children: [{ _type: 'span', text: line.substring(2), marks: [], _key: `span-${Math.random().toString(36).substring(7)}` }]
-      });
+        children,
+      };
+      if (markDefs.length > 0) block.markDefs = markDefs;
+      blocks.push(block);
       continue;
     }
     if (line.match(/^\d+\.\s/)) {
-      blocks.push({
+      const { children, markDefs } = parseTextWithLinks(line.replace(/^\d+\.\s/, ''));
+      const block = {
         _key: `block-${Math.random().toString(36).substring(7)}`,
         _type: 'block', style: 'normal', listItem: 'number',
-        children: [{ _type: 'span', text: line.replace(/^\d+\.\s/, ''), marks: [], _key: `span-${Math.random().toString(36).substring(7)}` }]
-      });
+        children,
+      };
+      if (markDefs.length > 0) block.markDefs = markDefs;
+      blocks.push(block);
       continue;
     }
 
-    // Normal Paragraph
-    blocks.push({
+    // Normal Paragraph (with link support)
+    const { children, markDefs } = parseTextWithLinks(line);
+    const block = {
       _key: `block-${Math.random().toString(36).substring(7)}`,
       _type: 'block', style: 'normal',
-      children: [{ _type: 'span', text: line, marks: [], _key: `span-${Math.random().toString(36).substring(7)}` }]
-    });
+      children,
+    };
+    if (markDefs.length > 0) block.markDefs = markDefs;
+    blocks.push(block);
   }
 
   return blocks;
