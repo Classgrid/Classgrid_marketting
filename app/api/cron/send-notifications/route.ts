@@ -264,7 +264,8 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;te
 async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promise<{ sent: number; failed: number; done: boolean; totalProcessed?: number }> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
   const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
-  const senderEmail = process.env.BREVO_SENDER_EMAIL || "support@classgrid.in";
+  const senderEmail = "noreply@classgrid.in";
+  const supportEmail = "support@classgrid.in";
 
   // 1. Fetch the full document from Sanity
   const [publishedDocument, recentBlogs, recentChangelogs] = await Promise.all([
@@ -368,7 +369,7 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
 
       await transporter.sendMail({
         from: `"${senderName}" <${senderEmail}>`,
-        replyTo: senderEmail,
+        replyTo: supportEmail,
         to: sub.email,
         subject,
         text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
