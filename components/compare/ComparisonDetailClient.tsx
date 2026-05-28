@@ -76,7 +76,7 @@ const getTocItems = (comparison: ComparisonDetailClientProps["comparison"]) => {
     // Extract real headings from body blocks
     const items: { id: string; label: string }[] = [];
     bodyBlocks.forEach((block) => {
-      if (block._type === "block" && (block.style === "h2" || block.style === "h3")) {
+      if (block._type === "block" && block.style === "h2") {
         const text = (block.children ?? []).map((c) => c.text ?? "").join("");
         if (text.trim()) {
           const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -149,15 +149,21 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           }
         });
       },
-      { rootMargin: "-20% 0px -60% 0px" } // Adjust to trigger when section is well within viewport
+      { rootMargin: "-20% 0px -40% 0px" } // Wider trigger area
     );
 
-    tocItems.forEach((item) => {
-      const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
-    });
+    // Give DOM a tick to finish mounting PortableText components
+    const timeout = setTimeout(() => {
+      tocItems.forEach((item) => {
+        const el = document.getElementById(item.id);
+        if (el) observer.observe(el);
+      });
+    }, 100);
 
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
   }, [tocItems]);
 
   const handleCopyUrl = async () => {
