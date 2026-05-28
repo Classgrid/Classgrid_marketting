@@ -137,6 +137,19 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
   const tocItems = useMemo(() => getTocItems(comparison), [comparison]);
 
+  // Assign IDs to headings rendered by PortableTextBlock (for scroll spy + TOC linking)
+  useEffect(() => {
+    const cmsBody = document.getElementById("cms-body");
+    if (!cmsBody) return;
+    const headings = cmsBody.querySelectorAll("h2, h3");
+    headings.forEach((el) => {
+      if (!el.id) {
+        const text = (el.textContent ?? "").trim();
+        el.id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      }
+    });
+  });
+
   // Scroll Spy Logic
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -157,19 +170,6 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
     return () => observer.disconnect();
   }, [tocItems]);
-
-  // Assign IDs to headings rendered by PortableTextBlock (for scroll spy + TOC linking)
-  useEffect(() => {
-    const cmsBody = document.getElementById("cms-body");
-    if (!cmsBody) return;
-    const headings = cmsBody.querySelectorAll("h2, h3");
-    headings.forEach((el) => {
-      if (!el.id) {
-        const text = (el.textContent ?? "").trim();
-        el.id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      }
-    });
-  });
 
   const handleCopyUrl = async () => {
     try {
