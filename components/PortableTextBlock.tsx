@@ -16,6 +16,12 @@ const blockAnim = {
   transition: { duration: 0.5, ease: "easeOut" }
 };
 
+// Helper to generate IDs for headings identical to getTocItems logic
+function getHeadingId(value: any) {
+  const text = (value?.children ?? []).map((c: any) => c.text ?? "").join("");
+  return text.trim() ? text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") : undefined;
+}
+
 // Vercel-inspired components
 function createPortableTextComponents(showAccentBars: boolean): PortableTextComponents {
   return {
@@ -25,16 +31,16 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         {children}
       </p>
     ),
-    h2: ({ children }) => (
+    h2: ({ children, value }) => (
       <>
         {showAccentBars ? <SectionAccentBar align="left" className="mt-14 mb-4 mx-auto max-w-[750px]" /> : null}
-        <h2 className={`group ${showAccentBars ? "" : "mt-14"} mb-5 flex mx-auto max-w-[750px] items-center text-2xl font-bold tracking-tight text-foreground antialiased`}>
+        <h2 id={getHeadingId(value)} className={`group ${showAccentBars ? "" : "mt-14"} mb-5 flex mx-auto max-w-[750px] items-center text-2xl font-bold tracking-tight text-foreground antialiased`}>
           {children}
         </h2>
       </>
     ),
-    h3: ({ children }) => (
-      <h3 className="group mt-10 mb-4 flex mx-auto max-w-[750px] items-center text-xl font-semibold tracking-tight text-foreground antialiased">
+    h3: ({ children, value }) => (
+      <h3 id={getHeadingId(value)} className="group mt-10 mb-4 flex mx-auto max-w-[750px] items-center text-xl font-semibold tracking-tight text-foreground antialiased">
         {children}
       </h3>
     ),
