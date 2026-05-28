@@ -15,8 +15,9 @@ export const comparisonPageType = defineType({
     defineField({
       name: 'slug',
       title: 'Slug',
-      type: 'string',
+      type: 'slug',
       description: 'URL: /compare/[slug]',
+      options: { source: 'competitorName' },
       validation: (rule) => rule.required(),
     }),
     defineField({

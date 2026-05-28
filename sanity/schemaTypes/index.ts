@@ -15,7 +15,7 @@ import { websiteFeedbackType } from './websiteFeedbackType'
 import { changelogEntryType } from './changelogEntryType'
 import { changelogSettingsType } from './changelogSettingsType'
 import { compareHubPageType } from './compareHubPageType'
-import { comparisonType } from './comparisonType'
+import { comparisonPageType } from './comparisonPageType'
 import { contactPageType } from './contactPageType'
 import { demoPageType } from './demoPageType'
 import { faqItemType } from './faqItemType'
@@ -150,7 +150,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     salesContactSocialProofType,
     salesContactPageType,
     compareHubPageType,
-    comparisonType,
+    comparisonPageType,
 
     useCasePageType,
     solutionPageType,
