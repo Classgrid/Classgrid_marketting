@@ -226,21 +226,10 @@ export function Navbar({
         },
       ],
     },
+
     {
       label: "Pricing",
       href: "/pricing",
-    },
-    {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-    {
-      label: "Contact",
-      href: "/contact",
     },
   ];
 
@@ -254,25 +243,10 @@ export function Navbar({
 
   const baseItems = normalizeNavItems(parsedItems.length > 0 ? parsedItems : DEFAULT_NAV_ITEMS);
 
-  // SEO: Ensure these high-value pages always appear as top-level nav items
-  // so Google treats them as primary sitelink candidates.
-  const SEO_INJECT_ITEMS: NavItem[] = [
-    { label: "Blog",    href: "/blog"    },
-    { label: "About",   href: "/about"   },
-    { label: "Contact", href: "/contact" },
-  ];
-
-  const itemsWithSeoLinks = [
-    ...baseItems,
-    ...SEO_INJECT_ITEMS.filter(
-      (seo) => !baseItems.some((existing) => existing.label?.toLowerCase() === seo.label?.toLowerCase())
-    ),
-  ];
-
   // Force "Home" to be the very first item if it's missing from the data
-  const navItems = itemsWithSeoLinks.some(item => item.label?.toLowerCase() === "home")
-    ? itemsWithSeoLinks
-    : [{ label: "Home", href: "/" }, ...itemsWithSeoLinks];
+  const navItems = baseItems.some(item => item.label?.toLowerCase() === "home")
+    ? baseItems
+    : [{ label: "Home", href: "/" }, ...baseItems];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.18] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
