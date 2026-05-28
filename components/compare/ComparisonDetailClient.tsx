@@ -386,7 +386,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   <section id="when-to-choose" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
                     <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
-                      Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
+                  Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
                     </p>
                     <VercelTable
                       columns={[
@@ -394,9 +394,9 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                         { key: "capabilities", header: "Capabilities" },
                       ]}
                       rows={[
-                        { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
-                        { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
-                        { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
+                    { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
+                    { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
+                    { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
                         { module: "NAAC/NBA", capabilities: "Auto-generated compliance reports, criterion-wise data aggregation, audit trails" },
                       ]}
                     />
@@ -411,7 +411,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                     <div className="space-y-4">
                       <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
                       <ul className="ml-4 space-y-2 text-[15px] text-slate-600 dark:text-neutral-400">
-                        <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
+                    <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
                       </ul>
