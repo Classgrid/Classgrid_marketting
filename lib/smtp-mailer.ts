@@ -55,6 +55,16 @@ export function getSenderAddress() {
   return `"${config.senderName}" <${config.senderEmail}>`;
 }
 
+export function getNoReplyAddress() {
+  const config = getSmtpConfig();
+  return `"${config.senderName}" <noreply@classgrid.in>`;
+}
+
+export function getSupportAddress() {
+  const config = getSmtpConfig();
+  return `"${config.senderName}" <support@classgrid.in>`;
+}
+
 export function sanitizeMailerError(error: unknown) {
   const err = error as {
     code?: string;

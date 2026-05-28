@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSmtpTransporter, getSenderAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
+import { getSmtpTransporter, getNoReplyAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
 
 /**
  * POST /api/contact — Handle Contact Us form submissions.
@@ -49,8 +49,9 @@ export async function POST(request: NextRequest) {
     const transporter = getSmtpTransporter();
 
     await transporter.sendMail({
-      from: getSenderAddress(),
+      from: getNoReplyAddress(),
       to: "nikhilsubsun123@gmail.com",
+      replyTo: sanitizedEmail,
       subject: `📬 New Contact Form Submission from ${sanitizedName}`,
       text: `New Contact Form:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPhone: +91 ${sanitizedPhone}\nMessage:\n${(message || "").trim()}`,
       html: `<!DOCTYPE html>

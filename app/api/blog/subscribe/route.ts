@@ -203,7 +203,8 @@ export async function POST(req: Request) {
     }
 
     const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || "support@classgrid.in";
+    const senderEmail = "noreply@classgrid.in";
+    const supportEmail = "support@classgrid.in";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
     const unsubHash = generateUnsubscribeHash(email);
     const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubHash}`;
@@ -418,7 +419,7 @@ ${!hasContent ? `
 
     await transporter.sendMail({
       from: `"${senderName}" <${senderEmail}>`,
-      replyTo: senderEmail,
+      replyTo: supportEmail,
       to: email,
       subject: emailSubject,
       text: emailText,
