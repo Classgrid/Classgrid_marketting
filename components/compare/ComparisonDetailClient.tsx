@@ -235,67 +235,68 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
   return (
     <main className="min-h-screen bg-background text-foreground pt-24 pb-16 relative">
-      
+
+
+      <div className="hidden xl:block absolute right-8 top-24 bottom-24 w-40 z-50 pointer-events-none">
+        <div className="sticky top-1/2 -translate-y-1/2 pointer-events-auto flex flex-col items-end w-full">
+
+          {/* The dropdown label (Moved back to top) */}
+          <div className="group relative inline-flex items-center gap-2 mb-4 text-[13px] font-medium text-slate-500 dark:text-neutral-400 cursor-pointer">
+            On this page
+            {/* Dropdown opens to the LEFT so it never goes off-screen */}
+            <div className="absolute top-full right-0 mt-2 w-56 max-h-[300px] overflow-y-auto overscroll-contain rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[999] p-2 text-left">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
+              {tocItems.map(item => (
+                <a key={`dropdown-${item.id}`} href={`#${item.id}`} className={cn(
+                  "block px-2 py-1.5 text-[13px] rounded hover:bg-slate-100 dark:hover:bg-white/5",
+                  activeSection === item.id ? "text-emerald-500 font-medium" : "text-slate-600 dark:text-neutral-300"
+                )}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* The scroll spy ticks */}
+          <div className="flex flex-col gap-1 items-end w-full">
+            {tocItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <a
+                  key={`tick-${item.id}`}
+                  href={`#${item.id}`}
+                  className="group relative flex justify-end items-center h-2 w-full"
+                  aria-label={`Scroll to ${item.label}`}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  <div
+                    className={cn(
+                      "h-[1px] transition-all duration-300 ease-in-out",
+                      isActive
+                        ? "w-10 bg-emerald-500 dark:bg-emerald-400"
+                        : "w-5 bg-slate-400 dark:bg-white/40 group-hover:w-7 group-hover:bg-slate-500 dark:group-hover:bg-white/60"
+                    )}
+                  />
+                  {/* Hover Tooltip for Ticks */}
+                  <span className="absolute right-full mr-3 px-2 py-1 bg-slate-800 dark:bg-white text-white dark:text-black text-[11px] font-medium rounded opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-lg z-[999]">
+                    {item.label}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* 
         The "Blueprint Box" Container
         max-w-[900px] centers it as a wide rectangle, while border-l and border-r create the vertical box shape.
       */}
       <div className="relative mx-4 sm:mx-auto max-w-[900px] mb-24">
-        
-        {/* Right-Side Minimalist Table of Contents (Sticky) */}
-        <div className="hidden xl:block absolute left-full top-32 ml-8 w-40 h-full z-50">
-          <div className="sticky top-32 pointer-events-auto">
-            {/* The dropdown label */}
-            <div className="group relative inline-flex items-center gap-2 mb-6 text-[13px] font-medium text-slate-500 dark:text-neutral-400 cursor-pointer">
-              On this page
-              {/* Dropdown opens to the LEFT so it never goes off-screen */}
-              <div className="absolute top-full right-0 mt-2 w-56 max-h-[300px] overflow-y-auto overscroll-contain rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[999] p-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
-                {tocItems.map(item => (
-                  <a key={`dropdown-${item.id}`} href={`#${item.id}`} className={cn(
-                    "block px-2 py-1.5 text-[13px] rounded hover:bg-slate-100 dark:hover:bg-white/5",
-                    activeSection === item.id ? "text-emerald-500 font-medium" : "text-slate-600 dark:text-neutral-300"
-                  )}>
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-            
-            {/* The scroll spy ticks */}
-            <div className="flex flex-col gap-2.5">
-              {tocItems.map((item) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <a
-                    key={`tick-${item.id}`}
-                    href={`#${item.id}`}
-                    className="group relative flex items-center h-4 w-full"
-                    aria-label={`Scroll to ${item.label}`}
-                    aria-current={isActive ? "true" : undefined}
-                  >
-                    <div
-                      className={cn(
-                        "h-[1px] transition-all duration-300 ease-in-out",
-                        isActive 
-                          ? "w-6 bg-emerald-500 dark:bg-emerald-400" 
-                          : "w-3 bg-slate-300 dark:bg-white/20 group-hover:w-4 group-hover:bg-slate-400 dark:group-hover:bg-white/40"
-                      )}
-                    />
-                    {/* Hover Tooltip for Ticks — positioned LEFT to overlap the table instead of getting cut off off-screen */}
-                    <span className="absolute right-full mr-3 px-2 py-1 bg-slate-800 dark:bg-white text-white dark:text-black text-[11px] font-medium rounded opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-lg z-[999]">
-                      {item.label}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
 
         {/* Main Box Area with borders */}
         <div className="relative border-l border-r border-slate-200 dark:border-white/10">
-          
+
           {/* Header Section */}
           <section id="intro" className="relative px-4 md:px-12 pt-16 pb-20 text-center">
             {/* Top Border Line for Header */}
@@ -374,11 +375,11 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   ))}
                 </ul>
               </div>
-              
+
 
               {/* === CMS Body (replaces hardcoded sections when available) === */}
               {Array.isArray(comparison.body) && comparison.body.length > 0 ? (
-                <section id="cms-body" className="pt-4 overflow-hidden">
+                <section id="cms-body" className="pt-4">
                   <PortableTextBlock value={comparison.body} showAccentBars={false} />
                 </section>
               ) : (
@@ -396,7 +397,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   <section id="when-to-choose" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
                     <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
-                  Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
+                      Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
                     </p>
                     <VercelTable
                       columns={[
@@ -404,9 +405,9 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                         { key: "capabilities", header: "Capabilities" },
                       ]}
                       rows={[
-                    { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
-                    { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
-                    { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
+                        { module: "Attendance", capabilities: "Biometric sync, GPS geofencing, real-time dashboards, automated defaulter alerts" },
+                        { module: "Fee Management", capabilities: "Multi-gateway collection, auto-reconciliation, late-fee engine, parent SMS receipts" },
+                        { module: "Examination", capabilities: "Seating plan generation, hall ticket automation, result processing with grace marks" },
                         { module: "NAAC/NBA", capabilities: "Auto-generated compliance reports, criterion-wise data aggregation, audit trails" },
                       ]}
                     />
@@ -421,7 +422,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                     <div className="space-y-4">
                       <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
                       <ul className="ml-4 space-y-2 text-[15px] text-slate-600 dark:text-neutral-400">
-                    <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
+                        <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
                       </ul>
@@ -511,14 +512,14 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           <div className="relative border-t border-slate-200 dark:border-white/10 flex items-center justify-center py-8">
             <Crosshair className="-top-[8px] -left-[8px]" />
             <Crosshair className="-top-[8px] -right-[8px]" />
-            
+
             <FeedbackWidget pageTitle={`Classgrid vs ${comparison.competitorName}`} pageType="compare" />
           </div>
 
           {/* Legal Disclaimer */}
           <div className="px-6 md:px-12 pb-12 pt-8 text-center">
             <p className="text-[11px] text-slate-400 dark:text-neutral-500 max-w-3xl mx-auto leading-relaxed">
-              {comparison.slug === "legacy-platforms" 
+              {comparison.slug === "legacy-platforms"
                 ? `This comparison uses “${comparison.competitorName}” as a category label for similar institutional ERP, LMS, and campus-management products. It does not refer to any single vendor, and Classgrid is not affiliated with any third-party platform represented by this category.`
                 : `${comparison.competitorName} is a trademark of its respective owners. Classgrid is not affiliated with them.`}
             </p>
