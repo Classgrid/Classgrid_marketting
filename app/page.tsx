@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 
 import { DemoRequestForm } from "@/components/sections/DemoRequestForm";
 import { HomeDevScrollReset } from "@/components/layout/HomeDevScrollReset";
@@ -1276,51 +1275,6 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
           </div>
         </Reveal>
       ) : null}
-
-      {/* ── SEO: Explore Classgrid — Direct links to high-value pages ── */}
-      {/* Google uses homepage body links to determine sitelink candidates. */}
-      <Reveal>
-        <section className="border-t border-black/5 dark:border-white/10 px-6 py-20 md:px-12 md:py-28 lg:px-16">
-          <div className="mx-auto max-w-5xl text-center">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-500">
-              Explore
-            </p>
-            <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-              Everything you need to get started
-            </h2>
-            <p className="mx-auto mb-12 max-w-2xl text-base text-muted-foreground md:text-lg">
-              From transparent pricing to in-depth articles, discover what makes Classgrid the operating system for modern education.
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {[
-                { label: "Pricing",       href: "/pricing",   desc: "Simple, transparent plans"       },
-                { label: "Blog",          href: "/blog",      desc: "Insights & product updates"      },
-                { label: "Changelog",     href: "/changelog", desc: "Latest releases & features"      },
-                { label: "About Us",      href: "/about",     desc: "Our mission & team"              },
-                { label: "Book a Demo",   href: "/#demo",     desc: "See Classgrid live"              },
-                { label: "Contact",       href: "/contact",   desc: "Talk to our team"                },
-                { label: "Compare",       href: "/compare",   desc: "See how we stack up"             },
-                { label: "Help Center",   href: "/help-center", desc: "Guides & support"              },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  prefetch={false}
-                  className="group flex flex-col items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 text-center transition-all duration-200 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] hover:shadow-[0_0_24px_rgba(16,185,129,0.08)]"
-                >
-                  <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-emerald-500">
-                    {item.label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {item.desc}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </Reveal>
 
       {showFaq ? (
         <Reveal>
