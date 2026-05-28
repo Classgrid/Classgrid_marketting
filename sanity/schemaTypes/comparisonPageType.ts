@@ -71,7 +71,36 @@ export const comparisonPageType = defineType({
       name: 'body',
       title: 'Body Content',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        { type: 'block' },
+        {
+          type: 'object',
+          name: 'table',
+          title: 'Table',
+          fields: [
+            {
+              name: 'rows',
+              type: 'array',
+              title: 'Rows',
+              of: [
+                {
+                  type: 'object',
+                  name: 'tableRow',
+                  title: 'Row',
+                  fields: [
+                    {
+                      name: 'cells',
+                      type: 'array',
+                      title: 'Cells',
+                      of: [{ type: 'string' }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
       description: 'Optional rich-text intro / deep-dive content',
     }),
 
@@ -192,7 +221,7 @@ export const comparisonPageType = defineType({
   ],
 
   preview: {
-    select: { title: 'competitorName', subtitle: 'slug' },
+    select: { title: 'competitorName', subtitle: 'slug.current' },
     prepare({ title, subtitle }) {
       return {
         title: `Classgrid vs ${title ?? 'Untitled'}`,
