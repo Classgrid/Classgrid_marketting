@@ -226,7 +226,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
         The "Blueprint Box" Container
         max-w-[900px] centers it as a wide rectangle, while border-l and border-r create the vertical box shape.
       */}
-      <div className="relative mx-4 sm:mx-auto max-w-[900px]">
+      <div className="relative mx-4 sm:mx-auto max-w-[900px] mb-24">
         
         {/* Right-Side Minimalist Table of Contents (Sticky) */}
         <div className="hidden xl:block absolute left-full top-32 ml-8 w-40 h-full z-50">
@@ -507,8 +507,10 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
           {/* Legal Disclaimer */}
           <div className="px-6 md:px-12 pb-12 pt-8 text-center">
-            <p className="text-[11px] text-slate-400 dark:text-neutral-500">
-              {comparison.competitorName} is a trademark of its respective owners. Classgrid is not affiliated with them.
+            <p className="text-[11px] text-slate-400 dark:text-neutral-500 max-w-3xl mx-auto leading-relaxed">
+              {comparison.slug === "legacy-platforms" 
+                ? `This comparison uses “${comparison.competitorName}” as a category label for similar institutional ERP, LMS, and campus-management products. It does not refer to any single vendor, and Classgrid is not affiliated with any third-party platform represented by this category.`
+                : `${comparison.competitorName} is a trademark of its respective owners. Classgrid is not affiliated with them.`}
             </p>
           </div>
 
