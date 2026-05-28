@@ -65,6 +65,11 @@ export function getSupportAddress() {
   return `"${config.senderName}" <support@classgrid.in>`;
 }
 
+export function getSupportEmail() {
+  const config = getSmtpConfig();
+  return config.senderEmail || "support@classgrid.in";
+}
+
 export function sanitizeMailerError(error: unknown) {
   const err = error as {
     code?: string;
