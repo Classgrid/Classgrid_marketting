@@ -18,6 +18,7 @@ import { SubscribeStrip } from "@/components/shared/SubscribeStrip";
 import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 import { buildLangHref, extractLocaleString, type SupportedLang } from "@/lib/locale";
 import { BlueprintBox, BlueprintSection } from "@/components/ui/BlueprintBox";
+import { ScrollSpyTOC } from "@/components/shared/ScrollSpyTOC";
 import { cn } from "@/lib/utils";
 
 const MotionDiv = motion.div as any;
@@ -215,54 +216,12 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         </section>
       )}
 
-      {/* Blueprint-framed article body */}
-      <div className="relative mx-auto max-w-4xl">
+      {/* Wrap TOC and main content in a relative div to constrain the absolute TOC */}
+      <div className="relative w-full">
+        <ScrollSpyTOC tocItems={tocItems} activeSection={activeSection} />
 
-        {/* ── Right-Side Sticky TOC (Desktop xl+) ── */}
-        <div className="hidden xl:block absolute left-full top-32 ml-8 w-40 h-full z-50">
-          <div className="sticky top-32 pointer-events-auto">
-            <div className="group relative inline-flex items-center gap-2 mb-6 text-[13px] font-medium text-slate-500 dark:text-neutral-400 cursor-pointer">
-              On this page
-              <div className="absolute top-full right-0 mt-2 w-56 max-h-[300px] overflow-y-auto overscroll-contain rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[999] p-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
-                {tocItems.map(item => (
-                  <a key={`dropdown-${item.id}`} href={`#${item.id}`} className={cn(
-                    "block px-2 py-1.5 text-[13px] rounded hover:bg-slate-100 dark:hover:bg-white/5",
-                    activeSection === item.id ? "text-emerald-500 font-medium" : "text-slate-600 dark:text-neutral-300"
-                  )}>
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col gap-2.5">
-              {tocItems.map((item) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <a
-                    key={`tick-${item.id}`}
-                    href={`#${item.id}`}
-                    className="group relative flex items-center h-4 w-full"
-                    aria-label={`Scroll to ${item.label}`}
-                    aria-current={isActive ? "true" : undefined}
-                  >
-                    <div
-                      className={cn(
-                        "h-[1px] transition-all duration-300 ease-in-out",
-                        isActive
-                          ? "w-6 bg-emerald-500 dark:bg-emerald-400"
-                          : "w-3 bg-slate-300 dark:bg-white/20 group-hover:w-4 group-hover:bg-slate-400 dark:group-hover:bg-white/40"
-                      )}
-                    />
-                    <span className="absolute right-full mr-3 px-2 py-1 bg-slate-800 dark:bg-white text-white dark:text-black text-[11px] font-medium rounded opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-lg z-[999] max-w-[180px] truncate">
-                      {item.label}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        {/* Blueprint-framed article body */}
+        <div className="relative mx-auto max-w-4xl">
 
       <BlueprintBox maxWidth="max-w-4xl" className="pt-2 pb-16">
         <article id="blog-intro" className="mt-0 w-full px-4 sm:px-8 md:px-12">
@@ -403,6 +362,8 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
           </div>
         )}
       </BlueprintBox>
+        </div> {/* close max-w-4xl */}
+      </div> {/* <-- CLOSE RELATIVE WRAPPER FOR STICKY TOC HERE SO IT STOPS BEFORE REFERENCES */}
 
       {/* Back to narrow column for references & author */}
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 relative">
@@ -561,7 +522,6 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
           )}
         </article>
       </div>
-      </div>{/* close relative wrapper for sticky TOC */}
 
       {/* ── MOBILE STICKY TOC — visible below xl only ── */}
       <div className="xl:hidden">
