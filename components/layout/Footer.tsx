@@ -341,7 +341,7 @@ export function Footer({
                       href={link.href!}
                       prefetch={false}
                       target={isExternal(link.href!) ? "_blank" : undefined}
-                      rel={isExternal(link.href!) ? "noopener noreferrer" : undefined}
+                      rel={isExternal(link.href!) ? "nofollow noopener noreferrer" : (isSitemap ? undefined : "nofollow")}
                       className={`whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
                     >
                       {link.label}
