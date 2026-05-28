@@ -106,6 +106,7 @@ export default async function Page({ params }: ComparePageProps) {
 		? {
 				competitorName: cms.competitorName ?? fallback?.competitorName ?? competitor.replace(/-/g, " "),
 				slug: cms.slug ?? competitor,
+				metaDescription: cms.metaDescription ?? fallback?.metaDescription,
 				competitorLogoUrl: buildSanityImageUrl(cms.competitorLogo, 240),
 				websiteLink: cms.websiteLink ?? null,
 				lastUpdated: cms._updatedAt ?? null,
@@ -119,6 +120,7 @@ export default async function Page({ params }: ComparePageProps) {
 		: {
 				competitorName: fallback.competitorName,
 				slug: fallback.slug,
+				metaDescription: fallback.metaDescription,
 				competitorLogoUrl: null,
 				websiteLink: null,
 				lastUpdated: null,
