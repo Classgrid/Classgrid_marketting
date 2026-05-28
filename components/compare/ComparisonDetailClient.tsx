@@ -143,7 +143,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
   const { mainItems: mainTocItems, fullItems: tocItems } = useMemo(() => getTocData(comparison), [comparison]);
 
-  // Scroll Spy Logic
+  // Scroll Spy Logic — polls until all heading elements exist in the DOM
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -153,19 +153,29 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           }
         });
       },
-      { rootMargin: "-20% 0px -40% 0px" }
+      { rootMargin: "-10% 0px -35% 0px" }
     );
 
-    // Wait for PortableText to fully render before observing
-    const timeout = setTimeout(() => {
+    let attempts = 0;
+    let retryTimer: ReturnType<typeof setTimeout>;
+
+    const tryObserve = () => {
+      let found = 0;
       tocItems.forEach((item) => {
         const el = document.getElementById(item.id);
-        if (el) observer.observe(el);
+        if (el) { observer.observe(el); found++; }
       });
-    }, 500);
+      attempts++;
+      // Retry every 200ms until all items found or 4 seconds elapsed
+      if (found < tocItems.length && attempts < 20) {
+        retryTimer = setTimeout(tryObserve, 200);
+      }
+    };
+
+    retryTimer = setTimeout(tryObserve, 300);
 
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(retryTimer);
       observer.disconnect();
     };
   }, [tocItems]);
