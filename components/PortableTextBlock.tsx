@@ -88,16 +88,19 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         {children}
       </code>
     ),
-    link: ({ children, value }) => (
-      <a
-        className="font-medium text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/30 underline-offset-4 hover:decoration-emerald-500/80 transition-colors"
-        href={value?.href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {children}
-      </a>
-    ),
+    link: ({ children, value }) => {
+      const href = value?.href ?? "";
+      const isExternal = href.startsWith("http") || href.startsWith("//");
+      return (
+        <a
+          className="font-medium text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/30 underline-offset-4 hover:decoration-emerald-500/80 transition-colors"
+          href={href}
+          {...(isExternal ? { target: "_blank", rel: "noreferrer" } : {})}
+        >
+          {children}
+        </a>
+      );
+    },
   },
   types: {
     image: ({ value }) => {
