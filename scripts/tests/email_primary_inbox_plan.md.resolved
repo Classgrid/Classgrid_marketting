@@ -1,0 +1,153 @@
+# Plan: Get Classgrid Blog Emails into Gmail Primary Inbox
+
+> **Status:** Saved for later  
+> **Priority:** Medium  
+> **Estimated Time:** ~30 minutes of code changes  
+
+---
+
+## Problem
+
+Blog notification emails sent via the cron job (`/api/cron/send-notifications`) land in Gmail's **Promotions** tab instead of the **Primary** inbox. This reduces visibility and open rates.
+
+Other Classgrid emails (OTP, support replies, contact form confirmations) correctly land in Primary because they are transactional one-to-one emails.
+
+---
+
+## Root Cause
+
+Gmail's bulk detection algorithm flags these emails because:
+1. **Identical content** is sent to 17+ subscribers within seconds
+2. **Heavy HTML template** with 10+ links (blog links, changelog links, social icons, unsubscribe)
+3. **Brand sender name** ("Classgrid") instead of a personal name
+4. **Marketing-style elements**: CTA buttons, image banners, multiple content sections
+
+---
+
+## Implementation Plan
+
+### Change 1: Personalize Subject Lines & Body
+**File:** `app/api/cron/send-notifications/route.ts`
+
+**Current:**
+```
+Subject: "New Post: Why Maharashtra's Schools..."
+Body: Generic greeting
+```
+
+**After:**
+```
+Subject: "Nikhil, new from Classgrid: Why Maharashtra's Schools..."
+Body: "Hi Nikhil," (extracted from email address)
+```
+
+**Why:** Each email becomes slightly unique, breaking the "identical bulk send" pattern that Gmail detects.
+
+**Code location:** Around line 357 (subject construction) and inside `buildNotificationEmailHtml()` function.
+
+---
+
+### Change 2: Slim Down the Email Template
+**File:** `app/api/cron/send-notifications/route.ts`
+
+**Remove:**
+- The "Recent from the Blog" section (3 extra blog cards with images)
+- The "What's New in Classgrid" section (3 extra changelog cards with images)
+- Social media icon links (Instagram, Facebook, YouTube)
+
+**Keep:**
+- Classgrid logo (small, single image)
+- The main blog/changelog post with cover image
+- CTA button ("Read Blog" / "View Product Update")
+- Support email link
+- Unsubscribe link (legally required)
+
+**Why:** Reduces total links from ~12 to ~3. Fewer links = dramatically lower promotional score.
+
+**Code location:** 
+- Remove calls to `renderRecentBlogs()` and `renderRecentChangelogs()` inside `buildNotificationEmailHtml()` (lines 223-224)
+- Remove the social media icons HTML block (lines 227-239)
+- Can also remove the `renderRecentBlogs()` and `renderRecentChangelogs()` function definitions (lines 91-156) if no longer used elsewhere
+
+---
+
+### Change 3: Send from a Person, Not a Brand
+**File:** `.env.local` and `.env` on Vercel
+
+**Current:**
+```
+BREVO_SENDER_NAME=Classgrid
+BREVO_SENDER_EMAIL=support@classgrid.in
+```
+
+**After:**
+```
+BREVO_SENDER_NAME=Nikhil from Classgrid
+BREVO_SENDER_EMAIL=nikhil@classgrid.in
+```
+
+> [!IMPORTANT]
+> The new sender email (`nikhil@classgrid.in`) must be verified in Brevo's dashboard before it can be used. Go to Brevo → Settings → Senders & IPs → Add Sender.
+
+**Why:** Gmail treats emails from personal names more favorably than brand names.
+
+---
+
+### Change 4: Add a `firstName` Parameter to Email Builder
+**File:** `app/api/cron/send-notifications/route.ts`
+
+The `firstNameFromEmail()` utility function already exists in the subscribe route (`app/api/blog/subscribe/route.ts`). We need to:
+
+1. Copy/move `firstNameFromEmail()` to the cron route (or extract to a shared utility)
+2. Use it when iterating over subscribers in `processQueueItem()` (around line 364)
+3. Pass the first name into `buildNotificationEmailHtml()` and use it in:
+   - The subject line: `"${firstName}, new from Classgrid: ${title}"`
+   - The greeting: `"Hi ${firstName},"`
+
+---
+
+### Change 5 (Optional): Stagger Email Sending
+**File:** `app/api/cron/send-notifications/route.ts`
+
+Instead of sending all emails in a tight loop, add a small delay (500ms-1000ms) between each send. This prevents Gmail from seeing a burst of identical emails arriving simultaneously.
+
+```typescript
+// Inside the subscriber loop (around line 364)
+for (const sub of batch) {
+  // ... send email ...
+  await new Promise(r => setTimeout(r, 500)); // 500ms gap between emails
+}
+```
+
+**Why:** Spreads out delivery so it looks less like a bulk blast.
+
+> [!WARNING]
+> This increases the total processing time. With a batch size of 3 and 500ms delay, each cron run takes ~1.5s extra. With the 10s Vercel timeout, this is still safe.
+
+---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| [route.ts](file:///c:/Users/nikhi/OneDrive/Documents/classgrid_marketting/app/api/cron/send-notifications/route.ts) | Personalize subject, slim template, add firstName, stagger sends |
+| `.env.local` | Update `BREVO_SENDER_NAME` and `BREVO_SENDER_EMAIL` |
+| Vercel Dashboard → Environment Variables | Same env var updates for production |
+| Brevo Dashboard → Senders | Verify new sender email |
+
+---
+
+## Testing Plan
+
+1. Make all code changes
+2. Update env vars locally and on Vercel
+3. Create a new test draft in Sanity using `node scripts/tests/create-test-post.mjs`
+4. Publish from Sanity Studio with "Send Subscriber Notification" ON
+5. Wait for next cron-job.org cycle (15 min)
+6. Check Gmail inbox — verify it lands in **Primary** or **Updates** tab instead of Promotions
+
+---
+
+## Expected Outcome
+
+These changes combined should move the email from Promotions to either **Primary** or **Updates** tab. The email will still look professional (logo + cover image + CTA button) but will have a much lighter footprint that Gmail's AI treats as informational rather than promotional.

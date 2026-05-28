@@ -170,8 +170,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Please enter your name to subscribe." }, { status: 400 });
     }
 
-    if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Invalid email address. Please enter a valid email." }, { status: 400 });
     }
 
     const { data: existingSub } = await supabaseAdmin
