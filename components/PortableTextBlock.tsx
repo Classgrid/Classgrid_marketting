@@ -90,7 +90,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
     ),
     link: ({ children, value }) => (
       <a
-        className="font-medium text-emerald-600 dark:text-emerald-400 decoration-emerald-500/30 underline-offset-4 hover:underline transition-colors"
+        className="font-medium text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/30 underline-offset-4 hover:decoration-emerald-500/80 transition-colors"
         href={value?.href}
         target="_blank"
         rel="noreferrer"
