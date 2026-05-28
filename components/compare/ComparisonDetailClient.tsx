@@ -294,7 +294,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
             </h1>
 
             <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-slate-600 dark:text-neutral-400">
-              {comparison.metaDescription || `A detailed guide to Classgrid vs ${comparison.competitorName}: compute architecture, AI infrastructure, security, and when to choose each platform for your project.`}
+              {comparison.metaDescription || `A detailed guide to Classgrid vs ${comparison.competitorName}: compute architecture, AI infrastructure, security, and when to choose each platform for your institution.`}
             </p>
 
             {/* Author / Competitor Badge */}
