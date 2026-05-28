@@ -143,40 +143,45 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
   const { mainItems: mainTocItems, fullItems: tocItems } = useMemo(() => getTocData(comparison), [comparison]);
 
-  // Scroll Spy Logic — polls until all heading elements exist in the DOM
+  // Scroll Spy Logic — tracks which heading is closest to the top of the viewport
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const threshold = 120; // px from top of viewport
+        let currentId = tocItems[0]?.id ?? "";
+
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (el) {
+            const top = el.getBoundingClientRect().top;
+            if (top <= threshold) {
+              currentId = item.id;
+            }
           }
-        });
-      },
-      { rootMargin: "-10% 0px -35% 0px" }
-    );
+        }
 
-    let attempts = 0;
-    let retryTimer: ReturnType<typeof setTimeout>;
+        // If scrolled near the bottom, activate the last item
+        if (window.innerHeight + scrollY >= document.body.offsetHeight - 100) {
+          currentId = tocItems[tocItems.length - 1]?.id ?? currentId;
+        }
 
-    const tryObserve = () => {
-      let found = 0;
-      tocItems.forEach((item) => {
-        const el = document.getElementById(item.id);
-        if (el) { observer.observe(el); found++; }
+        setActiveSection(currentId);
+        ticking = false;
       });
-      attempts++;
-      // Retry every 200ms until all items found or 4 seconds elapsed
-      if (found < tocItems.length && attempts < 20) {
-        retryTimer = setTimeout(tryObserve, 200);
-      }
     };
 
-    retryTimer = setTimeout(tryObserve, 300);
+    // Initial check after DOM settles
+    const initTimer = setTimeout(onScroll, 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      clearTimeout(retryTimer);
-      observer.disconnect();
+      clearTimeout(initTimer);
+      window.removeEventListener("scroll", onScroll);
     };
   }, [tocItems]);
 
