@@ -197,7 +197,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
       if (!value?.rows?.length) return null;
       return (
         <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[600px] border-collapse text-left text-sm">
+          <table className="w-full border-collapse text-left text-sm">
             <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
               <tr>
                 {value.rows[0].cells.map((cell: any, i: number) => (
@@ -226,7 +226,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
       if (!value?.headers?.length && !value?.rows?.length) return null;
       return (
         <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[600px] border-collapse text-left text-sm">
+          <table className="w-full border-collapse text-left text-sm">
             {value.headers?.length > 0 && (
               <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
                 <tr>
