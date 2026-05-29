@@ -536,18 +536,10 @@ export default function DemoSuccessPage() {
                     </div>
                     <button 
                       onClick={() => {
-                        const nextMonth = addMonths(currentMonth, 1);
-                        const maxDate = startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
-                        if (startOfMonth(nextMonth) > maxDate) return;
-                        
                         setSlideDir(1);
-                        setCurrentMonth(nextMonth);
+                        setCurrentMonth(addMonths(currentMonth, 1));
                       }}
-                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                        startOfMonth(addMonths(currentMonth, 1)) > startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000))
-                          ? "opacity-30 cursor-not-allowed text-muted-foreground"
-                          : "hover:bg-muted text-muted-foreground"
-                      }`}
+                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <ChevronRightIcon className="w-4 h-4" />
                     </button>
