@@ -12,18 +12,22 @@ export async function GET(req: Request) {
   try {
     const selectedDate = new Date(dateParam);
     
-    // Block Weekends (0 = Sunday, 6 = Saturday)
-    if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
+    // Convert to exact YYYY-MM-DD in Asia/Kolkata
+    const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const dateStr = formatter.format(selectedDate);
+
+    // Create start and end of day exactly in IST
+    const startOfDay = new Date(`${dateStr}T00:00:00+05:30`);
+    const endOfDay = new Date(`${dateStr}T23:59:59+05:30`);
+
+    // Block Weekends (Sun, Sat) in Asia/Kolkata
+    const dayOfWeek = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', weekday: 'short' }).format(startOfDay);
+    if (dayOfWeek === 'Sun' || dayOfWeek === 'Sat') {
       return NextResponse.json({ ok: true, availableSlots: [] });
     }
 
-    const startOfDay = new Date(selectedDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(selectedDate);
-    endOfDay.setHours(23, 59, 59, 999);
-
     // Default fallback times if Google sync fails
-    const DEFAULT_SLOTS = ["11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm"];
+    const DEFAULT_SLOTS = ["1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:00pm", "7:30pm", "8:00pm"];
 
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.ADMIN_GOOGLE_REFRESH_TOKEN) {
       console.warn("[freebusy] Google credentials missing. Using default static slots.");
@@ -51,16 +55,18 @@ export async function GET(req: Request) {
     const busySlots = freeBusyRes.data.calendars?.primary?.busy || [];
 
     const availableSlots: string[] = [];
-    const startHour = 11; // 11:00 AM Start
-    const endHour = 15;   // 3:00 PM End Hour
-    const endMinute = 30; // 3:30 PM is the last slot
+    const startHour = 13; // 1:00 PM Start (13:00 IST)
+    const endHour = 20;   // 8:00 PM End Hour (20:00 IST)
+    const endMinute = 0;  // 8:00 PM is the last slot
 
     for (let h = startHour; h <= endHour; h++) {
       for (let m of [0, 30]) {
         if (h === endHour && m > endMinute) continue;
 
-        const slotStart = new Date(selectedDate);
-        slotStart.setHours(h, m, 0, 0);
+        // Create exact slot start time in IST
+        const hh = h.toString().padStart(2, "0");
+        const mm = m.toString().padStart(2, "0");
+        const slotStart = new Date(`${dateStr}T${hh}:${mm}:00+05:30`);
         const slotEnd = new Date(slotStart.getTime() + 30 * 60000); // 30 min duration
 
         // Hide past times if the date is today
@@ -96,7 +102,7 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error("[freebusy] Error fetching availability:", error);
     // Safe fallback so the website doesn't break
-    const DEFAULT_SLOTS = ["11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm"];
+    const DEFAULT_SLOTS = ["1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:00pm", "7:30pm", "8:00pm"];
     return NextResponse.json({ ok: true, availableSlots: DEFAULT_SLOTS });
   }
 }
