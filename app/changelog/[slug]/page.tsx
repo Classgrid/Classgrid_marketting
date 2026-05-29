@@ -38,6 +38,8 @@ function prettyModule(moduleValue: string) {
   return moduleValue.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+export const revalidate = 300;
+
 export async function generateStaticParams() {
   const cmsEntries =
     ((await getChangelogEntries()) as Array<{ slug?: string }> | null)?.filter((entry) => entry.slug) ?? [];
