@@ -79,6 +79,17 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
+  // 4️⃣ Absolute last resort: OpenRouter (Free Tier Models)
+  const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (openRouterKey) {
+    providers.push({
+      name: "openrouter",
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      apiKey: openRouterKey,
+      model: process.env.OPENROUTER_MODEL?.trim() || "meta-llama/llama-3.2-3b-instruct:free",
+    });
+  }
+
   return providers;
 }
 
