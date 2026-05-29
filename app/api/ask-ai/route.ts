@@ -24,18 +24,18 @@ leoProfanity.loadDictionary();
 const customBadWords = [
   // English custom
   "kiss", "nude", "boobs", "sex", "porn", "kissing",
-  
+
   // Hindi / Hinglish
-  "bhenchod", "madarchod", "chutiya", "gandu", "bhosdike", "bhosadike", 
-  "bhosada", "randi", "harami", "kamine", "laude", "lawde", "loda", "lund", 
+  "bhenchod", "madarchod", "chutiya", "gandu", "bhosdike", "bhosadike",
+  "bhosada", "randi", "harami", "kamine", "laude", "lawde", "loda", "lund",
   "chut", "gaand", "mutthal", "suar", "chod",
-  
+
   // Marathi
-  "zavadya", "zavnya", "aai zavadya", "chinal", "gandmarya", "bhosadichya", 
+  "zavadya", "zavnya", "aai zavadya", "chinal", "gandmarya", "bhosadichya",
   "bulli", "bocha", "bhadve", "yedzavya",
 
   // Devanagari Script (Hindi & Marathi)
-  "बहनचोद", "मादरचोद", "चूतिया", "भोसड़ी", "रांडी", "गांड", "लौड़े", 
+  "बहनचोद", "मादरचोद", "चूतिया", "भोसड़ी", "रांडी", "गांड", "लौड़े",
   "लंड", "झवाड्या", "आईझवाड्या", "भडव्या", "चुतिया"
 ];
 
@@ -46,7 +46,7 @@ function containsProfanity(text: string): boolean {
   // for our custom words just to be extremely strict with substrings.
   const normalized = text.toLowerCase();
   const hasCustomWord = customBadWords.some(word => normalized.includes(word.toLowerCase()));
-  
+
   return leoProfanity.check(text) || hasCustomWord;
 }
 
@@ -96,8 +96,6 @@ export async function POST(req: Request) {
 
     // --- 0. CHECK IF USER IS ALREADY BANNED (VIA COOKIE OR EMAIL) ---
     const cookieHeader = req.headers.get("cookie") || "";
-    const isCookieBanned = cookieHeader.includes("ai_chat_restricted=true");
-
     let bannedUntil: Date | null = null;
 
     if (userEmail) {
@@ -111,15 +109,25 @@ export async function POST(req: Request) {
       }
     }
 
-    if (isCookieBanned && !bannedUntil) {
-      // Cookie ban but no DB record — estimate 15 min from now as a fallback
-      bannedUntil = new Date(Date.now() + 15 * 60 * 1000);
+    // Check if cookie contains a valid timestamp
+    const cookieMatch = cookieHeader.match(/ai_chat_restricted=([^;]+)/);
+    const cookieValue = cookieMatch ? cookieMatch[1] : null;
+
+    if (cookieValue && !bannedUntil) {
+      // Parse the timestamp from the cookie
+      const parsedTime = parseInt(cookieValue, 10);
+      if (!isNaN(parsedTime) && parsedTime > Date.now()) {
+        bannedUntil = new Date(parsedTime);
+      } else if (cookieValue === "true") {
+        // Fallback for old cookie format
+        bannedUntil = new Date(Date.now() + 15 * 60 * 1000);
+      }
     }
 
-    if (bannedUntil || isCookieBanned) {
-      return NextResponse.json({ 
+    if (bannedUntil) {
+      return NextResponse.json({
         error: "Your access has been restricted due to safety policy violations.",
-        bannedUntil: (bannedUntil || new Date(Date.now() + 15 * 60 * 1000)).toISOString()
+        bannedUntil: bannedUntil.toISOString()
       }, { status: 403 });
     }
 
@@ -140,14 +148,14 @@ export async function POST(req: Request) {
         reason: "Vulgarity in AI Chat",
         message: question,
       });
-      
+
       // Stop the conversation immediately and drop a 15-minute ban cookie
-      const response = NextResponse.json({ 
+      const response = NextResponse.json({
         error: "Your message violates our safety guidelines. The conversation has been terminated.",
         bannedUntil: banExpiry.toISOString()
-      }, { status: 403 }); 
+      }, { status: 403 });
 
-      response.cookies.set("ai_chat_restricted", "true", {
+      response.cookies.set("ai_chat_restricted", banExpiry.getTime().toString(), {
         maxAge: 15 * 60, // 15 minutes
         path: "/",
         httpOnly: true,
@@ -166,11 +174,11 @@ export async function POST(req: Request) {
 
     if (rateLimitRecord) {
       if (rateLimitRecord.count >= MAX_MESSAGES) {
-        return NextResponse.json({ 
-          error: "You have reached your message limit. Please try again after 1 hour." 
+        return NextResponse.json({
+          error: "You have reached your message limit. Please try again after 1 hour."
         }, { status: 429 }); // 429 Too Many Requests
       }
-      
+
       // They are under the limit, so increment their message count
       rateLimitRecord.count += 1;
       await rateLimitRecord.save();
