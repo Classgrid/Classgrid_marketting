@@ -202,7 +202,7 @@ export default async function ChangelogDetailPage({
           <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
         ) : null}
 
-        <div className="space-y-12">
+        <div className="space-y-0">
           <PortableTextBlock value={entry.content} showAccentBars={false} />
         </div>
 
