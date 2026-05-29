@@ -1184,9 +1184,9 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showClassgridVideo ? (
         <ClassgridVideoSection
-          label={(cmsClassgridVideo as any)?.label ?? "See It In Action"}
-          title={(cmsClassgridVideo as any)?.title ?? "Built for Every Institution"}
-          description={(cmsClassgridVideo as any)?.description ?? "Watch how Classgrid transforms operations across your entire campus in this quick overview. From admissions to academics, see everything in one unified platform."}
+          label={(cmsClassgridVideo as any)?.label ?? "Your Campus, All Day"}
+          title={(cmsClassgridVideo as any)?.title ?? "With Every Role, From Morning to Night"}
+          description={(cmsClassgridVideo as any)?.description ?? "Classgrid works silently behind every role on your campus — from the first attendance bell at sunrise to the last report reviewed at midnight. One platform, every stakeholder, every hour."}
           videos={
             Array.isArray((cmsClassgridVideo as any)?.videoPlaylist) &&
             (cmsClassgridVideo as any).videoPlaylist.length > 0
@@ -1196,13 +1196,13 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
               : ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"]
           }
           highlights={(cmsClassgridVideo as any)?.highlights ?? [
-            { text: "Manage admissions, fees, attendance & exams in one place" },
-            { text: "Real-time analytics and reporting for administrators" },
-            { text: "Seamless communication between staff, students & parents" },
-            { text: "Scales from small coaching institutes to multi-campus universities" },
+            { text: "Students, faculty, admins, accountants, librarians — every role, one login" },
+            { text: "Admissions at dawn, attendance by noon, fee reports by evening" },
+            { text: "Real-time sync across 25+ modules — nothing falls through the cracks" },
+            { text: "From small coaching centres to multi-campus universities, it just scales" },
           ]}
-          ctaLabel={(cmsClassgridVideo as any)?.ctaLabel ?? ""}
-          ctaHref={(cmsClassgridVideo as any)?.ctaHref ?? ""}
+          ctaLabel={(cmsClassgridVideo as any)?.ctaLabel ?? "Book a Free Demo"}
+          ctaHref={(cmsClassgridVideo as any)?.ctaHref ?? "/#demo"}
         />
       ) : null}
 
