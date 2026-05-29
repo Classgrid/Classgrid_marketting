@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, Loader2, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -268,8 +269,7 @@ export default function TicketDetailPage() {
     return (
       <main className="min-h-screen bg-background py-24 px-4 md:px-12 transition-colors duration-300">
         <div className="max-w-[960px] mx-auto flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mb-4" />
-          <p className="text-sm text-muted-foreground">Loading ticket...</p>
+          <Spinner className="w-8 h-8 text-muted-foreground" />
         </div>
       </main>
     );
@@ -349,7 +349,7 @@ export default function TicketDetailPage() {
             disabled={isRefreshing}
             className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-full transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            <Spinner className={`w-3.5 h-3.5 ${isRefreshing ? "" : "opacity-0"}`} />
             {isRefreshing ? "Refreshing..." : "Refresh"}
           </button>
         </motion.div>
@@ -454,7 +454,7 @@ export default function TicketDetailPage() {
                     >
                       {isSending ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Spinner className="w-4 h-4 text-inherit" />
                           Sending...
                         </>
                       ) : (

@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Star, CheckCircle2, RefreshCw, MessageSquareQuote, 
+  Star, CheckCircle2, MessageSquareQuote, 
   Send, Sparkles, ArrowRight, Users 
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import Marquee from "react-fast-marquee";
 import Masonry from "react-masonry-css";
 import { fetchReviewsData } from "./actions";
@@ -283,7 +284,7 @@ export default function ReviewsPage() {
               disabled={submitting} 
               className="w-full h-14 font-bold relative text-base"
             >
-              {submitting ? <RefreshCw className="w-5 h-5 animate-spin" /> : <>Submit Feedback <ArrowRight className="w-5 h-5 ml-2" /></>}
+              {submitting ? <><Spinner className="w-5 h-5 text-inherit mr-2" /> Submitting...</> : <>Submit Feedback <ArrowRight className="w-5 h-5 ml-2" /></>}
             </Button>
 
             {formStatus === "success" && (
@@ -329,8 +330,7 @@ export default function ReviewsPage() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <RefreshCw className="w-10 h-10 animate-spin text-emerald-500/30" />
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-neutral-600">Syncing Wall of Love...</p>
+            <Spinner className="w-10 h-10 text-emerald-500/50" />
           </div>
         ) : filteredReviews.length === 0 ? (
           <div className="text-center py-40 border border-dashed border-border rounded-[2.5rem] bg-card/20">

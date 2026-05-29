@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { CheckCircle2, AlertCircle, Send, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Send } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,7 +86,7 @@ export function SubscribeForm() {
             disabled={loading}
           >
             {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner className="h-4 w-4 text-inherit" />
             ) : (
               <Send className="h-4 w-4" />
             )}

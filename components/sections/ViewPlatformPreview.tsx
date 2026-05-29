@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   Expand,
-  LoaderCircle,
   Monitor,
   Smartphone,
   LogIn,
@@ -18,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { IPhone15Pro } from "@/components/ui/iphone-15-pro";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -91,8 +91,8 @@ function LiveIframe({
       {!isReady && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-50">
           <div className="flex flex-col items-center gap-3 text-center">
-            <div className="rounded-full border border-slate-200 bg-[#fafafa] p-3 shadow-md">
-              <LoaderCircle className="h-5 w-5 animate-spin text-emerald-500" />
+            <div className="rounded-full border border-slate-200 bg-[#fafafa] p-3 shadow-md flex items-center justify-center">
+              <Spinner className="h-5 w-5 text-emerald-500" />
             </div>
             <p className="text-xs font-medium text-slate-500">
               Loading live platform…

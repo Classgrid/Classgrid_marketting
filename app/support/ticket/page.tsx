@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import LinkModal from "@/app/support/components/LinkModal";
@@ -203,7 +204,7 @@ export default function RaiseTicketPage() {
   if (!identityReady && status === "loading") {
     return (
       <main className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <Spinner className="w-6 h-6" />
       </main>
     );
   }
@@ -413,7 +414,7 @@ export default function RaiseTicketPage() {
             respond as soon as possible. Redirecting you to your requests.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm font-semibold text-primary">
-            <span className="w-4 h-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+            <Spinner className="w-4 h-4 text-inherit" />
             Opening your requests...
           </div>
         </motion.div>
@@ -861,7 +862,7 @@ export default function RaiseTicketPage() {
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <Spinner className="w-4 h-4 text-inherit" />
                     Submitting…
                   </span>
                 ) : (

@@ -16,11 +16,11 @@ import {
   MessageSquare,
   RefreshCw,
   AlertCircle,
-  Loader2,
   ShieldCheck
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -502,7 +502,7 @@ export function DemoRequestForm({
                 disabled={submitting}
                 className="w-full text-base"
               >
-                {submitting && <Loader2 className="h-5 w-5 animate-spin" />}
+                {submitting && <Spinner className="h-5 w-5 text-inherit" />}
                 {submitting ? copy?.submitLoadingLabel || "Submitting..." : submitLabel}
               </Button>
               <div className="flex items-center justify-center gap-3">

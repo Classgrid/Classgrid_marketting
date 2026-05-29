@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isBefore, startOfDay, addMonths, subMonths } from "date-fns";
-import { Clock, Video, Globe, CheckSquare, User, CheckCircle2, Edit2, Loader2, ArrowRight, ChevronLeftIcon, ChevronRightIcon, LayoutGrid, MessageCircle, X } from "lucide-react";
+import { Clock, Video, Globe, CheckSquare, User, CheckCircle2, Edit2, ArrowRight, ChevronLeftIcon, ChevronRightIcon, LayoutGrid, MessageCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useSearchParams, notFound } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -264,9 +265,8 @@ export default function DemoSuccessPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background text-foreground flex-col">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mb-4" />
-        <p className="text-muted-foreground animate-pulse text-sm">Verifying secure session...</p>
+      <main className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <Spinner className="w-8 h-8 text-muted-foreground" />
       </main>
     );
   }
@@ -312,7 +312,7 @@ export default function DemoSuccessPage() {
                     onClick={handleSaveEdit}
                     disabled={isSavingEdit}
                   >
-                    {isSavingEdit ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save"}
+                    {isSavingEdit ? <Spinner className="w-3.5 h-3.5 text-inherit" /> : "Save"}
                   </Button>
                 </div>
               ) : !otpSent ? (
@@ -428,7 +428,7 @@ export default function DemoSuccessPage() {
                   disabled={isSendingOtp || cooldown > 0}
                   className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 text-lg font-bold shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:shadow-none"
                 >
-                  {isSendingOtp ? <Loader2 className="w-5 h-5 animate-spin" /> : cooldown > 0 ? `Resend available in ${cooldown}s` : "Send Verification Code"}
+                  {isSendingOtp ? <><Spinner className="w-5 h-5 text-inherit" /> Sending…</> : cooldown > 0 ? `Resend available in ${cooldown}s` : "Send Verification Code"}
                 </Button>
               ) : (
                 <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -449,7 +449,7 @@ export default function DemoSuccessPage() {
                     className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white py-6 text-lg font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] disabled:opacity-50 disabled:shadow-none disabled:hover:shadow-none disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed"
                   >
                     {isVerifying ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <><Spinner className="w-5 h-5 text-inherit" /> Verifying…</>
                     ) : (
                       <span className="flex items-center gap-2">Verify Email <ArrowRight className="w-5 h-5" /></span>
                     )}
@@ -461,7 +461,7 @@ export default function DemoSuccessPage() {
                     className="mt-5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2 disabled:hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSendingOtp ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+                      <><Spinner className="w-4 h-4 text-inherit" /> Sending…</>
                     ) : cooldown > 0 ? (
                       `Didn't receive code? Resend in ${cooldown}s`
                     ) : (
@@ -633,7 +633,7 @@ export default function DemoSuccessPage() {
                             const d = new Date(lead.scheduledAt);
                             const isCurrentYear = d.getFullYear() === new Date().getFullYear();
                             return format(d, isCurrentYear ? "EEEE, MMMM d 'at' h:mm a" : "EEEE, MMMM d, yyyy 'at' h:mm a");
-                          })() : "Loading..."}
+                          })() : <Spinner className="w-4 h-4 text-muted-foreground inline-block" />}
                         </p>
                       </div>
                       
@@ -672,7 +672,7 @@ export default function DemoSuccessPage() {
                     <div className="flex flex-col gap-2">
                       {isLoadingSlots ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
+                          <Spinner className="w-6 h-6 text-emerald-500" />
                         </div>
                       ) : availableSlots.length === 0 ? (
                         <div className="text-center py-8 px-4 text-muted-foreground border rounded-lg bg-black/20 border-white/5">
@@ -692,7 +692,7 @@ export default function DemoSuccessPage() {
                                 disabled={isConfirming}
                                 className="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 rounded-lg shadow-sm animate-in slide-in-from-right-4 duration-200"
                               >
-                                {isConfirming ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm"}
+                                {isConfirming ? <Spinner className="w-5 h-5 text-inherit" /> : "Confirm"}
                               </Button>
                             </div>
                           ) : (

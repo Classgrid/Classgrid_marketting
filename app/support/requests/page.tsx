@@ -9,7 +9,6 @@ import {
   Search,
   ExternalLink,
   Mail,
-  Loader2,
   PlusCircle,
   Ticket,
   Shield,
@@ -23,6 +22,7 @@ import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { LogOut } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 function normalizeSupportEmail(value?: string | null) {
   const next = (value || "").trim();
@@ -196,8 +196,7 @@ export default function MyRequestsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-md mx-auto mt-10 bg-card border border-border rounded-2xl p-8 shadow-sm text-center"
           >
-            <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-500 mb-4" />
-            <p className="text-sm text-muted-foreground">Checking your session...</p>
+            <Spinner className="w-6 h-6 mx-auto text-muted-foreground" />
           </motion.div>
         ) : !isAuthenticated ? (
           <motion.div
@@ -233,7 +232,7 @@ export default function MyRequestsPage() {
                 className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Verifying...</>
+                  <><Spinner className="w-4 h-4 text-inherit" /> Verifying...</>
                 ) : (
                   "View My Tickets"
                 )}
@@ -400,8 +399,7 @@ export default function MyRequestsPage() {
                     {loading ? (
                       <tr>
                         <td colSpan={5} className="p-12 text-center">
-                          <Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground mb-2" />
-                          <p className="text-sm text-muted-foreground">Loading your tickets...</p>
+                          <Spinner className="w-6 h-6 mx-auto text-muted-foreground" />
                         </td>
                       </tr>
                     ) : error ? (
@@ -478,8 +476,7 @@ export default function MyRequestsPage() {
               <div className="md:hidden flex flex-col divide-y divide-border">
                 {loading ? (
                   <div className="p-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Loading your tickets...</p>
+                    <Spinner className="w-6 h-6 mx-auto text-muted-foreground" />
                   </div>
                 ) : error ? (
                   <div className="p-8 text-center text-sm text-red-500">
