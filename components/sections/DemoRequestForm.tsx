@@ -22,7 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -270,7 +270,8 @@ export function DemoRequestForm({
   );
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <>
+      <div className="mx-auto w-full max-w-3xl">
       <div className="mb-12 text-center">
         <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500" />
         {label ? (
@@ -534,5 +535,7 @@ export function DemoRequestForm({
         </form>
       </div>
     </div>
+    <Toaster />
+    </>
   );
 }
