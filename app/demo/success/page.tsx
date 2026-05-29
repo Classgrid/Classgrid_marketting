@@ -536,10 +536,18 @@ export default function DemoSuccessPage() {
                     </div>
                     <button 
                       onClick={() => {
+                        const nextMonth = addMonths(currentMonth, 1);
+                        const maxDate = startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+                        if (startOfMonth(nextMonth) > maxDate) return;
+                        
                         setSlideDir(1);
-                        setCurrentMonth(addMonths(currentMonth, 1));
+                        setCurrentMonth(nextMonth);
                       }}
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
+                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                        startOfMonth(addMonths(currentMonth, 1)) > startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000))
+                          ? "opacity-30 cursor-not-allowed text-muted-foreground"
+                          : "hover:bg-muted text-muted-foreground"
+                      }`}
                     >
                       <ChevronRightIcon className="w-4 h-4" />
                     </button>
@@ -576,28 +584,31 @@ export default function DemoSuccessPage() {
                           {eachDayOfInterval({ 
                             start: startOfMonth(currentMonth), 
                             end: endOfMonth(currentMonth) 
-                          }).map((day) => {
-                            const isToday = isSameDay(day, new Date());
-                            const isPast = isBefore(day, startOfDay(new Date()));
-                            const isSelected = date && isSameDay(day, date);
+                            }).map((day) => {
+                              const isToday = isSameDay(day, new Date());
+                              const isPast = isBefore(day, startOfDay(new Date()));
+                              const maxDate = startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+                              const isTooFar = isBefore(maxDate, day);
+                              const isDisabled = isPast || isTooFar;
+                              const isSelected = date && isSameDay(day, date);
 
-                            return (
-                              <button
-                                key={day.toISOString()}
-                                onClick={() => !isPast && setDate(day)}
-                                disabled={isPast}
-                                className={`
-                                  relative aspect-square w-full flex items-center justify-center text-base font-medium rounded-lg transition-all
-                                  ${isPast ? "text-muted-foreground opacity-30 cursor-not-allowed bg-transparent" : "cursor-pointer text-foreground"}
-                                  ${isSelected && !isPast ? "!bg-white !text-black shadow-md font-bold" : ""}
-                                  ${!isSelected && !isPast ? "bg-zinc-800 hover:bg-zinc-700" : ""}
-                                  ${isToday && !isSelected ? "border-2 border-white/70" : ""}
-                                `}
-                              >
-                                {format(day, 'd')}
-                                {isToday && !isSelected && (
-                                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-white/70" />
-                                )}
+                              return (
+                                <button
+                                  key={day.toISOString()}
+                                  onClick={() => !isDisabled && setDate(day)}
+                                  disabled={isDisabled}
+                                  className={`
+                                    relative aspect-square w-full flex items-center justify-center text-base font-medium rounded-lg transition-all
+                                    ${isDisabled ? "text-muted-foreground opacity-30 cursor-not-allowed bg-transparent" : "cursor-pointer text-foreground"}
+                                    ${isSelected && !isDisabled ? "!bg-white !text-black shadow-md font-bold" : ""}
+                                    ${!isSelected && !isDisabled ? "bg-zinc-800 hover:bg-zinc-700" : ""}
+                                    ${isToday && !isSelected ? "border-2 border-white/70" : ""}
+                                  `}
+                                >
+                                  {format(day, 'd')}
+                                  {isToday && !isSelected && (
+                                    <div className="absolute bottom-1 w-1 h-1 rounded-full bg-white/70" />
+                                  )}
                               </button>
                             );
                           })}
