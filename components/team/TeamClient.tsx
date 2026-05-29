@@ -54,7 +54,10 @@ const TeamSection = ({ title, icon: Icon, members }: { title: string, icon: any,
   if (!members || members.length === 0) return null
 
   return (
-    <div className="mb-32">
+    // NOTE (Future): Changed from mb-32 to mb-16 because the team is small (5 people).
+    // When the team grows to 20+ people (many per department), change this back to mb-32 
+    // to give more breathing room between large groups.
+    <div className="mb-16">
       <div className="flex flex-col items-center justify-center mb-16 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
