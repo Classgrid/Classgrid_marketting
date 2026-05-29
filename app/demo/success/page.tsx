@@ -190,15 +190,17 @@ export default function DemoSuccessPage() {
     if (ampm === "pm" && hours < 12) hours += 12;
     if (ampm === "am" && hours === 12) hours = 0;
 
-    const scheduledDate = new Date(date);
-    scheduledDate.setHours(hours, minutes, 0, 0);
+    const dateStr = format(date, "yyyy-MM-dd");
+    const hh = hours.toString().padStart(2, "0");
+    const mm = minutes.toString().padStart(2, "0");
+    const isoString = `${dateStr}T${hh}:${mm}:00+05:30`;
 
     try {
       const res = await fetch(`/api/request-demo/${requestId}/meeting-booked`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          scheduledAt: scheduledDate.toISOString(),
+          scheduledAt: new Date(isoString).toISOString(),
         }),
       });
       const data = await res.json();
