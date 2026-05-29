@@ -17,27 +17,27 @@ import { useSearchParams } from "next/navigation";
 import { getDictionary } from "@/lib/i18n-dictionary";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-type FooterLink   = { label?: string; href?: string };
+type FooterLink = { label?: string; href?: string };
 type FooterColumn = { heading?: string; links?: FooterLink[] };
-type SocialLink   = { platform?: string; href?: string };
+type SocialLink = { platform?: string; href?: string };
 
 type FooterProps = {
-  brandName?:      string;
-  brandTagline?:   string;
-  logoUrl?:        string;
-  logoAlt?:        string;
-  columns?:        FooterColumn[];
+  brandName?: string;
+  brandTagline?: string;
+  logoUrl?: string;
+  logoAlt?: string;
+  columns?: FooterColumn[];
   contactHeading?: string;
-  addressLines?:   string[];
-  mapHref?:        string;
-  phoneNumbers?:   string[];
+  addressLines?: string[];
+  mapHref?: string;
+  phoneNumbers?: string[];
   emailAddresses?: string[];
-  legalLinks?:     FooterLink[];
-  socialLinks?:    SocialLink[];
-  copyrightText?:  string;
-  statusLabel?:    string;
-  statusState?:    FooterStatusState;
-  statusHref?:     string;
+  legalLinks?: FooterLink[];
+  socialLinks?: SocialLink[];
+  copyrightText?: string;
+  statusLabel?: string;
+  statusState?: FooterStatusState;
+  statusHref?: string;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ function isExternal(href: string) { return /^https?:\/\//i.test(href); }
 function rewriteHref(href: string): string {
   const map: Record<string, string> = {
     "/demo": "/#demo",
-    "/faq":  "/#faq",
+    "/faq": "/#faq",
     "/integrations": "/#integrations",
   };
   return normalizeAppHref(map[href] ?? href);
@@ -96,8 +96,8 @@ export function Footer({
   ];
 
   // Try to find a "Company" or "About" column, or just use the first column
-  const targetColIndex = footerColumns.findIndex(c => 
-    c?.heading?.toLowerCase().includes('company') || 
+  const targetColIndex = footerColumns.findIndex(c =>
+    c?.heading?.toLowerCase().includes('company') ||
     c?.heading?.toLowerCase().includes('about')
   );
 
@@ -125,11 +125,11 @@ export function Footer({
   const socialItems = (Array.isArray(socialLinks) ? socialLinks : [])
     .filter((l) => l?.platform?.trim() && l?.href?.trim());
 
-  const address = (Array.isArray(addressLines)   ? addressLines   : []).filter(Boolean);
-  const phones  = (Array.isArray(phoneNumbers)   ? phoneNumbers   : []).filter(Boolean);
-  const emails  = (Array.isArray(emailAddresses) ? emailAddresses : []).filter(Boolean);
+  const address = (Array.isArray(addressLines) ? addressLines : []).filter(Boolean);
+  const phones = (Array.isArray(phoneNumbers) ? phoneNumbers : []).filter(Boolean);
+  const emails = (Array.isArray(emailAddresses) ? emailAddresses : []).filter(Boolean);
   const hasContact = contactHeading?.trim() || address.length > 0 || phones.length > 0 || emails.length > 0;
-  
+
   const resolvedCopyrightText = resolveFooterCopyrightText(copyrightText, brandName);
   const resolvedStatusHref = statusHref?.trim();
 
@@ -140,7 +140,7 @@ export function Footer({
   const isAutomatic = statusState === 'automatic';
   const hasManualLabel = !!statusLabel?.trim();
 
-  const finalStatusState = (isAutomatic || !hasManualLabel) 
+  const finalStatusState = (isAutomatic || !hasManualLabel)
     ? (liveStatus?.state ?? (isAutomatic ? 'operational' : statusState))
     : statusState;
 
@@ -252,12 +252,12 @@ export function Footer({
                 {socialItems.map((link) => {
                   const p = (link.platform || "").toLowerCase();
                   const iconMap: Record<string, React.ReactNode> = {
-                    linkedin:  <Linkedin  className="h-4 w-4" />,
-                    facebook:  <Facebook  className="h-4 w-4" />,
+                    linkedin: <Linkedin className="h-4 w-4" />,
+                    facebook: <Facebook className="h-4 w-4" />,
                     instagram: <Instagram className="h-4 w-4" />,
-                    youtube:   <Youtube   className="h-4 w-4" />,
-                    x:         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.038 9.188L24 22.847h-7.406l-5.8-7.584-6.638 7.584H.474l8.596-9.822L0 1.154h7.594l5.243 6.932zM17.607 20.644h2.039L6.486 3.24H4.298z" /></svg>,
-                    twitter:   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.038 9.188L24 22.847h-7.406l-5.8-7.584-6.638 7.584H.474l8.596-9.822L0 1.154h7.594l5.243 6.932zM17.607 20.644h2.039L6.486 3.24H4.298z" /></svg>,
+                    youtube: <Youtube className="h-4 w-4" />,
+                    x: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.038 9.188L24 22.847h-7.406l-5.8-7.584-6.638 7.584H.474l8.596-9.822L0 1.154h7.594l5.243 6.932zM17.607 20.644h2.039L6.486 3.24H4.298z" /></svg>,
+                    twitter: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.038 9.188L24 22.847h-7.406l-5.8-7.584-6.638 7.584H.474l8.596-9.822L0 1.154h7.594l5.243 6.932zM17.607 20.644h2.039L6.486 3.24H4.298z" /></svg>,
                   };
                   const icon = iconMap[p];
                   if (!icon) return null;
@@ -336,20 +336,20 @@ export function Footer({
                 {legalItems.map((link, idx) => {
                   const isSitemap = link.label?.toLowerCase() === 'sitemap';
                   return (
-                  <React.Fragment key={link.label}>
-                    <Link
-                      href={link.href!}
-                      prefetch={false}
-                      target={isExternal(link.href!) ? "_blank" : undefined}
-                      rel={isExternal(link.href!) ? "nofollow noopener noreferrer" : (isSitemap ? undefined : "nofollow")}
-                      className={`whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
-                    >
-                      {link.label}
-                    </Link>
-                    {idx < legalItems.length - 1 && (
-                      <span className={`select-none text-border ${isSitemap ? "hidden sm:inline" : ""}`}>|</span>
-                    )}
-                  </React.Fragment>
+                    <React.Fragment key={link.label}>
+                      <Link
+                        href={link.href!}
+                        prefetch={false}
+                        target={isExternal(link.href!) ? "_blank" : undefined}
+                        rel={isExternal(link.href!) ? "nofollow noopener noreferrer" : (isSitemap ? undefined : "nofollow")}
+                        className={`whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
+                      >
+                        {link.label}
+                      </Link>
+                      {idx < legalItems.length - 1 && (
+                        <span className={`select-none text-border ${isSitemap ? "hidden sm:inline" : ""}`}>|</span>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </div>
