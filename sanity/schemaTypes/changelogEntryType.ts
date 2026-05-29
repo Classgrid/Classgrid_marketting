@@ -42,7 +42,6 @@ export const changelogEntryType = defineType({
       title: "Open Graph Image",
       type: "image",
       options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "versionLabel",
