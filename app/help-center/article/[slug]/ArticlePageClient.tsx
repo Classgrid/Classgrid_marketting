@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, Clock, Copy, Eye, PanelLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Spinner } from "@/components/ui/spinner";
 import { PortableText } from "@portabletext/react";
 import urlBuilder from "@sanity/image-url";
 import ReactMarkdown from "react-markdown";
@@ -218,7 +219,7 @@ export default function ArticlePageClient({
   if (loading) {
     return (
       <main className="min-h-screen bg-background pt-8 pb-24 flex justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+        <Spinner className="w-8 h-8 text-emerald-500" />
       </main>
     );
   }

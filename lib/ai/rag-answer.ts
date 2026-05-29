@@ -4,7 +4,7 @@ import {
   FORBIDDEN_ONBOARDING_PHRASES,
   PREFERRED_ONBOARDING_PHRASES,
 } from "@/lib/ai/rag-intents";
-import { generateGroqReply, getGroqModel, type GroqMessage } from "@/lib/ai/groq-chat";
+import { generateGroqReply, type GroqMessage } from "@/lib/ai/groq-chat";
 import {
   formatPlatformResourceDirectory,
   toAbsoluteResourceUrl,
@@ -262,7 +262,7 @@ export async function generateClassgridRagAnswer(
 
   const answer = await generateGroqReply({
     messages,
-    model: getGroqModel(channel),
+    channel,
     maxTokens: channel === "whatsapp" ? 220 : 700,
     timeoutMs: channel === "whatsapp" ? 10000 : 20000,
     temperature: 0.35,

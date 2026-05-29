@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const OTP_TTL_SECONDS = 60;
 
@@ -200,12 +200,7 @@ function LoginContent() {
   if (status === "loading" || status === "authenticated") {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin mx-auto" />
-          <p className="text-sm text-muted-foreground">
-            {status === "authenticated" ? "Redirecting you..." : "Loading..."}
-          </p>
-        </div>
+        <Spinner className="w-6 h-6 text-muted-foreground" />
       </div>
     );
   }
@@ -309,7 +304,7 @@ function LoginContent() {
                 disabled={loading}
                 className="mt-2 flex w-full items-center justify-center rounded-md bg-slate-900 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2a2a2a] dark:text-[#f1f1f1] dark:hover:bg-[#333]"
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
+                {loading ? <><Spinner className="w-4 h-4 text-inherit mr-2" /> Continue</> : "Continue"}
               </button>
             </form>
           ) : (
@@ -386,7 +381,7 @@ function LoginContent() {
                 disabled={loading || otp.length !== 6 || otpExpired}
                 className="flex w-full items-center justify-center rounded-md bg-slate-900 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2a2a2a] dark:text-[#f1f1f1] dark:hover:bg-[#333]"
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}
+                {loading ? <><Spinner className="w-4 h-4 text-inherit mr-2" /> Sign In</> : "Sign In"}
               </button>
               
               <button
@@ -436,7 +431,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background text-foreground flex items-center justify-center"><Loader2 className="w-6 h-6 text-muted-foreground animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background text-foreground flex items-center justify-center"><Spinner className="w-6 h-6 text-muted-foreground" /></div>}>
       <LoginContent />
     </Suspense>
   );

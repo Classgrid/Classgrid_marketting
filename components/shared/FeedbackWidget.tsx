@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 type PageType = 'compare' | 'blog' | 'module' | 'solution' | 'case-study' | 'use-case' | 'general';
 
@@ -205,11 +206,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
                     >
                       {isSending ? (
                         <>
-                          {/* Premium dual-ring spinner */}
-                          <span className="relative flex items-center justify-center w-4 h-4">
-                            <span className="absolute inset-0 rounded-full border-2 border-white/20 dark:border-black/20" />
-                            <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-white dark:border-t-black animate-spin" />
-                          </span>
+                          <Spinner className="w-4 h-4 text-inherit" />
                           Sending…
                         </>
                       ) : (

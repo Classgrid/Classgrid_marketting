@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Spinner } from "@/components/ui/spinner";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -328,7 +329,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
               >
                 {isSearchLoading ? (
                   <div className="p-6 text-center">
-                    <div className="w-5 h-5 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin mx-auto" />
+                    <Spinner className="w-5 h-5 text-emerald-500 mx-auto" />
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="p-8 text-center">

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, LogOut, Building2, CalendarDays, BadgeCheck, User } from "lucide-react";
+import { LogOut, Building2, CalendarDays, BadgeCheck, User } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -20,7 +21,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-[#888] animate-spin" />
+        <Spinner className="w-6 h-6 text-[#888]" />
       </div>
     );
   }

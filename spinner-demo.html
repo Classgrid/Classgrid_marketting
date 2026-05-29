@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classgrid Spinner Showcase</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      min-height: 100vh;
+      padding: 60px 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 30px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .section-title span {
+      color: #ef4444;
+    }
+
+    .section-title .new {
+      color: #10b981;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: #111;
+      border: 1px solid #1a1a1a;
+      border-radius: 16px;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: #333;
+    }
+
+    .card .spinner-box {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ccc;
+      text-align: center;
+    }
+
+    .card .desc {
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .card .file-tag {
+      font-size: 10px;
+      color: #444;
+      background: #1a1a1a;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+
+    /* ═══════════════════════════════════════════
+       CURRENT SPINNERS (The 5 random ones)
+    ═══════════════════════════════════════════ */
+
+    /* 1. Loader2 — Lucide spinning circle */
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader2 {
+      width: 28px; height: 28px;
+      border: 2.5px solid #333;
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* 2. Loader2Icon — Same but smaller (sonner.tsx) */
+    .loader2-small {
+      width: 18px; height: 18px;
+      border: 2px solid #333;
+      border-top-color: #888;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* 3. LoaderCircle — Lucide LoaderCircle */
+    .loader-circle {
+      width: 24px; height: 24px;
+      border: 2.5px solid transparent;
+      border-top-color: #10b981;
+      border-right-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* 4. RefreshCw spinning */
+    .refresh-spin {
+      width: 28px; height: 28px;
+      animation: spin 1s linear infinite;
+      opacity: 0.5;
+    }
+    .refresh-spin svg {
+      width: 100%; height: 100%;
+      stroke: #10b981;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* 5. Custom CSS border spinner */
+    .css-border-spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid rgba(16, 185, 129, 0.3);
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ═══════════════════════════════════════════
+       NEW BRANDED OPTIONS (3 proposals)
+    ═══════════════════════════════════════════ */
+
+    /* Option A — Grid Pulse (2x2 grid of squares) */
+    .grid-pulse {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      width: 28px; height: 28px;
+    }
+    .grid-pulse span {
+      background: #10b981;
+      border-radius: 3px;
+      animation: gridFade 1.2s ease-in-out infinite;
+    }
+    .grid-pulse span:nth-child(1) { animation-delay: 0s; }
+    .grid-pulse span:nth-child(2) { animation-delay: 0.15s; }
+    .grid-pulse span:nth-child(3) { animation-delay: 0.45s; }
+    .grid-pulse span:nth-child(4) { animation-delay: 0.3s; }
+
+    @keyframes gridFade {
+      0%, 100% { opacity: 0.15; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Option B — Emerald Ring */
+    .emerald-ring {
+      width: 28px; height: 28px;
+      border: 2.5px solid #1a1a1a;
+      border-radius: 50%;
+      position: relative;
+    }
+    .emerald-ring::after {
+      content: '';
+      position: absolute;
+      inset: -2.5px;
+      border: 2.5px solid transparent;
+      border-top-color: #10b981;
+      border-right-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+
+    /* Option C — Logo Breathe (pulsing grid icon) */
+    .logo-breathe {
+      width: 32px; height: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      animation: breathe 2s ease-in-out infinite;
+    }
+    .logo-breathe span {
+      background: #10b981;
+      border-radius: 2px;
+    }
+    .logo-breathe span:nth-child(5) {
+      background: #34d399;
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* ═══════════════════════════════════════════
+       SIZE VARIANTS DEMO
+    ═══════════════════════════════════════════ */
+    .sizes-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: #111;
+      border: 1px solid #1a1a1a;
+      border-radius: 16px;
+    }
+
+    .size-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .size-label {
+      font-size: 10px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Grid Pulse sizes */
+    .grid-pulse.sm { width: 16px; height: 16px; gap: 2px; }
+    .grid-pulse.sm span { border-radius: 1.5px; }
+    .grid-pulse.md { width: 28px; height: 28px; gap: 4px; }
+    .grid-pulse.lg { width: 44px; height: 44px; gap: 5px; }
+    .grid-pulse.lg span { border-radius: 4px; }
+    .grid-pulse.xl { width: 64px; height: 64px; gap: 6px; }
+    .grid-pulse.xl span { border-radius: 5px; }
+
+    /* Button demo */
+    .btn-demo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .demo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .demo-btn.primary {
+      background: #e5e5e5;
+      color: #0a0a0a;
+    }
+
+    .demo-btn.outline {
+      background: transparent;
+      color: #e5e5e5;
+      border: 1px solid #333;
+    }
+
+    .demo-btn .grid-pulse { width: 16px; height: 16px; gap: 2px; }
+    .demo-btn .grid-pulse span { border-radius: 1.5px; }
+    .demo-btn.primary .grid-pulse span { background: #0a0a0a; }
+
+    .verdict {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(16,185,129,0.02));
+      border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 16px;
+      margin-top: 40px;
+    }
+
+    .verdict h3 {
+      font-size: 16px;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+
+    .verdict p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Classgrid Spinner Showcase</h1>
+  <p class="subtitle">All current spinners vs. 3 branded proposals — pick your champion</p>
+
+  <!-- ═══════ SECTION 1: Current Spinners ═══════ -->
+  <h2 class="section-title">⚠️ Current Spinners <span>(Inconsistent — 5 Different Styles)</span></h2>
+  <div class="grid">
+
+    <div class="card">
+      <div class="spinner-box"><div class="loader2"></div></div>
+      <div class="label">Loader2 (Lucide)</div>
+      <div class="desc">Generic spinning circle. Used on Login, Demo, Profile, Support pages</div>
+      <div class="file-tag">~20 instances</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box"><div class="loader2-small"></div></div>
+      <div class="label">Loader2Icon (Small)</div>
+      <div class="desc">Same circle but tiny. Used in sonner.tsx toast notifications</div>
+      <div class="file-tag">3 instances</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box"><div class="loader-circle"></div></div>
+      <div class="label">LoaderCircle</div>
+      <div class="desc">Half-arc spinner. Used in ViewPlatformPreview</div>
+      <div class="file-tag">1 instance</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box">
+        <div class="refresh-spin">
+          <svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+      </div>
+      <div class="label">RefreshCw Spinning</div>
+      <div class="desc">Rotating refresh arrows. Used on Reviews page</div>
+      <div class="file-tag">2 instances</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box"><div class="css-border-spinner"></div></div>
+      <div class="label">CSS Border Spinner</div>
+      <div class="desc">Hand-coded border trick. Used in Support, Help Center, Feedback</div>
+      <div class="file-tag">7 instances</div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ SECTION 2: New Branded Options ═══════ -->
+  <h2 class="section-title">✨ Proposed Branded Spinners <span class="new">(Pick One to Rule Them All)</span></h2>
+  <div class="grid">
+
+    <div class="card" style="border-color: rgba(16,185,129,0.2);">
+      <div class="spinner-box">
+        <div class="grid-pulse">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="label">Option A — Grid Pulse ⭐</div>
+      <div class="desc">2×2 grid squares pulsing in sequence. Directly tied to the "ClassGRID" brand identity. Unique and memorable.</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box">
+        <div class="emerald-ring"></div>
+      </div>
+      <div class="label">Option B — Emerald Ring</div>
+      <div class="desc">Sleek ring in your brand emerald color. Clean and minimal like Apple's loader.</div>
+    </div>
+
+    <div class="card">
+      <div class="spinner-box">
+        <div class="logo-breathe">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="label">Option C — Logo Breathe</div>
+      <div class="desc">3×3 grid icon gently pulsing. Like your logo "breathing" while loading.</div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ SECTION 3: Size Variants (Grid Pulse) ═══════ -->
+  <h2 class="section-title">📐 Size Variants <span class="new">(Grid Pulse at Different Sizes)</span></h2>
+  <div class="sizes-row">
+    <div class="size-item">
+      <div class="grid-pulse sm"><span></span><span></span><span></span><span></span></div>
+      <div class="size-label">SM (16px) — Buttons</div>
+    </div>
+    <div class="size-item">
+      <div class="grid-pulse md"><span></span><span></span><span></span><span></span></div>
+      <div class="size-label">MD (28px) — Inline</div>
+    </div>
+    <div class="size-item">
+      <div class="grid-pulse lg"><span></span><span></span><span></span><span></span></div>
+      <div class="size-label">LG (44px) — Sections</div>
+    </div>
+    <div class="size-item">
+      <div class="grid-pulse xl"><span></span><span></span><span></span><span></span></div>
+      <div class="size-label">XL (64px) — Full Page</div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 4: Button Context Demo ═══════ -->
+  <h2 class="section-title">🖱️ Inside Buttons <span class="new">(How It Looks in Real UI)</span></h2>
+  <div class="btn-demo">
+    <button class="demo-btn primary">
+      <div class="grid-pulse sm"><span></span><span></span><span></span><span></span></div>
+      Sending OTP...
+    </button>
+    <button class="demo-btn outline">
+      <div class="grid-pulse sm"><span></span><span></span><span></span><span></span></div>
+      Verifying...
+    </button>
+  </div>
+
+  <div class="verdict">
+    <h3>My Recommendation: Option A — Grid Pulse</h3>
+    <p>It's the only spinner that directly represents your brand name "ClassGRID".<br/>
+    No other EdTech company in India will have a spinner like this. It's your signature.</p>
+  </div>
+
+</body>
+</html>
