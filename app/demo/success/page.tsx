@@ -215,8 +215,8 @@ export default function DemoSuccessPage() {
       } else {
         toast.error(data.message || "Failed to schedule meeting.");
       }
-    } catch (err) {
-      toast.error("An error occurred while booking.");
+    } catch (err: any) {
+      toast.error("An error occurred while booking: " + err.message);
     } finally {
       setIsConfirming(false);
     }

@@ -127,7 +127,7 @@ export async function POST(
 
   } catch (error: any) {
     console.error("[meeting-booked] Error scheduling meeting:", error);
-    return NextResponse.json({ ok: false, message: "Server Error" }, { status: 500 });
+    return NextResponse.json({ ok: false, message: "Server Error: " + (error.message || String(error)) }, { status: 500 });
   }
 }
 
