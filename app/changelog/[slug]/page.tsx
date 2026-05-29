@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArrowRight, Bug, Rocket, WandSparkles } from "lucide-react";
 import { format } from "date-fns";
 
@@ -96,13 +97,7 @@ export default async function ChangelogDetailPage({
   const fallback = changelogFallbackBySlug[slug];
 
   if (!cms && !fallback) {
-    return (
-      <CmsFallback
-        type="changelog entry"
-        backHref={buildLangHref("/changelog", lang)}
-        backLabel="Back to Changelog"
-      />
-    );
+    notFound();
   }
 
   const entry = cms
