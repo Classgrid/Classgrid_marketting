@@ -22,6 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -203,6 +204,7 @@ export function DemoRequestForm({
 
   const onSubmit = async (payload: DemoFormValues) => {
     if (captchaInput.toUpperCase() !== captchaCode) {
+      toast.error(copy?.captchaMismatchMessage || "Incorrect CAPTCHA, please try again.");
       setCaptchaError(copy?.captchaMismatchMessage || "");
       refreshCaptcha();
       return;
