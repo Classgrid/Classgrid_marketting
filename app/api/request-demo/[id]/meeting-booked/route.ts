@@ -123,7 +123,7 @@ export async function POST(
       }
     }
 
-    return NextResponse.json({ ok: true, message: "Meeting scheduled successfully.", meetingUrl, lead }, { status: 200 });
+    return NextResponse.json({ ok: true, message: "Meeting scheduled successfully.", meetingUrl }, { status: 200 });
 
   } catch (error: any) {
     console.error("[meeting-booked] Error scheduling meeting:", error);
