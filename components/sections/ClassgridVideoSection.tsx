@@ -78,9 +78,9 @@ export function ClassgridVideoSection({
 
           {/* ── Right Side: Media Block ── */}
           <div className="order-1 w-full lg:order-2 lg:w-[55%]">
-            {/* Elegant, oversized rounded container with slightly taller aspect ratio (4:3) */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2rem] border border-black/5 bg-slate-900 shadow-2xl shadow-black/5 dark:border-white/10 dark:shadow-[0_0_60px_-15px_rgba(0,0,0,0.3)]">
-              {/* Pure video — object-cover fills the 4:3 space nicely */}
+            {/* Elegant, oversized rounded container with 16:9 aspect ratio */}
+            <div className="relative aspect-video w-full overflow-hidden rounded-[2rem] border border-black/5 bg-slate-900 shadow-2xl shadow-black/5 dark:border-white/10 dark:shadow-[0_0_60px_-15px_rgba(0,0,0,0.3)]">
+              {/* Pure video — object-cover fills the space nicely */}
               <video
                 key={currentIndex}
                 src={playlist[currentIndex]}
