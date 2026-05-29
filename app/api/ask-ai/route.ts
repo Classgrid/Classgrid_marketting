@@ -159,15 +159,15 @@ export async function POST(req: Request) {
 
     // --- 2. RATE LIMITING (Preventing Token Spam) ---
     const identifier = userEmail || ip;
-    const MAX_MESSAGES = 11; // Allow 11 messages per 2 hours
-    const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+    const MAX_MESSAGES = 16; // Allow 16 messages per hour
+    const ONE_HOUR_MS = 60 * 60 * 1000;
 
     const rateLimitRecord = await AiRateLimit.findOne({ identifier });
 
     if (rateLimitRecord) {
       if (rateLimitRecord.count >= MAX_MESSAGES) {
         return NextResponse.json({ 
-          error: "You have reached your message limit. Please try again after 2 hours." 
+          error: "You have reached your message limit. Please try again after 1 hour." 
         }, { status: 429 }); // 429 Too Many Requests
       }
       
@@ -175,11 +175,11 @@ export async function POST(req: Request) {
       rateLimitRecord.count += 1;
       await rateLimitRecord.save();
     } else {
-      // First time chatting, create a tracker that expires in 2 hours
+      // First time chatting, create a tracker that expires in 1 hour
       await AiRateLimit.create({
         identifier,
         count: 1,
-        expireAt: new Date(Date.now() + TWO_HOURS_MS)
+        expireAt: new Date(Date.now() + ONE_HOUR_MS)
       });
     }
     // --- END RATE LIMITING ---
