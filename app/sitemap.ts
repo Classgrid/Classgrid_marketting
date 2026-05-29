@@ -1,7 +1,5 @@
 import type { MetadataRoute } from "next";
 
-import { changelogFallbackEntries } from "@/content/changelog";
-import { comparisonFallbacks } from "@/content/compare";
 import { siteMeta } from "@/content/siteMeta";
 import { getChangelogEntries, getComparisonPages, getCaseStudies, getAllSolutionModules } from "@/sanity/lib/marketing";
 
@@ -46,13 +44,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const dynamicCompareSlugs = Array.from(
     new Set([
       ...cmsComparisons.map((entry) => entry.slug).filter((value): value is string => Boolean(value)),
-      ...comparisonFallbacks.map((entry) => entry.slug),
     ])
   );
   const dynamicChangelogSlugs = Array.from(
     new Set([
       ...cmsChangelogEntries.map((entry) => entry.slug).filter((value): value is string => Boolean(value)),
-      ...changelogFallbackEntries.map((entry) => entry.slug),
     ])
   );
   

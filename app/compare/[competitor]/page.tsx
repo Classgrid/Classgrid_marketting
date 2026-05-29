@@ -99,7 +99,7 @@ export default async function Page({ params }: ComparePageProps) {
 	const fallback = comparisonFallbackBySlug[competitor];
 
 	if (!cms && !fallback) {
-		return <CmsFallback type="comparison" backHref="/compare" backLabel="Back to Compare" />;
+		notFound();
 	}
 
 	const comparison: Parameters<typeof ComparisonDetailClient>[0]["comparison"] = cms
