@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, Copy, Eye, PanelLeft, X } from "lucide-react";
+import { CalendarDays, Clock, Copy, Eye, PanelLeft, RefreshCw, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Spinner } from "@/components/ui/spinner";
 import { PortableText } from "@portabletext/react";
@@ -334,6 +334,7 @@ export default function ArticlePageClient({
           </div>
         </aside>
 
+        {/* TODO: Add a persistent search bar on article pages (like Claude Help Center) */}
         <article className="flex-1 max-w-[800px]">
           <div className="mb-2">
             <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
@@ -353,6 +354,22 @@ export default function ArticlePageClient({
               <Clock className="w-4 h-4 text-emerald-500" />
               <span>3 min read</span>
             </div>
+            {article.showDates !== false && article.publishedAt && (
+              <div className="flex items-center gap-1.5">
+                <CalendarDays className="w-4 h-4 text-emerald-500" />
+                <span>
+                  {new Date(article.publishedAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                </span>
+              </div>
+            )}
+            {article.showDates !== false && article.lastUpdatedAt && (
+              <div className="flex items-center gap-1.5">
+                <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-zinc-400">
+                  Updated {new Date(article.lastUpdatedAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                </span>
+              </div>
+            )}
           </div>
 
           {article.summary && (
