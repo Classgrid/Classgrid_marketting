@@ -214,7 +214,11 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
             Search for answers or browse by <span className="text-emerald-500 dark:text-emerald-400">topic</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg md:text-xl">
-            Everything you need — guides, API docs, and support articles.
+            Everything you need — guides, API docs, and support articles. Or{" "}
+            <Link href="/#demo" className="text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/30 underline-offset-4 hover:decoration-emerald-500 transition-colors">
+              book a demo
+            </Link>{" "}
+            with our team.
           </p>
         </motion.div>
       </section>
@@ -387,7 +391,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm min-h-[300px]"
+            className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm"
           >
             {isLoading ? (
               <div className="flex flex-col">
@@ -406,7 +410,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
                     href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
                     className="group flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
                   >
-                    <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 line-clamp-1">
+                    <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 truncate pb-0.5">
                       {extractLocaleString(article.title, lang)}
                     </h3>
                     <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald-500 transition-colors shrink-0" />
