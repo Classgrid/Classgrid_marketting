@@ -173,9 +173,13 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
                   )}
 
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-[10px] text-slate-400 dark:text-neutral-500 flex items-center gap-1">
-                      <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-[9px]">M↓</span>
-                      Markdown supported
+                    <span className="text-[10px] text-slate-400 dark:text-neutral-500 flex items-center gap-2">
+                      <span className="flex items-center gap-1">
+                        <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-[9px]">M↓</span>
+                        Markdown supported
+                      </span>
+                      <span className="text-slate-300 dark:text-neutral-600">•</span>
+                      <span>Message is optional</span>
                     </span>
                     <button
                       disabled={isSending}
