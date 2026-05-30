@@ -20,16 +20,23 @@ export function FeedbackAnalytics() {
     if (!data.length) return []
     const groups: Record<string, any> = {}
     data.forEach(item => {
-      const url = item.pageUrl || 'Unknown'
-      if (!groups[url]) {
-        groups[url] = { url, title: item.pageTitle || '', total: 0, comments: 0, emojis: { great: 0, okay: 0, bad: 0, terrible: 0 } }
+      let path = item.pageUrl || 'Unknown'
+      try {
+        if (path.startsWith('http')) {
+          path = new URL(path).pathname
+        }
+      } catch (e) {}
+      
+      const key = item.pageTitle || path;
+      if (!groups[key]) {
+        groups[key] = { url: path, title: item.pageTitle || '', total: 0, comments: 0, emojis: { great: 0, okay: 0, bad: 0, terrible: 0 } }
       }
-      groups[url].total++
-      if (item.message) groups[url].comments++
+      groups[key].total++
+      if (item.message) groups[key].comments++
       if (item.reaction) {
-        groups[url].emojis[item.reaction] = (groups[url].emojis[item.reaction] || 0) + 1
+        groups[key].emojis[item.reaction] = (groups[key].emojis[item.reaction] || 0) + 1
       }
-      if (item.pageTitle && !groups[url].title) groups[url].title = item.pageTitle
+      if (item.pageTitle && !groups[key].title) groups[key].title = item.pageTitle
     })
     return Object.values(groups).sort((a, b) => b.total - a.total)
   }, [data])
