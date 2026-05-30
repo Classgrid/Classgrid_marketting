@@ -1,4 +1,5 @@
 import type { StructureBuilder } from "sanity/structure";
+import { FeedbackAnalytics } from "./tools/feedbackAnalytics/FeedbackAnalytics";
 
 // Singleton document types - only one instance should exist.
 const singletonTypes = new Set(["homePage", "circularTimeline", "homeStats", "aboutPage", "compareHubPage", "changelogSettings", "turboClassgrid", "isometricStack", "appEcosystem"]);
@@ -17,7 +18,21 @@ export const structure = (S: StructureBuilder) =>
       S.listItem()
         .title("💬 Website Feedback")
         .id("websiteFeedbackList")
-        .child(S.documentTypeList("websiteFeedback").title("Website Feedback")),
+        .child(
+          S.list()
+            .title("Website Feedback")
+            .items([
+              S.listItem()
+                .title("Feedback Analytics")
+                .id("feedbackAnalytics")
+                .icon(() => "📊")
+                .child(S.component(FeedbackAnalytics).title("Analytics")),
+              S.listItem()
+                .title("All Feedback Entries")
+                .id("allFeedback")
+                .child(S.documentTypeList("websiteFeedback").title("All Feedbacks"))
+            ])
+        ),
 
       S.divider(),
 
