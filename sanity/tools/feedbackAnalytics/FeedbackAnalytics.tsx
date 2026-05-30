@@ -95,11 +95,11 @@ export function FeedbackAnalytics() {
               <Text size={1} weight="semibold" muted style={{ textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '11px' }}>
                 Most Loved 🤩
               </Text>
-              <Text size={1} weight="bold" style={{ lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, wordBreak: 'break-word', paddingTop: '2px', paddingBottom: '2px', color: 'var(--card-fg-color)' }}>
                 {highestRatedPage && highestRatedPage.emojis['great'] > 0
                   ? formatPageName(highestRatedPage.url, highestRatedPage.title)
                   : '—'}
-              </Text>
+              </div>
               <Text size={1} muted>
                 {highestRatedPage && highestRatedPage.emojis['great'] > 0
                   ? `${indianFormat.format(highestRatedPage.emojis['great'])} awesome ratings`
@@ -114,11 +114,11 @@ export function FeedbackAnalytics() {
               <Text size={1} weight="semibold" muted style={{ textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '11px' }}>
                 Needs Attention 😭
               </Text>
-              <Text size={1} weight="bold" style={{ lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, wordBreak: 'break-word', paddingTop: '2px', paddingBottom: '2px', color: 'var(--card-fg-color)' }}>
                 {lowestRatedPage && lowestRatedPage.emojis['terrible'] > 0
                   ? formatPageName(lowestRatedPage.url, lowestRatedPage.title)
                   : '—'}
-              </Text>
+              </div>
               <Text size={1} muted>
                 {lowestRatedPage && lowestRatedPage.emojis['terrible'] > 0
                   ? `${indianFormat.format(lowestRatedPage.emojis['terrible'])} negative ratings`
@@ -172,9 +172,9 @@ export function FeedbackAnalytics() {
                   onMouseOut={(e) => { if (!isExpanded) e.currentTarget.style.background = 'transparent' }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <Text size={2} weight="semibold" style={{ lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 600, wordBreak: 'break-word', textAlign: 'left', color: 'var(--card-fg-color)', paddingTop: '2px', paddingBottom: '2px' }}>
                       {formatPageName(stat.url, stat.title)}
-                    </Text>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                     <Badge tone="primary">{indianFormat.format(stat.total)}</Badge>
