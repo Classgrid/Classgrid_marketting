@@ -74,22 +74,41 @@ You can copy the Google Meet link from the confirmation page and save it for you
 
 ---
 
+## What Happens During the Demo?
+
+During your 30-minute Google Meet session, a Classgrid product specialist will:
+
+*   Understand your institution's structure, size, and day-to-day requirements
+*   Demonstrate the modules and workflows most relevant to your organization
+*   Answer technical and operational questions in real time
+*   Walk you through the implementation and onboarding process
+*   Discuss pricing and deployment options, if requested
+
+The session is a one-on-one conversation tailored entirely to your institution. There is no generic slideshow — the specialist works with the live platform to show you exactly how Classgrid would fit into your operations.
+
+---
+
 ## What is Classgrid Talk?
 
 Classgrid Talk is an inquiry portal that gives you direct access to Classgrid product specialists before your scheduled demo takes place.
 
-After you book a demo, a popup appears with the option to **Submit an Inquiry**. Clicking this takes you to the [Classgrid Inquiry page](https://classgrid.in/support/inquiry) where you can ask questions, describe your requirements, or request information about specific modules — and a specialist will respond within 24 hours.
+After you book a demo, a popup appears with the option to **Submit an Inquiry**. Clicking this takes you to the [Classgrid Inquiry page](https://classgrid.in/support/inquiry) where you can write to the team directly.
 
-Classgrid Talk is designed for:
-*   **Direct Inquiry** — Ask questions directly to a product specialist.
-*   **Expert Response** — Get answers tailored to your institution's specific needs.
-*   **Fast Turnaround** — Responses are provided within 24 hours.
+With Classgrid Talk, you can:
 
-This is ideal for prospective clients who want to make the most of their demo session by getting preliminary questions answered in advance.
+*   Ask product and feature-related questions
+*   Discuss technical requirements for your institution
+*   Clarify implementation and onboarding concerns
+*   Request information about specific modules
+*   Receive a detailed response within 24 hours
+
+Classgrid Talk is ideal for prospective clients who want to make the most of their demo session by getting preliminary questions answered in advance. A login is required to track and reply to your inquiry.
 
 ---
 
 ## What is a Support Ticket?
+
+> **Support Tickets are available only to verified institutions with an active Classgrid account.**
 
 Support Tickets are the dedicated help channel for active, verified Classgrid users. Unlike Classgrid Talk, which is open to anyone, Support Tickets are exclusively available to students, faculty, and administrators whose email addresses are linked to a registered Classgrid institution.
 
@@ -116,7 +135,7 @@ If your email is not associated with any Classgrid institution, you will see an 
 |---|---|---|
 | **Who can use it** | Anyone — visitors, prospective clients | Only verified platform users |
 | **Purpose** | Pre-sales questions, product inquiries | Technical issues, bug reports, account help |
-| **Authentication** | No login required | Requires platform sign-in |
+| **Authentication** | Login required to track replies | Login required + verified institution |
 | **Response time** | Within 24 hours | As soon as possible |
 | **Where to access** | [classgrid.in/support/inquiry](https://classgrid.in/support/inquiry) | [classgrid.in/support/ticket](https://classgrid.in/support/ticket) |`
 
