@@ -214,11 +214,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
             Search for answers or browse by <span className="text-emerald-500 dark:text-emerald-400">topic</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg md:text-xl">
-            Everything you need — guides, API docs, and support articles. Or{" "}
-            <Link href="/#demo" className="text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/30 underline-offset-4 hover:decoration-emerald-500 transition-colors">
-              book a demo
-            </Link>{" "}
-            with our team.
+            Everything you need — guides, API docs, and support articles.
           </p>
         </motion.div>
       </section>
