@@ -9,6 +9,7 @@ const hiddenTypes = new Set([
   "clientLogo",
   "helpCategory",
   "helpArticle",
+  "websiteFeedback",
 ]);
 
 export const structure = (S: StructureBuilder) =>
