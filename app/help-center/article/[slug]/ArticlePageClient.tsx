@@ -356,17 +356,15 @@ export default function ArticlePageClient({
             </div>
             {article.showDates !== false && article.publishedAt && (
               <div className="flex items-center gap-1.5">
-                <CalendarDays className="w-4 h-4 text-emerald-500" />
                 <span>
-                  {new Date(article.publishedAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                  {new Date(article.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </span>
               </div>
             )}
             {article.showDates !== false && article.lastUpdatedAt && (
               <div className="flex items-center gap-1.5">
-                <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />
                 <span className="text-zinc-400">
-                  Updated {new Date(article.lastUpdatedAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                  Updated {new Date(article.lastUpdatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </span>
               </div>
             )}
