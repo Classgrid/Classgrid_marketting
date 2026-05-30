@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   BookOpen,
   Building2,
+  ChevronRight,
   Clock,
   Code2,
   ExternalLink,
@@ -25,9 +26,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -87,13 +85,7 @@ const CATEGORY_ACCENT: Record<
     iconColor: "text-emerald-400",
     badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   },
-  "FAQ": {
-    border: "border-amber-500",
-    ring: "ring-amber-500",
-    gradient: "from-amber-500/8",
-    iconColor: "text-amber-400",
-    badgeColor: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  },
+
   "API Reference": {
     border: "border-indigo-500",
     ring: "ring-indigo-500",
@@ -130,8 +122,10 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 6;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [isShowingMore, setIsShowingMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [allArticles, setAllArticles] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -152,7 +146,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
       return;
     }
     setActiveCategory(activeCategory === category.title ? null : category.title);
-    setCurrentPage(1);
+    setVisibleCount(PAGE_SIZE);
 
     // Smooth scroll to articles section after a short delay for state to update
     setTimeout(() => {
@@ -168,6 +162,8 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
         setCategories(fetchedCategories);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchData();
@@ -198,23 +194,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
     ? allArticles.filter((article) => article.category === activeCategory)
     : allArticles;
 
-  const totalPages = Math.max(1, Math.ceil(displayedArticles.length / PAGE_SIZE));
-  const activePage = Math.min(currentPage, totalPages);
-  const pageStart = (activePage - 1) * PAGE_SIZE;
-  const paginatedArticles = displayedArticles.slice(pageStart, pageStart + PAGE_SIZE);
-
-  type PageToken = number | "ellipsis-left" | "ellipsis-right";
-  const pageTokens: PageToken[] = (() => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-    const tokens: PageToken[] = [1];
-    const ws = Math.max(2, activePage - 1);
-    const we = Math.min(totalPages - 1, activePage + 1);
-    if (ws > 2) tokens.push("ellipsis-left");
-    for (let p = ws; p <= we; p++) tokens.push(p);
-    if (we < totalPages - 1) tokens.push("ellipsis-right");
-    tokens.push(totalPages);
-    return tokens;
-  })();
+  const visibleArticles = displayedArticles.slice(0, visibleCount);
 
   // Sort categories: articles first, then links — respect "order" field
   const sortedCategories = [...categories].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
@@ -230,11 +210,11 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
       <section className="px-6 md:px-12 max-w-7xl mx-auto text-center mb-16 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <SectionAccentBar />
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-            How can we <span className="text-emerald-500 dark:text-emerald-400">help?</span>
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+            Search for answers or browse by <span className="text-emerald-500 dark:text-emerald-400">topic</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg md:text-xl">
-            Everything you need — guides, API docs, FAQs, and support articles.
+            Everything you need — guides, API docs, and support articles.
           </p>
         </motion.div>
       </section>
@@ -242,8 +222,13 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
       {/* Category Grid */}
       <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {sortedCategories.map((category, index) => {
-            const isActive = activeCategory === category.title;
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-32 bg-muted/50 rounded-2xl animate-pulse" />
+            ))
+          ) : (
+            sortedCategories.map((category, index) => {
+              const isActive = activeCategory === category.title;
             const IconComp = ICON_MAP[category.icon] || FileText;
             const accent = CATEGORY_ACCENT[category.title] || DEFAULT_ACCENT;
             const isLink = category.categoryType === "link";
@@ -292,7 +277,8 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
                 <p className="relative text-sm text-muted-foreground leading-relaxed">{category.description}</p>
               </motion.button>
             );
-          })}
+            })
+          )}
         </div>
       </section>
 
@@ -314,7 +300,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsSearching(true)}
               onBlur={() => setTimeout(() => setIsSearching(false), 200)}
-              placeholder="Search articles, guides, FAQs..."
+              placeholder="Search articles, guides..."
               className="w-full bg-transparent border-none py-5 px-4 text-base text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-0"
             />
           </div>
@@ -378,7 +364,6 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
       <section ref={articleSectionRef} className="px-6 max-w-6xl mx-auto mb-16 relative z-10 scroll-mt-24">
         <div className="flex items-center justify-between mb-10">
           <div>
-            <SectionAccentBar align="left" className="mb-4" />
             <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
               {activeCategory
                 ? activeCategory
@@ -387,7 +372,7 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
           </div>
           {activeCategory && (
             <button
-              onClick={() => { setActiveCategory(null); setCurrentPage(1); }}
+              onClick={() => { setActiveCategory(null); setVisibleCount(PAGE_SIZE); }}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
               <XCircle className="w-4 h-4" /> Clear filter
@@ -402,33 +387,34 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm min-h-[300px]"
           >
-            {paginatedArticles.length > 0 ? (
-              paginatedArticles.map((article, index) => (
-                <Link
-                  key={`${article.slug}-${index}`}
-                  href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
-                  className="flex flex-col p-6 rounded-2xl bg-card border border-border hover:border-emerald-500/40 transition-colors group shadow-sm"
-                >
-                  <div className="mb-3">
-                    <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
-                      {article.category || "General"}
-                    </span>
+            {isLoading ? (
+              <div className="flex flex-col">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0">
+                    <div className="h-5 bg-muted/50 rounded w-2/3 animate-pulse" />
+                    <div className="h-5 w-5 bg-muted/50 rounded animate-pulse" />
                   </div>
-                  <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
-                    {extractLocaleString(article.title, lang)}
-                  </h3>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-5 flex-1 line-clamp-3 leading-relaxed">
-                    {extractLocaleString(article.summary, lang)}
-                  </p>
-                  <div className="flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-500">
-                    Read article <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              ))
+                ))}
+              </div>
+            ) : visibleArticles.length > 0 ? (
+              <div className="flex flex-col">
+                {visibleArticles.map((article, index) => (
+                  <Link
+                    key={`${article.slug}-${index}`}
+                    href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
+                    className="group flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
+                  >
+                    <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 line-clamp-1">
+                      {extractLocaleString(article.title, lang)}
+                    </h3>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald-500 transition-colors shrink-0" />
+                  </Link>
+                ))}
+              </div>
             ) : (
-              <div className="col-span-full text-center py-16 text-zinc-500">
+              <div className="text-center py-16 text-zinc-500">
                 <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
                 <p>No articles in this category yet.</p>
               </div>
@@ -436,47 +422,30 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
           </motion.div>
         </AnimatePresence>
 
-        {totalPages > 1 && (
-          <Pagination className="pt-8">
-            <PaginationContent className="gap-1 rounded-xl border border-border bg-card/90 p-1 shadow-sm">
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); if (activePage > 1) setCurrentPage(activePage - 1); }}
-                  aria-disabled={activePage <= 1}
-                  className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage <= 1 ? "pointer-events-none opacity-50" : ""}`}
-                />
-              </PaginationItem>
-              {pageTokens.map((token, i) => (
-                <PaginationItem key={`${token}-${i}`}>
-                  {typeof token === "number" ? (
-                    <PaginationLink
-                      href="#"
-                      isActive={token === activePage}
-                      onClick={(e) => { e.preventDefault(); setCurrentPage(token); }}
-                      className={`h-10 min-w-10 rounded-lg ${
-                        token === activePage
-                          ? "border-emerald-500 bg-emerald-500 text-black hover:bg-emerald-500"
-                          : "text-muted-foreground hover:bg-accent"
-                      }`}
-                    >
-                      {token}
-                    </PaginationLink>
-                  ) : (
-                    <PaginationEllipsis className="text-muted-foreground" />
-                  )}
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); if (activePage < totalPages) setCurrentPage(activePage + 1); }}
-                  aria-disabled={activePage >= totalPages}
-                  className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        {visibleCount < displayedArticles.length && (
+          <div className="pt-8 text-center">
+            <Button
+              variant="outline"
+              disabled={isShowingMore}
+              onClick={() => {
+                setIsShowingMore(true);
+                setTimeout(() => {
+                  setVisibleCount((prev) => prev + PAGE_SIZE);
+                  setIsShowingMore(false);
+                }, 400); // Small delay for visual feedback
+              }}
+              className="rounded-xl px-6 py-5 font-medium border-border hover:bg-emerald-500/10 hover:text-emerald-600 hover:border-emerald-500/30 transition-colors"
+            >
+              {isShowingMore ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  Loading...
+                </>
+              ) : (
+                "View more articles"
+              )}
+            </Button>
+          </div>
         )}
       </section>
     </main>

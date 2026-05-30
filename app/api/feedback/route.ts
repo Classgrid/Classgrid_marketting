@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get('user-agent') || 'unknown'
 
     // Valid page types
-    const validPageTypes = ['compare', 'blog', 'module', 'solution', 'case-study', 'use-case', 'general']
+    const validPageTypes = ['compare', 'blog', 'module', 'solution', 'case-study', 'use-case', 'help-article', 'general']
     const resolvedPageType = validPageTypes.includes(pageType) ? pageType : 'general'
 
     // Create a new websiteFeedback document in Sanity

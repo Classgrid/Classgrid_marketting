@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Clock, Copy, Eye, PanelLeft, X } from "lucide-react";
+import { Clock, Copy, Eye, PanelLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Spinner } from "@/components/ui/spinner";
 import { PortableText } from "@portabletext/react";
@@ -12,6 +12,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { CmsFallback } from "@/components/ui/CmsErrorBoundary";
+import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 import { cn } from "@/lib/utils";
 import { buildLangHref, extractLocaleString, extractLocaleValue, type SupportedLang } from "@/lib/locale";
 import { client } from "@/sanity/lib/client";
@@ -108,7 +109,6 @@ export default function ArticlePageClient({
   const [activeSection, setActiveSection] = useState<string>("");
   const [headings, setHeadings] = useState<{ id: string; title: string }[]>([]);
   const [viewCount, setViewCount] = useState(0);
-  const [hasGivenFeedback, setHasGivenFeedback] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -179,25 +179,7 @@ export default function ArticlePageClient({
         .catch(console.error);
     }
 
-    const feedbackKey = `help_feedback_${slug}`;
-    if (localStorage.getItem(feedbackKey)) setHasGivenFeedback(true);
   }, [slug]);
-
-  const handleFeedback = async (isHelpful: boolean) => {
-    if (hasGivenFeedback || !slug) return;
-    setHasGivenFeedback(true);
-    localStorage.setItem(`help_feedback_${slug}`, "true");
-
-    try {
-      await fetch("/api/help/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, isHelpful }),
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     if (headings.length === 0) return;
@@ -218,8 +200,9 @@ export default function ArticlePageClient({
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background pt-8 pb-24 flex justify-center">
-        <Spinner className="w-8 h-8 text-emerald-500" />
+      <main className="min-h-[80vh] bg-background flex flex-col justify-center items-center pt-32 pb-24">
+        <Spinner className="w-8 h-8 text-emerald-500 mb-4" />
+        <p className="text-muted-foreground animate-pulse text-sm font-medium">Loading article...</p>
       </main>
     );
   }
@@ -228,7 +211,7 @@ export default function ArticlePageClient({
     return (
       <CmsFallback
         type="article"
-        backHref={buildLangHref("/support", lang)}
+        backHref={buildLangHref("/help-center", lang)}
         backLabel="Back to Help Center"
       />
     );
@@ -441,26 +424,11 @@ export default function ArticlePageClient({
             )}
           </div>
 
-          <div className="mt-20 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-              {hasGivenFeedback ? "Thank you for your feedback!" : "Was this article helpful?"}
-            </div>
-            {!hasGivenFeedback && (
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleFeedback(true)}
-                  className="px-6 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:border-emerald-800 transition-colors text-sm font-bold"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => handleFeedback(false)}
-                  className="px-6 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-red-50 hover:border-red-200 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-800 transition-colors text-sm font-bold"
-                >
-                  No
-                </button>
-              </div>
-            )}
+          <div className="mt-20 border-t border-zinc-200 dark:border-zinc-800">
+            <FeedbackWidget
+              pageTitle={extractLocaleString(article.title, lang)}
+              pageType="help-article"
+            />
           </div>
         </article>
       </div>
