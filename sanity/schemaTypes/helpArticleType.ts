@@ -70,5 +70,24 @@ export const helpArticleType = defineType({
       description: 'Raw markdown content for articles imported from docs. When present, this is rendered instead of Portable Text content.',
       type: 'text',
     }),
+    defineField({
+      name: 'publishedAt',
+      title: 'Published Date',
+      description: 'The date this article was first published. Displayed on the article page when "Show Dates" is enabled.',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'lastUpdatedAt',
+      title: 'Last Updated Date',
+      description: 'The date this article was last meaningfully updated. If set, displayed alongside the published date.',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'showDates',
+      title: 'Show Dates',
+      description: 'Toggle to show or hide the published/updated dates on the article page.',
+      type: 'boolean',
+      initialValue: true,
+    }),
   ],
 })

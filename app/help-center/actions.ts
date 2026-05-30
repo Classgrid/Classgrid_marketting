@@ -56,7 +56,10 @@ export async function fetchArticleData(slug: string) {
       "category": category->title,
       summary,
       content,
-      markdownBody
+      markdownBody,
+      publishedAt,
+      lastUpdatedAt,
+      showDates
     }`,
     { slug }
   );
