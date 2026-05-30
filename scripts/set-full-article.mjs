@@ -42,7 +42,7 @@ Once both verifications are complete, click the **Submit** button.
 
 After submitting, you are redirected to a secure confirmation page that shows all the details you entered — your name, email, institution name, organization type, and phone number.
 
-If you notice a mistake, click the **Edit** button to update any field. When you save your changes, a fresh verification code will be sent to the updated email address.
+If you notice a mistake, click the **Edit** button to update your name, email, institution name, phone number, or organization type. When you save your changes, a fresh verification code will be sent to the updated email address.
 
 If everything looks correct, click the **Send Verification Code** button. A 6-digit numeric code will be sent to the email address you provided. This step confirms that you own the email and can receive meeting invitations.
 
@@ -66,7 +66,7 @@ After email verification, the page transitions into a calendar scheduling view w
 
 After confirming, three things happen:
 
-1. **A Google Calendar event** is created automatically with a unique Google Meet link. The meeting is titled with your institution name and added to both your calendar and the Classgrid team calendar.
+1. **A Google Calendar event** is created automatically on the Classgrid team calendar with a unique Google Meet link. The meeting is titled with your institution name.
 2. **A confirmation email** is sent to your email address containing the scheduled date, time, and the Google Meet link.
 3. **A Classgrid Talk prompt** appears on screen, inviting you to ask pre-demo questions (see below).
 
@@ -110,7 +110,7 @@ Classgrid Talk is ideal for prospective clients who want to make the most of the
 
 > **Support Tickets are available only to verified institutions with an active Classgrid account.**
 
-Support Tickets are the dedicated help channel for active, verified Classgrid users. Unlike Classgrid Talk, which is open to anyone, Support Tickets are exclusively available to students, faculty, and administrators whose email addresses are linked to a registered Classgrid institution.
+Support Tickets are the dedicated help channel for active, verified Classgrid users. Unlike Classgrid Talk, which is available to any logged-in user, Support Tickets are exclusively available to students, faculty, and administrators whose email addresses are linked to a registered Classgrid institution.
 
 ### How to Raise a Ticket
 
@@ -119,13 +119,13 @@ Support Tickets are the dedicated help channel for active, verified Classgrid us
 3. Click **Submit a New Ticket** to open the ticket form. Fill in:
     *   **Subject** — A short summary of your issue.
     *   **Category** — Choose from General, Technical Issue, Billing and Payments, Account and Access, Feature Request, or Other.
-    *   **Priority** — Select Low (minor, not urgent), Medium (affecting your work), or High (blocking critical operations).
+    *   **Priority** — Select Low (minor issue, not urgent), Medium (affecting my work), or High (blocking critical operations).
     *   **Description** — Use the built-in rich-text editor to format your message, add bullet points, embed images, insert links, and attach files (up to 5 files, 5 MB each).
 4. Click **Submit**. Your ticket is created and a support team member will respond as soon as possible.
 
 ### If Your Account is Not Linked
 
-If your email is not associated with any Classgrid institution, you will see an "Institution Not Found" message. In that case, you can either contact your institution administrator to add your email to the platform, or email the team directly at support@classgrid.in. You also have the option to use Classgrid Talk to speak with the team.
+If your email is not associated with any Classgrid institution, you will see an "Institution Not Found" message. In that case, you can either contact your institution administrator to add your email to the platform, or [email the team directly](mailto:support@classgrid.in). You also have the option to use Classgrid Talk to speak with the team.
 
 ---
 
@@ -133,11 +133,11 @@ If your email is not associated with any Classgrid institution, you will see an 
 
 | | Classgrid Talk | Support Ticket |
 |---|---|---|
-| **Who can use it** | Anyone — visitors, prospective clients | Only verified platform users |
+| **Who can use it** | Any logged-in user — visitors, prospective clients | Only verified platform users linked to an institution |
 | **Purpose** | Pre-sales questions, product inquiries | Technical issues, bug reports, account help |
 | **Authentication** | Login required to track replies | Login required + verified institution |
 | **Response time** | Within 24 hours | As soon as possible |
-| **Where to access** | [classgrid.in/support/inquiry](https://classgrid.in/support/inquiry) | [classgrid.in/support/ticket](https://classgrid.in/support/ticket) |`
+| **Where to access** | [Inquiry Portal](https://classgrid.in/support/inquiry) | [Ticket Portal](https://classgrid.in/support/ticket) |`
 
 async function run() {
   await client
