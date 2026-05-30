@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
-type PageType = 'compare' | 'blog' | 'module' | 'solution' | 'case-study' | 'use-case' | 'general';
+type PageType = 'compare' | 'blog' | 'module' | 'solution' | 'case-study' | 'use-case' | 'help-article' | 'general';
 
 type FeedbackWidgetProps = {
   pageTitle: string;

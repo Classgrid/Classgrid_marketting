@@ -5,7 +5,7 @@ import { client } from "@/sanity/lib/client";
 export async function getInitialSupportData() {
   const [fetchedArticles, fetchedCategories] = await Promise.all([
     client.fetch(`
-      *[_type == "helpArticle"] | order(_createdAt desc) {
+      *[_type == "helpArticle" && category->title != "FAQ"] | order(_createdAt desc) {
         title,
         "slug": slug.current,
         summary,
@@ -14,7 +14,7 @@ export async function getInitialSupportData() {
       }
     `),
     client.fetch(`
-      *[_type == "helpCategory"] | order(coalesce(order, 99) asc, title asc) {
+      *[_type == "helpCategory" && title != "FAQ"] | order(coalesce(order, 99) asc, title asc) {
         "title": coalesce(title.en, title.hi, title.mr, title),
         "description": coalesce(description.en, description.hi, description.mr, description),
         icon,
@@ -31,7 +31,7 @@ export async function getInitialSupportData() {
 
 export async function searchSupportArticles(query: string) {
   return await client.fetch(
-    `*[_type == "helpArticle" && (
+    `*[_type == "helpArticle" && category->title != "FAQ" && (
       title match $q ||
       title.en match $q ||
       title.hi match $q ||

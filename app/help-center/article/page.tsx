@@ -8,5 +8,5 @@ type ArticleIndexProps = {
 
 export default async function ArticleIndex({ searchParams }: ArticleIndexProps) {
   const lang = parseLang((await searchParams) ?? undefined);
-  redirect(buildLangHref("/support", lang));
+  redirect(buildLangHref("/help-center", lang));
 }

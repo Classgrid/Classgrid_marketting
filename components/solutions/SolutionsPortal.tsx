@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Building2, GraduationCap, School, Target, UserRound, Users, Waypoints } from "lucide-react";
 import { getIndustrySolutionPath, getRoleSolutionPath } from "@/lib/route-maps";
+import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 
 const industryCards = [
   {
@@ -90,14 +91,15 @@ export function SolutionsPortal() {
       <section className="relative mx-auto max-w-7xl">
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center">
+          <SectionAccentBar className="mb-4" />
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-500">
             Solutions
           </p>
           <h1 className="mt-4 text-balance text-4xl font-black tracking-tight text-foreground md:text-6xl">
-            Are you an institution or a user?
+            Solutions for every role and workflow
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            Choose your path to see how Classgrid helps your exact role, workflow, and operating model.
+            Choose the path that best matches your responsibilities and explore the tools, workflows, and capabilities designed for your needs.
           </p>
         </div>
 

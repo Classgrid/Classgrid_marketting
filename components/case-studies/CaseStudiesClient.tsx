@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Bell, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -165,6 +166,7 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
         
         {/* ── HERO ── */}
         <section className="pt-16 pb-12 text-center flex flex-col items-center">
+          <SectionAccentBar className="mb-4" />
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-500 mb-4">
             Case Study
           </p>
