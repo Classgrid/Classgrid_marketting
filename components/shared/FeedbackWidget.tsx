@@ -66,7 +66,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
             </p>
             {/* Keep emojis visible but greyed out */}
             <div className="flex items-center gap-2 mt-1 opacity-40">
-              {['😭', '😞', '😐', '🤩'].map((e) => (
+              {['🤩', '😐', '😞', '😭'].map((e) => (
                 <span key={e} className={cn("text-base transition-all", selectedEmoji === e ? "opacity-100 scale-125" : "grayscale opacity-50")}>{e}</span>
               ))}
             </div>
@@ -80,7 +80,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
               </span>
 
               <div className="flex items-center gap-1">
-                {['😭', '😞', '😐', '🤩'].map((emoji) => {
+                {['🤩', '😐', '😞', '😭'].map((emoji) => {
                   const labels: Record<string, string> = {
                     '😭': 'Very unhelpful',
                     '😞': 'Unhelpful',
