@@ -162,21 +162,25 @@ export function FeedbackAnalytics() {
 
                 {/* Emoji Breakdown */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                  <div style={{ background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', padding: '8px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', marginBottom: '2px' }}>🤩</div>
+                  <div style={{ background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', padding: '10px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>🤩</div>
                     <Text size={1} weight="bold" style={{ color: '#10b981' }}>{indianFormat.format(stat.emojis['great'] || 0)}</Text>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Great</div>
                   </div>
-                  <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', padding: '8px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', marginBottom: '2px' }}>😐</div>
+                  <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', padding: '10px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>😐</div>
                     <Text size={1} weight="bold" style={{ color: '#f59e0b' }}>{indianFormat.format(stat.emojis['okay'] || 0)}</Text>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Okay</div>
                   </div>
-                  <div style={{ background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', padding: '8px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', marginBottom: '2px' }}>😞</div>
+                  <div style={{ background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', padding: '10px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>😞</div>
                     <Text size={1} weight="bold" style={{ color: '#f43f5e' }}>{indianFormat.format(stat.emojis['bad'] || 0)}</Text>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Bad</div>
                   </div>
-                  <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', padding: '8px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', marginBottom: '2px' }}>😭</div>
+                  <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', padding: '10px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>😭</div>
                     <Text size={1} weight="bold" style={{ color: '#ef4444' }}>{indianFormat.format(stat.emojis['terrible'] || 0)}</Text>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Terrible</div>
                   </div>
                 </div>
               </Stack>
