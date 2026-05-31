@@ -428,7 +428,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                           <PortableText value={block.textBlocks} components={ptFull} />
                         </div>
                       )}
-                      <div className="mt-8 md:mt-10">
+                      <div className="mt-8 md:mt-10 max-w-3xl mx-auto">
                         {mediaElement}
                       </div>
                     </motion.div>
