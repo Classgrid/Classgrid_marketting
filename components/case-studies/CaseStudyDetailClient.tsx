@@ -79,10 +79,10 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
           </>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
-
+        
         <div className="absolute inset-0 flex items-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16">
-            <motion.div
+            <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -164,9 +164,9 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                 {data.overview}
               </p>
             </motion.div>
-
+            
             {data.overviewDivider && (
-              <motion.div
+              <motion.div 
                 initial={{ scaleX: 0, opacity: 0 }}
                 whileInView={{ scaleX: 1, opacity: 1 }}
                 viewport={{ once: true }}
@@ -191,7 +191,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
               currentBlock = { media: null, textBlocks: [] };
             }
             currentBlock.textBlocks.push(item);
-          }
+          } 
           else if (item._type === "image" || item._type === "video") {
             if (!currentBlock.media && currentBlock.textBlocks.length > 0) {
               currentBlock.media = item;
@@ -345,7 +345,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                   if (block.media._type === "video") {
                     const videoSrc = block.media.videoUrl || block.media.url;
                     const youtubeEmbed = videoSrc ? getYouTubeEmbedUrl(videoSrc) : null;
-
+                    
                     if (youtubeEmbed) {
                       mediaElement = (
                         <div className="relative aspect-video rounded-xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
@@ -411,30 +411,6 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                 }
 
                 // ─── CENTER-SPLIT LAYOUT (OpenAI style) ───
-                // Text first, media below. Use for long article paragraphs
-                // where a side-by-side layout would make the copy hard to read.
-                if (layoutPref === "below" && mediaElement) {
-                  return (
-                    <motion.div
-                      key={i}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, margin: "-100px" }}
-                      variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7 } } }}
-                      className="max-w-5xl mx-auto"
-                    >
-                      {block.textBlocks.length > 0 && (
-                        <div className="max-w-2xl mx-auto">
-                          <PortableText value={block.textBlocks} components={ptFull} />
-                        </div>
-                      )}
-                      <div className="mt-8 md:mt-10 max-w-3xl mx-auto">
-                        {mediaElement}
-                      </div>
-                    </motion.div>
-                  );
-                }
-
                 if (isCenterSplit && mediaElement) {
                   const midpoint = Math.ceil(block.textBlocks.length / 2);
                   const leftText = block.textBlocks.slice(0, midpoint);
@@ -615,8 +591,8 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
             <h2 className="text-2xl font-bold tracking-tight">Gallery</h2>
           </div>
-          <ImageGallery images={data.galleryImageUrls.map((url, i) => ({
-            id: `gallery-${i}`,
+          <ImageGallery images={data.galleryImageUrls.map((url, i) => ({ 
+            id: `gallery-${i}`, 
             src: url,
             alt: `Campus proof ${i + 1}`
           }))} />
@@ -656,7 +632,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                 </h2>
                 <p className="text-muted-foreground">{data.nextCaseStudy.clientName} · <span className="capitalize">{data.nextCaseStudy.category.replace(/-/g, ' ')}</span></p>
               </div>
-
+              
               <div className="flex items-center gap-8 flex-shrink-0">
                 {data.nextCaseStudy.thumbnailUrl && (
                   <div className="relative w-32 h-32 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-lg border border-white/10 hidden md:block group-hover:scale-105 transition-transform duration-500">
