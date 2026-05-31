@@ -379,12 +379,13 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                     }
                     if (imgUrl) {
                       mediaElement = (
-                        <div className={`relative ${isCenterSplit ? "aspect-[3/4]" : "aspect-[4/3]"} rounded-xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10`}>
+                        <div className="relative rounded-xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
                           <Image
                             src={imgUrl}
-                            alt="Case study section image"
-                            fill
-                            className="object-cover transition-transform duration-700 hover:scale-105"
+                            alt={block.media.caption || "Case study section image"}
+                            width={1200}
+                            height={800}
+                            className="w-full h-auto object-contain transition-transform duration-700 hover:scale-[1.02]"
                             sizes="(max-width: 768px) 100vw, 55vw"
                           />
                         </div>
