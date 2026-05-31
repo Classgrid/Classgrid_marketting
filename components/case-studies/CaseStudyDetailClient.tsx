@@ -411,6 +411,30 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                 }
 
                 // ─── CENTER-SPLIT LAYOUT (OpenAI style) ───
+                // Text first, media below. Use for long article paragraphs
+                // where a side-by-side layout would make the copy hard to read.
+                if (layoutPref === "below" && mediaElement) {
+                  return (
+                    <motion.div
+                      key={i}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, margin: "-100px" }}
+                      variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7 } } }}
+                      className="max-w-5xl mx-auto"
+                    >
+                      {block.textBlocks.length > 0 && (
+                        <div className="max-w-2xl mx-auto">
+                          <PortableText value={block.textBlocks} components={ptFull} />
+                        </div>
+                      )}
+                      <div className="mt-8 md:mt-10">
+                        {mediaElement}
+                      </div>
+                    </motion.div>
+                  );
+                }
+
                 if (isCenterSplit && mediaElement) {
                   const midpoint = Math.ceil(block.textBlocks.length / 2);
                   const leftText = block.textBlocks.slice(0, midpoint);
