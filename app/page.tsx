@@ -957,8 +957,9 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
   const showHero =
     Boolean(headline || subtext || heroPrimaryLabel || heroSecondaryLabel || badge);
+  const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid === true : true;
   const showShowcase =
-    (sectionSettings?.showModuleGrid !== false) &&
+    moduleGridEnabled &&
     Boolean(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle || showcaseSlides.length);
   const showTrust =
     Boolean(trustedBy || trustSectionDescription || stats.length || trustedLogos.length);
@@ -973,8 +974,13 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       modulesCalloutCtaLabel
     );
   const showTimeline = Boolean(timelineTabs.length);
-  const showVideoSection = (sectionSettings?.showTestimonialVideos !== false) && Boolean(testimonialVideos?.length || productVideoUrl);
-  const showTestimonials = (sectionSettings?.showClientTestimonials !== false) && Boolean(testimonials.length);
+  // Respect the Sanity "Testimonials Controls" toggles — if the toggle is OFF (false), hide the section.
+  // If sectionSettings is null (fetch failed), default to showing the sections to avoid blank pages.
+  const trustedInstitutionsEnabled = sectionSettings ? sectionSettings.showTrustedInstitutions === true : true;
+  const clientTestimonialsEnabled = sectionSettings ? sectionSettings.showClientTestimonials === true : true;
+  const testimonialVideosEnabled = sectionSettings ? sectionSettings.showTestimonialVideos === true : true;
+  const showVideoSection = testimonialVideosEnabled && Boolean(testimonialVideos?.length || productVideoUrl);
+  const showTestimonials = clientTestimonialsEnabled && Boolean(testimonials.length);
   const showWhyClassgrid = true;
   const showClassgridVideo = (cmsClassgridVideo as any)?.isVisible === true;
   const showTeamVision = (cmsClassgridTeamVision as any)?.isVisible === true;
@@ -1076,7 +1082,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
               )}
 
               {stats.length > 0 ? <StatsStrip stats={stats} /> : null}
-              {sectionSettings?.showTrustedInstitutions !== false ? (
+              {trustedInstitutionsEnabled ? (
                 <TrustedInstitutionsShowcase title={trustedBy} institutions={trustedLogos} />
               ) : null}
             </div>
