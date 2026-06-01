@@ -71,10 +71,8 @@ export function ProfessionalHero() {
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="px-8 py-6 text-base" asChild>
-              <Link href="/view-platform">
+            <Button variant="outline" size="lg" className="px-8 py-6 text-base cursor-not-allowed opacity-70">
                 Explore Platform
-              </Link>
             </Button>
           </MotionDiv>
         </MotionDiv>
