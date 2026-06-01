@@ -401,9 +401,10 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     home?.heroSecondaryCtaHref,
     placeholderHomePage.heroSecondaryCtaHref
   );
+  // TODO: RE-ENABLE when platform is live — change "#" back to "/view-platform"
   // Force link to the tour if it's the secondary hero button or label matches
   const heroSecondaryHref = (heroSecondaryLabel.toLowerCase().includes("platform") || heroSecondaryLabel.toLowerCase().includes("tour"))
-    ? "/view-platform"
+    ? "#"
     : heroSecondaryHrefRaw;
 
   const empowerSection = {
@@ -719,9 +720,10 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     home?.modulesCalloutCtaHref,
     placeholderHomePage.modulesCalloutCtaHref
   );
+  // TODO: RE-ENABLE when platform is live — change "#" back to "/view-platform"
   // Force link to tour for modules callout as well
   const modulesCalloutCtaHref = modulesCalloutCtaLabel.toLowerCase().includes("platform")
-    ? "/view-platform"
+    ? "#"
     : modulesCalloutCtaHrefRaw;
 
   const timelineSectionTitle = getLocalized(
