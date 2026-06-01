@@ -1,0 +1,20 @@
+name: First Classgrid Action
+
+# This tells GitHub WHEN to run the action
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # This allows you to click a button to run it manually!
+
+# This tells GitHub WHAT to do
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest # Spun up a free Linux server
+
+    steps:
+      - name: Print a message to the console
+        run: echo "Hello Classgrid! Your very first GitHub Action is working perfectly!"
+
+      - name: Tell us the time
+        run: date
