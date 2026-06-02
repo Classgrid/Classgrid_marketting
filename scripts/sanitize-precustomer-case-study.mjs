@@ -22,6 +22,20 @@ try {
         'A sector research study on why Indian institutions need unified ERP, LMS, communication, analytics, and AI-ready digital infrastructure to improve visibility, readiness, and continuity.',
       overview:
         'This sector study looks at India higher-education infrastructure as of May 31, 2026. It is a research-backed perspective on market need and platform direction, not a named customer implementation.',
+      champions: [
+        {
+          _key: 'prepared-nikhil-shinde',
+          name: 'Nikhil Shinde',
+        },
+        {
+          _key: 'prepared-swaroop-ghorpade',
+          name: 'Swaroop Ghorpade',
+        },
+        {
+          _key: 'prepared-krushna-gore',
+          name: 'Krushna Gore',
+        },
+      ],
     })
     .unset([
       'clientLogo',
@@ -30,7 +44,6 @@ try {
       'championHeadshot',
       'championQuote',
       'championSocialLink',
-      'champions',
     ])
     .commit();
 

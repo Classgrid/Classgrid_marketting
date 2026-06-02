@@ -22,7 +22,7 @@ import { IPhone15Pro } from "@/components/ui/iphone-15-pro";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const platformUrl = "https://learner.pceterp.in/";
+const platformUrl = "https://www.youtube.com/@classgrid";
 
 const adminRoles = [
   { id: "org_admin", label: "Org Admin", email: "admin@classgrid.in", pass: "demo123" },
@@ -36,8 +36,8 @@ const adminRoles = [
 ] as const;
 
 const mobileApps = [
-  { id: "student", label: "Student App", email: "student@classgrid.in", pass: "demo123", url: "https://learner.pceterp.in/" },
-  { id: "faculty", label: "Faculty App", email: "faculty@classgrid.in", pass: "demo123", url: "https://faculty.pceterp.in/" }, // Temporary placeholder until specific URL is provided
+  { id: "student", label: "Student App", email: "student@classgrid.in", pass: "demo123", url: "https://www.youtube.com/@classgrid" },
+  { id: "faculty", label: "Faculty App", email: "faculty@classgrid.in", pass: "demo123", url: "https://www.youtube.com/@classgrid" },
 ] as const;
 
 /* ── Reusable live iframe ── */
@@ -504,6 +504,11 @@ export function ViewPlatformPreview() {
             </TabsContent>
 
           </Tabs>
+
+          {/* Coming Soon note */}
+          <p className="mt-8 text-center text-sm text-white/40">
+            🚀 Dashboard &amp; Live Preview — <span className="text-emerald-400 font-medium">Coming Soon</span>
+          </p>
         </div>
       </section>
     </main>

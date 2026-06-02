@@ -329,11 +329,18 @@ export function ModulesGrid({
             <p className="mx-auto mb-8 max-w-2xl text-slate-600 dark:text-emerald-100/70">{calloutBody}</p>
           ) : null}
           {calloutCtaLabel?.trim() && calloutCtaHref?.trim() ? (
-            <Button asChild size="lg" className="h-14 rounded-full px-10 text-base font-bold">
-              <Link href={calloutCtaHref}>
+            /* ── TO RE-ENABLE: Remove the isViewPlatform block below and keep only the Button+Link version ── */
+            calloutCtaHref === "/view-platform" ? (
+              <Button size="lg" className="h-14 rounded-full px-10 text-base font-bold cursor-not-allowed opacity-60">
                 {calloutCtaLabel}
-              </Link>
-            </Button>
+              </Button>
+            ) : (
+              <Button asChild size="lg" className="h-14 rounded-full px-10 text-base font-bold">
+                <Link href={calloutCtaHref}>
+                  {calloutCtaLabel}
+                </Link>
+              </Button>
+            )
           ) : null}
         </div>
       ) : null}
