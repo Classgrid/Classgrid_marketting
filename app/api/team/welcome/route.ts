@@ -68,13 +68,13 @@ export async function POST(req: Request) {
                 
                 <!-- BODY CONTENT -->
                 <tr>
-                  <td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;text-align:left;">
-                    <h1 style="color:#ffffff;font-size:24px;margin-top:0;margin-bottom:16px;">Welcome to the Classgrid team, ${name}!</h1>
-                    <p style="margin:0 0 16px 0;color:#cccccc;">We are absolutely thrilled to officially welcome you aboard. The entire team is excited to have you join us. As we continue to scale our platform and expand our community, your expertise and vision will be an invaluable asset to our mission.</p>
-                    <p style="margin:0 0 24px 0;color:#cccccc;">To help you hit the ground running, we've outlined your core focus areas and the initial resources you'll need below.</p>
+                  <td style="padding:30px;color:#cccccc;font-size:15px;line-height:1.7;text-align:left;">
+                    <h1 style="color:#ffffff;font-size:26px;margin-top:0;margin-bottom:16px;">Welcome to the Classgrid team, ${name}!</h1>
+                    <p style="margin:0 0 16px 0; font-size:16px; color:#cccccc; line-height:1.6;">We are absolutely thrilled to officially welcome you aboard. The entire team is excited to have you join us. As we continue to scale our platform and expand our community, your expertise and vision will be an invaluable asset to our mission.</p>
+                    <p style="margin:0 0 32px 0; font-size:16px; color:#cccccc; line-height:1.6;">To help you hit the ground running, we've outlined your core focus areas and the initial resources you'll need below.</p>
                     
-                    <h3 style="color:#ffffff; margin:0 0 16px 0; text-transform:uppercase; font-size:12px; letter-spacing:1px; border-bottom:1px solid #2a2a2a; padding-bottom:8px;">Your Responsibilities</h3>
-                    <ul class="list" style="margin-bottom:24px;padding-left:20px;color:#cccccc;font-size:14px;">
+                    <h3 style="color:#ffffff; margin:0 0 16px 0; text-transform:uppercase; font-size:14px; letter-spacing:1px; border-bottom:1px solid #2a2a2a; padding-bottom:8px;">Your Responsibilities</h3>
+                    <ul style="margin:0 0 32px 0; padding-left:20px; color:#cccccc; font-size:15px; line-height:1.6;">
                       <li style="margin-bottom:8px;"><strong>Marketing Site:</strong> Maintain the marketing codebase and send PRs. (<a href="https://github.com/Classgrid/Classgrid_marketting" style="color:#ffffff !important;text-decoration:underline;">Repository</a>)</li>
                       <li style="margin-bottom:8px;"><strong>Main Platform:</strong> Contribute directly to our core desktop platform. (<a href="https://github.com/Classgrid/classgrid_platoform-desktop-" style="color:#ffffff !important;text-decoration:underline;">Repository</a>)</li>
                       <li style="margin-bottom:8px;"><strong>Infrastructure:</strong> Help maintain our CI/CD GitHub Actions and monitor Vercel deployment stability.</li>
@@ -82,25 +82,25 @@ export async function POST(req: Request) {
                       <li style="margin-bottom:8px;"><strong>Content Management:</strong> Manage new blog posts and changelog updates via our Sanity CMS.</li>
                     </ul>
 
-                    <h3 style="color:#ffffff; margin:0 0 16px 0; text-transform:uppercase; font-size:12px; letter-spacing:1px; border-bottom:1px solid #2a2a2a; padding-bottom:8px;">Official Account Access</h3>
-                    <p style="margin:0 0 20px 0;color:#cccccc;">We use Zoho Mail exclusively for all official Classgrid email communications (we do not use Gmail). Below are your temporary credentials.</p>
+                    <h3 style="color:#ffffff; margin:0 0 16px 0; text-transform:uppercase; font-size:14px; letter-spacing:1px; border-bottom:1px solid #2a2a2a; padding-bottom:8px;">Official Account Access</h3>
+                    <p style="margin:0 0 20px 0; font-size:16px; color:#cccccc; line-height:1.6;">We use Zoho Mail exclusively for all official Classgrid email communications (we do not use Gmail). Below are your temporary credentials.</p>
                     
                     <!-- CREDENTIALS BOX -->
                     <div style="background-color:#111111; border:1px solid #333333; border-radius:8px; padding:20px; margin-bottom:24px;">
-                      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; margin-bottom:8px; font-weight:600;">Email Address</div>
-                      <div style="font-family:monospace; font-size:16px; color:#ffffff; font-weight:bold; background-color:#000000; padding:10px 14px; border-radius:6px; border:1px solid #333333; margin-bottom:16px;"><a href="mailto:${classgridEmail}" style="color:#ffffff !important; text-decoration:none;">${classgridEmail}</a></div>
+                      <div style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; margin-bottom:8px; font-weight:600;">Email Address</div>
+                      <div style="font-family:monospace; font-size:18px; color:#ffffff; font-weight:bold; background-color:#000000; padding:12px 14px; border-radius:6px; border:1px solid #333333; margin-bottom:16px;"><a href="mailto:${classgridEmail}" style="color:#ffffff !important; text-decoration:none;">${classgridEmail}</a></div>
                       
-                      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; margin-bottom:8px; font-weight:600;">Temporary Password</div>
-                      <div style="font-family:monospace; font-size:16px; color:#ffffff; font-weight:bold; background-color:#000000; padding:10px 14px; border-radius:6px; border:1px solid #333333;">${password}</div>
+                      <div style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; margin-bottom:8px; font-weight:600;">Temporary Password</div>
+                      <div style="font-family:monospace; font-size:18px; color:#ffffff; font-weight:bold; background-color:#000000; padding:12px 14px; border-radius:6px; border:1px solid #333333;">${password}</div>
                     </div>
                     
-                    <p style="margin:0 0 24px 0;color:#cccccc;">Please log in and <strong style="color:#ffffff;">change your temporary password</strong> immediately.</p>
+                    <p style="margin:0 0 24px 0; font-size:16px; color:#cccccc;">Please log in and <strong style="color:#ffffff;">change your temporary password</strong> immediately.</p>
                     
                     <!-- Google Account Setup Instructions -->
                     <div style="background-color:#1a1a1a; border-left:3px solid #34d399; padding:16px 20px; border-radius:4px; margin-bottom:24px;">
-                      <h4 style="color:#ffffff; margin:0 0 12px 0; font-size:14px;">Setup Your Chrome Profile & Workspace</h4>
-                      <p style="margin:0 0 12px 0;color:#cccccc;font-size:13px;line-height:1.6;">To get the full workspace experience, please register this email as a Google Account. This allows you to create a dedicated Chrome Browser Profile, set your professional profile photo, use "Continue with Google" across our tools, and access Google Services (excluding Gmail). Follow these steps:</p>
-                      <ol style="margin:0; padding-left:20px; color:#cccccc; font-size:13px; line-height:1.6;">
+                      <h4 style="color:#ffffff; margin:0 0 12px 0; font-size:16px;">Setup Your Chrome Profile & Workspace</h4>
+                      <p style="margin:0 0 12px 0;color:#cccccc;font-size:15px;line-height:1.6;">To get the full workspace experience, please register this email as a Google Account. This allows you to create a dedicated Chrome Browser Profile, set your professional profile photo, use "Continue with Google" across our tools, and access Google Services (excluding Gmail). Follow these steps:</p>
+                      <ol style="margin:0; padding-left:20px; color:#cccccc; font-size:15px; line-height:1.6;">
                         <li style="margin-bottom:6px;">Click <strong>Setup Google Account</strong> below and enter your name and details.</li>
                         <li style="margin-bottom:6px;">When prompted to create an email, click <strong>"Use your existing email"</strong> instead.</li>
                         <li style="margin-bottom:6px;">Enter your Zoho email address from above. Google will send an OTP to it, so <strong>you must log into your Zoho Mailbox first</strong> to retrieve the code and verify it.</li>
@@ -115,8 +115,8 @@ export async function POST(req: Request) {
                     
                     <!-- SIGNATURE -->
                     <div style="margin-top:40px;">
-                      <p style="margin:0; color:#ffffff; font-weight:bold;">Nikhil Shinde</p>
-                      <p style="margin:0; font-size:13px; color:#9ca3af;">Founder, Classgrid</p>
+                      <p style="margin:0; color:#ffffff; font-weight:bold; font-size:16px;">Nikhil Shinde</p>
+                      <p style="margin:0; font-size:14px; color:#9ca3af;">Founder, Classgrid</p>
                     </div>
                   </td>
                 </tr>
