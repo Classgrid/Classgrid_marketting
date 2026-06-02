@@ -1,5 +1,6 @@
 import type { StructureBuilder } from "sanity/structure";
 import { FeedbackAnalytics } from "./tools/feedbackAnalytics/FeedbackAnalytics";
+import { WelcomeEmailTool } from "./tools/WelcomeEmailTool";
 
 // Singleton document types - only one instance should exist.
 const singletonTypes = new Set(["homePage", "circularTimeline", "homeStats", "aboutPage", "compareHubPage", "changelogSettings", "turboClassgrid", "isometricStack", "appEcosystem"]);
@@ -48,9 +49,23 @@ export const structure = (S: StructureBuilder) =>
         .child(S.document().schemaType("circularTimeline").documentId("circularTimeline")),
 
       S.listItem()
-        .title("About Page")
-        .id("aboutPageSingleton")
-        .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+        .title("About Us")
+        .id("aboutUs")
+        .child(
+          S.list()
+            .title("About Us")
+            .items([
+              S.listItem()
+                .title("About Page Content")
+                .id("aboutPageSingleton")
+                .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+              S.listItem()
+                .title("Welcome Email Tool")
+                .id("welcomeEmail")
+                .icon(() => "📧")
+                .child(S.component(WelcomeEmailTool).title("Send Welcome Email"))
+            ])
+        ),
 
       S.listItem()
         .title("Compare Hub Page")
