@@ -13,6 +13,7 @@ import { resolveChromeContent } from "@/content/homePlaceholders";
 import { getHomeChrome, getLatestChangelogEntry } from "@/sanity/lib/marketing";
 import { resolveTenantSiteData } from "@/lib/tenant-site";
 import { NextAuthProvider } from "@/app/providers";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -213,15 +214,17 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           themes={["light", "dark"]}
           disableTransitionOnChange
         >
-          <NextAuthProvider>
-            {isTenantSitePage ? (
-              <main className="min-h-screen">{children}</main>
-            ) : (
-              <AppChrome chromeContent={homeChrome} latestReleaseDate={latestReleaseDate}>
-                {children}
-              </AppChrome>
-            )}
-          </NextAuthProvider>
+          <PostHogProvider>
+            <NextAuthProvider>
+              {isTenantSitePage ? (
+                <main className="min-h-screen">{children}</main>
+              ) : (
+                <AppChrome chromeContent={homeChrome} latestReleaseDate={latestReleaseDate}>
+                  {children}
+                </AppChrome>
+              )}
+            </NextAuthProvider>
+          </PostHogProvider>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
