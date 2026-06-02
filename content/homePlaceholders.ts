@@ -163,7 +163,7 @@ export const placeholderChromeContent: ChromeContent = {
   footerMapHref:
     "https://maps.google.com/?q=Akurdi+Railway+Station+Road,+Sector+No.+26,+Pradhikaran,+Nigdi,+Pimpri-Chinchwad,+Maharashtra+411044",
   footerPhoneNumbers: ["+91 8623947038", "+91 8149277038"],
-  footerEmailAddresses: [siteMeta.supportEmail, "contact@classgrid.in"],
+  footerEmailAddresses: [siteMeta.supportEmail, "nikhil.shinde@classgrid.in"],
   footerLegalLinks: [
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },
@@ -647,7 +647,7 @@ export function resolveChromeContent(input?: ChromeContent | null): ChromeConten
   const hasEmails = Array.isArray(chrome.footerEmailAddresses)
     && chrome.footerEmailAddresses.some((line) => typeof line === "string" && line.trim().length > 0);
   const normalizeFooterEmails = (emails?: string[]) => {
-    const allowed = new Set(["support@classgrid.in", "contact@classgrid.in"]);
+    const allowed = new Set(["support@classgrid.in", "nikhil.shinde@classgrid.in", "contact@classgrid.in"]);
     const normalized = Array.isArray(emails)
       ? emails
         .filter((line) => typeof line === "string")
