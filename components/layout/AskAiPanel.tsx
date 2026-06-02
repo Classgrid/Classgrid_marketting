@@ -133,14 +133,22 @@ function formatMessageTime(timestamp: number) {
 
 function sanitizeAssistantText(text: string) {
   const normalized = text.replace(/\r/g, "");
-  const cleanedLines = normalized.split("\n").map((line) =>
-    line
+  const cleanedLines = normalized.split("\n").map((line) => {
+    let cleaned = line
       .replace(/__(.*?)__/g, "$1")
       .replace(/`([^`]+)`/g, "$1")
       .replace(/^#{1,6}\s*/g, "")
-      .replace(/^>\s*/g, "")
-      .replace(/\s+$/g, "")
-  );
+      .replace(/^>\s*/g, "");
+
+    // Protect **bold** markers by temporarily replacing them
+    cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, "%%BOLD_START%%$1%%BOLD_END%%");
+    // Now strip ALL remaining single asterisks (italic markers like *"text"*)
+    cleaned = cleaned.replace(/\*/g, "");
+    // Restore **bold** markers
+    cleaned = cleaned.replace(/%%BOLD_START%%/g, "**").replace(/%%BOLD_END%%/g, "**");
+
+    return cleaned.replace(/\s+$/g, "");
+  });
 
   return cleanedLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
@@ -551,13 +559,39 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     };
   }, [open]);
 
+  const userScrolledUpRef = useRef(false);
+
+  // Track when user manually scrolls up — disable auto-scroll
+  useEffect(() => {
+    const element = chatScrollRef.current;
+    if (!element) return;
+
+    const handleUserScroll = () => {
+      const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+      userScrolledUpRef.current = distanceFromBottom > 80;
+    };
+
+    element.addEventListener("wheel", handleUserScroll, { passive: true });
+    element.addEventListener("touchmove", handleUserScroll, { passive: true });
+    return () => {
+      element.removeEventListener("wheel", handleUserScroll);
+      element.removeEventListener("touchmove", handleUserScroll);
+    };
+  }, [open]);
+
+  // Auto-scroll only when user hasn't manually scrolled up
   useEffect(() => {
     if (!open) return;
 
     const element = chatScrollRef.current;
     if (!element) return;
 
-    element.scrollTop = element.scrollHeight;
+    // If user manually scrolled up, don't fight them
+    if (userScrolledUpRef.current) return;
+
+    requestAnimationFrame(() => {
+      element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
+    });
   }, [messages, thinking, open]);
 
   function createMessageId(prefix: string) {
@@ -627,6 +661,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setInput("");
     setSubmitting(true);
     setThinking(true);
+    userScrolledUpRef.current = false; // Reset scroll lock for new question
 
     const nextMessages: ChatMessage[] = [
       ...messages,
@@ -761,7 +796,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           </Button>
         </div>
 
-        <div ref={chatScrollRef} className="flex-1 overflow-y-auto">
+        <div ref={chatScrollRef} className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:thin]">
           <div className="flex flex-col gap-4 px-4 py-4">
             {emptyState ? (
               <>
