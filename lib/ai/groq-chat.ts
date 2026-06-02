@@ -1,24 +1,19 @@
 /**
- * Multi-Provider LLM Client with Automatic Fallback
+ * Multi-Provider LLM Client with Automatic Fallback & Tool Calling
  *
  * Provider chain: Gemini → Groq → Mistral
  * Each provider uses the OpenAI-compatible chat completions format.
  * If the primary provider is rate-limited or fails, the next one is tried automatically.
- *
- * Environment variables:
- *   GEMINI_API_KEY   – Google Gemini (primary, 1M TPM free)
- *   GEMINI_MODEL     – default: gemini-2.5-flash
- *   GROQ_API_KEY     – Groq (fallback, 6K TPM free)
- *   GROQ_MODEL       – default: llama-3.1-8b-instant
- *   MISTRAL_API_KEY  – Mistral (last resort, 500K TPM free)
- *   MISTRAL_MODEL    – default: mistral-small-latest
  */
+import google from 'googlethis';
 
 // ── Types (backward-compatible) ──────────────────────────────────────────────
 
 export type GroqMessage = {
-  role: "system" | "user" | "assistant";
-  content: string;
+  role: "system" | "user" | "assistant" | "tool";
+  content?: string | null;
+  tool_calls?: any[];
+  tool_call_id?: string;
 };
 
 export type GroqChatOptions = {
@@ -39,10 +34,26 @@ type LLMProvider = {
   model: string;
 };
 
+const TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "search_web",
+      description: "Search the live web for competitor analysis, news, or external facts.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "The search query (e.g. 'Teachmint features and pricing')" }
+        },
+        required: ["query"]
+      }
+    }
+  }
+];
+
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  // 1️⃣ Primary: Google Gemini (1M TPM free tier)
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   if (geminiKey) {
     providers.push({
@@ -53,7 +64,6 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  // 2️⃣ Fallback: Groq (6K TPM free tier)
   const groqKey = process.env.GROQ_API_KEY?.trim();
   if (groqKey) {
     const groqModel =
@@ -68,7 +78,6 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  // 3️⃣ Last resort: Mistral (500K TPM free tier)
   const mistralKey = process.env.MISTRAL_API_KEY?.trim();
   if (mistralKey) {
     providers.push({
@@ -79,7 +88,6 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  // 4️⃣ Absolute last resort: OpenRouter (Free Tier Models)
   const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
   if (openRouterKey) {
     providers.push({
@@ -93,26 +101,25 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
   return providers;
 }
 
-// ── Kept for backward compatibility ──────────────────────────────────────────
-
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
-  // Returns the model of the first available provider
   const chain = getProviderChain(channel);
   return chain.length > 0 ? chain[0].model : "gemini-2.5-flash";
 }
 
 // ── Response Extraction ──────────────────────────────────────────────────────
 
-function extractAnswer(data: unknown): string {
-  if (!data || typeof data !== "object") return "";
+function extractResponse(data: unknown): { content: string | null; toolCalls?: any[] } {
+  if (!data || typeof data !== "object") return { content: null };
   const choices = (data as { choices?: unknown }).choices;
-  if (!Array.isArray(choices) || choices.length === 0) return "";
-
-  const first = choices[0] as { message?: { content?: unknown } };
-  return typeof first.message?.content === "string" ? first.message.content.trim() : "";
+  if (!Array.isArray(choices) || choices.length === 0) return { content: null };
+  const first = choices[0] as any;
+  return {
+    content: first.message?.content || null,
+    toolCalls: first.message?.tool_calls
+  };
 }
 
-// ── Single Provider Request ──────────────────────────────────────────────────
+// ── Single Provider Request (Recursive for Tool Calls) ───────────────────────
 
 async function tryProvider(
   provider: LLMProvider,
@@ -137,6 +144,7 @@ async function tryProvider(
         messages,
         temperature,
         max_tokens: maxTokens,
+        tools: TOOLS,
       }),
     });
 
@@ -147,18 +155,71 @@ async function tryProvider(
       if (response.status === 429) {
         return { answer: null, rateLimited: true, error: "rate_limited" };
       }
-      // 401/403 = bad key, skip this provider
       if (response.status === 401 || response.status === 403) {
         return { answer: null, rateLimited: false, error: "auth_failed" };
       }
       return { answer: null, rateLimited: false, error: `http_${response.status}` };
     }
 
-    const answer = extractAnswer(await response.json());
-    if (answer) {
-      console.log(`[llm] ✓ ${provider.name} (${provider.model})`);
+    const result = extractResponse(await response.json());
+    
+    // Handle Tool Calling
+    if (result.toolCalls && result.toolCalls.length > 0) {
+      const call = result.toolCalls[0];
+      console.log(`[llm:${provider.name}] 🔍 Using Tool: ${call.function.name}`);
+      
+      if (call.function.name === 'search_web') {
+        const args = JSON.parse(call.function.arguments);
+        console.log(`[llm:${provider.name}] 🌐 Searching: "${args.query}"`);
+        
+        let searchResultText = "No reliable search results found.";
+        try {
+          const tavilyKey = process.env.TAVILY_API_KEY?.trim();
+          if (tavilyKey) {
+            const tavilyRes = await fetch("https://api.tavily.com/search", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                api_key: tavilyKey,
+                query: args.query,
+                search_depth: "basic",
+                include_answer: true,
+                max_results: 3
+              })
+            });
+            const searchData = await tavilyRes.json();
+            if (searchData.answer) {
+              // Include the answer plus the actual source URLs
+              const sourceUrls = (searchData.results || []).map((r: any) => `- ${r.title}: ${r.url}`).join('\n');
+              searchResultText = `${searchData.answer}\n\nSource URLs:\n${sourceUrls}`;
+            } else if (searchData.results && searchData.results.length > 0) {
+              searchResultText = searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
+            }
+          } else {
+            console.error(`[llm:${provider.name}] TAVILY_API_KEY is missing. Cannot perform live search.`);
+            searchResultText = "Search failed because TAVILY_API_KEY is not configured in the server environment.";
+          }
+        } catch (e) {
+          console.error(`[llm:${provider.name}] Search failed:`, e);
+        }
+
+        // Recursively call the provider with the search results appended
+        const nextMessages: GroqMessage[] = [
+          ...messages,
+          { role: "assistant", content: result.content, tool_calls: result.toolCalls },
+          { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 2000) } // Cap at 2000 chars to save tokens
+        ];
+        
+        // Give the recursive call a bit more timeout since we just used some up
+        clearTimeout(timeout);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs);
+      }
     }
-    return { answer: answer || null, rateLimited: false };
+
+    if (result.content) {
+      console.log(`[llm] ✓ ${provider.name} (${provider.model}) answered successfully.`);
+    }
+    return { answer: result.content || null, rateLimited: false };
   } catch (error) {
     const name = error instanceof Error ? error.name : "";
     const message = error instanceof Error ? error.message : String(error);
@@ -203,7 +264,6 @@ export async function generateGroqReply({
       allRateLimited = false;
     }
 
-    // If rate limited or failed, try the next provider
     if (result.rateLimited) {
       console.warn(`[llm] ${provider.name} rate-limited, trying next provider...`);
     } else if (result.error === "auth_failed") {
@@ -213,7 +273,6 @@ export async function generateGroqReply({
     }
   }
 
-  // All providers exhausted
   if (allRateLimited) {
     console.error("[llm] All providers rate-limited");
     return "[RATE_LIMITED]";
