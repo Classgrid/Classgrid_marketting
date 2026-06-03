@@ -6,7 +6,9 @@ import {
   ArrowUp,
   BarChart3,
   Bot,
+  Check,
   ClipboardList,
+  Copy,
   CreditCard,
   FileText,
   Globe2,
@@ -15,6 +17,8 @@ import {
   MessageCircleMore,
   School,
   Sparkles,
+  ThumbsDown,
+  ThumbsUp,
   UserRound,
   X,
   type LucideIcon,
@@ -380,6 +384,75 @@ function renderInlineText(rawText: string) {
   return nodes;
 }
 
+function MessageActions({ content, messageId }: { content: string; messageId: string }) {
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
+
+  async function handleCopy() {
+    try {
+      // Strip bold markers and links for plain text copy
+      const plainText = content
+        .replace(/\*\*(.+?)\*\*/g, "$1")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .trim();
+      await navigator.clipboard.writeText(plainText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (_) {
+      // Clipboard API may not be available in some contexts
+    }
+  }
+
+  function handleFeedback(type: "up" | "down") {
+    setFeedback(type === feedback ? null : type);
+    // Future: send feedback to analytics/API
+  }
+
+  return (
+    <div className="mt-2 flex items-center gap-1">
+      <button
+        type="button"
+        onClick={handleCopy}
+        className={cn(
+          "flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-200",
+          copied
+            ? "bg-emerald-500/15 text-emerald-500"
+            : "text-muted-foreground/60 hover:bg-muted hover:text-foreground"
+        )}
+        title={copied ? "Copied!" : "Copy response"}
+      >
+        {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+      </button>
+      <button
+        type="button"
+        onClick={() => handleFeedback("up")}
+        className={cn(
+          "flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-200",
+          feedback === "up"
+            ? "bg-emerald-500/15 text-emerald-500"
+            : "text-muted-foreground/60 hover:bg-muted hover:text-foreground"
+        )}
+        title="Helpful"
+      >
+        <ThumbsUp className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => handleFeedback("down")}
+        className={cn(
+          "flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-200",
+          feedback === "down"
+            ? "bg-red-500/15 text-red-400"
+            : "text-muted-foreground/60 hover:bg-muted hover:text-foreground"
+        )}
+        title="Not helpful"
+      >
+        <ThumbsDown className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
 function AssistantMessageContent({ content }: { content: string }) {
   const blocks = useMemo(() => buildStructuredBlocks(content), [content]);
 
@@ -436,23 +509,31 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
-  // Load chat history from session storage on mount
+  // Load chat history and session ID from session storage on mount
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem("classgrid_ai_chat_history");
       if (saved) {
         setMessages(JSON.parse(saved));
       }
+      const savedSessionId = sessionStorage.getItem("classgrid_ai_session_id");
+      if (savedSessionId) {
+        setSessionId(savedSessionId);
+      }
     } catch (_) {}
   }, []);
 
-  // Save chat history to session storage whenever it updates
+  // Save chat history and session ID to session storage whenever they update
   useEffect(() => {
     if (messages.length > 0) {
       sessionStorage.setItem("classgrid_ai_chat_history", JSON.stringify(messages));
     }
-  }, [messages]);
+    if (sessionId) {
+      sessionStorage.setItem("classgrid_ai_session_id", sessionId);
+    }
+  }, [messages, sessionId]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isTerminated, setIsTerminated] = useState(false);
@@ -684,9 +765,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         body: JSON.stringify({
           question: trimmed,
           userName: session?.user?.name ?? undefined,
+          sessionId: sessionId ?? undefined,
           history: nextMessages
             .filter((m) => m.role === "user" || m.role === "assistant")
-            .slice(-6)
+            .slice(-10)
             .map((m) => ({ role: m.role, content: m.content })),
           pageContext: pageContext,
         }),
@@ -706,6 +788,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             ? payload.error
             : "Unable to answer right now. Please try again."
         );
+      }
+
+      // Store session ID from API for Redis memory tracking
+      if (payload?.sessionId) {
+        setSessionId(payload.sessionId);
       }
 
       const answer =
@@ -875,6 +962,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                         <p className="mt-1 text-[11px] opacity-70">
                           {formatMessageTime(message.createdAt)}
                         </p>
+                        {!isUser && !message.typing && message.content.length > 0 && (
+                          <MessageActions content={message.content} messageId={message.id} />
+                        )}
                       </div>
                     </motion.div>
                   );

@@ -67,9 +67,8 @@ Classgrid offers 41 active modules across 8 categories:
 13. Real-Time Chat — Role-isolated channels, message persistence, moderation
 14. Live Meetings and Video — Agora, Zoom, scheduling, recording
 15. Notification and Push System — In-app, push, email, SMS, digest
-16. Forum and Discussion — Threaded academic discussions
-17. Voice Messages — Voice notes with AI transcription
-18. Organization Announcements — Broadcast messaging by role and department
+16. Voice Messages — Voice notes with AI transcription
+17. Organization Announcements — Broadcast messaging by role and department
 
 **Finance (2 modules):**
 19. Fee Management and Razorpay Integration — Fee structures, ledgers, split settlements
@@ -148,7 +147,7 @@ WEBSITE PAGES AND RESOURCES:
 - Contact Sales: /contact/sales — Sales consultation and planning
 - Demo: /demo — Request 30-day demo with guided onboarding
 - FAQ: /faq — Migration, security, pricing, and workflow questions
-- Features: /features — All 41 modules across 8 categories
+- Product Modules: /product/modules — All 41 modules across 8 categories (NOTE: There is NO /features page. Always link to /product/modules instead.)
 - View Platform: /view-platform — Guided product preview across roles
 - Integrations: /integrations — Payment, communication, cloud, AI services
 - Institutions: /institutions — Choose institution profile
@@ -168,15 +167,24 @@ WEBSITE PAGES AND RESOURCES:
 - Cookie Policy: /cookies
 - Disclaimer: /disclaimer
 - Acceptable Use: /acceptable-use
-- Community Forum: /community — Classgrid Talk (open forum)
+- Classgrid Talk: /community — Community discussion portal (NOT the same as a traditional forum — see support system rules below)
 - Team: /team — Classgrid team page
 - Product Modules: /product/modules — Full module directory
 - Status: https://classgrid1.statuspage.io — Platform status
 
-SUPPORT SYSTEM:
-1. **Formal Support Tickets** (/support/ticket) — For VERIFIED institution users only (students, faculty, admins with active institution link). Categories: technical, billing, account, feature, general, other. Priority: low/medium/high. Track at /support/requests.
-2. **Classgrid Talk** (/community) — Open community forum. Anyone can join. For general discussion, feature suggestions, tips, and peer support. NOT for critical technical issues.
-3. **Inquiry Form** (/support/inquiry) — For prospective institutions or anyone without a subscription.
+SUPPORT SYSTEM (CRITICAL — UNDERSTAND THESE DIFFERENCES):
+
+⚠️ IMPORTANT: Classgrid has THREE active channels plus one UPCOMING forum:
+
+1. Classgrid Talk (/community) — AVAILABLE NOW. A community discussion portal for pre-sales questions, product inquiries, and general Classgrid discussion. Any logged-in user can participate. Response time: within 24 hours.
+2. Support Tickets (/support/ticket) — AVAILABLE NOW. For VERIFIED PLATFORM USERS ONLY — students, faculty, and administrators linked to an active Classgrid institution. For technical issues, bug reports, account help. Response time: as soon as possible.
+3. Inquiry Form (/support/inquiry) — AVAILABLE NOW. For prospective institutions or anyone without a subscription.
+4. The ClassGrid Forum — COMING SOON (NOT YET LAUNCHED). A dedicated community forum for educators and administrators to connect, share ideas, and collaborate. Will feature public discussions, verified member badges, and feedback channels. Launch condition: 500 active users across 2-3 partner institutions.
+
+Classgrid Talk and the ClassGrid Forum are DIFFERENT things.
+- Classgrid Talk is available NOW.
+- The ClassGrid Forum is being BUILT and will launch later.
+- If someone asks about the forum, explain it's coming soon and direct them to Classgrid Talk for now.
 
 INTEGRATIONS:
 Classgrid integrates with: Razorpay (payments), Zoom (video), Google Classroom/Drive/Forms, Agora (video), Firebase (push notifications), Twilio (SMS), SendGrid/Brevo (email), and more.
