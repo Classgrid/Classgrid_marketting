@@ -10,6 +10,10 @@ import {
   type ChatHistoryItem,
 } from "@/lib/ai/rag-answer";
 import { normalizeText, type PageContext } from "@/lib/ai/rag-content";
+import {
+  saveMessageToSession,
+  getSessionHistory,
+} from "@/lib/ai/chat-memory";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -54,6 +58,7 @@ type AskAiRequestBody = {
   question?: string;
   userName?: string;
   history?: ChatHistoryItem[];
+  sessionId?: string;
   pageContext?: PageContext;
 };
 
@@ -192,17 +197,37 @@ export async function POST(req: Request) {
     }
     // --- END RATE LIMITING ---
 
+    // --- 3. REDIS SESSION MEMORY ---
+    // Generate or reuse session ID for chat memory
+    const sessionId = body?.sessionId || `${identifier}-${Date.now()}`;
+
+    // Load full conversation history from Redis
+    const redisHistory = await getSessionHistory(sessionId);
+
+    // Merge: Redis has the authoritative full history, frontend history is fallback
+    const mergedHistory = redisHistory.length > 0 ? redisHistory : (body?.history || []);
+
+    // Save the user's current question to Redis
+    await saveMessageToSession(sessionId, { role: "user", content: question });
+    // --- END REDIS SESSION MEMORY ---
+
     const result = await generateClassgridRagAnswer({
       question,
       channel: "web",
       userName: normalizeText(body?.userName),
-      history: body?.history,
+      history: mergedHistory,
       pageContext: normalizePageContext(body?.pageContext),
     });
 
+    const answer = result.answer || DEFAULT_ERROR_MESSAGE;
+
+    // Save the AI response to Redis session memory
+    await saveMessageToSession(sessionId, { role: "assistant", content: answer });
+
     return NextResponse.json(
       {
-        answer: result.answer || DEFAULT_ERROR_MESSAGE,
+        answer,
+        sessionId, // Return so frontend can reuse it
         sources: result.sources.map((source) => ({
           documentId: source.documentId,
           documentType: source.documentType,
