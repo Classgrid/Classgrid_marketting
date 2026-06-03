@@ -251,7 +251,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         answer,
-        sessionId, // Return so frontend can reuse it
+        sessionId,
         sources: result.sources.map((source) => ({
           documentId: source.documentId,
           documentType: source.documentType,
