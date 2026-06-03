@@ -826,6 +826,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
       setThinking(false);
       await wait(prefersReducedMotion ? 0 : 100);
+      if (payload.sessionId && !sessionId) {
+        setSessionId(payload.sessionId);
+        sessionStorage.setItem("classgrid_ai_session_id", payload.sessionId);
+      }
+
       await typeAssistantResponse(answer);
     } catch (apiError: unknown) {
       const rawMessage =
