@@ -64,19 +64,21 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    const groqModel =
-      channel === "whatsapp" || channel === "telegram"
-        ? process.env.WHATSAPP_GROQ_MODEL?.trim() || process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant"
-        : process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant";
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: groqModel,
-    });
-  }
+  // Groq disabled: system prompt now exceeds Groq's free tier 6000 TPM limit (needs ~7000+ tokens).
+  // Keep code for future re-enabling if Groq plan is upgraded or prompt is trimmed.
+  // const groqKey = process.env.GROQ_API_KEY?.trim();
+  // if (groqKey) {
+  //   const groqModel =
+  //     channel === "whatsapp" || channel === "telegram"
+  //       ? process.env.WHATSAPP_GROQ_MODEL?.trim() || process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant"
+  //       : process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant";
+  //   providers.push({
+  //     name: "groq",
+  //     url: "https://api.groq.com/openai/v1/chat/completions",
+  //     apiKey: groqKey,
+  //     model: groqModel,
+  //   });
+  // }
 
   const mistralKey = process.env.MISTRAL_API_KEY?.trim();
   if (mistralKey) {
