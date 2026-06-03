@@ -511,6 +511,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [copiedAll, setCopiedAll] = useState(false);
 
   // Load chat history and session ID from session storage on mount
   useEffect(() => {
@@ -611,7 +612,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         .map((m) => `${m.role === "user" ? "You" : "Classgrid AI"}:\n${m.content}`)
         .join("\n\n---\n\n");
       await navigator.clipboard.writeText(text);
-      // Optional: Add a toast notification here if you have a toast system
+      setCopiedAll(true);
+      setTimeout(() => setCopiedAll(false), 2000);
     } catch (_) {}
   }
 
@@ -909,7 +911,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                   onClick={handleCopyAll}
                   title="Copy entire chat"
                 >
-                  <Copy className="h-4 w-4" />
+                  {copiedAll ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                   <span className="sr-only">Copy chat</span>
                 </Button>
                 <Button
