@@ -130,8 +130,14 @@ export async function POST(req: Request) {
     }
 
     if (bannedUntil) {
+      const banTimeStr = bannedUntil.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
       return NextResponse.json({
-        error: "Your access has been restricted due to safety policy violations.",
+        error: `Your access has been restricted due to safety policy violations. Access resumes at ${banTimeStr} IST.`,
         bannedUntil: bannedUntil.toISOString()
       }, { status: 403 });
     }
@@ -155,8 +161,14 @@ export async function POST(req: Request) {
       });
 
       // Stop the conversation immediately and drop a 15-minute ban cookie
+      const banExpiryStr = banExpiry.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
       const response = NextResponse.json({
-        error: "Your message violates our safety guidelines. The conversation has been terminated.",
+        error: `Your message violates our safety guidelines. The conversation has been terminated. Access resumes at ${banExpiryStr} IST.`,
         bannedUntil: banExpiry.toISOString()
       }, { status: 403 });
 
