@@ -13,8 +13,8 @@ import type { ChatHistoryItem } from "@/lib/ai/rag-answer";
 // Session TTL: 30 minutes of inactivity = session cleanup
 const SESSION_TTL_SECONDS = 30 * 60; // 30 minutes
 
-// Max messages to store per session (prevents unbounded growth)
-const MAX_SESSION_MESSAGES = 50;
+// Max messages to store per session (prevents unbounded token growth that crashes Groq/Mistral)
+const MAX_SESSION_MESSAGES = 12;
 
 function getSessionKey(sessionId: string): string {
   return `ai:chat:session:${sessionId}`;
