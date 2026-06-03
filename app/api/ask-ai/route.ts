@@ -179,8 +179,20 @@ export async function POST(req: Request) {
 
     if (rateLimitRecord) {
       if (rateLimitRecord.count >= MAX_MESSAGES) {
+        // Calculate exact reset time
+        const resetAt = new Date(rateLimitRecord.expireAt);
+        const minutesLeft = Math.max(1, Math.ceil((resetAt.getTime() - Date.now()) / 60000));
+        const resetTimeStr = resetAt.toLocaleTimeString("en-IN", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: "Asia/Kolkata",
+        });
+
         return NextResponse.json({
-          error: "You have reached your message limit. Please try again after 1 hour."
+          error: `You have reached your message limit (${MAX_MESSAGES} messages/hour). Your limit resets at ${resetTimeStr} (in ~${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}).`,
+          resetAt: resetAt.toISOString(),
+          minutesLeft,
         }, { status: 429 }); // 429 Too Many Requests
       }
 
