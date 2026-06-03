@@ -14,7 +14,7 @@ import type { ChatHistoryItem } from "@/lib/ai/rag-answer";
 const SESSION_TTL_SECONDS = 30 * 60; // 30 minutes
 
 // Max messages to store per session (prevents unbounded token growth that crashes Groq/Mistral)
-const MAX_SESSION_MESSAGES = 12;
+const MAX_SESSION_MESSAGES = 25;
 
 function getSessionKey(sessionId: string): string {
   return `ai:chat:session:${sessionId}`;
