@@ -202,7 +202,7 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({
-          error: `You have reached your message limit (${MAX_MESSAGES} messages/hour). Your limit resets at ${resetTimeStr} (in ~${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}).`,
+          error: `You have reached your message limit. Your limit resets at ${resetTimeStr} (in ~${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}).`,
           resetAt: resetAt.toISOString(),
           minutesLeft,
         }, { status: 429 }); // 429 Too Many Requests
