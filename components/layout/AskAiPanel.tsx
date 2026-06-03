@@ -19,6 +19,7 @@ import {
   Sparkles,
   ThumbsDown,
   ThumbsUp,
+  Trash2,
   UserRound,
   X,
   type LucideIcon,
@@ -516,7 +517,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     try {
       const saved = sessionStorage.getItem("classgrid_ai_chat_history");
       if (saved) {
-        setMessages(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // Force typing to false for loaded messages so they don't get stuck
+        setMessages(parsed.map((m: any) => ({ ...m, typing: false })));
       }
       const savedSessionId = sessionStorage.getItem("classgrid_ai_session_id");
       if (savedSessionId) {
@@ -592,6 +595,25 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     }
     if (open) void checkBanStatus();
   }, [open]);
+
+  function handleClearChat() {
+    setMessages([]);
+    setInput("");
+    setSessionId(null);
+    sessionStorage.removeItem("classgrid_ai_chat_history");
+    sessionStorage.removeItem("classgrid_ai_session_id");
+  }
+
+  async function handleCopyAll() {
+    if (messages.length === 0) return;
+    try {
+      const text = messages
+        .map((m) => `${m.role === "user" ? "You" : "Classgrid AI"}:\n${m.content}`)
+        .join("\n\n---\n\n");
+      await navigator.clipboard.writeText(text);
+      // Optional: Add a toast notification here if you have a toast system
+    } catch (_) {}
+  }
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -871,16 +893,45 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             <Bot className="h-4 w-4 text-emerald-500" />
             <p className="text-sm font-semibold text-foreground">Ask AI</p>
           </div>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close panel</span>
-          </Button>
+          <div className="flex items-center gap-1">
+            {messages.length > 0 && (
+              <>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={handleCopyAll}
+                  title="Copy entire chat"
+                >
+                  <Copy className="h-4 w-4" />
+                  <span className="sr-only">Copy chat</span>
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-muted-foreground hover:text-red-500"
+                  onClick={handleClearChat}
+                  title="Clear chat"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only">Clear chat</span>
+                </Button>
+                <div className="mx-1 h-4 w-[1px] bg-border" />
+              </>
+            )}
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8"
+              onClick={() => onOpenChange(false)}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close panel</span>
+            </Button>
+          </div>
         </div>
 
         <div ref={chatScrollRef} className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:thin]">
