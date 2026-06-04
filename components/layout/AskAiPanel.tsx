@@ -333,9 +333,9 @@ function isSafeAssistantHref(href: string) {
 
 function renderInlineText(rawText: string) {
   // Pre-process to fix **[Link](url)** being caught as bold instead of a link
-  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#)[^\s)]+\))\*\*/g, "$1");
+  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#)[^\s)]*\))\*\*/g, "$1");
 
-  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#)[^\s)]+)\)|\*\*([^*]+)\*\*)/g;
+  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#)[^\s)]*)\)|\*\*([^*]+)\*\*)/g;
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
