@@ -1,53 +1,43 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
-// Note: You must add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env.local file
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Proxy to the platform backend
+const PLATFORM_API = process.env.NEXT_PUBLIC_PLATFORM_API_URL || process.env.PLATFORM_API_URL || 'https://api.classgrid.in';
 
 export async function POST(req: Request) {
   try {
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json(
-        { error: 'Supabase credentials not configured in environment variables.' },
-        { status: 500 }
-      );
-    }
-
     const body = await req.json();
     const { name, email, subject, module, priority, description, collegeName } = body;
 
     // Validate required fields
-    if (!name || !email || !subject || !module || !description || !collegeName) {
+    if (!name || !email || !subject || !description) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Insert into Supabase
-    const { data, error } = await supabase
-      .from('support_tickets')
-      .insert([
-        {
-          requester_name: name,
-          requester_email: email,
-          subject,
-          module,
-          priority: priority || 'low',
-          description,
-          college_name: collegeName,
-          status: 'Open'
-        }
-      ])
-      .select()
-      .single();
+    // Build form data to match the backend expectations
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("subject", subject);
+    formData.append("category", module || "general");
+    formData.append("priority", priority || "low");
+    formData.append("message", description);
+    formData.append("institution", collegeName || "");
 
-    if (error) {
-      console.error('Supabase insertion error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    // Forward to the backend Support API
+    const response = await fetch(`${PLATFORM_API}/api/support/public/tickets`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Backend support API error:', data);
+      return NextResponse.json({ error: data.message || 'Failed to create ticket' }, { status: response.status });
     }
 
-    return NextResponse.json({ success: true, ticket: data }, { status: 201 });
+    return NextResponse.json({ success: true, ticket: data.ticket }, { status: 201 });
   } catch (error: any) {
     console.error('Ticket API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
