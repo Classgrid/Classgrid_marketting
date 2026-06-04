@@ -44,8 +44,8 @@ Classgrid supports 13 structure types including engineering (degree-branch-year-
 DEGREE PROGRAMS SUPPORTED:
 Classgrid supports degree programs for engineering institutions including B.E., B.Tech, M.E., M.Tech, Diploma, and more through its flexible academic hierarchy system. The degree-branch-year-semester-division structure accommodates all types of degree programs. Exact program types are configured by each institution during setup.
 
-MODULES (41 TOTAL):
-Classgrid offers 41 active modules across 8 categories:
+MODULES (30+ ACTIVE):
+Classgrid offers 30+ active modules across 8 categories. Key modules include:
 
 **Academics (7 modules):**
 1. Classroom and Course Management — Create, govern, and scale classroom workflows
@@ -147,7 +147,7 @@ WEBSITE PAGES AND RESOURCES:
 - Contact Sales: /contact/sales — Sales consultation and planning
 - Demo: /demo — Request 30-day demo with guided onboarding
 - FAQ: /faq — Migration, security, pricing, and workflow questions
-- Product Modules: /product/modules — All 41 modules across 8 categories (NOTE: There is NO /features page. Always link to /product/modules instead.)
+- Product Modules: /product/modules — Full module directory (NOTE: There is NO /features page. Always link to /product/modules instead.)
 - View Platform: /view-platform — Guided product preview across roles
 - Integrations: /integrations — Payment, communication, cloud, AI services
 - Institutions: /institutions — Choose institution profile

@@ -17,6 +17,7 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Allow up to 60s to prevent Vercel 10s timeouts
 
 // @ts-ignore
 import leoProfanity from "leo-profanity";

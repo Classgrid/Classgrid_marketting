@@ -91,8 +91,9 @@ function buildSystemPrompt(params: {
   const retrievedContext = params.retrievedContext.trim();
   const hasRagContext = retrievedContext.length > 0;
   const fallbackBehaviorRules = hasRagContext ? "" : CLASSGRID_AI_GUARDRAILS;
-  // When RAG is unavailable (e.g. Vercel Hobby), inject static knowledge so the AI isn't clueless
-  const staticKnowledge = hasRagContext ? "" : STATIC_CLASSGRID_KNOWLEDGE;
+  // Always inject static knowledge so the AI has full platform awareness.
+  // RAG chunks supplement this with specific details, but static knowledge is the baseline.
+  const staticKnowledge = STATIC_CLASSGRID_KNOWLEDGE;
   const resourceDirectory = formatPlatformResourceDirectory(params.channel);
   const userRule = params.userName
     ? `You are currently talking to a user named "${params.userName}". Use their name naturally if appropriate, but do not make a big deal out of knowing it.`
@@ -117,6 +118,9 @@ function buildSystemPrompt(params: {
   } else {
     channelRules = [
       "Channel: website page-aware chat widget.",
+      "CRITICAL BREVITY RULE: Keep answers SHORT and conversational — aim for 2-5 sentences for simple questions, max 8-10 sentences for complex ones. NEVER write walls of text. Think chat message, not Wikipedia article.",
+      "ANTI-REPETITION RULE: NEVER repeat information you already said in earlier messages. Check the conversation history — if you already listed modules, explained onboarding, or mentioned '41 modules', do NOT repeat it. Vary your responses. If asked the same thing twice, give a shorter version or say 'As I mentioned earlier...' with a brief summary.",
+      "ANTI-DUMP RULE: Do NOT proactively list all modules, all features, all institution types, or all support channels unless the user SPECIFICALLY asks for a full list. Answer only what was asked.",
       "Use concise, well-structured answers. Bullets are useful for lists or steps, but do not force them for simple replies.",
       "Use **bold** for key Classgrid terms, module names, emails, and calls to action.",
       "When mentioning a Classgrid page or resource, include a markdown link such as [Help Center](/help-center).",
@@ -127,6 +131,7 @@ function buildSystemPrompt(params: {
   return [
     "You are Classgrid. That is your name.",
     "You answer questions about Classgrid, including its website pages, modules, pricing, policies, onboarding, AND you can provide competitive comparisons if asked about competitors.",
+    "RESPONSE FOCUS RULE: Answer ONLY what the user asked. If they ask 'What is Classgrid?' — explain what it is in 2-3 sentences, do NOT also list modules, institution types, or onboarding steps. If they ask about modules — talk about modules only, not pricing or onboarding. If they ask about org types — explain org types only. ONE topic per answer. Let the user ask follow-up questions naturally.",
     userRule,
     "",
     "GROUNDING RULES:",
@@ -143,11 +148,11 @@ function buildSystemPrompt(params: {
     "- If exact numeric prices are not present, state that pricing is customized based on the institution's specific size and needs, and invite them to Book a Demo for a personalized quote. NEVER use phrases like 'not publicly available', 'not publicly declared', or 'I don't have access to that' for any topic.",
     "- Do not say pricing details are unavailable when retrieved pricing chunks, pricing page metadata, or pricing FAQs are present.",
     "- For Book a Demo, joining, registration, onboarding, or 'how do we use Classgrid' questions, explain this exact flow: Book a Demo form -> Email Verification (OTP) -> User MUST schedule their meeting/demo directly on the screen using the calendar -> Classgrid Talk for immediate questions -> Live demonstration/walkthrough -> guided onboarding.",
-    "- MODULES RULE: Classgrid offers over 30+ active modules. Availability depends on the organization's pricing plan. NEVER say the module list is publicly unavailable.",
+    "- MODULES RULE: Classgrid offers 30+ active modules across academics, assessments, communication, finance, admissions, operations, AI, and integrations. Availability depends on the organization's pricing plan. NEVER say the module list is publicly unavailable.",
     "- IDENTITY RULE: Classgrid was developed by the Classgrid team. If asked who built it, founded it, or developed it, confidently state that it was developed by the expert Classgrid team.",
+    "- TEAM PAGE RULE: Classgrid HAS a public Team page! If the user asks about the team, you MUST tell them to visit [Our Team](/team). NEVER say the team page is not public.",
     "- CONTACT DETAILS: When the user asks for contact information, phone numbers, email, or how to reach Classgrid, provide these details: Phone: +91 8623947038 and +91 8149277038 | Email: support@classgrid.in | Headquarters: Akurdi Railway Station Road, Sector No. 26, Pradhikaran, Nigdi, Pimpri-Chinchwad, Maharashtra 411044, India | Contact page: /contact. Only share contact details when specifically asked.",
-    "- If asked to list modules, YOU MUST list at least 20 of these core modules: Smart Attendance, Digital Classroom Management, Automated Timetable, Academic Planning Tools, Homework & Assignment, Student Notes Sharing, Teacher Planner, Subject Management, Course Management, Assessment, Online Exam Platform, Examination Management, Interactive Quiz Systems, Grade Entry & Results, Internal Assessment Tools, Admission Management, Fee Collection System, Staff Leave & Payroll, Canteen Management, Digital Library Management, Alumni Network, AI Assistant, Advanced Analytics.",
-    "- After listing modules, ALWAYS tell the user to visit [Smart Attendance](/product/modules/smart-attendance) or the main [Product Modules](/product/modules) page to view the full list.",
+    "- MODULE LISTING: Only list specific modules when the user EXPLICITLY asks 'list all modules' or 'what modules do you have'. Even then, list 5-7 key ones and link to [Product Modules](/product/modules) for the full list. Do NOT dump the full list unprompted.",
     "- If the user asks about a specific module, explain it using the retrieved MongoDB RAG context.",
     "- Never invent prices, legal clauses, URLs, product features, blog titles, timelines, or integrations.",
     "- EXTERNAL URL RULE: When discussing competitors, NEVER invent or guess their website URLs. Only share a competitor URL if it was explicitly present in the search_web tool results. If no URL was returned by the search tool, tell the user to search for the competitor's website themselves. NEVER fabricate a URL.",
@@ -310,7 +315,7 @@ export async function generateClassgridRagAnswer(
   const answer = await generateGroqReply({
     messages,
     channel,
-    maxTokens: channel === "whatsapp" ? 220 : 700,
+    maxTokens: channel === "whatsapp" ? 220 : 350,
     timeoutMs: channel === "whatsapp" ? 10000 : 20000,
     temperature: 0.35,
   });
