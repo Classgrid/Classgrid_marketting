@@ -17,6 +17,7 @@ import {
   MessageCircleMore,
   School,
   Sparkles,
+  Square,
   ThumbsDown,
   ThumbsUp,
   Trash2,
@@ -510,6 +511,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [thinkingLabel, setThinkingLabel] = useState("Thinking");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
 
@@ -544,6 +546,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const isGenerating = submitting || thinking || (messages[messages.length - 1]?.typing === true);
 
   // Live countdown timer for ban expiry
   useEffect(() => {
@@ -603,6 +608,30 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setSessionId(null);
     sessionStorage.removeItem("classgrid_ai_chat_history");
     sessionStorage.removeItem("classgrid_ai_session_id");
+  }
+
+  function handleStop() {
+    // 1. Abort any ongoing network request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    
+    // 2. Stop any ongoing typing animation
+    typingRunRef.current++;
+    
+    // 3. Reset states
+    setThinking(false);
+    setSubmitting(false);
+
+    // 4. Update the last message to stop the typing indicator
+    setMessages((current) => {
+      const last = current[current.length - 1];
+      if (last?.role === "assistant" && last.typing) {
+        return current.map(m => m.id === last.id ? { ...m, typing: false } : m);
+      }
+      return current;
+    });
   }
 
   async function handleCopyAll() {
@@ -665,39 +694,78 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   }, [open]);
 
   const userScrolledUpRef = useRef(false);
+  const prevMessageCountRef = useRef(0);
+  const isAutoScrollingRef = useRef(false);
 
-  // Track when user manually scrolls up — disable auto-scroll
+  // Track when user manually scrolls — use 'scroll' event which fires for ALL scroll types
   useEffect(() => {
     const element = chatScrollRef.current;
     if (!element) return;
 
-    const handleUserScroll = () => {
+    const handleScroll = () => {
+      // Skip if we caused this scroll programmatically
+      if (isAutoScrollingRef.current) return;
+
       const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+      // User scrolled up if they're more than 80px from bottom
       userScrolledUpRef.current = distanceFromBottom > 80;
     };
 
-    element.addEventListener("wheel", handleUserScroll, { passive: true });
-    element.addEventListener("touchmove", handleUserScroll, { passive: true });
+    element.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      element.removeEventListener("wheel", handleUserScroll);
-      element.removeEventListener("touchmove", handleUserScroll);
+      element.removeEventListener("scroll", handleScroll);
     };
   }, [open]);
 
-  // Auto-scroll only when user hasn't manually scrolled up
+  // Auto-scroll when a new message is added or thinking state changes
   useEffect(() => {
     if (!open) return;
-
     const element = chatScrollRef.current;
     if (!element) return;
 
-    // If user manually scrolled up, don't fight them
-    if (userScrolledUpRef.current) return;
+    const currentCount = messages.length;
+    const isNewMessage = currentCount > prevMessageCountRef.current;
+    prevMessageCountRef.current = currentCount;
 
+    // If user scrolled up, don't force them down — unless it's a brand new message they just sent
+    const lastMessage = messages[messages.length - 1];
+    const isUserMessage = lastMessage?.role === "user";
+
+    if (userScrolledUpRef.current && !isUserMessage && !thinking) return;
+
+    // Only auto-scroll on: new message added, thinking started, or user just sent a message
+    if (!isNewMessage && !thinking) return;
+
+    // Reset scroll lock when user sends a new message
+    if (isUserMessage) {
+      userScrolledUpRef.current = false;
+    }
+
+    isAutoScrollingRef.current = true;
     requestAnimationFrame(() => {
       element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
+      setTimeout(() => { isAutoScrollingRef.current = false; }, 200);
     });
-  }, [messages, thinking, open]);
+  }, [messages.length, thinking, open]);
+
+  // Follow along during typing animation — only if user is near the bottom
+  useEffect(() => {
+    if (!open) return;
+    const element = chatScrollRef.current;
+    if (!element) return;
+
+    // If user has scrolled up, don't follow along
+    if (userScrolledUpRef.current) return;
+
+    // Check if we're actually near the bottom (within 150px)
+    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    if (distanceFromBottom > 150) return;
+
+    // Gently scroll to bottom as content grows
+    isAutoScrollingRef.current = true;
+    element.scrollTo({ top: element.scrollHeight, behavior: "auto" });
+    setTimeout(() => { isAutoScrollingRef.current = false; }, 50);
+  }, [messages, open]);
 
   function createMessageId(prefix: string) {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -766,6 +834,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setInput("");
     setSubmitting(true);
     setThinking(true);
+    
+    // Pick a random label for the thinking state
+    const labels = ["Thinking", "Searching", "Analyzing", "Gathering info"];
+    setThinkingLabel(labels[Math.floor(Math.random() * labels.length)]);
     userScrolledUpRef.current = false; // Reset scroll lock for new question
 
     const nextMessages: ChatMessage[] = [
@@ -782,10 +854,14 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
     let wasTerminated = false;
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const response = await fetch("/api/ask-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           question: trimmed,
           userName: session?.user?.name ?? undefined,
@@ -834,10 +910,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       }
 
       await typeAssistantResponse(answer);
-    } catch (apiError: unknown) {
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.message?.includes("abort")) {
+        // User manually stopped the generation, silently exit
+        setSubmitting(false);
+        setThinking(false);
+        return;
+      }
       const rawMessage =
-        apiError instanceof Error && apiError.message.trim().length > 0
-          ? apiError.message
+        error instanceof Error && error.message.trim().length > 0
+          ? error.message
           : "Unable to answer right now. Please try again.";
 
       // If terminated, add support info to the message shown in chat
@@ -1043,7 +1125,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                       </div>
                       <div className="max-w-[75%] rounded-2xl border border-border bg-card px-4 py-3 text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] dark:bg-zinc-800 dark:text-white">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>Thinking</span>
+                          <span>{thinkingLabel}</span>
                           <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
                         </div>
                       </div>
@@ -1085,16 +1167,29 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                   autoComplete="off"
                   className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-card pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 overflow-y-auto [scrollbar-width:thin] leading-relaxed"
                 />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="icon"
-                  disabled={!canSubmit}
-                  className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
-                >
-                  <ArrowUp className="h-4 w-4 text-white" />
-                  <span className="sr-only">Send question</span>
-                </Button>
+                {isGenerating ? (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={handleStop}
+                    className="!absolute !bottom-3 !right-3 !top-auto h-9 shrink-0 rounded-xl bg-zinc-800 text-white hover:bg-zinc-700 px-3 text-xs font-medium shadow-sm transition-all active:scale-95 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                    title="Stop generating"
+                  >
+                    <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
+                    Stop
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="icon"
+                    disabled={!canSubmit}
+                    className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
+                  >
+                    <ArrowUp className="h-4 w-4 text-white" />
+                    <span className="sr-only">Send question</span>
+                  </Button>
+                )}
               </div>
             </form>
           )}
