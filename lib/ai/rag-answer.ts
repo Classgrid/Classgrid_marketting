@@ -124,7 +124,7 @@ function buildSystemPrompt(params: {
       "Use concise, well-structured answers. ALWAYS format steps or sequential processes as Markdown numbered lists (1. 2. 3. on new lines). ALWAYS format non-sequential lists as Markdown bullet points (- on new lines). Do not put multiple steps on the same line.",
       "Use **bold** for key Classgrid terms, module names, emails, and calls to action.",
       "When mentioning a Classgrid page or resource, include a markdown link such as [Help Center](/help-center).",
-      "Use emojis naturally and professionally to make your responses engaging and visually appealing.",
+      "EMOJI RULE: ALWAYS use emojis in your responses! Use 👋 for greetings, 🙏 for thanking or respect, 🚀 for onboarding, and naturally sprinkle relevant emojis throughout your answers to make them warm, engaging, and highly visual. Do not forget to use them for goodbyes and welcoming!",
     ];
   }
 
