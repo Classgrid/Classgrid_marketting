@@ -333,9 +333,9 @@ function isSafeAssistantHref(href: string) {
 
 function renderInlineText(rawText: string) {
   // Pre-process to fix **[Link](url)** being caught as bold instead of a link
-  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#)[^\s)]+\))\*\*/g, "$1");
+  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#)[^\s)]*\))\*\*/g, "$1");
 
-  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#)[^\s)]+)\)|\*\*([^*]+)\*\*)/g;
+  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#)[^\s)]*)\)|\*\*([^*]+)\*\*)/g;
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -489,7 +489,7 @@ function AssistantMessageContent({ content }: { content: string }) {
           <div key={`s-${index}`} className="space-y-2">
             <div className="flex items-center gap-2">
               <Icon className="h-4 w-4 text-emerald-400" />
-              <h3 className="font-semibold text-slate-900 dark:text-white">{block.title}</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white">{block.title.replace(/\*\*/g, "")}</h3>
             </div>
             <div className="space-y-2">
               {block.paragraphs.map((paragraph, paragraphIndex) => (
