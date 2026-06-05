@@ -229,6 +229,9 @@ function isLikelyHeading(title: string) {
   const trimmed = title.trim().replace(/:$/, "");
   if (!trimmed) return false;
 
+  // Enforce length limit so full paragraphs aren't mistakenly treated as headings
+  if (trimmed.length > 80 || trimmed.split(/\s+/).length > 10) return false;
+
   if (SECTION_ICON_RULES.some((rule) => rule.match.test(trimmed))) return true;
 
   return /^[A-Za-z][A-Za-z\s/&-]{2,50}$/.test(trimmed) && trimmed.split(/\s+/).length <= 6;
@@ -354,7 +357,7 @@ function renderInlineText(rawText: string) {
       const external = /^https?:\/\//i.test(href);
       // Strip any bold asterisks that might be inside the label: [**Book Demo**](...)
       const cleanLabel = label.replace(/\*\*/g, "");
-      
+
       nodes.push(
         <a
           key={`link-${match.index}`}
@@ -528,7 +531,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       if (savedSessionId) {
         setSessionId(savedSessionId);
       }
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   // Save chat history and session ID to session storage whenever they update
@@ -616,10 +619,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    
+
     // 2. Stop any ongoing typing animation
     typingRunRef.current++;
-    
+
     // 3. Reset states
     setThinking(false);
     setSubmitting(false);
@@ -643,7 +646,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       await navigator.clipboard.writeText(text);
       setCopiedAll(true);
       setTimeout(() => setCopiedAll(false), 2000);
-    } catch (_) {}
+    } catch (_) { }
   }
 
   useEffect(() => {
@@ -834,7 +837,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setInput("");
     setSubmitting(true);
     setThinking(true);
-    
+
     // Pick a random label for the thinking state
     const labels = ["Thinking", "Searching", "Analyzing", "Gathering info"];
     setThinkingLabel(labels[Math.floor(Math.random() * labels.length)]);
