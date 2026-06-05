@@ -54,7 +54,8 @@ type ListItem = {
 type StructuredBlock =
   | { type: "paragraph"; text: string }
   | { type: "list"; items: ListItem[] }
-  | { type: "section"; title: string; paragraphs: string[]; items?: ListItem[] };
+  | { type: "section"; title: string; paragraphs: string[]; items?: ListItem[] }
+  | { type: "table"; headers: string[]; rows: string[][] };
 
 const SUGGESTED_QUESTIONS = [
   "What is Classgrid?",
@@ -279,6 +280,27 @@ function parseSectionBlock(block: string): StructuredBlock | null {
   return null;
 }
 
+function parseTableBlock(block: string) {
+  const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+  if (lines.length < 3) return null;
+
+  if (!lines[0].includes("|") || !lines[1].includes("|")) return null;
+  if (!/^[\|\-\s:]+$/.test(lines[1])) return null;
+
+  const extractCells = (line: string) => {
+    const parts = line.split("|");
+    if (parts.length > 0 && parts[0].trim() === "") parts.shift();
+    if (parts.length > 0 && parts[parts.length - 1].trim() === "") parts.pop();
+    return parts.map(c => c.trim());
+  };
+
+  const headers = extractCells(lines[0]);
+  if (headers.length === 0) return null;
+
+  const rows = lines.slice(2).map(extractCells).filter(r => r.length > 0);
+  return { type: "table" as const, headers, rows };
+}
+
 function buildStructuredBlocks(text: string): StructuredBlock[] {
   const cleaned = sanitizeAssistantText(text);
   if (!cleaned) return [];
@@ -296,6 +318,12 @@ function buildStructuredBlocks(text: string): StructuredBlock[] {
     const sectionBlock = parseSectionBlock(rawBlock);
     if (sectionBlock) {
       blocks.push(sectionBlock);
+      continue;
+    }
+
+    const tableBlock = parseTableBlock(rawBlock);
+    if (tableBlock) {
+      blocks.push(tableBlock);
       continue;
     }
 
@@ -495,6 +523,35 @@ function AssistantMessageContent({ content }: { content: string }) {
                 </li>
               ))}
             </ul>
+          );
+        }
+
+        if (block.type === "table") {
+          return (
+            <div key={`t-${index}`} className="w-full overflow-x-auto pb-2 [scrollbar-width:thin]">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    {block.headers.map((h, i) => (
+                      <th key={i} className="py-2 px-3 font-semibold text-slate-900 dark:text-white whitespace-nowrap bg-muted/50 first:rounded-tl-lg last:rounded-tr-lg">
+                        {renderInlineText(h)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {block.rows.map((row, rIndex) => (
+                    <tr key={rIndex} className="hover:bg-muted/30 transition-colors">
+                      {row.map((cell, cIndex) => (
+                        <td key={cIndex} className="py-2 px-3 text-slate-700 dark:text-gray-300">
+                          {renderInlineText(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           );
         }
 
