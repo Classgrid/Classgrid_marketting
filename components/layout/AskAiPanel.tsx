@@ -28,6 +28,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
@@ -528,29 +536,31 @@ function AssistantMessageContent({ content }: { content: string }) {
 
         if (block.type === "table") {
           return (
-            <div key={`t-${index}`} className="w-full overflow-x-auto pb-2 [scrollbar-width:thin]">
-              <table className="w-full text-left text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    {block.headers.map((h, i) => (
-                      <th key={i} className="py-2 px-3 font-semibold text-slate-900 dark:text-white whitespace-nowrap bg-muted/50 first:rounded-tl-lg last:rounded-tr-lg">
-                        {renderInlineText(h)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {block.rows.map((row, rIndex) => (
-                    <tr key={rIndex} className="hover:bg-muted/30 transition-colors">
-                      {row.map((cell, cIndex) => (
-                        <td key={cIndex} className="py-2 px-3 text-slate-700 dark:text-gray-300">
-                          {renderInlineText(cell)}
-                        </td>
+            <div key={`t-${index}`} className="w-full pb-2">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {block.headers.map((h, i) => (
+                        <TableHead key={i} className="font-semibold text-slate-900 dark:text-white">
+                          {renderInlineText(h)}
+                        </TableHead>
                       ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {block.rows.map((row, rIndex) => (
+                      <TableRow key={rIndex}>
+                        {row.map((cell, cIndex) => (
+                          <TableCell key={cIndex} className="text-slate-700 dark:text-gray-300">
+                            {renderInlineText(cell)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           );
         }
