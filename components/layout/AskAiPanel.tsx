@@ -54,7 +54,7 @@ type ListItem = {
 type StructuredBlock =
   | { type: "paragraph"; text: string }
   | { type: "list"; items: ListItem[] }
-  | { type: "section"; title: string; paragraphs: string[] };
+  | { type: "section"; title: string; paragraphs: string[]; items?: ListItem[] };
 
 const SUGGESTED_QUESTIONS = [
   "What is Classgrid?",
@@ -254,7 +254,21 @@ function parseSectionBlock(block: string): StructuredBlock | null {
   }
 
   if (isLikelyHeading(firstLine) && lines.length > 1) {
-    const body = lines.slice(1).join(" ");
+    const bodyLines = lines.slice(1);
+    const bodyText = bodyLines.join("\n");
+
+    // Check if the body is a numbered/bullet list — preserve list structure
+    const listItems = parseListBlock(bodyText);
+    if (listItems) {
+      return {
+        type: "section",
+        title: firstLine.replace(/:$/, "").trim(),
+        paragraphs: [],
+        items: listItems,
+      };
+    }
+
+    const body = bodyLines.join(" ");
     return {
       type: "section",
       title: firstLine.replace(/:$/, "").trim(),
@@ -491,13 +505,26 @@ function AssistantMessageContent({ content }: { content: string }) {
               <Icon className="h-4 w-4 text-emerald-400" />
               <h3 className="font-semibold text-slate-900 dark:text-white">{block.title.replace(/\*\*/g, "")}</h3>
             </div>
-            <div className="space-y-2">
-              {block.paragraphs.map((paragraph, paragraphIndex) => (
-                <p key={`sp-${index}-${paragraphIndex}`} className="text-slate-700 dark:text-white">
-                  {renderInlineText(paragraph)}
-                </p>
-              ))}
-            </div>
+            {block.items && block.items.length > 0 ? (
+              <ul className="space-y-2">
+                {block.items.map((item, itemIndex) => (
+                  <li key={`sli-${index}-${itemIndex}`} className="flex gap-2 text-slate-700 dark:text-white">
+                    <span className="min-w-5 font-medium text-emerald-400">
+                      {item.indexLabel ?? "\u2022"}
+                    </span>
+                    <span>{renderInlineText(item.text)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="space-y-2">
+                {block.paragraphs.map((paragraph, paragraphIndex) => (
+                  <p key={`sp-${index}-${paragraphIndex}`} className="text-slate-700 dark:text-white">
+                    {renderInlineText(paragraph)}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}
@@ -748,24 +775,31 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     });
   }, [messages.length, thinking, open]);
 
-  // Follow along during typing animation — only if user is near the bottom
+  // Follow along during typing animation via a gentle interval
+  // instead of reacting to every message state change (which fights user scroll)
   useEffect(() => {
     if (!open) return;
     const element = chatScrollRef.current;
     if (!element) return;
 
-    // If user has scrolled up, don't follow along
-    if (userScrolledUpRef.current) return;
+    // Only run while a message is actively being typed
+    const lastMsg = messages[messages.length - 1];
+    if (!lastMsg?.typing) return;
 
-    // Check if we're actually near the bottom (within 150px)
-    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-    if (distanceFromBottom > 150) return;
+    const interval = setInterval(() => {
+      // If user scrolled up, respect their position
+      if (userScrolledUpRef.current) return;
 
-    // Gently scroll to bottom as content grows
-    isAutoScrollingRef.current = true;
-    element.scrollTo({ top: element.scrollHeight, behavior: "auto" });
-    setTimeout(() => { isAutoScrollingRef.current = false; }, 50);
-  }, [messages, open]);
+      const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+      if (distanceFromBottom > 150) return;
+
+      isAutoScrollingRef.current = true;
+      element.scrollTo({ top: element.scrollHeight, behavior: "auto" });
+      setTimeout(() => { isAutoScrollingRef.current = false; }, 80);
+    }, 150);
+
+    return () => clearInterval(interval);
+  }, [open, messages.length, messages[messages.length - 1]?.typing]);
 
   function createMessageId(prefix: string) {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
