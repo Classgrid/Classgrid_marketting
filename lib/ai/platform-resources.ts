@@ -51,7 +51,7 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
   },
   {
     label: "Book a Demo",
-    href: "/#demo",
+    href: "/#book-demo",
     description: "Demo request flow for institution consultation and guided onboarding.",
     category: "sales",
     keywords: ["demo", "book demo", "trial", "onboarding"],
