@@ -458,8 +458,24 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   );
 }
 
-function AssistantMessageContent({ content }: { content: string }) {
+/** Lightweight typing view — renders plain text with a blinking cursor.
+ *  No markdown parsing happens here, so partial links/bold won't cause layout jumps. */
+function TypingMessageContent({ content }: { content: string }) {
+  return (
+    <div className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-white">
+      {content}
+      <span className="inline-block w-[2px] h-[1em] bg-emerald-400 align-text-bottom ml-[1px] animate-pulse" />
+    </div>
+  );
+}
+
+function AssistantMessageContent({ content, isTyping }: { content: string; isTyping?: boolean }) {
   const blocks = useMemo(() => buildStructuredBlocks(content), [content]);
+
+  // During typing, show raw text with blinking cursor to prevent vibration
+  if (isTyping) {
+    return <TypingMessageContent content={content} />;
+  }
 
   return (
     <div className="space-y-3 text-sm leading-relaxed">
@@ -751,24 +767,29 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     });
   }, [messages.length, thinking, open]);
 
-  // Follow along during typing animation — only if user is near the bottom
+  // Follow along during typing animation via a stable interval timer
+  // instead of reacting to every message state change (which caused vibration)
   useEffect(() => {
     if (!open) return;
     const element = chatScrollRef.current;
     if (!element) return;
 
-    // If user has scrolled up, don't follow along
-    if (userScrolledUpRef.current) return;
+    // Only run the interval while a message is actively being typed
+    const lastMsg = messages[messages.length - 1];
+    if (!lastMsg?.typing) return;
 
-    // Check if we're actually near the bottom (within 150px)
-    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-    if (distanceFromBottom > 150) return;
+    const interval = setInterval(() => {
+      if (userScrolledUpRef.current) return;
+      const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+      if (distanceFromBottom > 150) return;
 
-    // Gently scroll to bottom as content grows
-    isAutoScrollingRef.current = true;
-    element.scrollTo({ top: element.scrollHeight, behavior: "auto" });
-    setTimeout(() => { isAutoScrollingRef.current = false; }, 50);
-  }, [messages, open]);
+      isAutoScrollingRef.current = true;
+      element.scrollTo({ top: element.scrollHeight, behavior: "auto" });
+      setTimeout(() => { isAutoScrollingRef.current = false; }, 50);
+    }, 120); // Scroll at most ~8 times/sec during typing
+
+    return () => clearInterval(interval);
+  }, [open, messages.length, messages[messages.length - 1]?.typing]);
 
   function createMessageId(prefix: string) {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -780,12 +801,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     });
   }
 
+  // Characters to advance per tick — faster typing = fewer re-renders = less vibration
+  const CHARS_PER_TICK = 3;
+
   function getCharDelay(char: string) {
     if (prefersReducedMotion) return 0;
-    if (/[.!?]/.test(char)) return 30;
-    if (/[,;:]/.test(char)) return 20;
-    if (char === " ") return 6;
-    return 11;
+    if (/[.!?]/.test(char)) return 28;
+    if (/[,;:]/.test(char)) return 18;
+    if (char === " ") return 5;
+    return 9;
   }
 
   async function typeAssistantResponse(answer: string) {
@@ -803,21 +827,33 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       },
     ]);
 
-    for (let index = 1; index <= answer.length; index += 1) {
+    for (let index = CHARS_PER_TICK; index <= answer.length; index += CHARS_PER_TICK) {
       if (runId !== typingRunRef.current) return;
 
+      const endPos = Math.min(index, answer.length);
       setMessages((current) =>
         current.map((message) =>
           message.id === assistantId
-            ? { ...message, content: answer.slice(0, index) }
+            ? { ...message, content: answer.slice(0, endPos) }
             : message
         )
       );
 
-      const delay = getCharDelay(answer[index - 1]);
+      const delay = getCharDelay(answer[endPos - 1]);
       if (delay > 0) {
         await wait(delay);
       }
+    }
+
+    // Ensure we show the full content if the loop ended before the last char
+    if (runId === typingRunRef.current) {
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === assistantId
+            ? { ...message, content: answer }
+            : message
+        )
+      );
     }
 
     if (runId !== typingRunRef.current) return;
@@ -1100,7 +1136,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                         {isUser ? (
                           <p className="text-sm leading-relaxed">{message.content}</p>
                         ) : (
-                          <AssistantMessageContent content={message.content} />
+                          <AssistantMessageContent content={message.content} isTyping={message.typing} />
                         )}
                         <p className="mt-1 text-[11px] opacity-70">
                           {formatMessageTime(message.createdAt)}
