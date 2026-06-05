@@ -315,7 +315,7 @@ export async function generateClassgridRagAnswer(
   const answer = await generateGroqReply({
     messages,
     channel,
-    maxTokens: channel === "whatsapp" ? 220 : 350,
+    maxTokens: channel === "whatsapp" ? 220 : 1500,
     timeoutMs: channel === "whatsapp" ? 10000 : 20000,
     temperature: 0.35,
   });
