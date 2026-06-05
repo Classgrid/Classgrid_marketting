@@ -165,7 +165,11 @@ function sanitizeAssistantText(text: string) {
     return cleaned.replace(/\s+$/g, "");
   });
 
-  return cleanedLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  return cleanedLines
+    .join("\n")
+    .replace(/^-{3,}$/gm, "")         // strip markdown horizontal rules (---)
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function splitLongParagraph(text: string) {
@@ -292,8 +296,18 @@ function parseTableBlock(block: string) {
   const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
   if (lines.length < 3) return null;
 
-  if (!lines[0].includes("|") || !lines[1].includes("|")) return null;
-  if (!/^[\|\-\s:]+$/.test(lines[1])) return null;
+  // Find the first line that looks like a table header (contains |)
+  let headerIndex = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes("|") && i + 1 < lines.length && /^[\|\-\s:]+$/.test(lines[i + 1])) {
+      headerIndex = i;
+      break;
+    }
+  }
+
+  if (!lines[headerIndex].includes("|")) return null;
+  if (headerIndex + 1 >= lines.length) return null;
+  if (!/^[\|\-\s:]+$/.test(lines[headerIndex + 1])) return null;
 
   const extractCells = (line: string) => {
     const parts = line.split("|");
@@ -302,10 +316,12 @@ function parseTableBlock(block: string) {
     return parts.map(c => c.trim());
   };
 
-  const headers = extractCells(lines[0]);
+  const headers = extractCells(lines[headerIndex]);
   if (headers.length === 0) return null;
 
-  const rows = lines.slice(2).map(extractCells).filter(r => r.length > 0);
+  const rows = lines.slice(headerIndex + 2).map(extractCells).filter(r => r.length > 0);
+  if (rows.length === 0) return null;
+
   return { type: "table" as const, headers, rows };
 }
 
