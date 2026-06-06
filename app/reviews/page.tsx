@@ -258,11 +258,47 @@ export default function ReviewsPage() {
                   className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm text-muted-foreground focus:border-emerald-500/50 transition-all outline-none appearance-none"
                 >
                   <option value="Overall">Overall Experience</option>
-                  <option value="Attendance">Attendance Module</option>
-                  <option value="Fees">Fees & Payments</option>
-                  <option value="Exams">Exams & Grading</option>
-                  <option value="Timetable">Timetable Management</option>
-                  <option value="Communication">Communication Tools</option>
+                  <optgroup label="Academic">
+                    <option value="Attendance">Attendance System</option>
+                    <option value="Digital Classroom">Digital Classroom</option>
+                    <option value="Timetable">Automated Timetable</option>
+                    <option value="Academic Planning">Academic Planning Tools</option>
+                    <option value="Homework">Homework & Assignments</option>
+                    <option value="Notes Sharing">Student Notes Sharing</option>
+                    <option value="Teacher Planner">Teacher Planner</option>
+                    <option value="Subject Management">Subject Management</option>
+                    <option value="Course Management">Course Management</option>
+                  </optgroup>
+                  <optgroup label="Assessment">
+                    <option value="Online Exams">Online Exam Platform</option>
+                    <option value="Exam Management">Examination Management</option>
+                    <option value="Quiz Systems">Interactive Quiz Systems</option>
+                    <option value="Results & Grades">Grade Entry & Results</option>
+                    <option value="Internal Assessment">Internal Assessment Tools</option>
+                    <option value="CET/JEE/NEET">CET/JEE/NEET Exam Conduction</option>
+                    <option value="Mock Tests">Past Paper & Mock Tests</option>
+                    <option value="AI Viva">AI-Powered Viva</option>
+                    <option value="Test Series">Test Series Management</option>
+                  </optgroup>
+                  <optgroup label="Management">
+                    <option value="Admissions">Admission Management</option>
+                    <option value="Fees">Fee Collection System</option>
+                    <option value="Leave & Payroll">Staff Leave & Payroll</option>
+                    <option value="Canteen">Canteen Management</option>
+                    <option value="Library">Digital Library</option>
+                    <option value="Alumni">Alumni Network</option>
+                  </optgroup>
+                  <optgroup label="Advanced">
+                    <option value="AI Assistant">AI Assistant</option>
+                    <option value="Analytics">Advanced Analytics</option>
+                    <option value="Compliance">Compliance & Audit Trails</option>
+                    <option value="Certificates">Digital Certificates</option>
+                    <option value="Holidays">Holiday Management</option>
+                    <option value="ID Cards">Digital ID Cards</option>
+                    <option value="Events">Events Management</option>
+                    <option value="Feedback">Feedback System</option>
+                    <option value="Website Builder">Institution Website</option>
+                  </optgroup>
                 </select>
               </div>
             </div>
@@ -301,8 +337,8 @@ export default function ReviewsPage() {
       <section className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h3 className="text-2xl font-bold tracking-tight mb-1 text-foreground">Live Community Feed</h3>
-            <p className="text-muted-foreground text-sm font-medium">Real-time feedback from the Classgrid ecosystem.</p>
+            <h3 className="text-2xl font-bold tracking-tight mb-1 text-foreground">What Institutions Say</h3>
+            <p className="text-muted-foreground text-sm font-medium">Verified feedback from students, faculty, and admins across India.</p>
           </div>
 
           {/* Star Filter Bar */}
