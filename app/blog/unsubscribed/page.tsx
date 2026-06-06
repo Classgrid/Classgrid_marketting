@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 export default async function UnsubscribedPage() {
   const cookieStore = await cookies();
   
-  // TEMPORARILY DISABLED FOR DESIGN TESTING
-  // if (!cookieStore.has("unsubscribed_session")) {
-  //   redirect("/blog");
-  // }
+  // Protect route: Only allow if they just unsubscribed
+  if (!cookieStore.has("unsubscribed_session")) {
+    redirect("/blog");
+  }
 
   return (
     <div className="relative isolate overflow-hidden">
