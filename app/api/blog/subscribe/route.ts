@@ -321,24 +321,15 @@ export async function POST(req: Request) {
 <tr>
 <td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
 <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
-<h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">Welcome to Classgrid.</h1>
-<p style="color:#9ca3af;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">We are glad you are here.</p>
+<h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">You're Subscribed!</h1>
+<p style="color:#9ca3af;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">Thanks for joining us.</p>
 </td>
 </tr>
 <tr>
 <td style="padding:32px 30px;color:#cccccc;font-size:14px;line-height:1.8;">
 <p style="color:#ffffff;font-size:16px;font-weight:600;margin:0 0 20px;">${firstName ? `Hi ${escapeHtml(firstName)},` : `Hi there,`}</p>
-<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 16px;">We are excited to have you as part of the growing community of <strong style="color:#ffffff;">Schools, Junior Colleges, and Coaching Institutes</strong> building smarter academic workflows with the <strong style="color:#ffffff;">Classgrid Unified Campus Platform</strong>.</p>
-<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 20px;">From this point forward, you will receive thoughtfully curated updates, product improvements, and practical insights designed to help institutions operate more efficiently and deliver a better student experience.</p>
-<p style="color:#ffffff;font-size:13px;font-weight:600;margin:0 0 14px;text-transform:uppercase;letter-spacing:0.5px;">Here's what you can expect from us:</p>
-<table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
-  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Modern Campus Administration &amp; ERP Workflows</span></td></tr>
-  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">AI-powered Automation for Educational Institutions</span></td></tr>
-  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Product Updates and New Platform Features</span></td></tr>
-  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Insights on Academic Operations, Attendance, Exams, and Communication</span></td></tr>
-  <tr><td style="padding:5px 0;"><span style="color:#34d399;font-weight:700;margin-right:10px;">&#8594;</span><span style="color:#cccccc;font-size:14px;">Real-world Use Cases from Institutions using Classgrid</span></td></tr>
-</table>
-<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 8px;">Our goal is simple &#8212; to help educational institutions manage academics, operations, communication, and administration through one unified platform.</p>
+<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 16px;">You are now subscribed to receive the latest updates from the <strong style="color:#ffffff;">Classgrid Blog</strong> and <strong style="color:#ffffff;">Changelog</strong>.</p>
+<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 20px;">We'll keep you in the loop whenever we publish new product features, platform improvements, or practical insights on modern campus administration.</p>
 
 ${renderRecentBlogs(blogsWithImages, siteUrl)}
 ${renderRecentChangelogs(changelogsWithImages, siteUrl)}
@@ -357,32 +348,33 @@ ${!hasContent ? `
 </div>`}
 
 
-<div style="margin-top:40px;padding-top:20px;border-top:1px solid #2a2a2a;text-align:center;">
-  <p style="color:#ffffff;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
-  <div style="display:inline-block;">
-    <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="24" height="24" style="opacity:0.8;">
+<div style="margin-top:40px;padding-top:30px;border-top:1px solid #2a2a2a;">
+  <p style="color:#cccccc;font-size:14px;margin:0 0 8px;">Build smarter academic workflows</p>
+  <a href="${siteUrl}" style="color:#9ca3af;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
+
+  <div style="margin-bottom:24px;">
+    <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
-    <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="24" height="24" style="opacity:0.8;">
+    <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
-    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;">
+    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
   </div>
-</div>
 
-<div style="margin-top:32px;padding-top:24px;border-top:1px solid #2a2a2a;">
-<p style="color:#9ca3af;font-size:13px;margin:0 0 4px;">Need help? <a href="mailto:support@classgrid.in" style="color:#34d399;text-decoration:none;font-weight:600;">support@classgrid.in</a></p>
-<p style="color:#6b7280;font-size:13px;margin:0;">— Team Classgrid</p>
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td style="color:#7a7a7a;font-size:12px;text-align:left;">
+        &copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
+      </td>
+      <td style="color:#7a7a7a;font-size:12px;text-align:right;">
+        <a href="${unsubscribeUrl}" style="color:#7a7a7a;text-decoration:none;">Unsubscribe</a>
+      </td>
+    </tr>
+  </table>
 </div>
-</td>
-</tr>
-<tr>
-<td style="padding:20px;text-align:center;border-top:1px solid #2a2a2a;color:#7a7a7a;font-size:12px;">
-<p style="margin-bottom:8px;color:#7a7a7a;font-size:12px;">You received this because you opted into Classgrid Updates.</p>
-<p style="margin-bottom:12px;"><a href="${unsubscribeUrl}" style="color:#9ca3af;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
-&copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
 </td>
 </tr>
 </table>
@@ -393,7 +385,7 @@ ${!hasContent ? `
 </html>`;
 
     const emailText = [
-      "Welcome to Classgrid Updates.",
+      "Thanks for subscribing to the Classgrid Blog & Changelog.",
       "",
       ...(blogsWithImages.length > 0 ? [
         "Recent blog posts:",
@@ -413,8 +405,8 @@ ${!hasContent ? `
     ].join("\n");
 
     const emailSubject = firstName
-      ? `Welcome to Classgrid, ${firstName}.`
-      : "Welcome to Classgrid.";
+      ? `You're subscribed to Classgrid Updates, ${firstName}!`
+      : "You're subscribed to Classgrid Updates!";
 
 
     await transporter.sendMail({
