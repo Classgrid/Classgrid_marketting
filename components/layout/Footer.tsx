@@ -92,7 +92,8 @@ export function Footer({
   const injectedLinks = [
     { label: 'Our Team', href: '/team' },
     { label: 'Acknowledgements', href: '/acknowledgement' },
-    { label: 'Compare', href: '/compare' } // Added Compare here!
+    { label: 'Compare', href: '/compare' }, // Added Compare here!
+    { label: 'Careers', href: '/careers' }
   ];
 
   // Try to find a "Company" or "About" column, or just use the first column

@@ -57,11 +57,11 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
     keywords: ["demo", "book demo", "trial", "onboarding"],
   },
   {
-    label: "Contact Sales",
-    href: "/contact/sales",
-    description: "Sales consultation and implementation planning form.",
-    category: "sales",
-    keywords: ["sales", "contact", "consultation"],
+    label: "Careers",
+    href: "/careers",
+    description: "Apply for open roles and internships",
+    category: "company",
+    keywords: ["careers", "jobs", "hiring", "work"],
   },
   {
     label: "Contact",

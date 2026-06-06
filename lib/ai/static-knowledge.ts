@@ -118,7 +118,6 @@ PRICING:
 - There are Core, Premium, and Enterprise plans
 - For exact pricing, institutions should Book a Demo or Contact Sales for a personalized quote
 - Pricing page: /pricing
-- Contact Sales: /contact/sales
 
 ONBOARDING PROCESS (Book a Demo Flow):
 1. Visit the homepage and fill out the "Book a Demo" form
@@ -144,7 +143,7 @@ WEBSITE PAGES AND RESOURCES:
 - Changelog: /changelog — Release notes and product evolution
 - Compare: /compare — Classgrid vs legacy ERP comparison
 - Contact: /contact — Sales and support pathways
-- Contact Sales: /contact/sales — Sales consultation and planning
+- Careers: /careers — Apply for open roles and internships
 - Demo: /demo — Request 30-day demo with guided onboarding
 - FAQ: /faq — Migration, security, pricing, and workflow questions
 - Product Modules: /product/modules — Full module directory (NOTE: There is NO /features page. Always link to /product/modules instead.)

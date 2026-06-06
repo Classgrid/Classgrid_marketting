@@ -226,7 +226,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
           askAiPrompt={pagePrompt}
           showAskAiPrompt={showPromptBubble && !askAiOpen}
         />
-        {pathname !== "/blog/unsubscribed" && <RouteBreadcrumb />}
+        {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && <RouteBreadcrumb />}
         <SmoothScrollHandler />
         <main className="flex-1 overflow-x-clip">{children}</main>
         <Footer
