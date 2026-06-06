@@ -190,7 +190,7 @@ export async function POST(req: Request) {
         // User exists but is unsubscribed. Resubscribe them!
         const { error: updateError } = await supabaseAdmin
           .from("blog_subscribers")
-          .update({ is_subscribed: true, name: firstName })
+          .update({ is_subscribed: true })
           .eq("email", email);
           
         if (updateError) throw updateError;
@@ -199,7 +199,7 @@ export async function POST(req: Request) {
       // New user, insert them
       const { error: insertError } = await supabaseAdmin
         .from("blog_subscribers")
-        .insert({ email, name: firstName });
+        .insert({ email });
 
       if (insertError) {
         if (insertError.code === "23505") {
