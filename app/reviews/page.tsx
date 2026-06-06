@@ -145,7 +145,7 @@ export default function ReviewsPage() {
         transition={{ duration: 0.8 }}
         className="w-full border-y border-border bg-card/10 py-4 mb-12"
       >
-        <Marquee pauseOnHover speed={45} gradient gradientColor={undefined} gradientWidth={100} className="dark:!bg-transparent !bg-transparent">
+        <Marquee pauseOnHover speed={45} gradient={false} className="dark:!bg-transparent !bg-transparent">
           {featuredReviews.map((rev) => (
             <div key={rev._id} className="flex items-center gap-6 px-12 border-r border-white/[0.05]">
               <div className="flex gap-0.5">
