@@ -10,12 +10,14 @@ import {
   ClipboardList,
   Copy,
   CreditCard,
+  ChevronRight,
   FileText,
   Globe2,
   HelpCircle,
   LayoutDashboard,
   MessageCircleMore,
   School,
+  Search,
   Sparkles,
   Square,
   ThumbsDown,
@@ -137,6 +139,8 @@ const SECTION_ICON_RULES: Array<{ match: RegExp; icon: LucideIcon }> = [
   { match: /website|domain|tenant/i, icon: Globe2 },
   { match: /dashboard|analytics|report/i, icon: LayoutDashboard },
   { match: /school|college|institute|coaching/i, icon: School },
+  { match: /classgrid/i, icon: Sparkles },
+  { match: /competitor|vs|comparison/i, icon: Globe2 },
 ];
 
 function formatMessageTime(timestamp: number) {
@@ -363,7 +367,7 @@ function buildStructuredBlocks(text: string): StructuredBlock[] {
 
 function getSectionIcon(title: string) {
   const match = SECTION_ICON_RULES.find((rule) => rule.match.test(title));
-  return match?.icon ?? HelpCircle;
+  return match?.icon ?? ChevronRight;
 }
 
 function TypingDots({ reducedMotion }: { reducedMotion: boolean }) {
@@ -390,6 +394,21 @@ function TypingDots({ reducedMotion }: { reducedMotion: boolean }) {
         />
       ))}
     </div>
+  );
+}
+
+function SearchingSpinner({ reducedMotion }: { reducedMotion: boolean }) {
+  if (reducedMotion) {
+    return <Search className="h-3.5 w-3.5 text-emerald-400" />;
+  }
+
+  return (
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+    >
+      <Globe2 className="h-3.5 w-3.5 text-emerald-400" />
+    </motion.div>
   );
 }
 
@@ -525,7 +544,7 @@ function AssistantMessageContent({ content }: { content: string }) {
   const blocks = useMemo(() => buildStructuredBlocks(content), [content]);
 
   return (
-    <div className="space-y-3 text-sm leading-relaxed">
+    <div className="space-y-3 text-sm leading-relaxed overflow-hidden break-words">
       {blocks.map((block, index) => {
         if (block.type === "paragraph") {
           return (
@@ -951,10 +970,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setInput("");
     setSubmitting(true);
     setThinking(true);
-    
-    // Pick a random label for the thinking state
-    const labels = ["Thinking", "Searching", "Analyzing", "Gathering info"];
-    setThinkingLabel(labels[Math.floor(Math.random() * labels.length)]);
+    setThinkingLabel("Thinking");
     userScrolledUpRef.current = false; // Reset scroll lock for new question
 
     const nextMessages: ChatMessage[] = [
@@ -991,8 +1007,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         }),
       });
 
-      const payload = await response.json().catch(() => ({}));
+      // Error responses (403 ban, 429 rate-limit) are still JSON
       if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
         if (response.status === 403) {
           setIsTerminated(true);
           wasTerminated = true;
@@ -1007,26 +1024,90 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         );
       }
 
-      // Store session ID from API for Redis memory tracking
-      if (payload?.sessionId) {
-        setSessionId(payload.sessionId);
+      // --- SSE STREAM READER ---
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("text/event-stream") && response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let finalPayload: any = null;
+        let streamError: string | null = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split("\n\n");
+          buffer = parts.pop() || "";
+
+          for (const part of parts) {
+            const dataMatch = part.match(/^data:\s*(.+)$/m);
+            if (!dataMatch) continue;
+
+            try {
+              const event = JSON.parse(dataMatch[1]);
+              if (event.type === "status") {
+                setThinkingLabel(
+                  event.label === "searching" ? "Searching the web" :
+                  event.label === "analyzing" ? "Analyzing results" :
+                  "Thinking"
+                );
+              } else if (event.type === "answer") {
+                finalPayload = event;
+              } else if (event.type === "error") {
+                streamError = event.error || "Unable to answer right now. Please try again.";
+              }
+            } catch (_) {
+              // Skip malformed JSON chunks
+            }
+          }
+        }
+
+        if (streamError) {
+          throw new Error(streamError);
+        }
+
+        if (finalPayload) {
+          if (finalPayload.sessionId) {
+            setSessionId(finalPayload.sessionId);
+            sessionStorage.setItem("classgrid_ai_session_id", finalPayload.sessionId);
+          }
+
+          const answer =
+            typeof finalPayload.answer === "string" && finalPayload.answer.trim().length > 0
+              ? finalPayload.answer
+              : session?.user?.name
+                ? `Hi ${session.user.name.split(" ")[0]}, I can help you with Classgrid features, pricing, or setup. What would you like to explore?`
+                : "I can help you with Classgrid features, pricing, or setup. What would you like to explore?";
+
+          setThinking(false);
+          await wait(prefersReducedMotion ? 0 : 100);
+          await typeAssistantResponse(answer);
+        } else {
+          throw new Error("Unable to answer right now. Please try again.");
+        }
+      } else {
+        // Fallback: JSON response (for ban_check or older format)
+        const payload = await response.json().catch(() => ({}));
+
+        if (payload?.sessionId) {
+          setSessionId(payload.sessionId);
+          sessionStorage.setItem("classgrid_ai_session_id", payload.sessionId);
+        }
+
+        const answer =
+          typeof payload?.answer === "string" && payload.answer.trim().length > 0
+            ? payload.answer
+            : session?.user?.name
+              ? `Hi ${session.user.name.split(" ")[0]}, I can help you with Classgrid features, pricing, or setup. What would you like to explore?`
+              : "I can help you with Classgrid features, pricing, or setup. What would you like to explore?";
+
+        setThinking(false);
+        await wait(prefersReducedMotion ? 0 : 100);
+        await typeAssistantResponse(answer);
       }
-
-      const answer =
-        typeof payload?.answer === "string" && payload.answer.trim().length > 0
-          ? payload.answer
-          : session?.user?.name
-            ? `Hi ${session.user.name.split(" ")[0]}, I can help you with Classgrid features, pricing, or setup. What would you like to explore?`
-            : "I can help you with Classgrid features, pricing, or setup. What would you like to explore?";
-
-      setThinking(false);
-      await wait(prefersReducedMotion ? 0 : 100);
-      if (payload.sessionId && !sessionId) {
-        setSessionId(payload.sessionId);
-        sessionStorage.setItem("classgrid_ai_session_id", payload.sessionId);
-      }
-
-      await typeAssistantResponse(answer);
     } catch (error: any) {
       if (error.name === "AbortError" || error.message?.includes("abort")) {
         // User manually stopped the generation, silently exit
@@ -1237,13 +1318,29 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                       transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2 }}
                       className="flex items-end gap-2"
                     >
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-emerald-500">
-                        <Bot className="h-3.5 w-3.5" />
+                      <div className={cn(
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-emerald-500",
+                        thinkingLabel === "Searching the web" && "border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+                      )}>
+                        {thinkingLabel === "Searching the web" ? (
+                          <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
+                        ) : thinkingLabel === "Analyzing results" ? (
+                          <Sparkles className="h-3.5 w-3.5" />
+                        ) : (
+                          <Bot className="h-3.5 w-3.5" />
+                        )}
                       </div>
-                      <div className="max-w-[75%] rounded-2xl border border-border bg-card px-4 py-3 text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] dark:bg-zinc-800 dark:text-white">
+                      <div className={cn(
+                        "max-w-[75%] rounded-2xl border border-border bg-card px-4 py-3 text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] dark:bg-zinc-800 dark:text-white",
+                        thinkingLabel === "Searching the web" && "border-emerald-500/30 shadow-[0_0_14px_rgba(16,185,129,0.22)]"
+                      )}>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span>{thinkingLabel}</span>
-                          <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
+                          {thinkingLabel === "Searching the web" ? (
+                            <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
+                          ) : (
+                            <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
+                          )}
                         </div>
                       </div>
                     </motion.div>
