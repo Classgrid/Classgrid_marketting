@@ -176,12 +176,12 @@ export async function POST(req: Request) {
 
     const { data: existingSub } = await supabaseAdmin
       .from("blog_subscribers")
-      .select("email, is_subscribed")
+      .select("email, is_active")
       .eq("email", email)
       .maybeSingle();
 
     if (existingSub) {
-      if (existingSub.is_subscribed) {
+      if (existingSub.is_active) {
         return NextResponse.json(
           { message: "You are already subscribed to our updates!" },
           { status: 409 }
@@ -190,7 +190,7 @@ export async function POST(req: Request) {
         // User exists but is unsubscribed. Resubscribe them!
         const { error: updateError } = await supabaseAdmin
           .from("blog_subscribers")
-          .update({ is_subscribed: true, name: firstName })
+          .update({ is_active: true, name: firstName })
           .eq("email", email);
           
         if (updateError) throw updateError;
