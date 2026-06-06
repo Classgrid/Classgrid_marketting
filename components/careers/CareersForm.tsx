@@ -283,7 +283,7 @@ export function CareersForm({
               onClick={() => setShowStacks(!showStacks)}
               className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
             >
-              {showStacks ? "▲ Hide Tech Stack List" : "▼ Select from 150+ Technologies"}
+              {showStacks ? "▲ Hide Tech Stack List" : "▼ Select from 200+ Technologies"}
             </button>
 
             {/* Collapsible grouped list */}

@@ -63,77 +63,77 @@ export default async function Page() {
 
   const techStackGroups: Record<string, string[]> = {
     "Languages": [
-      "JavaScript", "TypeScript", "Python", "Java", "C++", "C", "C#", "Go", "Rust",
-      "Ruby", "PHP", "Swift", "Kotlin", "Dart", "R", "Scala", "Perl", "Lua",
-      "Shell / Bash", "SQL", "HTML", "CSS", "Zig", "Elixir", "Haskell", "MATLAB"
+      "JavaScript", "TypeScript", "Python", "Go", "Rust", "Java", "C++", "C", "C#",
+      "Ruby", "PHP", "Swift", "Kotlin", "Dart", "Zig", "Elixir", "Haskell",
+      "Scala", "Clojure", "Solidity", "Shell / Bash", "SQL", "HTML", "CSS"
     ],
-    "Frontend": [
+    "Frontend & UI Styling": [
       "React", "Next.js", "Vue.js", "Nuxt.js", "Angular", "Svelte", "SvelteKit",
-      "Astro", "Remix", "Qwik", "SolidJS", "Gatsby", "jQuery", "HTMX", "Alpine.js",
-      "Tailwind CSS", "Bootstrap", "Material UI", "Chakra UI", "shadcn/ui",
-      "Sass / SCSS", "Framer Motion", "GSAP", "Three.js", "D3.js",
-      "Vite", "Webpack", "Turbopack", "Parcel", "esbuild"
+      "Astro", "Remix", "SolidJS", "Qwik", "HTMX", "Alpine.js", "Tailwind CSS",
+      "shadcn/ui", "Material UI (MUI)", "Chakra UI", "Radix UI", "Headless UI",
+      "Sass / SCSS", "CSS Modules", "Styled Components", "Emotion", "Vanilla Extract",
+      "Framer Motion", "GSAP", "Three.js", "Vite", "Webpack", "esbuild"
     ],
-    "State Management": [
-      "Zustand", "Redux / Redux Toolkit", "React Query / TanStack Query",
-      "Jotai", "Recoil", "MobX", "Pinia (Vue)", "XState", "React Context API"
+    "State Management & Fetching": [
+      "Zustand", "Redux Toolkit", "React Query / TanStack Query", "SWR",
+      "Jotai", "Recoil", "MobX", "React Context API", "Apollo Client", "URQL"
     ],
-    "Backend": [
-      "Node.js", "Bun", "Deno", "Express.js", "Fastify", "Hono", "NestJS", "Elysia",
-      "Django", "Flask", "FastAPI", "Spring Boot", "Ruby on Rails", "Laravel",
-      "ASP.NET", "Gin (Go)", "Fiber (Go)", "Phoenix (Elixir)",
-      "GraphQL", "REST API", "gRPC", "WebSockets", "Socket.IO", "tRPC"
+    "Backend & API Protocols": [
+      "Node.js", "Bun", "Deno", "Express.js", "Fastify", "NestJS", "Hono", "Elysia",
+      "Django", "Flask", "FastAPI", "Laravel", "Spring Boot", "Ruby on Rails",
+      "GraphQL", "REST API", "gRPC", "WebSockets", "Socket.IO", "tRPC", "WebRTC"
     ],
-    "Databases": [
-      "MongoDB", "PostgreSQL", "MySQL", "SQLite", "Redis", "Upstash",
-      "Supabase", "Neon", "Turso", "Firebase / Firestore", "DynamoDB",
-      "Cassandra", "Neo4j", "Elasticsearch", "CockroachDB", "PlanetScale",
-      "Xata", "Convex", "Prisma", "Drizzle ORM", "Mongoose",
-      "MariaDB", "Oracle DB", "SQL Server"
+    "Databases & Caching": [
+      "MongoDB", "PostgreSQL", "MySQL", "SQLite", "Redis", "Upstash", "Neon",
+      "Turso", "Firebase Firestore", "DynamoDB", "Cassandra", "Neo4j",
+      "Elasticsearch", "ClickHouse", "Snowflake", "Prisma ORM", "Drizzle ORM",
+      "Mongoose", "MariaDB", "Oracle DB", "SQL Server"
     ],
-    "Vector & AI DBs": [
-      "Pinecone", "Qdrant", "Chroma DB", "Weaviate", "Milvus",
-      "Supabase pgvector", "Neon pgvector", "LanceDB"
+    "Vector & AI Databases": [
+      "Pinecone", "Qdrant", "Chroma DB", "Weaviate", "Milvus", "LanceDB",
+      "Supabase pgvector", "Neon pgvector", "Faiss"
     ],
-    "Auth & Security": [
-      "Clerk", "NextAuth / Auth.js", "Firebase Auth", "Supabase Auth",
-      "Auth0", "Passport.js", "JWT", "OAuth 2.0", "Lucia", "Better Auth"
+    "Auth & Security Identity": [
+      "Clerk", "NextAuth / Auth.js", "Firebase Auth", "Supabase Auth", "Kinde",
+      "Auth0", "Better Auth", "Lucia Auth", "Passport.js", "JWT / OAuth 2.0"
     ],
-    "Cloud & DevOps": [
-      "AWS", "Google Cloud (GCP)", "Microsoft Azure", "Vercel", "Netlify",
-      "Railway", "Render", "Fly.io", "DigitalOcean", "Heroku", "Cloudflare",
-      "Docker", "Kubernetes", "Nginx", "Apache", "PM2",
-      "Terraform", "Ansible", "GitHub Actions", "GitLab CI/CD", "Jenkins",
-      "Linux Administration", "Turborepo", "Nx (Monorepo)"
+    "Cloud & Serverless Computing": [
+      "AWS (EC2, S3, RDS)", "Google Cloud (GCP)", "Microsoft Azure", "Vercel",
+      "Netlify", "Railway", "Render", "Fly.io", "Cloudflare Workers / Pages",
+      "DigitalOcean", "Heroku", "AWS Lambda", "Google Cloud Run", "SST"
     ],
-    "Mobile": [
+    "DevOps, CI/CD & Monorepos": [
+      "Docker", "Kubernetes", "Nginx", "Apache", "PM2", "GitHub Actions",
+      "GitLab CI/CD", "CircleCI", "Terraform", "Ansible", "Helm", "Prometheus",
+      "Grafana", "Turborepo", "Nx (Monorepo)", "Linux Administration"
+    ],
+    "Mobile & Game Development": [
       "React Native", "Expo", "Flutter", "Swift (iOS)", "Kotlin (Android)",
-      "Ionic", "Capacitor", "Xamarin", "PWA"
+      "SwiftUI", "Jetpack Compose", "Unity", "Unreal Engine", "PWA"
     ],
-    "AI / ML": [
-      "OpenAI API", "Google Gemini", "Groq", "Anthropic Claude API",
-      "Vercel AI SDK", "LangChain", "LangGraph", "LlamaIndex",
-      "Hugging Face", "TensorFlow", "PyTorch", "scikit-learn",
-      "RAG (Retrieval Augmented Gen)", "Computer Vision", "NLP",
-      "Stable Diffusion", "Ollama", "Replicate"
+    "AI, ML & Data Science": [
+      "OpenAI API", "Google Gemini API", "Anthropic Claude API", "Groq",
+      "Vercel AI SDK", "LangChain", "LangGraph", "LlamaIndex", "Hugging Face",
+      "TensorFlow", "PyTorch", "scikit-learn", "Pandas", "NumPy", "Polars",
+      "Ollama", "Replicate", "RAG (Retrieval-Augmented Generation)", "NLP", "Computer Vision"
     ],
-    "Backend-as-a-Service": [
-      "Appwrite", "PocketBase", "Convex", "Supabase BaaS",
-      "Firebase BaaS", "Directus", "Strapi"
+    "CMS & E-Commerce": [
+      "Sanity CMS", "WordPress", "Shopify", "Webflow", "Payload CMS", "Strapi",
+      "Contentful", "Ghost", "KeystoneJS", "Hugo", "Docusaurus"
     ],
-    "Design & CMS": [
-      "Figma", "Adobe XD", "Photoshop", "Illustrator", "Canva", "Blender",
-      "Sanity CMS", "WordPress", "Contentful", "Ghost", "Payload CMS"
+    "Web3 & Blockchain": [
+      "Solidity", "Web3.js", "Ethers.js", "Hardhat", "Foundry", "Rust (Solana)",
+      "IPFS", "Arweave"
     ],
-    "Testing & QA": [
+    "Testing & Quality Assurance": [
       "Jest", "Vitest", "Cypress", "Playwright", "Selenium", "Mocha / Chai",
-      "Testing Library", "Supertest", "Postman", "JUnit", "PyTest", "Storybook"
+      "Testing Library", "MSW (Mock Service Worker)", "Puppeteer", "Postman",
+      "JUnit", "PyTest", "Storybook"
     ],
-    "Other Tools": [
-      "Git / GitHub", "Jira", "Linear", "Notion", "Slack", "PostHog", "Mixpanel",
-      "Razorpay", "Stripe", "Agora", "Twilio", "SendGrid / Brevo",
-      "Cloudinary", "Uploadthing", "RabbitMQ", "Kafka",
-      "Sentry", "Datadog", "Grafana", "Prometheus", "Zod", "Yup"
+    "Other SaaS & Payment APIs": [
+      "Git / GitHub", "Jira", "Linear", "Notion", "Slack", "Stripe", "Razorpay",
+      "Lemon Squeezy", "PayPal", "Twilio", "Agora (Video/Voice)", "SendGrid",
+      "Brevo", "Cloudinary", "Uploadthing", "PostHog", "Mixpanel", "Sentry"
     ]
   };
   
