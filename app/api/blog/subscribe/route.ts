@@ -176,30 +176,40 @@ export async function POST(req: Request) {
 
     const { data: existingSub } = await supabaseAdmin
       .from("blog_subscribers")
-      .select("email")
+      .select("email, is_subscribed")
       .eq("email", email)
-      .single();
+      .maybeSingle();
 
     if (existingSub) {
-      return NextResponse.json(
-        { message: "You are already subscribed to our updates!" },
-        { status: 409 }
-      );
-    }
-
-    const { error: insertError } = await supabaseAdmin
-      .from("blog_subscribers")
-      .insert({ email });
-
-    if (insertError) {
-      if (insertError.code === "23505") {
+      if (existingSub.is_subscribed) {
         return NextResponse.json(
           { message: "You are already subscribed to our updates!" },
           { status: 409 }
         );
+      } else {
+        // User exists but is unsubscribed. Resubscribe them!
+        const { error: updateError } = await supabaseAdmin
+          .from("blog_subscribers")
+          .update({ is_subscribed: true, name: firstName })
+          .eq("email", email);
+          
+        if (updateError) throw updateError;
       }
+    } else {
+      // New user, insert them
+      const { error: insertError } = await supabaseAdmin
+        .from("blog_subscribers")
+        .insert({ email, name: firstName });
 
-      throw insertError;
+      if (insertError) {
+        if (insertError.code === "23505") {
+          return NextResponse.json(
+            { message: "You are already subscribed to our updates!" },
+            { status: 409 }
+          );
+        }
+        throw insertError;
+      }
     }
 
     const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
