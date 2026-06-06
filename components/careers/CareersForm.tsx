@@ -19,6 +19,7 @@ type CareersFormProps = {
   fieldRole: string;
   rolePlaceholder: string;
   roles: SalesRole[];
+  techStackGroups?: Record<string, string[]>;
 };
 
 export function CareersForm({
@@ -31,10 +32,21 @@ export function CareersForm({
   fieldRole,
   rolePlaceholder,
   roles,
+  techStackGroups = {},
 }: CareersFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [selectedStacks, setSelectedStacks] = useState<string[]>([]);
+  const [showStacks, setShowStacks] = useState(false);
+
+  const toggleStack = (stack: string) => {
+    if (selectedStacks.includes(stack)) {
+      setSelectedStacks(selectedStacks.filter((s) => s !== stack));
+    } else if (selectedStacks.length < 10) {
+      setSelectedStacks([...selectedStacks, stack]);
+    }
+  };
 
   const cities = [
     "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Nashik", "Chhatrapati Sambhajinagar (Aurangabad)",
@@ -57,6 +69,7 @@ export function CareersForm({
         phone: formData.get("phone") as string,
         city: formData.get("city") as string,
         role: formData.get("role") as string,
+        techStack: selectedStacks.join(", "),
         skills: formData.get("skills") as string,
         whyJoin: formData.get("whyJoin") as string,
         age18: formData.get("age18") as string,
@@ -78,6 +91,8 @@ export function CareersForm({
 
       if (response.ok) {
         setIsSuccess(true);
+        // Fix for footer jump: manually scroll back to top of the page when the form collapses
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         const data = await response.json();
         setErrorMsg(data.message || "Something went wrong. Please try again.");
@@ -90,36 +105,34 @@ export function CareersForm({
     }
   };
 
-  if (isSuccess) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center text-center py-32 min-h-[600px] space-y-4"
-      >
-        <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-4">
-          <CheckCircle2 className="w-8 h-8" />
-        </div>
-        <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Application Sent!</h3>
-        <p className="text-muted-foreground max-w-sm">
-          Thank you for applying to Classgrid! We have received your application and will be in touch shortly.
-        </p>
-      </motion.div>
-    );
-  }
-
   return (
     <>
-      <h2 className="text-xl font-semibold">{formTitle}</h2>
-      <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400">{formSubtitle}</p>
-      
-      {errorMsg && (
-        <div className="mt-4 p-3 bg-red-500/10 text-red-500 text-sm rounded-lg border border-red-500/20">
-          {errorMsg}
-        </div>
-      )}
+      {isSuccess ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center text-center py-16 space-y-4"
+        >
+          <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-4">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Application Sent!</h3>
+          <p className="text-muted-foreground max-w-sm">
+            Thank you for applying to Classgrid! We have received your application and will be in touch shortly.
+          </p>
+        </motion.div>
+      ) : (
+        <>
+          <h2 className="text-xl font-semibold">{formTitle}</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400">{formSubtitle}</p>
+          
+          {errorMsg && (
+            <div className="mt-4 p-3 bg-red-500/10 text-red-500 text-sm rounded-lg border border-red-500/20">
+              {errorMsg}
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block text-sm">
           <span className="mb-2 block text-slate-700 dark:text-zinc-300">{fieldName}</span>
           <input
@@ -206,6 +219,7 @@ export function CareersForm({
             <input
               type="url"
               name="twitter"
+              required
               placeholder="https://"
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
@@ -215,6 +229,7 @@ export function CareersForm({
             <input
               type="url"
               name="github"
+              required
               placeholder="https://"
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
@@ -224,27 +239,95 @@ export function CareersForm({
             <input
               type="url"
               name="linkedin"
+              required
               placeholder="https://"
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
           </label>
         </div>
 
-        <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">What skills do you have?</span>
-          <textarea
-            name="skills"
-            rows={3}
-            placeholder="React, Node.js, Marketing, Design, etc."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
-          ></textarea>
-        </label>
+        {Object.keys(techStackGroups).length > 0 && (
+          <div className="block text-sm">
+            <span className="mb-1 flex items-center justify-between text-slate-700 dark:text-zinc-300">
+              <span>Your Tech Stack</span>
+              <span className="text-xs text-slate-500">
+                {selectedStacks.length} / 10 selected
+              </span>
+            </span>
+            <p className="text-[11px] text-slate-400 dark:text-zinc-500 mb-3">Click below to open the list and select up to 10 technologies you're proficient in.</p>
+
+            {/* Show selected chips */}
+            {selectedStacks.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {selectedStacks.map((stack) => (
+                  <span
+                    key={stack}
+                    className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400"
+                  >
+                    {stack}
+                    <button
+                      type="button"
+                      onClick={() => toggleStack(stack)}
+                      className="ml-0.5 hover:text-red-400 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Toggle button */}
+            <button
+              type="button"
+              onClick={() => setShowStacks(!showStacks)}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
+            >
+              {showStacks ? "▲ Hide Tech Stack List" : "▼ Select from 150+ Technologies"}
+            </button>
+
+            {/* Collapsible grouped list */}
+            {showStacks && (
+              <div className="mt-3 space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-zinc-800 dark:bg-[#111] max-h-[400px] overflow-y-auto">
+                {Object.entries(techStackGroups).map(([group, items]) => (
+                  <div key={group}>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-2">
+                      {group}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {items.map((stack) => {
+                        const isSelected = selectedStacks.includes(stack);
+                        const isDisabled = !isSelected && selectedStacks.length >= 10;
+                        return (
+                          <button
+                            key={stack}
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={() => toggleStack(stack)}
+                            className={`rounded-md border px-2.5 py-1.5 text-xs font-medium transition-all ${
+                              isSelected
+                                ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-zinc-400 dark:hover:border-zinc-600"
+                            } ${isDisabled ? "cursor-not-allowed opacity-40" : ""}`}
+                          >
+                            {stack}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <label className="block text-sm">
           <span className="mb-2 block text-slate-700 dark:text-zinc-300">Have you made any open source contributions in the past that you'd like to share with us?</span>
           <textarea
             name="openSource"
             rows={3}
+            required
             placeholder="Type here..."
             className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
           ></textarea>
@@ -255,6 +338,7 @@ export function CareersForm({
           <textarea
             name="whyJoin"
             rows={3}
+            required
             placeholder="Type here..."
             className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
           ></textarea>
@@ -265,6 +349,7 @@ export function CareersForm({
           <textarea
             name="asyncRemote"
             rows={4}
+            required
             placeholder="Type here..."
             className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
           ></textarea>
@@ -279,6 +364,8 @@ export function CareersForm({
           {!isSubmitting && <Send className="ml-2 h-4 w-4 text-white" />}
         </button>
       </form>
+        </>
+      )}
     </>
   );
 }

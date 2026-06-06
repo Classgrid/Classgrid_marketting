@@ -13,7 +13,7 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, city, role, skills, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote } = body;
+    const { name, email, phone, city, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote } = body;
 
     if (!email?.trim() || !name?.trim() || !role?.trim() || !phone?.trim()) {
       return NextResponse.json(
@@ -42,8 +42,13 @@ export async function POST(request: NextRequest) {
     const sanitizedGithub = escapeHtml(github?.trim() || "Not provided");
     const sanitizedLinkedin = escapeHtml(linkedin?.trim() || "Not provided");
     
-    // Text areas
-    const sanitizedSkills = escapeHtml((skills || "").trim() || "Not provided").replace(/\n/g, "<br/>");
+    // Text areas & Arrays
+    const techStackItems = (techStack || "").trim().split(",").map((s: string) => s.trim()).filter(Boolean);
+    const techStackHtml = techStackItems.length > 0
+      ? techStackItems.map((item: string) =>
+          `<span style="display:inline-block;background:#10b981;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;margin:3px 4px 3px 0;">${escapeHtml(item)}</span>`
+        ).join("")
+      : `<span style="color:#666;font-style:italic;">None selected</span>`;
     const sanitizedWhyJoin = escapeHtml((whyJoin || "").trim() || "Not provided").replace(/\n/g, "<br/>");
     const sanitizedOpenSource = escapeHtml((openSource || "").trim() || "Not provided").replace(/\n/g, "<br/>");
     const sanitizedAsyncRemote = escapeHtml((asyncRemote || "").trim() || "Not provided").replace(/\n/g, "<br/>");
@@ -55,7 +60,7 @@ export async function POST(request: NextRequest) {
       to: "nikhilsubsun123@gmail.com",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}`,
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nTech Stack: ${techStackItems.join(", ")}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
@@ -105,8 +110,8 @@ export async function POST(request: NextRequest) {
     </table>
     
     <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Skills & Experience</p>
-      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedSkills}</div>
+      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Tech Stack (${techStackItems.length} selected)</p>
+      <div style="margin:0;line-height:2;">${techStackHtml}</div>
     </div>
 
     <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">

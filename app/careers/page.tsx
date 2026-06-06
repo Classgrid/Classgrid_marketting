@@ -37,25 +37,111 @@ export default async function Page() {
   const rolePlaceholder = "Select a role";
   
   const roles: SalesRole[] = [
-    { label: "Software Engineer (Full Stack)", value: "swe" },
-    { label: "Mobile Developer (React Native/Expo)", value: "mobile_dev" },
+    // ── Engineering ──
+    { label: "Full Stack Engineer", value: "fullstack_eng" },
+    { label: "Backend Engineer", value: "backend_eng" },
+    { label: "Frontend Engineer", value: "frontend_eng" },
+    { label: "Mobile Engineer", value: "mobile_eng" },
+    { label: "AI / ML Engineer", value: "ai_eng" },
+    { label: "Real-Time Engineer", value: "realtime_eng" },
     { label: "Database Engineer", value: "db_eng" },
-    { label: "Cloud & DevOps Engineer (AWS)", value: "devops" },
-    { label: "System Designer / Architect", value: "design" },
-    { label: "Product Analytics (PostHog)", value: "analytics" },
-    { label: "SEO Specialist", value: "seo" },
-    { label: "Marketing & Growth", value: "marketing" },
-    { label: "Open Source Maintainer", value: "os_maintainer" },
+    { label: "DevOps & Cloud Engineer", value: "devops_eng" },
+    { label: "QA & Testing Engineer", value: "qa_eng" },
+    // ── Marketing & Growth ──
+    { label: "SEO & Content Specialist", value: "seo" },
+    { label: "Growth & Marketing Lead", value: "growth_lead" },
+    { label: "Product Analytics", value: "analytics" },
+    { label: "Technical Content Writer", value: "tech_writer" },
     { label: "Sales Executive", value: "sales" },
-    { label: "Internship (Engineering)", value: "intern_eng" },
-    { label: "Internship (Marketing)", value: "intern_mktg" },
+    // ── Design ──
+    { label: "UI/UX Designer", value: "designer" },
+    // ── Internships ──
+    { label: "Internship — Engineering", value: "intern_eng" },
+    { label: "Internship — Design", value: "intern_design" },
+    { label: "Internship — Marketing & Growth", value: "intern_mktg" },
   ];
+
+  const techStackGroups: Record<string, string[]> = {
+    "Languages": [
+      "JavaScript", "TypeScript", "Python", "Java", "C++", "C", "C#", "Go", "Rust",
+      "Ruby", "PHP", "Swift", "Kotlin", "Dart", "R", "Scala", "Perl", "Lua",
+      "Shell / Bash", "SQL", "HTML", "CSS", "Zig", "Elixir", "Haskell", "MATLAB"
+    ],
+    "Frontend": [
+      "React", "Next.js", "Vue.js", "Nuxt.js", "Angular", "Svelte", "SvelteKit",
+      "Astro", "Remix", "Qwik", "SolidJS", "Gatsby", "jQuery", "HTMX", "Alpine.js",
+      "Tailwind CSS", "Bootstrap", "Material UI", "Chakra UI", "shadcn/ui",
+      "Sass / SCSS", "Framer Motion", "GSAP", "Three.js", "D3.js",
+      "Vite", "Webpack", "Turbopack", "Parcel", "esbuild"
+    ],
+    "State Management": [
+      "Zustand", "Redux / Redux Toolkit", "React Query / TanStack Query",
+      "Jotai", "Recoil", "MobX", "Pinia (Vue)", "XState", "React Context API"
+    ],
+    "Backend": [
+      "Node.js", "Bun", "Deno", "Express.js", "Fastify", "Hono", "NestJS", "Elysia",
+      "Django", "Flask", "FastAPI", "Spring Boot", "Ruby on Rails", "Laravel",
+      "ASP.NET", "Gin (Go)", "Fiber (Go)", "Phoenix (Elixir)",
+      "GraphQL", "REST API", "gRPC", "WebSockets", "Socket.IO", "tRPC"
+    ],
+    "Databases": [
+      "MongoDB", "PostgreSQL", "MySQL", "SQLite", "Redis", "Upstash",
+      "Supabase", "Neon", "Turso", "Firebase / Firestore", "DynamoDB",
+      "Cassandra", "Neo4j", "Elasticsearch", "CockroachDB", "PlanetScale",
+      "Xata", "Convex", "Prisma", "Drizzle ORM", "Mongoose",
+      "MariaDB", "Oracle DB", "SQL Server"
+    ],
+    "Vector & AI DBs": [
+      "Pinecone", "Qdrant", "Chroma DB", "Weaviate", "Milvus",
+      "Supabase pgvector", "Neon pgvector", "LanceDB"
+    ],
+    "Auth & Security": [
+      "Clerk", "NextAuth / Auth.js", "Firebase Auth", "Supabase Auth",
+      "Auth0", "Passport.js", "JWT", "OAuth 2.0", "Lucia", "Better Auth"
+    ],
+    "Cloud & DevOps": [
+      "AWS", "Google Cloud (GCP)", "Microsoft Azure", "Vercel", "Netlify",
+      "Railway", "Render", "Fly.io", "DigitalOcean", "Heroku", "Cloudflare",
+      "Docker", "Kubernetes", "Nginx", "Apache", "PM2",
+      "Terraform", "Ansible", "GitHub Actions", "GitLab CI/CD", "Jenkins",
+      "Linux Administration", "Turborepo", "Nx (Monorepo)"
+    ],
+    "Mobile": [
+      "React Native", "Expo", "Flutter", "Swift (iOS)", "Kotlin (Android)",
+      "Ionic", "Capacitor", "Xamarin", "PWA"
+    ],
+    "AI / ML": [
+      "OpenAI API", "Google Gemini", "Groq", "Anthropic Claude API",
+      "Vercel AI SDK", "LangChain", "LangGraph", "LlamaIndex",
+      "Hugging Face", "TensorFlow", "PyTorch", "scikit-learn",
+      "RAG (Retrieval Augmented Gen)", "Computer Vision", "NLP",
+      "Stable Diffusion", "Ollama", "Replicate"
+    ],
+    "Backend-as-a-Service": [
+      "Appwrite", "PocketBase", "Convex", "Supabase BaaS",
+      "Firebase BaaS", "Directus", "Strapi"
+    ],
+    "Design & CMS": [
+      "Figma", "Adobe XD", "Photoshop", "Illustrator", "Canva", "Blender",
+      "Sanity CMS", "WordPress", "Contentful", "Ghost", "Payload CMS"
+    ],
+    "Testing & QA": [
+      "Jest", "Vitest", "Cypress", "Playwright", "Selenium", "Mocha / Chai",
+      "Testing Library", "Supertest", "Postman", "JUnit", "PyTest", "Storybook"
+    ],
+    "Other Tools": [
+      "Git / GitHub", "Jira", "Linear", "Notion", "Slack", "PostHog", "Mixpanel",
+      "Razorpay", "Stripe", "Agora", "Twilio", "SendGrid / Brevo",
+      "Cloudinary", "Uploadthing", "RabbitMQ", "Kafka",
+      "Sentry", "Datadog", "Grafana", "Prometheus", "Zod", "Yup"
+    ]
+  };
   
 
   
   return (
     <div className="bg-background text-foreground">
-      <section className="border-b border-slate-200 px-4 py-16 dark:border-white/10 sm:px-6 lg:px-8 lg:py-24">
+      <section className="min-h-screen border-b border-slate-200 px-4 py-16 dark:border-white/10 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <div className="text-center space-y-6 mb-12">
             <h1 className="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl mt-6">
@@ -87,6 +173,7 @@ export default async function Page() {
               fieldRole={fieldRole}
               rolePlaceholder={rolePlaceholder}
               roles={roles}
+              techStackGroups={techStackGroups}
             />
           </div>
         </div>
