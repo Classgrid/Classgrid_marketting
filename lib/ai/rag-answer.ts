@@ -61,7 +61,7 @@ function normalizeHistory(history: unknown): ChatHistoryItem[] {
     }
   }
 
-  return cleaned.slice(-10); // Keep last 10 messages for better session memory
+  return cleaned.slice(-32); // Keep last 32 messages (16 interactions) to match 16 msg/hr rate limit
 }
 
 function buildPageContextBlock(pageContext?: PageContext) {
