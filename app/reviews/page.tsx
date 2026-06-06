@@ -341,7 +341,7 @@ export default function ReviewsPage() {
             {formStatus === "success" && (
               <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 shrink-0" />
-                <p>Submitted to Classgrid team! We will reply to you and publish in the feed.</p>
+                <p>Submitted to the team! We will reply to you and publish in the feed.</p>
               </div>
             )}
           </form>
