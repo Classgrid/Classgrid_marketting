@@ -140,13 +140,7 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
     category: "legal",
     keywords: ["cookies", "local storage"],
   },
-  {
-    label: "Acceptable Use Policy",
-    href: "/acceptable-use",
-    description: "Rules for acceptable use of the Classgrid platform.",
-    category: "legal",
-    keywords: ["acceptable use", "policy", "rules"],
-  },
+
   {
     label: "Security",
     href: "/security",
