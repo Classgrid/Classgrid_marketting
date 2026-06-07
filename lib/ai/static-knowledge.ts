@@ -163,10 +163,9 @@ WEBSITE PAGES AND RESOURCES:
 - Support: /support — Help center and support pathways
 - Submit a Ticket: /support/ticket — For verified institution users only
 - Speak with Classgrid: /support/inquiry — Pre-sales and general inquiries
-- Terms: /terms — Terms of service and licensing
+- Terms: /terms — Terms of service, licensing, and Acceptable Use Policy (Section 7)
 - Cookie Policy: /cookies
 - Disclaimer: /disclaimer
-- Acceptable Use: /acceptable-use
 - Classgrid Talk: /community — Community discussion portal (NOT the same as a traditional forum — see support system rules below)
 - Team: /team — Classgrid team page
 - Product Modules: /product/modules — Full module directory

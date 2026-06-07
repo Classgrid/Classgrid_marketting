@@ -1,1 +1,0 @@
-const express=require("express");const app=express();app.use(express.json());app.get("/health",(_q,res)=>res.json({ok:true,service:"tenant-service"}));app.get("/version",(_q,res)=>res.json({version:"0.0.1-placeholder"}));app.get("/routes",(_q,res)=>res.json(["/health","/version","/routes"]));app.listen(process.env.PORT||4100);
