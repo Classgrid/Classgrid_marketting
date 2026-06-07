@@ -4,6 +4,7 @@ import DOMPurify from "isomorphic-dompurify";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { extractLocaleString } from "@/lib/locale";
 import Link from "next/link";
 import Image from "next/image";
@@ -227,7 +228,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 // ─────────────────────────────────────────────
 // Main Component
 // ─────────────────────────────────────────────
-export function StructuredContentPage({
+function StructuredContentPageInner({
   mode,
   eyebrow,
   title,
@@ -1048,5 +1049,13 @@ export function StructuredContentPage({
 
       </div>
     </div>
+  );
+}
+
+export function StructuredContentPage(props: StructuredContentPageProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <StructuredContentPageInner {...props} />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, Suspense, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import { AskAiPanel } from "@/components/layout/AskAiPanel";
@@ -211,42 +211,46 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
       />
       <div className="relative flex min-h-screen flex-col">
         <GlobalScrollProgress />
-        <Navbar
-          brandName={chromeContent?.brandName}
-          logoUrl={chromeContent?.logoUrl}
-          logoAlt={chromeContent?.logoAlt}
-          menuItems={chromeContent?.navbarMenuItems}
-          secondaryLinkLabel={chromeContent?.navbarSecondaryLinkLabel}
-          secondaryLinkHref={chromeContent?.navbarSecondaryLinkHref}
-          primaryCtaLabel={chromeContent?.navbarPrimaryCtaLabel}
-          primaryCtaHref={chromeContent?.navbarPrimaryCtaHref}
-          mobileMenuTitle={chromeContent?.mobileMenuTitle}
-          latestReleaseDate={latestReleaseDate}
-          onAskAiClick={() => setAskAiOpen(true)}
-          askAiPrompt={pagePrompt}
-          showAskAiPrompt={showPromptBubble && !askAiOpen}
-        />
+        <Suspense fallback={null}>
+          <Navbar
+            brandName={chromeContent?.brandName}
+            logoUrl={chromeContent?.logoUrl}
+            logoAlt={chromeContent?.logoAlt}
+            menuItems={chromeContent?.navbarMenuItems}
+            secondaryLinkLabel={chromeContent?.navbarSecondaryLinkLabel}
+            secondaryLinkHref={chromeContent?.navbarSecondaryLinkHref}
+            primaryCtaLabel={chromeContent?.navbarPrimaryCtaLabel}
+            primaryCtaHref={chromeContent?.navbarPrimaryCtaHref}
+            mobileMenuTitle={chromeContent?.mobileMenuTitle}
+            latestReleaseDate={latestReleaseDate}
+            onAskAiClick={() => setAskAiOpen(true)}
+            askAiPrompt={pagePrompt}
+            showAskAiPrompt={showPromptBubble && !askAiOpen}
+          />
+        </Suspense>
         {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && <RouteBreadcrumb />}
         <SmoothScrollHandler />
         <main className="flex-1 overflow-x-clip">{children}</main>
-        <Footer
-          brandName={chromeContent?.brandName}
-          brandTagline={chromeContent?.brandTagline}
-          logoUrl={chromeContent?.logoUrl}
-          logoAlt={chromeContent?.logoAlt}
-          columns={chromeContent?.footerColumns}
-          contactHeading={chromeContent?.footerContactHeading}
-          addressLines={chromeContent?.footerAddressLines}
-          mapHref={chromeContent?.footerMapHref}
-          phoneNumbers={chromeContent?.footerPhoneNumbers}
-          emailAddresses={chromeContent?.footerEmailAddresses}
-          legalLinks={chromeContent?.footerLegalLinks}
-          socialLinks={chromeContent?.footerSocialLinks}
-          copyrightText={chromeContent?.footerCopyrightText}
-          statusLabel={chromeContent?.footerStatusLabel}
-          statusState={chromeContent?.footerStatusState}
-          statusHref={chromeContent?.footerStatusHref}
-        />
+        <Suspense fallback={null}>
+          <Footer
+            brandName={chromeContent?.brandName}
+            brandTagline={chromeContent?.brandTagline}
+            logoUrl={chromeContent?.logoUrl}
+            logoAlt={chromeContent?.logoAlt}
+            columns={chromeContent?.footerColumns}
+            contactHeading={chromeContent?.footerContactHeading}
+            addressLines={chromeContent?.footerAddressLines}
+            mapHref={chromeContent?.footerMapHref}
+            phoneNumbers={chromeContent?.footerPhoneNumbers}
+            emailAddresses={chromeContent?.footerEmailAddresses}
+            legalLinks={chromeContent?.footerLegalLinks}
+            socialLinks={chromeContent?.footerSocialLinks}
+            copyrightText={chromeContent?.footerCopyrightText}
+            statusLabel={chromeContent?.footerStatusLabel}
+            statusState={chromeContent?.footerStatusState}
+            statusHref={chromeContent?.footerStatusHref}
+          />
+        </Suspense>
         <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
       </div>
     </>
