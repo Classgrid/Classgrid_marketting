@@ -77,10 +77,11 @@ Classgrid offers 30+ active modules across 8 categories. Key modules include:
 **Admissions (1 module):**
 21. Admission Engine — Spot, Merit, and CET pathways with parent tracking
 
-**Operations (13 modules):**
+**Operations (14 modules):**
 22. Authentication and Identity System — OTP, Google OAuth, biometric login
 23. Organization Management Engine — White-label branding, org lifecycle control
-24. Leave Management — Digital leave requests, approvals, attendance linkage
+24. Institution Website Builder — Fully managed, white-labeled public websites for schools, colleges, and coaching
+25. Leave Management — Digital leave requests, approvals, attendance linkage
 25. Feedback and Review System — Custom forms with anonymous option
 26. Alumni Management — Batch-linked directories, communication channels
 27. Student Analytics and Performance — Composite health scoring, trend analytics
@@ -106,7 +107,7 @@ Classgrid offers 30+ active modules across 8 categories. Key modules include:
 
 MODULE AVAILABILITY BY INSTITUTION TYPE:
 - **Basic modules** (included for all): Classroom Hub, Homework & Assignments, Attendance Engine, Exams & Results, Course & Subject Mapping, Student & Parent Communication, Study Notes & Materials, Online Meetings, Digital ID Cards, Student Management, Faculty Management, Leave Management, Events & Notice Management, Academic Hierarchy Builder, Organization Control, Feedback & Survey Dashboard
-- **PRO modules** (premium): AI Quiz Maker, AI Tutor, Digital Certificates, Admission Management, Fee Management, Library Management (engineering only), Alumni Management (engineering only), Canteen QR-Ordering, Transport & Bus Tracking, Hostel Management (engineering only)
+- **PRO modules** (premium): AI Quiz Maker, AI Tutor, Digital Certificates, Admission Management, Fee Management, Institution Website Builder (for schools, colleges, coaching), Library Management (engineering only), Alumni Management (engineering only), Canteen QR-Ordering, Transport & Bus Tracking, Hostel Management (engineering only)
 - **MASTER modules**: NAAC/NBA Accreditation Management (engineering only)
 - Availability depends on the organization's pricing plan
 
