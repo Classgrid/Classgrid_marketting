@@ -405,7 +405,6 @@ function publicHrefForSourceFile(relative: string) {
     about: "/about",
     campusCommunity: "/community",
     changelog: "/changelog",
-    collge_webiste: "/college_website",
     compare: "/compare",
     forms: "/demo",
     homepage: "/",

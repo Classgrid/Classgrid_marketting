@@ -64,14 +64,6 @@ const nextConfig: NextConfig = {
       { source: "/product", destination: "/product/modules", permanent: true },
       { source: "/modules", destination: "/product/modules", permanent: true },
       { source: "/modules/:slug*", destination: "/product/modules/:slug*", permanent: true },
-      
-      // BLOCKED TENANT ROUTES - Force redirect to home
-      { source: "/college_website", destination: "/", permanent: false },
-      { source: "/college_website/:path*", destination: "/", permanent: false },
-      { source: "/collge_webiste", destination: "/", permanent: false },
-      { source: "/collge_webiste/:path*", destination: "/", permanent: false },
-      { source: "/collge_website", destination: "/", permanent: false },
-      { source: "/collge_website/:path*", destination: "/", permanent: false },
     ];
   },
   experimental: {
