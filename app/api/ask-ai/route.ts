@@ -236,39 +236,73 @@ export async function POST(req: Request) {
     await saveMessageToSession(sessionId, { role: "user", content: question });
     // --- END REDIS SESSION MEMORY ---
 
-    const result = await generateClassgridRagAnswer({
-      question,
-      channel: "web",
-      userName: normalizeText(body?.userName),
-      history: mergedHistory,
-      pageContext: normalizePageContext(body?.pageContext),
+    // --- 4. SSE STREAMING RESPONSE ---
+    // Stream real-time status updates (thinking → searching → analyzing → answer)
+    // This keeps the Vercel connection alive and gives accurate UI feedback.
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const sendEvent = (data: Record<string, unknown>) => {
+          try {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+          } catch (_) {
+            // Controller may already be closed
+          }
+        };
+
+        try {
+          sendEvent({ type: "status", label: "thinking" });
+
+          const result = await generateClassgridRagAnswer({
+            question,
+            channel: "web",
+            userName: normalizeText(body?.userName),
+            history: mergedHistory,
+            pageContext: normalizePageContext(body?.pageContext),
+            onStatus: (label: string) => sendEvent({ type: "status", label }),
+          });
+
+          const answer = result.answer || DEFAULT_ERROR_MESSAGE;
+
+          // Save the AI response to Redis session memory
+          await saveMessageToSession(sessionId, { role: "assistant", content: answer });
+
+          sendEvent({
+            type: "answer",
+            answer,
+            sessionId,
+            sources: result.sources.map((source) => ({
+              documentId: source.documentId,
+              documentType: source.documentType,
+              pageTitle: source.pageTitle,
+              pageSlug: source.pageSlug,
+              section: source.section,
+              sourceUrl: source.sourceUrl,
+              score: source.score,
+            })),
+            retrieval: {
+              chunks: result.sources.length,
+              usedFallbackSearch: result.retrieval.usedFallbackSearch,
+            },
+          });
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error("[ask-ai:stream]", msg);
+          sendEvent({ type: "error", error: DEFAULT_ERROR_MESSAGE });
+        } finally {
+          controller.close();
+        }
+      },
     });
 
-    const answer = result.answer || DEFAULT_ERROR_MESSAGE;
-
-    // Save the AI response to Redis session memory
-    await saveMessageToSession(sessionId, { role: "assistant", content: answer });
-
-    return NextResponse.json(
-      {
-        answer,
-        sessionId,
-        sources: result.sources.map((source) => ({
-          documentId: source.documentId,
-          documentType: source.documentType,
-          pageTitle: source.pageTitle,
-          pageSlug: source.pageSlug,
-          section: source.section,
-          sourceUrl: source.sourceUrl,
-          score: source.score,
-        })),
-        retrieval: {
-          chunks: result.sources.length,
-          usedFallbackSearch: result.retrieval.usedFallbackSearch,
-        },
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
       },
-      { status: 200 }
-    );
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("[ask-ai]", message);

@@ -18,24 +18,17 @@ export const communityReviewType = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'avatarType',
-      title: 'Avatar Type',
+      name: 'email',
+      title: 'Reviewer Email (Internal)',
+      description: 'Not displayed publicly. Used to verify if the reviewer is a real Classgrid platform user and to pull their profile photo.',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Gradient (Auto)', value: 'gradient' },
-          { title: 'Photo', value: 'photo' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'gradient',
+      validation: (Rule) => Rule.email(),
     }),
     defineField({
-      name: 'photo',
-      title: 'Reviewer Photo',
-      type: 'image',
-      options: { hotspot: true },
-      hidden: ({ parent }) => parent?.avatarType !== 'photo',
+      name: 'photoUrl',
+      title: 'Profile Photo URL',
+      description: 'Paste the Supabase storage URL of the reviewer\'s profile photo. Leave blank to use auto-generated initial avatar.',
+      type: 'url',
     }),
 
     // ── Rating ────────────────────────────────────

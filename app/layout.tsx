@@ -11,7 +11,7 @@ import { AppChrome } from "@/components/layout/AppChrome";
 import { changelogFallbackEntries } from "@/content/changelog";
 import { resolveChromeContent } from "@/content/homePlaceholders";
 import { getHomeChrome, getLatestChangelogEntry } from "@/sanity/lib/marketing";
-import { resolveTenantSiteData } from "@/lib/tenant-site";
+
 import { NextAuthProvider } from "@/app/providers";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
 
@@ -27,51 +27,9 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"],
 });
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-tenant-body",
-  weight: ["400", "500", "600", "700"],
-});
 
-function isTenantWebsitePath(pathname: string): boolean {
-  const clean = pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
-  return (
-    clean === "/collge_webiste" ||
-    clean.startsWith("/collge_webiste/") ||
-    clean === "/collge_website" ||
-    clean.startsWith("/collge_website/") ||
-    clean === "/college_website" ||
-    clean.startsWith("/college_website/")
-  );
-}
 
 export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const tenantSlug = requestHeaders.get("x-tenant-slug");
-
-  if (tenantSlug) {
-    const tenantSite = await resolveTenantSiteData(tenantSlug);
-    const tenantTitle = tenantSite.institution.name;
-    const tenantDescription = tenantSite.hero.description;
-
-    return {
-      title: {
-        default: tenantTitle,
-        template: `%s | ${tenantTitle}`,
-      },
-      description: tenantDescription,
-      openGraph: {
-        title: tenantTitle,
-        description: tenantDescription,
-        type: "website",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: tenantTitle,
-        description: tenantDescription,
-      },
-    };
-  }
 
   const homeChrome = resolveChromeContent((await getHomeChrome()) as any);
   const siteUrl = typeof homeChrome?.siteUrl === "string" ? homeChrome.siteUrl : undefined;
@@ -142,12 +100,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 300;
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const requestHeaders = await headers();
-  const tenantSlug = requestHeaders.get("x-tenant-slug");
-  const requestPath = requestHeaders.get("x-tenant-path") || "";
-  const isTenantSitePage =
-    requestHeaders.get("x-tenant-site-page") === "1" || isTenantWebsitePath(requestPath);
-  const forcedTheme = tenantSlug || isTenantSitePage ? "light" : undefined;
   const homeChrome = resolveChromeContent((await getHomeChrome()) as any);
   const latestChangelogEntry = (await getLatestChangelogEntry()) as { releaseDate?: string } | null;
   const latestReleaseDate =
@@ -157,7 +109,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${dmSans.variable} ${outfit.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${inter.variable} ${dmSans.variable} min-h-screen bg-background text-foreground antialiased`}
       >
         {/* JSON-LD Structured Data for Google Rich Results */}
         <script
@@ -210,19 +162,15 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          forcedTheme={forcedTheme ?? "dark"}
+          forcedTheme="dark"
           themes={["light", "dark"]}
           disableTransitionOnChange
         >
           <PostHogProvider>
             <NextAuthProvider>
-              {isTenantSitePage ? (
-                <main className="min-h-screen">{children}</main>
-              ) : (
-                <AppChrome chromeContent={homeChrome} latestReleaseDate={latestReleaseDate}>
-                  {children}
-                </AppChrome>
-              )}
+              <AppChrome chromeContent={homeChrome} latestReleaseDate={latestReleaseDate}>
+                {children}
+              </AppChrome>
             </NextAuthProvider>
           </PostHogProvider>
         </ThemeProvider>

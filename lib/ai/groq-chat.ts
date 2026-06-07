@@ -23,6 +23,7 @@ export type GroqChatOptions = {
   temperature?: number;
   maxTokens?: number;
   timeoutMs?: number;
+  onStatus?: (label: string) => void;
 };
 
 // ── Provider Definitions ─────────────────────────────────────────────────────
@@ -128,7 +129,8 @@ async function tryProvider(
   messages: GroqMessage[],
   temperature: number,
   maxTokens: number,
-  timeoutMs: number
+  timeoutMs: number,
+  onStatus?: (label: string) => void
 ): Promise<{ answer: string | null; rateLimited: boolean; error?: string }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -173,6 +175,7 @@ async function tryProvider(
       if (call.function.name === 'search_web') {
         const args = JSON.parse(call.function.arguments);
         console.log(`[llm:${provider.name}] 🌐 Searching: "${args.query}"`);
+        onStatus?.("searching");
         
         let searchResultText = "No reliable search results found.";
         try {
@@ -205,16 +208,21 @@ async function tryProvider(
           console.error(`[llm:${provider.name}] Search failed:`, e);
         }
 
+        // Notify frontend that search is done, now analyzing
+        onStatus?.("analyzing");
+
         // Recursively call the provider with the search results appended
+        // IMPORTANT: We must only pass the specific tool call we processed,
+        // otherwise strict providers (Mistral) throw "Not the same number of function calls and responses"
         const nextMessages: GroqMessage[] = [
           ...messages,
-          { role: "assistant", content: result.content, tool_calls: result.toolCalls },
+          { role: "assistant", content: result.content || "", tool_calls: [call] },
           { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 2000) } // Cap at 2000 chars to save tokens
         ];
         
         // Give the recursive call a bit more timeout since we just used some up
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       }
     }
 
@@ -245,6 +253,7 @@ export async function generateGroqReply({
   temperature = 0.35,
   maxTokens = 600,
   timeoutMs = 20000,
+  onStatus,
 }: GroqChatOptions): Promise<string | null> {
   const chain = getProviderChain(channel);
 
@@ -256,7 +265,7 @@ export async function generateGroqReply({
   let allRateLimited = true;
 
   for (const provider of chain) {
-    const result = await tryProvider(provider, messages, temperature, maxTokens, timeoutMs);
+    const result = await tryProvider(provider, messages, temperature, maxTokens, timeoutMs, onStatus);
 
     if (result.answer) {
       return result.answer;

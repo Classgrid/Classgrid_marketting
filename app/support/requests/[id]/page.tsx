@@ -5,6 +5,7 @@ import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw,
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
@@ -120,7 +121,7 @@ function getAvatarColor(name: string) {
 
 // ─── Page Component ──────────────────────────────────────────────────────────
 
-export default function TicketDetailPage() {
+function TicketDetailPageInner() {
   const params = useParams();
   const searchParams = useSearchParams();
   const { data: session, status: sessionStatus } = useSession();
@@ -572,6 +573,14 @@ export default function TicketDetailPage() {
         onClose={() => setPreviewFile(null)}
       />
     </main>
+  );
+}
+
+export default function TicketDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <TicketDetailPageInner />
+    </Suspense>
   );
 }
 

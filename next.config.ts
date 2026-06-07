@@ -64,7 +64,6 @@ const nextConfig: NextConfig = {
       { source: "/product", destination: "/product/modules", permanent: true },
       { source: "/modules", destination: "/product/modules", permanent: true },
       { source: "/modules/:slug*", destination: "/product/modules/:slug*", permanent: true },
-
     ];
   },
   experimental: {

@@ -20,6 +20,7 @@ type Review = {
   _id: string;
   name: string;
   institution: string;
+  photoUrl?: string;
   reviewText: string;
   suggestion?: string;
   rating: number;
@@ -45,11 +46,12 @@ export default function ReviewsPage() {
   // Form State
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     institution: "",
     reviewText: "",
     suggestion: "",
     rating: 0,
-    moduleName: "Overall",
+    moduleName: "",
   });
   const [hoveredStar, setHoveredStar] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -99,9 +101,9 @@ export default function ReviewsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.institution || !formData.reviewText || formData.rating === 0) {
+    if (!formData.name || !formData.email || !formData.institution || !formData.reviewText || formData.rating === 0 || !formData.moduleName) {
       setFormStatus("error");
-      setErrorMessage("Please fill all required fields and select a star rating.");
+      setErrorMessage("Please fill all required fields, select a module, and give a star rating.");
       return;
     }
 
@@ -118,7 +120,7 @@ export default function ReviewsPage() {
       if (!res.ok) throw new Error("Failed to submit review.");
 
       setFormStatus("success");
-      setFormData({ name: "", institution: "", reviewText: "", suggestion: "", rating: 0, moduleName: "Overall" });
+      setFormData({ name: "", email: "", institution: "", reviewText: "", suggestion: "", rating: 0, moduleName: "" });
       setHoveredStar(0);
       setTimeout(() => setFormStatus("idle"), 5000);
     } catch (error: any) {
@@ -145,9 +147,19 @@ export default function ReviewsPage() {
         transition={{ duration: 0.8 }}
         className="w-full border-y border-border bg-card/10 py-4 mb-12"
       >
-        <Marquee pauseOnHover speed={45} gradient gradientColor={undefined} gradientWidth={100} className="dark:!bg-transparent !bg-transparent">
-          {featuredReviews.map((rev) => (
+        <Marquee pauseOnHover speed={45} gradient={false} className="dark:!bg-transparent !bg-transparent">
+          {featuredReviews.map((rev) => {
+            const palette = ['bg-emerald-500', 'bg-teal-500', 'bg-emerald-600', 'bg-teal-600', 'bg-emerald-400'];
+            const colorClass = palette[rev.name.charCodeAt(0) % palette.length];
+            return (
             <div key={rev._id} className="flex items-center gap-6 px-12 border-r border-white/[0.05]">
+              {rev.photoUrl ? (
+                <img src={rev.photoUrl} alt={rev.name} className="w-8 h-8 rounded-full object-cover shrink-0 border border-border" />
+              ) : (
+                <div className={`w-8 h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                  {rev.name.charAt(0).toUpperCase()}
+                </div>
+              )}
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className={`w-3 h-3 ${i < rev.rating ? "fill-emerald-400 text-emerald-400" : "text-neutral-800"}`} />
@@ -161,7 +173,8 @@ export default function ReviewsPage() {
                 <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-tighter">{rev.institution}</span>
               </div>
             </div>
-          ))}
+            );
+          })}
         </Marquee>
       </MotionDiv>
 
@@ -232,6 +245,11 @@ export default function ReviewsPage() {
                 className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
+            <input
+              type="email" required placeholder="Email Address"
+              value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="bg-background rounded-xl px-4 h-14 border border-border flex items-center">
@@ -250,21 +268,54 @@ export default function ReviewsPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Which module did you use most?</label>
-                <select
+              <select
                   value={formData.moduleName}
                   onChange={(e) => setFormData({ ...formData, moduleName: e.target.value })}
-                  className="w-full h-14 bg-background border border-border rounded-xl px-5 text-sm text-muted-foreground focus:border-emerald-500/50 transition-all outline-none appearance-none"
+                  className={`w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none appearance-none ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}
                 >
-                  <option value="Overall">Overall Experience</option>
-                  <option value="Attendance">Attendance Module</option>
-                  <option value="Fees">Fees & Payments</option>
-                  <option value="Exams">Exams & Grading</option>
-                  <option value="Timetable">Timetable Management</option>
-                  <option value="Communication">Communication Tools</option>
+                  <option value="" disabled hidden>Which module did you like most?</option>
+                  <optgroup label="Academic">
+                    <option value="Attendance">Attendance System</option>
+                    <option value="Digital Classroom">Digital Classroom</option>
+                    <option value="Timetable">Automated Timetable</option>
+                    <option value="Academic Planning">Academic Planning Tools</option>
+                    <option value="Homework">Homework & Assignments</option>
+                    <option value="Notes Sharing">Student Notes Sharing</option>
+                    <option value="Teacher Planner">Teacher Planner</option>
+                    <option value="Subject Management">Subject Management</option>
+                    <option value="Course Management">Course Management</option>
+                  </optgroup>
+                  <optgroup label="Assessment">
+                    <option value="Online Exams">Online Exam Platform</option>
+                    <option value="Exam Management">Examination Management</option>
+                    <option value="Quiz Systems">Interactive Quiz Systems</option>
+                    <option value="Results & Grades">Grade Entry & Results</option>
+                    <option value="Internal Assessment">Internal Assessment Tools</option>
+                    <option value="CET/JEE/NEET">CET/JEE/NEET Exam Conduction</option>
+                    <option value="Mock Tests">Past Paper & Mock Tests</option>
+                    <option value="AI Viva">AI-Powered Viva</option>
+                    <option value="Test Series">Test Series Management</option>
+                  </optgroup>
+                  <optgroup label="Management">
+                    <option value="Admissions">Admission Management</option>
+                    <option value="Fees">Fee Collection System</option>
+                    <option value="Leave & Payroll">Staff Leave & Payroll</option>
+                    <option value="Canteen">Canteen Management</option>
+                    <option value="Library">Digital Library</option>
+                    <option value="Alumni">Alumni Network</option>
+                  </optgroup>
+                  <optgroup label="Advanced">
+                    <option value="AI Assistant">AI Assistant</option>
+                    <option value="Analytics">Advanced Analytics</option>
+                    <option value="Compliance">Compliance & Audit Trails</option>
+                    <option value="Certificates">Digital Certificates</option>
+                    <option value="Holidays">Holiday Management</option>
+                    <option value="ID Cards">Digital ID Cards</option>
+                    <option value="Events">Events Management</option>
+                    <option value="Feedback">Feedback System</option>
+                    <option value="Website Builder">Institution Website</option>
+                  </optgroup>
                 </select>
-              </div>
             </div>
 
             <textarea
@@ -290,7 +341,7 @@ export default function ReviewsPage() {
             {formStatus === "success" && (
               <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 shrink-0" />
-                <p>Submitted to Classgrid team! We will reply to you and publish in the feed.</p>
+                <p>Submitted to the team! We will reply to you and publish in the feed.</p>
               </div>
             )}
           </form>
@@ -301,8 +352,8 @@ export default function ReviewsPage() {
       <section className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h3 className="text-2xl font-bold tracking-tight mb-1 text-foreground">Live Community Feed</h3>
-            <p className="text-muted-foreground text-sm font-medium">Real-time feedback from the Classgrid ecosystem.</p>
+            <h3 className="text-2xl font-bold tracking-tight mb-1 text-foreground">What Institutions Say</h3>
+            <p className="text-muted-foreground text-sm font-medium">Verified feedback from students, faculty, and admins across India.</p>
           </div>
 
           {/* Star Filter Bar */}
@@ -360,7 +411,9 @@ export default function ReviewsPage() {
                     <div className="flex items-start justify-between mb-8">
                       <div className="flex items-center gap-4">
                         {/* System-color Avatar (Emerald/Teal variants only) */}
-                        {(() => {
+                        {rev.photoUrl ? (
+                          <img src={rev.photoUrl} alt={rev.name} className="w-12 h-12 rounded-2xl object-cover shrink-0 shadow-lg rotate-2 group-hover:rotate-0 transition-transform border border-border" />
+                        ) : (() => {
                           const palette = ['bg-emerald-500', 'bg-teal-500', 'bg-emerald-600', 'bg-teal-600', 'bg-emerald-400'];
                           const colorClass = palette[rev.name.charCodeAt(0) % palette.length];
                           return (

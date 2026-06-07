@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isBefore, startOfDay, addMonths, subMonths } from "date-fns";
 import { Clock, Video, Globe, CheckSquare, User, CheckCircle2, Edit2, ArrowRight, ChevronLeftIcon, ChevronRightIcon, LayoutGrid, MessageCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,18 +20,18 @@ import { toast, Toaster } from "sonner";
 
 
 
-export default function DemoSuccessPage() {
+function DemoSuccessPageInner() {
   const searchParams = useSearchParams();
   const requestId = searchParams.get("requestId");
 
   const [lead, setLead] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // OTP State
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  
+
   // Edit State
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -100,12 +100,12 @@ export default function DemoSuccessPage() {
     try {
       const res = await fetch(`/api/request-demo/${requestId}`);
       const data = await res.json();
-      
+
       if (!res.ok) {
         setLead(null);
         return;
       }
-      
+
       if (data.lead) {
         setLead(data.lead);
         setEditForm({
@@ -178,7 +178,7 @@ export default function DemoSuccessPage() {
   const handleConfirmMeeting = async () => {
     if (!date || !selectedTime) return;
     setIsConfirming(true);
-    
+
     // Parse the selected time (e.g. "2:30pm")
     const timeRegex = /(\d+):(\d+)(am|pm)/i;
     const match = selectedTime.match(timeRegex);
@@ -205,7 +205,7 @@ export default function DemoSuccessPage() {
         }),
       });
       const data = await res.json();
-      
+
       if (data.ok) {
         toast.success(`Booking Confirmed for ${format(date, "PPP")} at ${selectedTime}!`);
         // We could redirect to a final thank you page, or just clear the screen
@@ -277,11 +277,11 @@ export default function DemoSuccessPage() {
 
   return (
     <main className="min-h-screen pt-12 pb-16 flex flex-col items-center justify-start px-4 bg-background">
-      
+
       {!isVerified ? (
         /* OTP COVER PAGE */
         <div className="w-full max-w-lg bg-black rounded-2xl border border-white/10 shadow-xl overflow-hidden p-8 text-card-foreground">
-          
+
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-emerald-500" />
@@ -326,7 +326,7 @@ export default function DemoSuccessPage() {
                 </Button>
               ) : null}
             </div>
-            
+
             {!isEditing ? (
               <div className="space-y-5 text-sm">
                 <div>
@@ -367,25 +367,25 @@ export default function DemoSuccessPage() {
               <div className="space-y-5">
                 <div>
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Email Address</Label>
-                  <Input 
-                    value={editForm.adminEmail} 
-                    onChange={e => setEditForm({...editForm, adminEmail: e.target.value})}
+                  <Input
+                    value={editForm.adminEmail}
+                    onChange={e => setEditForm({ ...editForm, adminEmail: e.target.value })}
                     className="bg-background border-border h-10 w-full"
                   />
                 </div>
                 <div>
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Full Name</Label>
-                  <Input 
-                    value={editForm.adminName} 
-                    onChange={e => setEditForm({...editForm, adminName: e.target.value})}
+                  <Input
+                    value={editForm.adminName}
+                    onChange={e => setEditForm({ ...editForm, adminName: e.target.value })}
                     className="bg-background border-border h-10 w-full"
                   />
                 </div>
                 <div>
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Institution</Label>
-                  <Input 
-                    value={editForm.institutionName} 
-                    onChange={e => setEditForm({...editForm, institutionName: e.target.value})}
+                  <Input
+                    value={editForm.institutionName}
+                    onChange={e => setEditForm({ ...editForm, institutionName: e.target.value })}
                     className="bg-background border-border h-10 w-full"
                   />
                 </div>
@@ -394,7 +394,7 @@ export default function DemoSuccessPage() {
                     <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Organization Type</Label>
                     <select
                       value={editForm.orgType}
-                      onChange={e => setEditForm({...editForm, orgType: e.target.value})}
+                      onChange={e => setEditForm({ ...editForm, orgType: e.target.value })}
                       className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <option value="engineering">Engineering College</option>
@@ -408,9 +408,9 @@ export default function DemoSuccessPage() {
                   </div>
                   <div>
                     <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Phone Number</Label>
-                    <Input 
-                      value={editForm.adminPhone || ""} 
-                      onChange={e => setEditForm({...editForm, adminPhone: e.target.value})}
+                    <Input
+                      value={editForm.adminPhone || ""}
+                      onChange={e => setEditForm({ ...editForm, adminPhone: e.target.value })}
                       className="bg-background border-border h-10 w-full"
                     />
                   </div>
@@ -423,7 +423,7 @@ export default function DemoSuccessPage() {
           {!isEditing && (
             <div className="flex flex-col items-center">
               {!otpSent ? (
-                <Button 
+                <Button
                   onClick={handleSendOtp}
                   disabled={isSendingOtp || cooldown > 0}
                   className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 text-lg font-bold shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:shadow-none"
@@ -433,7 +433,7 @@ export default function DemoSuccessPage() {
               ) : (
                 <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <p className="text-sm text-muted-foreground mb-4 text-center">
-                    Enter the 6-digit code sent to <br/><strong className="text-foreground">{lead.adminEmail}</strong>
+                    Enter the 6-digit code sent to <br /><strong className="text-foreground">{lead.adminEmail}</strong>
                   </p>
                   <InputOTP maxLength={6} value={otp} onChange={(val) => setOtp(val.replace(/\D/g, ""))} className="gap-1 sm:gap-2" inputMode="numeric" pattern="[0-9]*">
                     <InputOTPGroup className="gap-1 sm:gap-2">
@@ -443,7 +443,7 @@ export default function DemoSuccessPage() {
                     </InputOTPGroup>
                   </InputOTP>
 
-                  <Button 
+                  <Button
                     onClick={handleVerifyOtp}
                     disabled={otp.length !== 6 || isVerifying}
                     className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white py-6 text-lg font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] disabled:opacity-50 disabled:shadow-none disabled:hover:shadow-none disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed"
@@ -454,9 +454,9 @@ export default function DemoSuccessPage() {
                       <span className="flex items-center gap-2">Verify Email <ArrowRight className="w-5 h-5" /></span>
                     )}
                   </Button>
-                  
-                  <button 
-                    onClick={handleSendOtp} 
+
+                  <button
+                    onClick={handleSendOtp}
                     disabled={cooldown > 0 || isSendingOtp}
                     className="mt-5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2 disabled:hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -477,7 +477,7 @@ export default function DemoSuccessPage() {
         /* CALENDAR SCHEDULER (Unlocked after Verification) */
         <div className="w-full max-w-[1000px] mx-auto">
           <div className="bg-black rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden flex flex-col md:flex-row text-card-foreground animate-in fade-in zoom-in duration-500">
-            
+
             {/* LEFT PANEL */}
             <div className="p-8 md:w-[320px] border-b md:border-b-0 md:border-r border-zinc-800">
               <div className="flex items-center gap-3 mb-6">
@@ -507,7 +507,7 @@ export default function DemoSuccessPage() {
                   <span>Asia/Kolkata</span>
                 </div>
               </div>
-              
+
               <p className="mt-8 text-xs text-muted-foreground leading-relaxed">
                 Book a session to get a personalized walkthrough of the Classgrid platform.
               </p>
@@ -522,7 +522,7 @@ export default function DemoSuccessPage() {
                 {/* Custom Cal.com Style Calendar */}
                 <div className="w-full select-none">
                   <div className="flex items-center justify-between mb-6 px-2">
-                    <button 
+                    <button
                       onClick={() => {
                         setSlideDir(-1);
                         setCurrentMonth(subMonths(currentMonth, 1));
@@ -534,7 +534,7 @@ export default function DemoSuccessPage() {
                     <div className="text-sm font-semibold text-foreground">
                       {format(currentMonth, "MMMM yyyy")}
                     </div>
-                    <button 
+                    <button
                       onClick={() => {
                         setSlideDir(1);
                         setCurrentMonth(addMonths(currentMonth, 1));
@@ -573,34 +573,34 @@ export default function DemoSuccessPage() {
                           {Array(getDay(startOfMonth(currentMonth))).fill(null).map((_, i) => (
                             <div key={`empty-${i}`} className="aspect-square" />
                           ))}
-                          {eachDayOfInterval({ 
-                            start: startOfMonth(currentMonth), 
-                            end: endOfMonth(currentMonth) 
-                            }).map((day) => {
-                              const isToday = isSameDay(day, new Date());
-                              const isPast = isBefore(day, startOfDay(new Date()));
-                              const maxDate = startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
-                              const isTooFar = isBefore(maxDate, day);
-                              const isDisabled = isPast || isTooFar;
-                              const isSelected = date && isSameDay(day, date);
+                          {eachDayOfInterval({
+                            start: startOfMonth(currentMonth),
+                            end: endOfMonth(currentMonth)
+                          }).map((day) => {
+                            const isToday = isSameDay(day, new Date());
+                            const isPast = isBefore(day, startOfDay(new Date()));
+                            const maxDate = startOfDay(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+                            const isTooFar = isBefore(maxDate, day);
+                            const isDisabled = isPast || isTooFar;
+                            const isSelected = date && isSameDay(day, date);
 
-                              return (
-                                <button
-                                  key={day.toISOString()}
-                                  onClick={() => !isDisabled && setDate(day)}
-                                  disabled={isDisabled}
-                                  className={`
+                            return (
+                              <button
+                                key={day.toISOString()}
+                                onClick={() => !isDisabled && setDate(day)}
+                                disabled={isDisabled}
+                                className={`
                                     relative aspect-square w-full flex items-center justify-center text-base font-medium rounded-lg transition-all
                                     ${isDisabled ? "text-muted-foreground opacity-30 cursor-not-allowed bg-transparent" : "cursor-pointer text-foreground"}
                                     ${isSelected && !isDisabled ? "!bg-white !text-black shadow-md font-bold" : ""}
                                     ${!isSelected && !isDisabled ? "bg-zinc-800 hover:bg-zinc-700" : ""}
                                     ${isToday && !isSelected ? "border-2 border-white/70" : ""}
                                   `}
-                                >
-                                  {format(day, 'd')}
-                                  {isToday && !isSelected && (
-                                    <div className="absolute bottom-1 w-1 h-1 rounded-full bg-white/70" />
-                                  )}
+                              >
+                                {format(day, 'd')}
+                                {isToday && !isSelected && (
+                                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-white/70" />
+                                )}
                               </button>
                             );
                           })}
@@ -624,7 +624,7 @@ export default function DemoSuccessPage() {
                     <p className="text-sm text-muted-foreground mb-6">
                       Your meeting is confirmed. A Classgrid team member will join you on Google Meet at the selected time.
                     </p>
-                    
+
                     <div className="bg-background border rounded-lg p-4 space-y-4">
                       <div>
                         <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Date & Time</p>
@@ -636,15 +636,15 @@ export default function DemoSuccessPage() {
                           })() : <Spinner className="w-4 h-4 text-muted-foreground inline-block" />}
                         </p>
                       </div>
-                      
+
                       {lead.meetingUrl && (
                         <div>
                           <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Google Meet Link</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Input readOnly value={lead.meetingUrl} className="h-9 text-xs bg-muted/50 border-border" />
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
+                            <Button
+                              size="sm"
+                              variant="outline"
                               className="h-9 px-3 border-border hover:bg-accent hover:text-accent-foreground"
                               onClick={() => {
                                 navigator.clipboard.writeText(lead.meetingUrl!);
@@ -657,7 +657,7 @@ export default function DemoSuccessPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="mt-auto pt-6">
                       <a href="/" className="text-sm font-medium text-emerald-500 hover:text-emerald-400 flex items-center gap-2">
                         <ArrowRight className="w-4 h-4 rotate-180" /> Return Home
@@ -687,7 +687,7 @@ export default function DemoSuccessPage() {
                               <div className="w-1/2 px-4 py-3 text-sm font-bold rounded-lg border bg-foreground text-background border-foreground shadow-sm flex items-center justify-center">
                                 {time}
                               </div>
-                              <Button 
+                              <Button
                                 onClick={handleConfirmMeeting}
                                 disabled={isConfirming}
                                 className="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 rounded-lg shadow-sm animate-in slide-in-from-right-4 duration-200"
@@ -909,5 +909,13 @@ export default function DemoSuccessPage() {
         )}
       </AnimatePresence>
     </main>
+  );
+}
+
+export default function DemoSuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <DemoSuccessPageInner />
+    </Suspense>
   );
 }
