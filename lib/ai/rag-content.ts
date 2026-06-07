@@ -270,7 +270,7 @@ function resolveSourcePath(type: string, slug: string): string {
     homePage: "/",
     homeStats: "/",
     pricingPage: "/pricing",
-    salesContactPage: "/contact/sales",
+    careersPage: "/careers",
     sectionSettings: "/",
     supportPage: "/support",
     useCasesLandingPage: "/solutions",

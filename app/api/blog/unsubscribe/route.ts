@@ -58,7 +58,17 @@ export async function GET(req: Request) {
 
     // Redirect to the confirmation page
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    return NextResponse.redirect(`${siteUrl}/blog/unsubscribed`);
+    const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed`);
+    
+    // Set a short-lived cookie so the user can view the success screen just once
+    response.cookies.set("unsubscribed_session", "true", {
+      maxAge: 30, // Valid for 30 seconds
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+    });
+
+    return response;
 
   } catch (error) {
     console.error("Unsubscribe Error:", error);

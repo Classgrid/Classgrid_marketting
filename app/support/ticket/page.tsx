@@ -440,7 +440,6 @@ export default function RaiseTicketPage() {
             {/* Form Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6 -mt-2">
               <div>
-                <SectionAccentBar align="left" className="mb-4" />
                 <h2 className="text-2xl font-bold text-foreground">Submit a request</h2>
                 <p className="text-muted-foreground text-sm mt-1">Please provide the details of your issue.</p>
               </div>

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft, BellOff, CheckCircle2, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { CheckCircle2, Mail, ShieldCheck, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 
 export const metadata: Metadata = {
   title: "Unsubscribed | Classgrid",
@@ -15,7 +14,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function UnsubscribedPage() {
+export default async function UnsubscribedPage() {
+  const cookieStore = await cookies();
+  
+  // Protect route: Only allow if they just unsubscribed
+  if (!cookieStore.has("unsubscribed_session")) {
+    redirect("/blog");
+  }
+
   return (
     <div className="relative isolate overflow-hidden">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -25,48 +31,71 @@ export default function UnsubscribedPage() {
 
       <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
         <div className="rounded-3xl border border-border/70 bg-background/90 p-6 shadow-[0_20px_70px_-35px_rgba(16,185,129,0.35)] backdrop-blur-md sm:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="space-y-5">
-              <Badge
-                variant="outline"
-                className="inline-flex items-center gap-1.5 border-emerald-500/35 bg-emerald-500/10 px-3 py-1 text-[11px] tracking-[0.15em] text-emerald-500 uppercase"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Subscription Updated
-              </Badge>
+          
+          <style dangerouslySetInnerHTML={{ __html: `
+            .animate-spin-once {
+              animation: spinOnce 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+            @keyframes spinOnce {
+              0% { transform: rotate(0deg); opacity: 1; border-width: 3px; }
+              70% { transform: rotate(720deg); border-width: 3px; opacity: 1; }
+              100% { transform: rotate(900deg); opacity: 0; border-width: 0px; }
+            }
+            .animate-pop-in {
+              animation: popIn 0.55s cubic-bezier(0.34, 1.2, 0.64, 1) 0.75s forwards;
+              transform: scale(0);
+              opacity: 0;
+            }
+            @keyframes popIn {
+              0% { transform: scale(0); opacity: 0; }
+              50% { transform: scale(1.1); }
+              100% { transform: scale(1); opacity: 1; }
+            }
+            .animate-fade-up {
+              animation: fadeUp 0.5s ease-out 0.2s both;
+            }
+            @keyframes fadeUp {
+              from { opacity: 0; transform: translateY(12px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}} />
 
-              <div className="flex items-center gap-4">
-                <div className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/35 bg-emerald-500/10 text-emerald-500">
-                  <BellOff className="h-7 w-7" />
-                </div>
-                <div>
-                  <SectionAccentBar align="left" className="mb-3" />
-                  <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-                    You&apos;re Unsubscribed
-                  </h1>
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center">
+            
+            {/* LEFT SIDE: Animation and text only */}
+            <div className="flex flex-col items-start space-y-6">
+              
+              <div className="relative flex h-24 w-24 items-center justify-center">
+                {/* Spinner Ring */}
+                <div className="animate-spin-once absolute inset-0 box-border rounded-full border-[3px] border-b-emerald-500/20 border-l-emerald-500/10 border-r-emerald-500 border-t-emerald-500"></div>
+                
+                {/* Checkmark Pop */}
+                <div className="animate-pop-in absolute inset-0 flex items-center justify-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 shadow-[0_10px_20px_-5px_rgba(16,185,129,0.4)]">
+                    <svg className="h-7 w-7 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-
-              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                You have been removed from new blog update emails. Your preference is saved and takes effect immediately.
-              </p>
-
-              <div className="flex flex-wrap gap-3 pt-1">
-                <Button asChild className="bg-emerald-500 text-black hover:bg-emerald-400">
-                  <Link href="/blog" prefetch={false}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Return To Blog
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="border-border/70 bg-background/70">
-                  <Link href="/" prefetch={false}>
-                    Go To Homepage
-                  </Link>
-                </Button>
+              
+              <div className="animate-fade-up">
+                <Badge
+                  variant="outline"
+                  className="mb-4 inline-flex items-center gap-1.5 border-emerald-500/35 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-emerald-500"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Unsubscribed
+                </Badge>
+                <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+                  You&apos;re Unsubscribed
+                </h1>
               </div>
+
             </div>
 
-            <aside className="rounded-2xl border border-border/70 bg-muted/30 p-5 sm:p-6">
+            {/* RIGHT SIDE: What Happens Next Card */}
+            <aside className="rounded-2xl border border-border/70 bg-muted/30 p-5 sm:p-6 animate-fade-up">
               <p className="text-sm font-semibold text-foreground">What Happens Next</p>
               <div className="mt-4 space-y-4 text-sm text-muted-foreground">
                 <div className="flex items-start gap-3">
@@ -82,18 +111,8 @@ export default function UnsubscribedPage() {
                   <p>Your unsubscribe preference remains protected and respected by default.</p>
                 </div>
               </div>
-
-              <div className="mt-6 rounded-xl border border-border/60 bg-background/80 px-4 py-3 text-xs text-muted-foreground">
-                Need help? Contact us at{" "}
-                <a
-                  href="mailto:support@classgrid.in"
-                  className="font-medium text-foreground underline decoration-border underline-offset-4 hover:text-emerald-500"
-                >
-                  support@classgrid.in
-                </a>
-                .
-              </div>
             </aside>
+
           </div>
         </div>
       </section>
