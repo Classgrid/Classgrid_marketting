@@ -215,7 +215,17 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (val.length >= 2) setIsSearchLoading(true);
+                else setIsSearchLoading(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                }
+              }}
               onFocus={() => setIsSearching(true)}
               onBlur={() => setTimeout(() => setIsSearching(false), 200)}
               placeholder="Search articles, guides..."
