@@ -22,7 +22,7 @@ export const articleQuestionType = defineType({
       components: {
         field: (props: any) => {
           const slug = props.value;
-          const fullUrl = slug ? `https://classgrid.in/help-center/${slug}` : null;
+          const fullUrl = slug ? `https://classgrid.in/help-center/article/${slug}` : null;
           return React.createElement(
             'div',
             { style: { display: 'flex', flexDirection: 'column', gap: '8px' } },

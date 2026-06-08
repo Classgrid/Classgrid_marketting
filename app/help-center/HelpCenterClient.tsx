@@ -235,22 +235,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
                   <div className="p-6 text-center">
                     <Spinner className="w-5 h-5 text-emerald-500 mx-auto" />
                   </div>
-                ) : searchResults.length === 0 ? (
-                  <div className="p-8 text-center">
-                    <XCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                    <h4 className="text-base font-bold text-foreground mb-1">No articles found</h4>
-                    <p className="text-muted-foreground text-sm mb-5">
-                      No results for &quot;{searchQuery}&quot;.
-                    </p>
-                    <Button
-                      variant="default"
-                      className="font-bold"
-                      onClick={() => { window.location.href = buildLangHref("/support/ticket", lang); }}
-                    >
-                      Contact Support Directly
-                    </Button>
-                  </div>
-                ) : (
+                ) : searchResults.length > 0 ? (
                   <div className="p-2">
                     <div className="px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
@@ -278,8 +263,16 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
         </motion.div>
       </section>
 
-      <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Dynamic Content */}
+      {searchQuery.length >= 2 && !isSearchLoading && searchResults.length === 0 ? (
+        <section className="px-6 max-w-3xl mx-auto mb-20 text-center relative z-10">
+          <p className="text-lg font-medium text-muted-foreground mt-8">
+            We couldn't find any articles for: <strong className="text-foreground">{searchQuery}</strong>
+          </p>
+        </section>
+      ) : (
+        <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {sortedCategories.map((category, index) => {
             const isActive = activeCategory === category.title;
             const IconComp = ICON_MAP[category.icon] || FileText;
@@ -333,6 +326,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
           })}
         </div>
       </section>
+      )}
 
     </main>
   );
