@@ -101,12 +101,14 @@ export default function CategoryPageClient({ slug, lang, initialData }: { slug: 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 * groupIndex }}
+                className="bg-card border border-border rounded-[2rem] overflow-hidden shadow-md"
               >
                 {/* Group Header */}
-                <h2 className="text-xl font-bold text-foreground mb-4 pl-1">{groupName}</h2>
+                <div className="px-6 md:px-8 pt-8 pb-4">
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">{groupName}</h2>
+                </div>
 
-                {/* Articles Card */}
-                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">                {/* Articles in this group */}
+                {/* Articles in this group */}
                 <div className="flex flex-col">
                   {grouped[groupName].map((article: any, index: number) => (
                     <Link
@@ -120,7 +122,6 @@ export default function CategoryPageClient({ slug, lang, initialData }: { slug: 
                       <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald-500 transition-colors shrink-0" />
                     </Link>
                   ))}
-                </div>
                 </div>
               </motion.div>
             ))}
