@@ -499,7 +499,7 @@ function DemoSuccessPageInner() {
                   <span>30m</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <img src="https://fiherpwzabiftbkwuqsb.supabase.co/storage/v1/object/public/notes-files/69a1616fc010102d9efa52e9/svgviewer-output.svg" alt="Google Meet" className="w-5 h-5" />
+                  <img src="/icons/google-meet.svg" alt="Google Meet" className="w-5 h-5" />
                   <span>Google Meet</span>
                 </div>
                 <div className="flex items-center gap-3">

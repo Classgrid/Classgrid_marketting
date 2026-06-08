@@ -18,6 +18,7 @@ import { buildLangHref, extractLocaleString, extractLocaleValue, type SupportedL
 import { client } from "@/sanity/lib/client";
 
 import { fetchArticleData } from "../../actions";
+import { ArticleQuestionBox } from "./ArticleQuestionBox";
 
 const builder = urlBuilder(client);
 
@@ -280,13 +281,7 @@ export default function ArticlePageClient({
                 })}
               </div>
               <div className="mt-auto border-t border-zinc-200 dark:border-zinc-800 p-4">
-                <Link
-                  href={buildLangHref("/support/ticket", lang)}
-                  className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <span className="text-lg">🙋</span> Have a question?
-                </Link>
+                <ArticleQuestionBox articleSlug={slug} articleTitle={article.title ? extractLocaleString(article.title, lang) : "Unknown"} />
               </div>
             </motion.div>
           </>
@@ -324,12 +319,7 @@ export default function ArticlePageClient({
             </nav>
 
             <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 shrink-0 pb-4">
-              <Link
-                href={buildLangHref("/support/ticket", lang)}
-                className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
-              >
-                <span className="text-lg">🙋</span> Have a question?
-              </Link>
+              <ArticleQuestionBox articleSlug={slug} articleTitle={article.title ? extractLocaleString(article.title, lang) : "Unknown"} />
             </div>
           </div>
         </aside>
