@@ -14,6 +14,7 @@ export function ArticleQuestionBox({ articleSlug, articleTitle }: ArticleQuestio
   const [question, setQuestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,8 +23,20 @@ export function ArticleQuestionBox({ articleSlug, articleTitle }: ArticleQuestio
     const key = `asked_question_${articleSlug}`;
     if (localStorage.getItem(key)) {
       setIsSubmitted(true);
+      setIsHidden(true); // Hide completely if already submitted in a previous session
     }
   }, [articleSlug]);
+
+  // Hide the success message after 25 seconds
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isSubmitted && !isHidden) {
+      timeout = setTimeout(() => {
+        setIsHidden(true);
+      }, 25000);
+    }
+    return () => clearTimeout(timeout);
+  }, [isSubmitted, isHidden]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +66,8 @@ export function ArticleQuestionBox({ articleSlug, articleTitle }: ArticleQuestio
       setIsSubmitting(false);
     }
   };
+
+  if (isHidden) return null;
 
   if (isSubmitted) {
     return (
