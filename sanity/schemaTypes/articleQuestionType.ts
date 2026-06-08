@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, useFormValue } from "sanity";
 import React from "react";
 
 export const articleQuestionType = defineType({
@@ -6,6 +6,34 @@ export const articleQuestionType = defineType({
   title: "Article Questions",
   type: "document",
   fields: [
+    defineField({
+      name: "submittedAt",
+      title: "Submitted At (IST)",
+      type: "string",
+      readOnly: true,
+      description: "The exact date and time this question was submitted.",
+      components: {
+        field: (props: any) => {
+          const createdAt = useFormValue(["_createdAt"]) as string | undefined;
+          
+          let displayValue = "Not yet submitted";
+          if (createdAt) {
+            const date = new Date(createdAt);
+            displayValue = date.toLocaleString("en-IN", {
+              timeZone: "Asia/Kolkata",
+              dateStyle: "medium",
+              timeStyle: "medium",
+            });
+          }
+
+          return React.createElement(
+            'div',
+            null,
+            props.renderDefault({ ...props, value: displayValue })
+          );
+        }
+      }
+    }),
     defineField({
       name: "articleTitle",
       title: "Article Title",
