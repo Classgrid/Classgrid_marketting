@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import React from "react";
 
 export const articleQuestionType = defineType({
   name: "articleQuestion",
@@ -22,17 +23,26 @@ export const articleQuestionType = defineType({
         field: (props: any) => {
           const slug = props.value;
           const fullUrl = slug ? `https://classgrid.in/help-center/${slug}` : null;
-          return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {props.renderDefault(props)}
-              {fullUrl && (
-                <div style={{ padding: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px' }}>
-                  <a href={fullUrl} target="_blank" rel="noreferrer" style={{ color: '#10b981', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    View Live Article: {fullUrl} ↗
-                  </a>
-                </div>
-              )}
-            </div>
+          return React.createElement(
+            'div',
+            { style: { display: 'flex', flexDirection: 'column', gap: '8px' } },
+            props.renderDefault(props),
+            fullUrl
+              ? React.createElement(
+                  'div',
+                  { style: { padding: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px' } },
+                  React.createElement(
+                    'a',
+                    {
+                      href: fullUrl,
+                      target: '_blank',
+                      rel: 'noreferrer',
+                      style: { color: '#10b981', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }
+                    },
+                    `View Live Article: ${fullUrl} ↗`
+                  )
+                )
+              : null
           );
         }
       }
