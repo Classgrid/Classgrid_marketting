@@ -256,7 +256,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
                       </Link>
                     ))}
                   </div>
-                )}
+                ) : null}
               </motion.div>
             )}
           </AnimatePresence>
