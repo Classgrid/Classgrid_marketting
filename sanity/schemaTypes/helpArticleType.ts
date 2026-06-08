@@ -49,6 +49,12 @@ export const helpArticleType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'subCategory',
+      title: 'Sub-Category (Grouping)',
+      description: 'Used to group articles together on the category page. E.g., "General", "Admission Workflow", "Fees", etc. Defaults to "General" if left blank.',
+      type: 'string',
+    }),
+    defineField({
       name: 'summary',
       title: 'Summary',
       description: 'A brief description of what this article covers',

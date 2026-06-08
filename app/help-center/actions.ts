@@ -54,6 +54,7 @@ export async function fetchArticleData(slug: string) {
     `*[_type == "helpArticle" && slug.current == $slug][0]{
       title,
       "category": category->title,
+      "categorySlug": category->slug.current,
       summary,
       content,
       markdownBody,

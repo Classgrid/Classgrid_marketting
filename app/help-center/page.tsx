@@ -1,5 +1,6 @@
 import { parseLang } from "@/lib/locale";
 
+import { getInitialSupportData } from "./actions";
 import HelpCenterClient from "./HelpCenterClient";
 
 type HelpCenterPageProps = {
@@ -8,5 +9,7 @@ type HelpCenterPageProps = {
 
 export default async function HelpCenterPage({ searchParams }: HelpCenterPageProps) {
   const lang = parseLang((await searchParams) ?? undefined);
-  return <HelpCenterClient lang={lang} />;
+  const initialData = await getInitialSupportData();
+  
+  return <HelpCenterClient lang={lang} initialData={initialData} />;
 }
