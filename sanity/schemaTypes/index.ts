@@ -12,6 +12,7 @@ import { caseStudyType } from './caseStudyType'
 import { caseStudySettingsType } from './caseStudySettingsType'
 import { communityReviewType } from './communityReviewType'
 import { websiteFeedbackType } from './websiteFeedbackType'
+import { articleQuestionType } from './articleQuestionType'
 import { changelogEntryType } from './changelogEntryType'
 import { changelogSettingsType } from './changelogSettingsType'
 import { compareHubPageType } from './compareHubPageType'
@@ -174,6 +175,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     turboClassgridType,
     appEcosystemType,
     websiteFeedbackType,
+    articleQuestionType,
     classgridVideoType,
     classgridTeamVisionType,
   ],

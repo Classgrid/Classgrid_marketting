@@ -10,6 +10,7 @@ const hiddenTypes = new Set([
   "clientLogo",
   "helpCategory",
   "helpArticle",
+  "articleQuestion",
   "websiteFeedback",
 ]);
 
@@ -120,6 +121,10 @@ export const structure = (S: StructureBuilder) =>
               S.listItem()
                 .title("Help Articles")
                 .child(S.documentTypeList("helpArticle").title("Help Articles")),
+              S.listItem()
+                .title("Article Questions (Feedback)")
+                .icon(() => "🙋")
+                .child(S.documentTypeList("articleQuestion").title("Article Questions")),
             ])
         ),
 
