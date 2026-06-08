@@ -28,8 +28,9 @@ export const articleQuestionType = defineType({
 
           return React.createElement(
             'div',
-            null,
-            props.renderDefault({ ...props, value: displayValue })
+            { style: { padding: '8px 0' } },
+            React.createElement('div', { style: { fontSize: '13px', fontWeight: 600, marginBottom: '6px' } }, props.title),
+            React.createElement('div', { style: { fontSize: '15px', color: '#10b981', fontWeight: 500 } }, displayValue)
           );
         }
       }
@@ -105,8 +106,9 @@ export const articleQuestionType = defineType({
     prepare(selection) {
       const { title, subtitle, status } = selection;
       const statusEmoji = status === "new" ? "🔴" : status === "reviewed" ? "🟡" : "🟢";
+      const shortTitle = title ? (title.length > 50 ? title.substring(0, 50) + "..." : title) : "Untitled Question";
       return {
-        title: title ? `${statusEmoji} ${title}` : "Untitled Question",
+        title: `${statusEmoji} ${shortTitle}`,
         subtitle: subtitle ? `Article: ${subtitle}` : "Unknown Article",
       };
     },
