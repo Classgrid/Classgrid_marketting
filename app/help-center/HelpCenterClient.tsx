@@ -117,7 +117,7 @@ const DEFAULT_ACCENT = {
   badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
-export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
+export default function HelpCenterClient({ lang, initialData }: { lang: SupportedLang; initialData: any }) {
   const { status } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -125,10 +125,9 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
   const PAGE_SIZE = 6;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isShowingMore, setIsShowingMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const [allArticles, setAllArticles] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [allArticles, setAllArticles] = useState<any[]>(initialData.fetchedArticles);
+  const [categories, setCategories] = useState<any[]>(initialData.fetchedCategories);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
@@ -145,29 +144,11 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
       }
       return;
     }
-    setActiveCategory(activeCategory === category.title ? null : category.title);
-    setVisibleCount(PAGE_SIZE);
-
-    // Smooth scroll to articles section after a short delay for state to update
-    setTimeout(() => {
-      articleSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    // Navigate to the dedicated category page
+    window.location.href = buildLangHref(`/help-center/category/${category.slug}`, lang);
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { fetchedArticles, fetchedCategories } = await getInitialSupportData();
-        setAllArticles(fetchedArticles);
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+
 
   const handleSearch = useCallback(async (query: string) => {
     if (query.length < 2) {
@@ -219,75 +200,12 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
         </motion.div>
       </section>
 
-      {/* Category Grid */}
-      <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {isLoading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-32 bg-muted/50 rounded-2xl animate-pulse" />
-            ))
-          ) : (
-            sortedCategories.map((category, index) => {
-              const isActive = activeCategory === category.title;
-            const IconComp = ICON_MAP[category.icon] || FileText;
-            const accent = CATEGORY_ACCENT[category.title] || DEFAULT_ACCENT;
-            const isLink = category.categoryType === "link";
-            const isExternalLink = isLink && category.externalHref?.startsWith("http");
-
-            return (
-              <motion.button
-                key={category.slug || index}
-                onClick={() => handleCategoryClick(category)}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.08 * index }}
-                className={`group relative p-6 rounded-2xl bg-card border hover:border-emerald-500/50 transition-all text-left overflow-hidden cursor-pointer shadow-sm ${
-                  isActive ? `${accent.border} ring-1 ${accent.ring}` : "border-border"
-                }`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${accent.gradient} to-transparent transition-opacity ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} />
-
-                <div className="relative flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-background border border-border flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                    <IconComp className={`w-5 h-5 ${accent.iconColor}`} />
-                  </div>
-                  {isLink && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                      {isExternalLink ? <ArrowUpRight className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
-                      {isExternalLink ? "External" : "Go to"}
-                    </span>
-                  )}
-                </div>
-
-                {!isLink && (
-                  <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border mb-3 text-[10px] font-bold tracking-widest uppercase ${accent.badgeColor}`}>
-                    <FileText className="w-3 h-3" />
-                    {category.articleCount ?? 0} {category.articleCount === 1 ? "Article" : "Articles"}
-                  </div>
-                )}
-
-                {isLink && (
-                  <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border mb-3 text-[10px] font-bold tracking-widest uppercase ${accent.badgeColor}`}>
-                    <ExternalLink className="w-3 h-3" />
-                    Resource
-                  </div>
-                )}
-
-                <h3 className="relative text-lg font-bold mb-1 text-foreground">{category.title}</h3>
-                <p className="relative text-sm text-muted-foreground leading-relaxed">{category.description}</p>
-              </motion.button>
-            );
-            })
-          )}
-        </div>
-      </section>
-
       {/* Search */}
-      <section className="px-6 max-w-3xl mx-auto mb-24 relative z-20">
+      <section className="px-6 max-w-3xl mx-auto mb-16 relative z-20">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="relative group"
         >
           <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/30 via-teal-500/30 to-emerald-500/30 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
@@ -360,94 +278,62 @@ export default function HelpCenterClient({ lang }: { lang: SupportedLang }) {
         </motion.div>
       </section>
 
-      {/* Article Grid */}
-      <section ref={articleSectionRef} className="px-6 max-w-6xl mx-auto mb-16 relative z-10 scroll-mt-24">
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-              {activeCategory
-                ? activeCategory
-                : "All articles"}
-            </h2>
-          </div>
-          {activeCategory && (
-            <button
-              onClick={() => { setActiveCategory(null); setVisibleCount(PAGE_SIZE); }}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-            >
-              <XCircle className="w-4 h-4" /> Clear filter
-            </button>
-          )}
-        </div>
+      <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {sortedCategories.map((category, index) => {
+            const isActive = activeCategory === category.title;
+            const IconComp = ICON_MAP[category.icon] || FileText;
+            const accent = CATEGORY_ACCENT[category.title] || DEFAULT_ACCENT;
+            const isLink = category.categoryType === "link";
+            const isExternalLink = isLink && category.externalHref?.startsWith("http");
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory || "all"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm"
-          >
-            {isLoading ? (
-              <div className="flex flex-col">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0">
-                    <div className="h-5 bg-muted/50 rounded w-2/3 animate-pulse" />
-                    <div className="h-5 w-5 bg-muted/50 rounded animate-pulse" />
+            return (
+              <motion.button
+                key={category.slug || index}
+                onClick={() => handleCategoryClick(category)}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.08 * index }}
+                className={`group relative p-6 rounded-2xl bg-card border hover:border-emerald-500/50 transition-all text-left overflow-hidden cursor-pointer shadow-sm ${
+                  isActive ? `${accent.border} ring-1 ${accent.ring}` : "border-border"
+                }`}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${accent.gradient} to-transparent transition-opacity ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} />
+
+                <div className="relative flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-background border border-border flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <IconComp className={`w-5 h-5 ${accent.iconColor}`} />
                   </div>
-                ))}
-              </div>
-            ) : visibleArticles.length > 0 ? (
-              <div className="flex flex-col">
-                {visibleArticles.map((article, index) => (
-                  <Link
-                    key={`${article.slug}-${index}`}
-                    href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
-                    className="group flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
-                  >
-                    <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 truncate pb-0.5">
-                      {extractLocaleString(article.title, lang)}
-                    </h3>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald-500 transition-colors shrink-0" />
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16 text-zinc-500">
-                <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                <p>No articles in this category yet.</p>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+                  {isLink && (
+                    <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                      {isExternalLink ? <ArrowUpRight className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
+                      {isExternalLink ? "External" : "Go to"}
+                    </span>
+                  )}
+                </div>
 
-        {visibleCount < displayedArticles.length && (
-          <div className="pt-8 text-center">
-            <Button
-              variant="outline"
-              disabled={isShowingMore}
-              onClick={() => {
-                setIsShowingMore(true);
-                setTimeout(() => {
-                  setVisibleCount((prev) => prev + PAGE_SIZE);
-                  setIsShowingMore(false);
-                }, 400); // Small delay for visual feedback
-              }}
-              className="rounded-xl px-6 py-5 font-medium border-border hover:bg-emerald-500/10 hover:text-emerald-600 hover:border-emerald-500/30 transition-colors"
-            >
-              {isShowingMore ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Loading...
-                </>
-              ) : (
-                "View more articles"
-              )}
-            </Button>
-          </div>
-        )}
+                {!isLink && (
+                  <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border mb-3 text-[10px] font-bold tracking-widest uppercase ${accent.badgeColor}`}>
+                    <FileText className="w-3 h-3" />
+                    {category.articleCount ?? 0} {category.articleCount === 1 ? "Article" : "Articles"}
+                  </div>
+                )}
+
+                {isLink && (
+                  <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border mb-3 text-[10px] font-bold tracking-widest uppercase ${accent.badgeColor}`}>
+                    <ExternalLink className="w-3 h-3" />
+                    Resource
+                  </div>
+                )}
+
+                <h3 className="relative text-lg font-bold mb-1 text-foreground">{category.title}</h3>
+                <p className="relative text-sm text-muted-foreground leading-relaxed">{category.description}</p>
+              </motion.button>
+            );
+          })}
+        </div>
       </section>
+
     </main>
   );
 }

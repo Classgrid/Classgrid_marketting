@@ -101,59 +101,54 @@ const ptComponents = {
 export default function ArticlePageClient({
   slug,
   lang,
+  initialData,
 }: {
   slug: string;
   lang: SupportedLang;
+  initialData: any;
 }) {
-  const [article, setArticle] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<string>("");
-  const [headings, setHeadings] = useState<{ id: string; title: string }[]>([]);
+  // Synchronously process initialData so the page renders instantly
+  const localizedContent = extractLocaleValue<any[]>(initialData?.content, lang, []) ?? [];
+  const localizedArticle = initialData
+    ? {
+        ...initialData,
+        content: localizedContent,
+      }
+    : null;
+
+  let initialHeadings: { id: string; title: string }[] = [];
+  if (initialData?.markdownBody) {
+    initialHeadings = (initialData.markdownBody as string)
+      .split("\n")
+      .filter((line: string) => line.startsWith("## ") && !line.startsWith("### "))
+      .map((line: string, index: number) => {
+        const text = line.slice(3).trim();
+        const id = toHeadingId(text, `section-${index + 1}`);
+        return { id, title: text };
+      });
+  } else if (localizedContent.length > 0) {
+    initialHeadings = localizedContent
+      .filter((block: any) => block._type === "block" && block.style === "h2")
+      .map((block: any, index: number) => {
+        const text = block.children?.map((child: any) => child.text || "").join("").trim() || "section";
+        const id = toHeadingId(text, `section-${block._key || index + 1}`);
+        return { id, title: text };
+      });
+  }
+
+  const [article] = useState<any>(localizedArticle);
+  const [headings] = useState<{ id: string; title: string }[]>(initialHeadings);
+  const [activeSection, setActiveSection] = useState<string>(initialHeadings.length > 0 ? initialHeadings[0].id : "");
   const [viewCount, setViewCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    async function loadArticle() {
-      if (!slug) return;
-      const data = await fetchArticleData(slug);
-      const localizedContent = extractLocaleValue<any[]>(data?.content, lang, []) ?? [];
-      const localizedArticle = data
-        ? {
-            ...data,
-            content: localizedContent,
-          }
-        : null;
-
-      setArticle(localizedArticle);
-      setLoading(false);
-
-      // Extract headings from markdown or Portable Text
-      if (data?.markdownBody) {
-        const mdHeadings = (data.markdownBody as string)
-          .split("\n")
-          .filter((line: string) => line.startsWith("## ") && !line.startsWith("### "))
-          .map((line: string, index: number) => {
-            const text = line.slice(3).trim();
-            const id = toHeadingId(text, `section-${index + 1}`);
-            return { id, title: text };
-          });
-        setHeadings(mdHeadings);
-        if (mdHeadings.length > 0) setActiveSection(mdHeadings[0].id);
-      } else if (localizedContent.length > 0) {
-        const extracted = localizedContent
-          .filter((block: any) => block._type === "block" && block.style === "h2")
-          .map((block: any, index: number) => {
-            const text = block.children?.map((child: any) => child.text || "").join("").trim() || "section";
-            const id = toHeadingId(text, `section-${block._key || index + 1}`);
-            return { id, title: text };
-          });
-        setHeadings(extracted);
-        if (extracted.length > 0) setActiveSection(extracted[0].id);
-      }
+    // Expose category info for the global breadcrumb
+    if (article?.category && article?.categorySlug) {
+      document.documentElement.dataset.articleCategory = article.category;
+      document.documentElement.dataset.articleCategorySlug = article.categorySlug;
     }
-
-    loadArticle();
-  }, [lang, slug]);
+  }, [article]);
 
   useEffect(() => {
     if (!slug) return;
@@ -199,14 +194,6 @@ export default function ArticlePageClient({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [headings]);
 
-  if (loading) {
-    return (
-      <main className="min-h-[80vh] bg-background flex flex-col justify-center items-center pt-32 pb-24">
-        <Spinner className="w-8 h-8 text-emerald-500 mb-4" />
-        <p className="text-muted-foreground animate-pulse text-sm font-medium">Loading article...</p>
-      </main>
-    );
-  }
 
   if (!article) {
     return (

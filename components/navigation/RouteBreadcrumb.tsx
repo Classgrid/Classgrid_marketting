@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 import { AppBreadcrumb } from "@/components/navigation/AppBreadcrumb";
@@ -47,20 +47,60 @@ function formatSegmentLabel(segment: string): string {
 
 export function RouteBreadcrumb() {
   const pathname = usePathname();
+  const [articleCategory, setArticleCategory] = useState<{ label: string; slug: string } | null>(null);
 
+  // Watch for article category data attributes set by ArticlePageClient
+  useEffect(() => {
+    const checkCategory = () => {
+      const cat = document.documentElement.dataset.articleCategory;
+      const catSlug = document.documentElement.dataset.articleCategorySlug;
+      if (cat && catSlug) {
+        setArticleCategory({ label: cat, slug: catSlug });
+      } else {
+        setArticleCategory(null);
+      }
+    };
+
+    checkCategory();
+
+    const observer = new MutationObserver(checkCategory);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-article-category", "data-article-category-slug"] });
+
+    return () => {
+      observer.disconnect();
+      // Clean up data attributes when leaving
+      delete document.documentElement.dataset.articleCategory;
+      delete document.documentElement.dataset.articleCategorySlug;
+    };
+  }, [pathname]);
 
   const items = useMemo<BreadcrumbEntry[]>(() => {
     const segments = pathname.split("/").filter(Boolean);
+    // Segments that are just routing folders, not real pages
+    const skipSegments = new Set(["category", "article"]);
     let hrefAccumulator = "";
-    return segments.map((segment, index) => {
+    const entries: BreadcrumbEntry[] = [];
+    segments.forEach((segment, index) => {
       hrefAccumulator += `/${segment}`;
+      if (skipSegments.has(segment)) return; // skip routing-only folders
       const isLast = index === segments.length - 1;
-      return {
+      entries.push({
         label: formatSegmentLabel(segment),
         href: isLast ? undefined : hrefAccumulator,
-      };
+      });
     });
-  }, [pathname]);
+
+    // For article pages: inject the category between "Help Center" and the article title
+    const isArticlePage = segments.includes("article") && articleCategory;
+    if (isArticlePage && entries.length >= 2) {
+      entries.splice(1, 0, {
+        label: articleCategory.label,
+        href: `/help-center/category/${articleCategory.slug}`,
+      });
+    }
+
+    return entries;
+  }, [pathname, articleCategory]);
 
   // Hide breadcrumb on top-level pages where it's redundant (just shows the page name)
   // Keep it for nested routes like /solutions/for-schools, /changelog/slug, /case-studies/slug
