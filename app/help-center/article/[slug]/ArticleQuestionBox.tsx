@@ -74,10 +74,10 @@ export function ArticleQuestionBox({ articleSlug, articleTitle }: ArticleQuestio
       <div className="flex flex-col items-center justify-center p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
         <CheckCircle2 className="w-6 h-6 text-emerald-500 mb-2" />
         <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-          Thanks for asking!
+          Thanks for sharing!
         </span>
         <span className="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-1">
-          We'll review your question and update the article soon.
+          We'll review your feedback and update the article soon.
         </span>
       </div>
     );
