@@ -291,12 +291,14 @@ export const aboutPageQuery = `*[_type == "aboutPage" && _id == "aboutPage"][0]{
   timeline[]{
     year,
     title,
-    description
+    description,
+    link
   },
   futureTimelineItem{
     year,
     title,
-    description
+    description,
+    link
   },
   teamHeadline,
   teamMembers[]{

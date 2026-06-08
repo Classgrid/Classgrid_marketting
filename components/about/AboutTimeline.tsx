@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   Lightbulb, Calendar, Settings, BarChart, Trophy,
   Rocket, Star, Zap, Layers, Globe, ChevronLeft, ChevronRight,
+  ShieldCheck, Sparkles
 } from "lucide-react";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 
@@ -12,6 +13,7 @@ type TimelineItem = {
   year: string;
   title: string;
   description: string;
+  link?: string;
 };
 
 type AboutTimelineProps = {
@@ -22,27 +24,33 @@ const defaultTimeline: TimelineItem[] = [
   {
     year: "Dec 2025",
     title: "Foundation",
-    description: "Classgrid launched as an online classroom portal connecting students and teachers through a secure login system.",
+    description: "Classgrid launched on December 25 as an AI-powered intelligent classroom ecosystem. It started as a dedicated Learning Management System (LMS), creating a seamless digital connection between students and faculty.",
+    link: "https://v1.classgrid.in",
   },
   {
     year: "Feb 2026",
     title: "Classgrid V2",
-    description: "RBAC-based administration, multi-role access, and improved management features evolved the platform beyond a classroom portal.",
+    description: "Introduced RBAC-based administration, multi-role access systems, and improved management features like Smart Attendance. By launching scalable subscription tiers\u2014supporting up to 600 students on the Free plan and 7,500 on Pro\u2014Classgrid evolved beyond a classroom portal into a smarter institutional system.",
+    link: "https://v2.classgrid.in",
   },
   {
     year: "Jul 2026",
     title: "Classgrid V3",
-    description: "41 integrated modules, Play Store launch, and dedicated dashboards for students, faculty, fees, and departments.",
+    description: "25+ integrated modules and the Play Store mobile app launched. Dedicated dashboards for students, faculty, fees, attendance, and department management created a complete ERP ecosystem.",
   },
   {
     year: "Today & Beyond",
     title: "The Future",
-    description: "Smarter AI-powered systems and advanced institutional tools for the fully digital future of education.",
+    description: "New features, smarter AI-powered systems, and advanced institutional tools are continuously being developed to help every institution move toward a fully digital future.",
   },
 ];
 
-// Cycle through icons — add more as your timeline grows
-const icons = [Lightbulb, Calendar, Settings, BarChart, Trophy, Rocket, Star, Zap, Layers, Globe];
+// Specific icons tailored for our 4 milestones:
+// 1. Foundation: Lightbulb
+// 2. V2 (RBAC): ShieldCheck
+// 3. V3 (Modules): Layers
+// 4. Future: Sparkles
+const icons = [Lightbulb, ShieldCheck, Layers, Sparkles, Rocket, Zap];
 
 // Items ≤ this count → inline grid. More → horizontal scroll mode.
 const SCROLL_THRESHOLD = 6;
@@ -210,7 +218,18 @@ export function AboutTimeline({ timeline = defaultTimeline }: AboutTimelineProps
                       {/* Content */}
                       <div className="mb-6 px-2">
                         <h3 className="mb-2 text-base font-semibold text-foreground">
-                          {item.title}
+                          {item.link ? (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline decoration-emerald-500/40 decoration-1 underline-offset-4 transition-colors hover:text-emerald-400 hover:decoration-emerald-400"
+                            >
+                              {item.title}
+                            </a>
+                          ) : (
+                            item.title
+                          )}
                         </h3>
                         <p className="mx-auto max-w-[190px] text-xs leading-relaxed text-muted-foreground">
                           {item.description}
@@ -254,7 +273,20 @@ export function AboutTimeline({ timeline = defaultTimeline }: AboutTimelineProps
                       <Icon className="h-5 w-5" strokeWidth={1.5} />
                     </div>
                     <div className="mb-1 text-sm font-bold tracking-widest text-emerald-500">{item.year}</div>
-                    <h3 className="mb-1 text-base font-semibold text-foreground">{item.title}</h3>
+                    <h3 className="mb-1 text-base font-semibold text-foreground">
+                      {item.link ? (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline decoration-emerald-500/40 decoration-1 underline-offset-4 transition-colors hover:text-emerald-400 hover:decoration-emerald-400"
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        item.title
+                      )}
+                    </h3>
                     <p className="mx-auto max-w-[260px] text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                     {index < items.length - 1 && (
                       <div className="mt-4 flex flex-col items-center">
