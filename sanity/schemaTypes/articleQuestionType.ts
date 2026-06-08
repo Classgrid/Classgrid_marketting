@@ -99,17 +99,21 @@ export const articleQuestionType = defineType({
   ],
   preview: {
     select: {
-      title: "question",
+      id: "_id",
       subtitle: "articleTitle",
       status: "status",
     },
     prepare(selection) {
-      const { title, subtitle, status } = selection;
+      const { id, subtitle, status } = selection;
       const statusEmoji = status === "new" ? "🔴" : status === "reviewed" ? "🟡" : "🟢";
-      const shortTitle = title ? (title.length > 50 ? title.substring(0, 50) + "..." : title) : "Untitled Question";
+      
+      // Use the last 4 characters of the ID to simulate a short "Ticket Number" like #A4F2
+      const shortId = id ? id.slice(-4).toUpperCase() : "NEW";
+      const pageName = subtitle || "Unknown Page";
+
       return {
-        title: `${statusEmoji} ${shortTitle}`,
-        subtitle: subtitle ? `Article: ${subtitle}` : "Unknown Article",
+        title: `${statusEmoji} Question #${shortId} ( ${pageName} )`,
+        subtitle: `ID: ${id || "new"}`,
       };
     },
   },
