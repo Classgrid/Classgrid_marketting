@@ -1,0 +1,16 @@
+{
+  "name": "Classgrid API",
+  "colors": {
+    "primary": "#34d399",
+    "light": "#34d399",
+    "dark": "#34d399"
+  },
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction"
+      ]
+    }
+  ]
+}
