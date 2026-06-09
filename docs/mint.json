@@ -8,7 +8,15 @@
   "colors": {
     "primary": "#34d399",
     "light": "#34d399",
-    "dark": "#34d399"
+    "dark": "#34d399",
+    "background": {
+      "light": "#0a0a0f",
+      "dark": "#0a0a0f"
+    }
+  },
+  "modeToggle": {
+    "default": "dark",
+    "isHidden": true
   },
   "navigation": [
     {
