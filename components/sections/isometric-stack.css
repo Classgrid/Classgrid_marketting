@@ -278,7 +278,7 @@
 .cg-iso-wrapper[data-stack-entry="collapsed"] .cg-iso-layer-container,
 .cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container {
   transition-property: transform, opacity;
-  transition-duration: 1.55s, 1.25s;
+  transition-duration: 0.8s, 0.6s;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1), ease-out;
   will-change: transform, opacity;
 }
@@ -304,11 +304,11 @@
 }
 
 .cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="0"] { transition-delay: 0ms; }
-.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="1"] { transition-delay: 120ms; }
-.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="2"] { transition-delay: 240ms; }
-.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="3"] { transition-delay: 360ms; }
-.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="4"] { transition-delay: 480ms; }
-.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="5"] { transition-delay: 600ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="1"] { transition-delay: 60ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="2"] { transition-delay: 120ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="3"] { transition-delay: 180ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="4"] { transition-delay: 240ms; }
+.cg-iso-wrapper[data-stack-entry="expanding"] .cg-iso-layer-container[data-layer="5"] { transition-delay: 300ms; }
 
 /* ═══ ZOHO-STYLE DOT LABELS — hidden on desktop, shown on mobile ═══ */
 .cg-iso-dot-labels {
