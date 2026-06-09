@@ -73,32 +73,28 @@ export function HeroSection({
           variants={{
             hidden: {},
             visible: {
-              transition: { staggerChildren: 0.03, delayChildren: 0.2 },
+              transition: { staggerChildren: 0.08, delayChildren: 0.1 },
             },
           }}
         >
           {typeof headline === "string"
             ? headline.split(" ").map((word, wordIndex) => (
-              <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.25em]">
-                {word.split("").map((char, charIndex) => (
-                  <span key={charIndex} className="inline-block overflow-hidden pb-2 -mb-2">
-                    <motion.span
-                      variants={{
-                        hidden: { y: "100%", opacity: 0 },
-                        visible: {
-                          y: "0%",
-                          opacity: 1,
-                          transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-                        },
-                      }}
-                      className="inline-block"
-                    >
-                      {char}
-                    </motion.span>
-                  </span>
-                ))}
-              </span>
-            ))
+                <span key={wordIndex} className="inline-block overflow-hidden pb-4 -mb-4 mr-[0.25em] align-bottom">
+                  <motion.span
+                    variants={{
+                      hidden: { y: "120%", opacity: 0 },
+                      visible: {
+                        y: "0%",
+                        opacity: 1,
+                        transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                      },
+                    }}
+                    className="inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                </span>
+              ))
             : headline}
         </motion.h1>
 
