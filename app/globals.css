@@ -42,7 +42,7 @@
   --secondary: #0f0f0f;
   --secondary-foreground: #ffffff;
   --muted: #141414;
-  --muted-foreground: #a3a3a3;
+  --muted-foreground: #ededed;
   --accent: #222222;
   --accent-foreground: #ffffff;
   --destructive: #f43f5e;
@@ -183,6 +183,8 @@
     color: var(--foreground);
     background-attachment: fixed;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* NOTE: overflow-x:clip on html/body breaks position:sticky on real mobile devices.

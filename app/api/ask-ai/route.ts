@@ -104,15 +104,17 @@ export async function POST(req: Request) {
     const cookieHeader = req.headers.get("cookie") || "";
     let bannedUntil: Date | null = null;
 
-    if (userEmail) {
-      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-      const previousStrike = await ModerationFlag.findOne({
-        userEmail: userEmail,
-        createdAt: { $gte: fifteenMinutesAgo }
-      } as any);
-      if (previousStrike) {
-        bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 15 * 60 * 1000);
-      }
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const queryConditions: any[] = [{ ipAddress: ip }];
+    if (userEmail) queryConditions.push({ userEmail: userEmail });
+
+    const previousStrike = await ModerationFlag.findOne({
+      $or: queryConditions,
+      createdAt: { $gte: fifteenMinutesAgo }
+    } as any);
+    
+    if (previousStrike) {
+      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 15 * 60 * 1000);
     }
 
     // Check if cookie contains a valid timestamp

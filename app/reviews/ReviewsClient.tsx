@@ -417,7 +417,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
 
                     {/* Content Body */}
                     <div className="space-y-6">
-                      <p className="text-[15px] text-muted-foreground dark:text-neutral-300 leading-relaxed font-medium">"{rev.reviewText}"</p>
+                      <p className="text-[15px] text-muted-foreground text-muted-foreground leading-relaxed font-medium">"{rev.reviewText}"</p>
                       
                       {/* Tags (System Colors) */}
                       {(rev.positives?.length || rev.moduleName) && (
@@ -426,7 +426,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                             <span className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase">{rev.moduleName}</span>
                           )}
                           {rev.positives?.map((p, i) => (
-                            <span key={i} className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground dark:text-neutral-400 text-[10px] font-bold tracking-wider uppercase">{p}</span>
+                            <span key={i} className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-muted-foreground text-[10px] font-bold tracking-wider uppercase">{p}</span>
                           ))}
                         </div>
                       )}
@@ -448,7 +448,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                             </div>
                             <div className="flex-1">
                               <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-2">Team Response</span>
-                              <p className="text-sm text-muted-foreground dark:text-neutral-300 leading-relaxed bg-muted/30 dark:bg-black/40 p-4 rounded-2xl rounded-tl-none border border-border dark:border-white/[0.03] shadow-inner">
+                              <p className="text-sm text-muted-foreground text-muted-foreground leading-relaxed bg-muted/30 dark:bg-black/40 p-4 rounded-2xl rounded-tl-none border border-border dark:border-white/[0.03] shadow-inner">
                                 {rev.adminReply}
                               </p>
                             </div>

@@ -255,7 +255,7 @@ export function DemoRequestForm({
   }) => (
     <div className="space-y-1.5">
       {label?.trim() ? (
-        <Label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
           {label} <span className="text-rose-500">*</span>
         </Label>
       ) : null}
@@ -286,7 +286,7 @@ export function DemoRequestForm({
         ) : null}
         
         {subtitle?.trim() ? (
-          <div className="mx-auto mt-6 max-w-[90%] md:max-w-2xl text-center text-[15px] md:text-base leading-[1.75] text-slate-500 dark:text-slate-400 space-y-4">
+          <div className="mx-auto mt-6 max-w-[90%] md:max-w-2xl text-center text-[15px] md:text-base leading-[1.75] text-muted-foreground space-y-4">
             {subtitle.split('\n').map((line, i) => (
               <p 
                 key={i} 
@@ -381,7 +381,7 @@ export function DemoRequestForm({
 
               <div className="space-y-1.5">
                 {(copy?.solutionLabel || "").trim() ? (
-                  <Label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                     {copy?.solutionLabel} <span className="text-rose-500">*</span>
                   </Label>
                 ) : null}
@@ -434,7 +434,7 @@ export function DemoRequestForm({
 
             <div className="space-y-1.5">
               {copy?.messageLabel?.trim() ? (
-                <Label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                   {copy?.messageLabel}
                 </Label>
               ) : null}

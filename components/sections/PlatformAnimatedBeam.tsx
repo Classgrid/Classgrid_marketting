@@ -101,7 +101,7 @@ export function PlatformAnimatedBeam({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
-                        className="text-gray-600 dark:text-gray-300 h-3 w-3 sm:h-4 sm:w-4"
+                        className="text-muted-foreground h-3 w-3 sm:h-4 sm:w-4"
                       >
                         <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4" />
                       </svg>

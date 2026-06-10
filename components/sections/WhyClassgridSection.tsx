@@ -32,7 +32,7 @@ export function WhyClassgridSection({
             {title}
           </h2>
           {description && (
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               {description}
             </p>
           )}
@@ -53,7 +53,7 @@ export function WhyClassgridSection({
                 <h3 className="mb-3 text-xl font-bold text-emerald-900 dark:text-emerald-50">
                   {card.title}
                 </h3>
-                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {card.description}
                 </p>
               </div>
