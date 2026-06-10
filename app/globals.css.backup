@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "highlight.js/styles/github-dark.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -43,7 +45,7 @@
   --secondary-foreground: #ffffff;
   --muted: #141414;
   --muted-foreground: #a3a3a3;
-  --accent: #222222;
+  --accent: #141414;
   --accent-foreground: #ffffff;
   --destructive: #f43f5e;
   --border: rgba(255, 255, 255, 0.14);
@@ -894,4 +896,66 @@
 
 .solution-html-content li {
   margin-bottom: 0.35rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SHIKI CODE BLOCK LINE NUMBERS (Supabase style)
+───────────────────────────────────────────────────────────────────────────── */
+.code-block-wrapper pre {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+}
+
+.code-block-wrapper {
+  /* Creates a continuous 3rem gutter background spanning top to bottom */
+  background: linear-gradient(to right, #1c1c1f 0%, #1c1c1f 3rem, transparent 3rem);
+}
+
+.code-block-wrapper code {
+  counter-reset: line;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.code-block-wrapper code > [data-line] {
+  padding-right: 1rem;
+  padding-left: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.code-block-wrapper code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 3rem;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  text-align: right;
+  color: #6b7280;
+  background-color: transparent; /* Background handled by linear-gradient */
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+  min-height: 1.5rem;
+}
+
+.code-block-wrapper code[data-line-numbers-max-digits="2"] > [data-line]::before {
+  width: 3rem;
+}
+
+.code-block-wrapper code[data-line-numbers-max-digits="3"] > [data-line]::before {
+  width: 4rem;
+}
+
+/* Optional: Highlight specific lines if we ever add data-highlighted-line attribute */
+.code-block-wrapper [data-highlighted-line] {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: #34d399;
 }

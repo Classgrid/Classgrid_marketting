@@ -1,0 +1,53 @@
+# Classgrid Custom Domain (White-Label) Architecture Plan
+
+This document outlines the three architectural approaches Classgrid can take to allow colleges to use their own custom domains (e.g., `portal.xyzcollege.edu`) instead of the default `xyz.classgrid.in`.
+
+## Overview of the Goal
+When a college purchases `xyzcollege.edu`, they want their Classgrid portal to be hosted directly on that domain.
+To achieve this securely, two things must happen:
+1. **Verification (TXT Record):** Prove the college owns the domain so an SSL (HTTPS) certificate can be generated.
+2. **Routing (CNAME/A Record):** Point the internet traffic from their domain to Classgrid's servers.
+
+---
+
+## Scenario 1: The "Vercel-Only" Approach
+*Best if the entire Classgrid application (Frontend + Backend APIs) moves to Vercel.*
+
+**How it works:**
+Vercel has a built-in feature called the **Vercel Domains API** designed specifically for multi-tenant SaaS platforms.
+
+1. **The College Action:** The college enters `portal.xyzcollege.edu` into their Classgrid Organization Settings dashboard.
+2. **API Trigger:** Classgrid sends an API request to Vercel: `POST /v9/projects/{id}/domains` with the new domain.
+3. **DNS Challenge Generation:** Vercel responds with a unique `TXT` verification code and a `CNAME` target (`cname.vercel-dns.com`).
+4. **College Configuration:** The college adds these records to their GoDaddy/Cloudflare account.
+5. **Auto-SSL & Routing:** Vercel continuously checks the DNS. Once verified, Vercel automatically generates an SSL certificate via Let's Encrypt and routes traffic for `xyzcollege.edu` directly to your Next.js application.
+
+---
+
+## Scenario 2: The "AWS EC2-Only" Approach (Current Setup)
+*Best if Classgrid wants to keep the main platform strictly on AWS EC2 and handle traffic directly without Vercel acting as a middleman.*
+
+**How it works:**
+Since AWS EC2 doesn't have Vercel's magic built-in, you must set up a **Reverse Proxy** at the front door of your EC2 instance. The industry standard for this is **Caddy Server** due to its "On-Demand TLS" feature.
+
+1. **The College Action:** The college adds a `CNAME` pointing `portal.xyzcollege.edu` to a generic Classgrid domain (e.g., `cname.classgrid.in`), which resolves to your EC2 Elastic IP.
+2. **The Request:** A student visits `portal.xyzcollege.edu`. The traffic hits your EC2 instance.
+3. **Caddy Interception:** Caddy Server receives the request. It notices it has never seen `xyzcollege.edu` before.
+4. **On-Demand SSL Generation:** Caddy pauses the request, talks to Let's Encrypt in the background, verifies the DNS points to your server, and generates an SSL certificate in milliseconds.
+5. **Routing to App:** Caddy saves the certificate and securely passes the traffic to your Node.js/Python backend running on a local port (e.g., `localhost:3000`).
+
+---
+
+## Scenario 3: The "Hybrid Proxy" Approach (Vercel + EC2)
+*Best of both worlds: Vercel handles the headache of SSL/DNS management, while EC2 handles the heavy-lifting databases and backend processing.*
+
+**How it works:**
+You use Vercel exclusively as an "Edge Proxy" or "Front Door", relying on Vercel's Domains API, but the actual data lives on AWS.
+
+1. **Vercel Domain Management:** Follow the exact same steps as Scenario 1. Vercel automatically generates the TXT/CNAME records and provisions the SSL certificate for `xyzcollege.edu`.
+2. **Traffic Hits Vercel:** A student visits `xyzcollege.edu`. The request securely enters Vercel's global edge network.
+3. **Next.js Middleware Rewrite:** Your Next.js app on Vercel runs a middleware script that detects the hostname (`xyzcollege.edu`).
+4. **Secret Fetch to EC2:** Next.js uses `NextResponse.rewrite()` to secretly proxy the request to your AWS EC2 instance (e.g., `http://<ec2-ip>/api/data?tenant=xyzcollege.edu`).
+5. **Response Delivery:** EC2 processes the heavy logic, sends the payload back to Vercel, and Vercel serves the final HTML/JSON back to the student.
+
+*Note: In this scenario, the EC2 server does not need to manage custom domains or SSL certificates at all. It only ever talks securely to Vercel.*

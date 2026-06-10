@@ -1,0 +1,1 @@
+const { createClient } = require('next-sanity'); const client = createClient({projectId: 'a4wk6kp5', dataset: 'production', apiVersion: '2026-03-30', useCdn: false}); client.fetch('*[_type == "apiDoc" && slug.current == "introduction"][0]').then(doc => console.log(doc.content.substring(doc.content.length - 800)));

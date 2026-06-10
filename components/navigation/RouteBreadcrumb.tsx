@@ -105,12 +105,12 @@ export function RouteBreadcrumb() {
   // Hide breadcrumb on top-level pages where it's redundant (just shows the page name)
   // Keep it for nested routes like /solutions/for-schools, /changelog/slug, /case-studies/slug
   const topLevelHidden = ["/team", "/acknowledgement", "/community", "/about", "/pricing", "/blog", "/changelog", "/contact", "/case-studies"];
-  const isHidden = topLevelHidden.includes(pathname) || pathname.startsWith("/compare");
+  const isHidden = topLevelHidden.includes(pathname) || pathname.startsWith("/compare") || pathname.startsWith("/docs");
 
   if (isHidden || items.length === 0) return null;
 
   return (
-    <div className="border-b border-border/40 bg-background/80">
+    <div className="bg-background/80">
       <div className="container mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
         <AppBreadcrumb items={items} />
       </div>

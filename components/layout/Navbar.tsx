@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { getDictionary } from "@/lib/i18n-dictionary";
 import { 
-  Menu, X, ArrowRight, Bot, ChevronDown,
+  Menu, X, ArrowRight, Bot, ChevronDown, Search,
   School, Building2, GraduationCap, BookOpen, Cpu, User, UserCog,
   ShieldCheck, Sun, Moon, Laptop,
   type LucideIcon
@@ -59,6 +59,9 @@ type NavbarProps = {
   onAskAiClick?: () => void;
   askAiPrompt?: string;
   showAskAiPrompt?: boolean;
+  /** When true, hides CTAs and shows "Search Documentation" button */
+  docsMode?: boolean;
+  onDocsSearchClick?: () => void;
 };
 
 function isExternalHref(href: string) {
@@ -146,6 +149,8 @@ export function Navbar({
   onAskAiClick,
   askAiPrompt,
   showAskAiPrompt,
+  docsMode,
+  onDocsSearchClick,
 }: NavbarProps) {
   const [showNewBadge, setShowNewBadge] = React.useState(false);
   const [menuValue, setMenuValue] = React.useState("");
@@ -426,17 +431,17 @@ export function Navbar({
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:text-white",
-                  showAskAiPrompt ? "border-emerald-500/35 shadow-[0_0_18px_rgba(16,185,129,0.14)]" : ""
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer",
+                  showAskAiPrompt ? "border-white/[0.2] shadow-[0_0_14px_rgba(255,255,255,0.06)]" : ""
                 )}
                 onClick={onAskAiClick}
               >
-                <Bot className="mr-2 h-4 w-4 text-emerald-500" />
+                <Bot className="mr-2 h-4 w-4 text-white/60" />
                 {dict.askAi}
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-black" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/50 opacity-60" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white/80 ring-2 ring-black" />
                   </span>
                 ) : null}
               </Button>
@@ -448,39 +453,58 @@ export function Navbar({
             </div>
           ) : null}
 
-          {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
-            <Button asChild variant="outline" className="hidden h-9 rounded-lg border-white/[0.12] bg-white/[0.04] px-4 text-[13px] font-medium tracking-tight text-white/90 shadow-sm transition-all duration-200 hover:border-white/[0.2] hover:bg-white/[0.08] hover:text-white lg:inline-flex">
-              <Link
-                href={secondaryLinkHref}
-                prefetch={false}
-                target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}
-                rel={isExternalHref(secondaryLinkHref) ? "noopener noreferrer" : undefined}
-              >
-                {secondaryLinkLabel}
-              </Link>
+          {/* Docs mode: show search button instead of CTAs */}
+          {docsMode ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="hidden h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-3 text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white md:inline-flex items-center gap-2 cursor-pointer"
+              onClick={onDocsSearchClick}
+            >
+              <Search className="h-3.5 w-3.5 text-white/50" />
+              <span className="hidden lg:inline">Search Documentation</span>
+              <span className="lg:hidden">Search</span>
+              <kbd className="ml-1 hidden sm:inline-flex items-center gap-0.5 rounded-[5px] border border-white/[0.1] bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-medium text-white/35 cursor-pointer">
+                Ctrl K
+              </kbd>
             </Button>
-          ) : null}
+          ) : (
+            <>
+              {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
+                <Button asChild variant="outline" className="hidden h-9 rounded-lg border-white/[0.12] bg-white/[0.04] px-4 text-[13px] font-medium tracking-tight text-white/90 shadow-sm transition-all duration-200 hover:border-white/[0.2] hover:bg-white/[0.08] hover:text-white lg:inline-flex">
+                  <Link
+                    href={secondaryLinkHref}
+                    prefetch={false}
+                    target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}
+                    rel={isExternalHref(secondaryLinkHref) ? "noopener noreferrer" : undefined}
+                  >
+                    {secondaryLinkLabel}
+                  </Link>
+                </Button>
+              ) : null}
 
-          {primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
-            <Button asChild className="hidden h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110 md:inline-flex">
-              <Link
-                href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
-                prefetch={false}
-                target={isExternalHref(primaryCtaHref) ? "_blank" : undefined}
-                rel={isExternalHref(primaryCtaHref) ? "noopener noreferrer" : undefined}
-                onClick={(e) => {
-                  const resolvedHref = resolveCtaHref(primaryCtaLabel, primaryCtaHref);
-                  if (resolvedHref.startsWith("/#") && window.location.pathname !== "/") {
-                    e.preventDefault();
-                    window.sessionStorage.setItem("classgrid-scroll-target", resolvedHref.split("#")[1]);
-                    window.location.assign("/");
-                  }
-                }}
-              >
-                {primaryCtaLabel}
-              </Link>
-            </Button>
-          ) : null}
+              {primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
+                <Button asChild className="hidden h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110 md:inline-flex">
+                  <Link
+                    href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
+                    prefetch={false}
+                    target={isExternalHref(primaryCtaHref) ? "_blank" : undefined}
+                    rel={isExternalHref(primaryCtaHref) ? "noopener noreferrer" : undefined}
+                    onClick={(e) => {
+                      const resolvedHref = resolveCtaHref(primaryCtaLabel, primaryCtaHref);
+                      if (resolvedHref.startsWith("/#") && window.location.pathname !== "/") {
+                        e.preventDefault();
+                        window.sessionStorage.setItem("classgrid-scroll-target", resolvedHref.split("#")[1]);
+                        window.location.assign("/");
+                      }
+                    }}
+                  >
+                    {primaryCtaLabel}
+                  </Link>
+                </Button>
+              ) : null}
+            </>
+          )}
 
           <div className="md:hidden">
             {/* Mobile hamburger / close toggle */}

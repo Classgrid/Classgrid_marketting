@@ -5,16 +5,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-
-type PageType = 'compare' | 'blog' | 'module' | 'solution' | 'case-study' | 'use-case' | 'help-article' | 'general';
+type PageType = 'compare' | 'blog' | 'module' | 'solution' | 'case-study' | 'use-case' | 'help-article' | 'docs' | 'general';
 
 type FeedbackWidgetProps = {
   pageTitle: string;
   pageType?: PageType;
   className?: string;
+  hideMessage?: boolean;
 };
 
-export function FeedbackWidget({ pageTitle, pageType = 'general', className }: FeedbackWidgetProps) {
+export function FeedbackWidget({ pageTitle, pageType = 'general', className, hideMessage = false }: FeedbackWidgetProps) {
   // Feedback State
   const [feedbackState, setFeedbackState] = useState<'idle' | 'opened' | 'submitted' | 'error'>('idle');
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -74,10 +74,12 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
         ) : (
           <>
             {/* Top Row: Label + Emojis */}
-            <div className="flex items-center justify-between px-4 py-2.5 w-full">
-              <span className="text-[13px] font-medium text-slate-600 dark:text-neutral-400">
-                Was this helpful?
-              </span>
+            <div className={cn("flex items-center px-4 py-2.5 w-full", pageType === 'docs' ? "justify-center" : "justify-between")}>
+              {pageType !== 'docs' && (
+                <span className="text-[13px] font-medium text-slate-600 dark:text-neutral-400">
+                  Was this helpful?
+                </span>
+              )}
 
               <div className="flex items-center gap-1">
                 {['🤩', '😐', '😞', '😭'].map((emoji) => {
@@ -91,14 +93,35 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className }: F
                     <button
                       key={emoji}
                       aria-label={labels[emoji]}
-                      onClick={() => {
+                      onClick={async () => {
                         if (selectedEmoji === emoji && feedbackState === 'opened') {
                           // Clicking the already-selected emoji collapses the card
                           setSelectedEmoji(null);
                           setFeedbackState('idle');
                         } else {
                           setSelectedEmoji(emoji);
-                          setFeedbackState('opened');
+                          if (hideMessage) {
+                            // OPTIMISTIC UI: Immediately show success state so it feels instant
+                            setFeedbackState('submitted');
+                            
+                            // Send to API in the background
+                            fetch('/api/feedback', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                reaction: emoji,
+                                message: '',
+                                pageUrl: window.location.href,
+                                pageTitle: pageTitle,
+                                pageType: pageType,
+                              }),
+                            }).catch((e) => {
+                              console.error('Background feedback submission failed:', e);
+                              // If it fails, we silently log it so the user's UX isn't interrupted
+                            });
+                          } else {
+                            setFeedbackState('opened');
+                          }
                         }
                       }}
                       className={cn(
