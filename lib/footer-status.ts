@@ -22,6 +22,15 @@ const FOOTER_STATUS_DOT_CLASS_MAP: Record<FooterStatusState, string> = {
   automatic: "bg-emerald-500", // Fallback for automatic while loading
 };
 
+const FOOTER_STATUS_TEXT_CLASS_MAP: Record<FooterStatusState, string> = {
+  operational: "text-emerald-500",
+  degraded: "text-amber-500",
+  partial_outage: "text-orange-500",
+  major_outage: "text-red-500",
+  maintenance: "text-blue-500",
+  automatic: "text-emerald-500",
+};
+
 const FOOTER_STATUS_DEFAULT_LABEL_MAP: Record<FooterStatusState, string> = {
   operational: "Operational",
   degraded: "Degraded Performance",
@@ -44,6 +53,10 @@ export function normalizeFooterStatusState(state?: string | null): FooterStatusS
 
 export function getFooterStatusDotClass(state?: string | null): string {
   return FOOTER_STATUS_DOT_CLASS_MAP[normalizeFooterStatusState(state)];
+}
+
+export function getFooterStatusTextClass(state?: string | null): string {
+  return FOOTER_STATUS_TEXT_CLASS_MAP[normalizeFooterStatusState(state)];
 }
 
 export function getFooterStatusLabel(state?: string | null, label?: string | null): string {
@@ -101,7 +114,19 @@ export async function fetchLiveStatus(pageId: string): Promise<{ state: FooterSt
     // 2. Map Statuspage indicators to our FooterStatusState
     // Statuspage indicators: none, minor, major, critical
     const indicator = data.status.indicator; 
-    const description = data.status.description; // e.g. "All Systems Operational"
+    
+    // Default to the generic description (e.g. "All Systems Operational")
+    let description = data.status.description; 
+
+    // If there is an active incident, use the actual custom incident name!
+    if (data.incidents && data.incidents.length > 0) {
+      const activeIncident = data.incidents.find((i: any) => 
+        i.status === "investigating" || i.status === "identified" || i.status === "monitoring"
+      );
+      if (activeIncident && activeIncident.name) {
+        description = activeIncident.name;
+      }
+    }
 
     let state: FooterStatusState = "operational";
     if (indicator === "minor") state = "degraded";

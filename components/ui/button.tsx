@@ -52,7 +52,7 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, showGlow = true, glowVariant = "emerald", children, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, showGlow = false, glowVariant = "emerald", children, ...props }, ref) => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 

@@ -1,0 +1,70 @@
+'use client';
+
+import { useState } from 'react';
+import { Check, Copy } from 'lucide-react';
+
+// Maps languages to short badges like Vercel does
+const LANG_BADGES: Record<string, string> = {
+  javascript: 'JS',
+  typescript: 'TS',
+  jsx: 'JSX',
+  tsx: 'TSX',
+  bash: 'SH',
+  json: 'JSON',
+  html: 'HTML',
+  css: 'CSS',
+  python: 'PY',
+};
+
+export function CodeBlockClient({ rawCode, html, language = 'javascript' }: { rawCode: string; html: string; language?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(rawCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const badgeText = LANG_BADGES[language] || language.toUpperCase().substring(0, 4);
+
+  // Attempt to extract filename from the first line if it's a comment
+  const lines = rawCode.split('\n');
+  let filename = '';
+  if (lines[0] && lines[0].startsWith('// ') && lines[0].includes('.')) {
+    filename = lines[0].replace('// ', '').trim();
+  } else if (lines[0] && lines[0].startsWith('# ') && lines[0].includes('.')) {
+    filename = lines[0].replace('# ', '').trim();
+  }
+
+  return (
+    <div className="group relative my-6 rounded-xl border border-white/10 bg-[#111113] overflow-hidden text-sm shadow-xl">
+      {/* Vercel-style Code Header */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 bg-[#18181b]">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center justify-center bg-white/10 text-zinc-300 text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] min-w-[24px] tracking-wider">
+            {badgeText}
+          </span>
+          {filename && (
+            <span className="text-zinc-400 text-[13px] font-mono tracking-tight">
+              {filename}
+            </span>
+          )}
+        </div>
+        
+        <button
+          onClick={onCopy}
+          className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md text-xs text-zinc-400 hover:text-white hover:bg-white/5"
+          title="Copy code"
+        >
+          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+        </button>
+      </div>
+
+      {/* Code Content */}
+      <div 
+        className="relative overflow-auto max-h-[32rem] text-sm code-block-wrapper custom-scrollbar [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0" 
+        dangerouslySetInnerHTML={{ __html: html }} 
+      />
+    </div>
+  );
+}

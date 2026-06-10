@@ -194,7 +194,7 @@ export function ViewPlatformPreview() {
           </Badge>
           <SectionAccentBar className="mt-6" />
 
-          <h1 className="mt-6 mx-auto max-w-4xl text-balance text-4xl font-black leading-[0.95] tracking-[-0.04em] md:text-5xl lg:text-6xl bg-linear-to-r from-emerald-300 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="mt-6 mx-auto max-w-4xl text-balance text-4xl font-black leading-[0.95] tracking-[-0.04em] md:text-5xl lg:text-6xl bg-linear-to-r from-emerald-300 via-cyan-300 to-emerald-400 bg-clip-text text-transparent pb-4">
             Experience Classgrid
           </h1>
 

@@ -9,6 +9,7 @@ import { LanguageSelector } from "@/components/ui/language-selector";
 import {
   fetchLiveStatus,
   getFooterStatusDotClass,
+  getFooterStatusTextClass,
   getFooterStatusLabel,
   resolveFooterCopyrightText,
   type FooterStatusState,
@@ -17,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { getDictionary } from "@/lib/i18n-dictionary";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-type FooterLink = { label?: string; href?: string };
+type FooterLink = { label?: string; href?: string; isNew?: boolean };
 type FooterColumn = { heading?: string; links?: FooterLink[] };
 type SocialLink = { platform?: string; href?: string };
 
@@ -120,6 +121,25 @@ export function Footer({
     };
   }
 
+  // Inject Documentation link into Resources column
+  const resourcesColIndex = footerColumns.findIndex(c =>
+    c?.heading?.toLowerCase().includes('resources') ||
+    c?.heading?.toLowerCase().includes('resource')
+  );
+
+  if (resourcesColIndex !== -1) {
+    const hasDocs = footerColumns[resourcesColIndex].links?.some(l => l.href === '/docs');
+    if (!hasDocs) {
+      footerColumns[resourcesColIndex] = {
+        ...footerColumns[resourcesColIndex],
+        links: [
+          ...(footerColumns[resourcesColIndex].links || []),
+          { label: 'Docs', href: '/docs', isNew: true }
+        ]
+      };
+    }
+  }
+
   const legalItems = (Array.isArray(legalLinks) ? legalLinks : [])
     .filter((l) => l?.label?.trim() && l?.href?.trim());
 
@@ -150,6 +170,7 @@ export function Footer({
     : statusLabel;
 
   const statusDotClass = getFooterStatusDotClass(finalStatusState);
+  const statusTextClass = getFooterStatusTextClass(finalStatusState);
 
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang");
@@ -179,7 +200,7 @@ export function Footer({
                 )}
                 <ul className="space-y-[10px]">
                   {links.map((link) => (
-                    <li key={`${column.heading}-${link.label}`}>
+                    <li key={`${column.heading}-${link.label}`} className="flex items-center gap-2">
                       <Link
                         href={resolveHref(link.label!, link.href!)}
                         prefetch={false}
@@ -189,6 +210,11 @@ export function Footer({
                       >
                         {link.label}
                       </Link>
+                      {link.isNew && (
+                        <span className="rounded-md border border-emerald-400/30 bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-emerald-500">
+                          NEW
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -276,45 +302,6 @@ export function Footer({
                   );
                 })}
               </div>
-
-              {/* ── Google Play Badge ── */}
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Get ClassGrid on Google Play"
-                className="mt-5 inline-flex items-center gap-3 rounded-xl border border-border bg-black px-4 py-2.5 transition-colors duration-200 hover:border-emerald-500/50 dark:bg-white/5"
-              >
-                {/* Colorful Google Play triangle */}
-                <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="gp-a" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#00C3FF" />
-                      <stop offset="100%" stopColor="#1976D2" />
-                    </linearGradient>
-                    <linearGradient id="gp-b" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#FFD740" />
-                      <stop offset="100%" stopColor="#FF8F00" />
-                    </linearGradient>
-                    <linearGradient id="gp-c" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#F44336" />
-                      <stop offset="100%" stopColor="#B71C1C" />
-                    </linearGradient>
-                    <linearGradient id="gp-d" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#00E676" />
-                      <stop offset="100%" stopColor="#00796B" />
-                    </linearGradient>
-                  </defs>
-                  <path fill="url(#gp-a)" d="M3.18 23.76A2 2 0 0 1 2 22V2A2 2 0 0 1 3.18.24L13.9 11 3.18 23.76z" />
-                  <path fill="url(#gp-b)" d="M17.5 14.5 5.5 21.8l-.32.18 9.44-10.42L17.5 14.5z" />
-                  <path fill="url(#gp-c)" d="M21.25 10.7c.5.28.75.65.75 1.3s-.25 1.02-.75 1.3L18 15l-3.38-3.56L18 8l3.25 2.7z" />
-                  <path fill="url(#gp-d)" d="M5.18 2.02 17.5 9.5l-2.88 2.94L5.18 2.02z" />
-                </svg>
-                <div className="flex flex-col leading-none">
-                  <span className="text-[9px] font-medium tracking-wide text-white/50 uppercase">Get it on</span>
-                  <span className="text-[13px] font-semibold text-white">Google Play</span>
-                </div>
-              </a>
             </div>
           )}
         </div>
@@ -369,25 +356,25 @@ export function Footer({
           <div className="flex items-center justify-between gap-4">
 
             {/* LEFT — status */}
-            <div className="text-[12px] text-muted-foreground min-w-[200px]">
-              <span className="flex items-center gap-1.5">
-                <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${statusDotClass}`} />
+            <div className={`text-[13px] min-w-[200px] font-medium tracking-wide ${statusTextClass}`}>
+              <span className="flex items-center gap-2">
+                <span className={`h-2 w-2 animate-pulse rounded-full ${statusDotClass}`} />
                 {!liveStatus && !statusLabel ? (
                   // Skeleton placeholder — same approximate width as the real label.
                   // Prevents layout shift when the fetch resolves.
-                  <span className="inline-block h-3 w-36 animate-pulse rounded bg-muted-foreground/20" />
+                  <span className={`inline-block h-3.5 w-40 animate-pulse rounded ${statusDotClass} opacity-20`} />
                 ) : resolvedStatusHref ? (
                   <Link
                     href={resolvedStatusHref}
                     prefetch={false}
                     target={isExternal(resolvedStatusHref) ? "_blank" : undefined}
                     rel={isExternal(resolvedStatusHref) ? "noopener noreferrer" : undefined}
-                    className="transition-colors hover:text-emerald-500"
+                    className="transition-opacity hover:opacity-80 capitalize"
                   >
-                    {finalStatusLabel}
+                    {finalStatusLabel.toLowerCase()}
                   </Link>
                 ) : (
-                  <span>{finalStatusLabel}</span>
+                  <span className="capitalize">{finalStatusLabel.toLowerCase()}</span>
                 )}
               </span>
             </div>
