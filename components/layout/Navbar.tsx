@@ -426,7 +426,7 @@ export function Navbar({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-0 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
 
           {typeof onAskAiClick === "function" ? (
             <div className="relative inline-flex">
