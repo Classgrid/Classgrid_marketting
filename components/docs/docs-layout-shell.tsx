@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PanelLeft, ChevronRight, Menu, FileText, Search } from 'lucide-react';
+import { PanelLeft, ChevronRight, Menu, FileText, Search, X } from 'lucide-react';
 import { DocsSidebar, SIDEBAR_SECTIONS } from '@/components/docs/docs-sidebar';
 import { DocsToc } from '@/components/docs/docs-toc';
 import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
@@ -99,7 +99,16 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
               transition={{ duration: 0.2 }}
               className="absolute top-12 left-0 right-0 bg-[#0a0a0a] border-b border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-7rem)] px-4 py-4 z-[70]"
             >
-              <div className="flex items-center gap-2 mb-2 mt-2 px-2" />
+              <div className="flex items-center justify-between mb-3 mt-1 px-2">
+                <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Navigation</span>
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </motion.button>
+              </div>
               <div 
                 className="flex flex-col mt-2"
                 onClick={(e) => {
@@ -123,8 +132,15 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
               transition={{ duration: 0.2 }}
               className="absolute top-12 right-4 w-64 bg-[#111111] border border-white/10 rounded-lg shadow-2xl overflow-y-auto max-h-[60vh] py-2 z-[70]"
             >
-              <div className="px-4 py-2 mb-1 border-b border-white/5">
+              <div className="px-4 py-2 mb-1 border-b border-white/5 flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">On this page</span>
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  onClick={() => setMobileTocOpen(false)}
+                  className="p-1 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </motion.button>
               </div>
               <div className="flex flex-col mt-2">
                 {headings.length > 0 ? headings.map((heading) => (
