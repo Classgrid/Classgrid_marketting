@@ -22,9 +22,10 @@ interface BaseTemplateProps {
   content: string;
   title?: string;
   ignoreText?: string | null;
+  hideSupportLink?: boolean;
 }
 
-export function baseTemplate({ content, title = "Notification", ignoreText = null }: BaseTemplateProps): string {
+export function baseTemplate({ content, title = "Notification", ignoreText = null, hideSupportLink = false }: BaseTemplateProps): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,11 +126,13 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
 
 ${content}
 
+${hideSupportLink ? '' : `
 <div style="margin-top:30px;">
 <p style="color:#9ca3af;font-size:13px;margin:0;">
 Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
 </p>
 </div>
+`}
 
 </td>
 </tr>
@@ -343,5 +346,36 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
     content,
     title: "Demo Booking Confirmed",
     ignoreText: "You are receiving this because you booked a demo with Classgrid."
+  });
+}
+
+// ------------- ADMIN DEMO NOTIFICATION -------------
+export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl: string): string {
+  const content = `
+    <h1>New Demo Scheduled!</h1>
+    <p>A new demo has been booked and confirmed by <strong>${lead.adminName}</strong>.</p>
+    
+    <div class="box">
+      <div class="meta">Meeting Details</div>
+      <p><strong>Date & Time:</strong> <span style="color: #10b981; font-weight: bold;">${dateStr}</span></p>
+      <p><strong>Meeting Link:</strong> <a href="${meetUrl}" style="color: #10b981;">${meetUrl}</a></p>
+      
+      <div class="meta" style="margin-top: 24px;">Lead Information</div>
+      <p><strong>Name:</strong> ${lead.adminName}</p>
+      <p><strong>Email:</strong> ${lead.adminEmail}</p>
+      <p><strong>Phone:</strong> ${lead.adminPhone || "N/A"}</p>
+      <p><strong>Institution:</strong> ${lead.institutionName}</p>
+      <p><strong>Organization Type:</strong> ${lead.orgType}</p>
+      <p><strong>Location:</strong> ${lead.city || "N/A"}, ${lead.state || "N/A"}</p>
+      <p><strong>Message:</strong> ${lead.message || "N/A"}</p>
+    </div>
+    
+    <p>These meeting details have been successfully synced to the dashboard. Please ensure a team member is prepared for the meeting!</p>
+  `;
+  return baseTemplate({
+    content,
+    title: "New Demo Booked",
+    ignoreText: "Automated notification from Classgrid Admin System.",
+    hideSupportLink: true
   });
 }

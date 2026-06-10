@@ -13,7 +13,7 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, city, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote } = body;
+    const { name, email, phone, city, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote, resumeUrl } = body;
 
     if (!email?.trim() || !name?.trim() || !role?.trim() || !phone?.trim()) {
       return NextResponse.json(
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail({
       from: getNoReplyAddress(),
-      to: "nikhilsubsun123@gmail.com",
+      to: "support@classgrid.in",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
       text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nTech Stack: ${techStackItems.join(", ")}`,
@@ -107,6 +107,10 @@ export async function POST(request: NextRequest) {
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Twitter / X</td>
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedTwitter !== "Not provided" ? `<a href="${sanitizedTwitter}" style="color:#10b981;text-decoration:none;">${sanitizedTwitter}</a>` : "Not provided"}</td>
       </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Resume</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${resumeUrl ? `<a href="${resumeUrl}" style="color:#10b981;text-decoration:none;font-weight:bold;">📥 Download Resume</a>` : "No resume attached"}</td>
+      </tr>
     </table>
     
     <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
@@ -134,6 +138,14 @@ export async function POST(request: NextRequest) {
   </div>
 </div>
 </body></html>`,
+      ...(resumeUrl && {
+        attachments: [
+          {
+            filename: `Resume_${sanitizedName.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`,
+            href: resumeUrl,
+          },
+        ],
+      }),
     });
 
     return NextResponse.json({
