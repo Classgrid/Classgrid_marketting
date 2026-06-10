@@ -90,6 +90,11 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                   </h3>
                 );
               },
+              table: ({ children, ...props }) => (
+                <div className="overflow-x-auto w-full my-8 pb-4 custom-scrollbar">
+                  <table {...props} className="w-full text-left border-collapse min-w-[600px]">{children}</table>
+                </div>
+              ),
             }}
           >
             {doc.content}
