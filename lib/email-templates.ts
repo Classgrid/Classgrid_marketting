@@ -22,9 +22,10 @@ interface BaseTemplateProps {
   content: string;
   title?: string;
   ignoreText?: string | null;
+  hideSupportLink?: boolean;
 }
 
-export function baseTemplate({ content, title = "Notification", ignoreText = null }: BaseTemplateProps): string {
+export function baseTemplate({ content, title = "Notification", ignoreText = null, hideSupportLink = false }: BaseTemplateProps): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,11 +126,13 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
 
 ${content}
 
+${hideSupportLink ? '' : `
 <div style="margin-top:30px;">
 <p style="color:#9ca3af;font-size:13px;margin:0;">
 Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
 </p>
 </div>
+`}
 
 </td>
 </tr>
@@ -367,11 +370,12 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
       <p><strong>Message:</strong> ${lead.message || "N/A"}</p>
     </div>
     
-    <p>This lead has already been saved to the database. Please ensure a team member is prepared for the meeting!</p>
+    <p>These meeting details have been successfully synced to the dashboard. Please ensure a team member is prepared for the meeting!</p>
   `;
   return baseTemplate({
     content,
     title: "New Demo Booked",
-    ignoreText: "Automated notification from Classgrid Admin System."
+    ignoreText: "Automated notification from Classgrid Admin System.",
+    hideSupportLink: true
   });
 }
