@@ -423,7 +423,7 @@ export function Navbar({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-0 md:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
 
           {typeof onAskAiClick === "function" ? (
             <div className="relative inline-flex">
@@ -458,14 +458,14 @@ export function Navbar({
             <Button
               type="button"
               variant="outline"
-              className="hidden h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-3 text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white md:inline-flex items-center gap-2 cursor-pointer"
+              className="h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white inline-flex items-center gap-1.5 md:gap-2 cursor-pointer"
               onClick={onDocsSearchClick}
             >
               <Search className="h-3.5 w-3.5 text-white/50" />
               <span className="hidden lg:inline">Search Documentation</span>
-              <span className="lg:hidden">Search</span>
+              <span className="inline lg:hidden">Search...</span>
               <kbd className="ml-1 hidden sm:inline-flex items-center gap-0.5 rounded-[5px] border border-white/[0.1] bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-medium text-white/35 cursor-pointer">
-                Ctrl K
+                ⌘K
               </kbd>
             </Button>
           ) : (

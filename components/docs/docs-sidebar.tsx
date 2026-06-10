@@ -16,7 +16,7 @@ type SidebarSection = {
   items: SidebarItem[];
 };
 
-const SIDEBAR_SECTIONS: SidebarSection[] = [
+export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     title: 'Getting Started',
     items: [
@@ -132,9 +132,9 @@ function CollapsibleSection({ section }: { section: SidebarSection }) {
   );
 }
 
-export function DocsSidebar() {
+export function DocsSidebar({ className }: { className?: string }) {
   return (
-    <aside className="w-[260px] hidden lg:block h-full pb-8 overflow-y-auto border-r border-white/10 pr-2 custom-scrollbar">
+    <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-auto border-r border-white/10 pr-2 custom-scrollbar"}>
       <div className="flex flex-col divide-y divide-white/[0.06] pt-2">
         {SIDEBAR_SECTIONS.map((section) => (
           <CollapsibleSection key={section.title} section={section} />
