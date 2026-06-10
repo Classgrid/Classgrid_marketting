@@ -38,26 +38,31 @@ export default async function Page() {
   
   const roles: SalesRole[] = [
     // ── Engineering ──
-    { label: "Full Stack Engineer", value: "fullstack_eng" },
-    { label: "Backend Engineer", value: "backend_eng" },
-    { label: "Frontend Engineer", value: "frontend_eng" },
-    { label: "Mobile Engineer", value: "mobile_eng" },
-    { label: "AI / ML Engineer", value: "ai_eng" },
-    { label: "Real-Time Engineer", value: "realtime_eng" },
-    { label: "Database Engineer", value: "db_eng" },
+    { label: "Full Stack Web Developer", value: "fullstack_web" },
+    { label: "Frontend Web Developer", value: "frontend_web" },
+    { label: "Backend Web Developer", value: "backend_web" },
+    { label: "Software Engineer", value: "software_eng" },
+    { label: "Mobile App Developer", value: "mobile_eng" },
+    { label: "AI / Machine Learning Engineer", value: "ai_eng" },
+    { label: "Data Scientist", value: "data_scientist" },
+    { label: "Database Administrator", value: "db_admin" },
     { label: "DevOps & Cloud Engineer", value: "devops_eng" },
     { label: "QA & Testing Engineer", value: "qa_eng" },
-    // ── Marketing & Growth ──
-    { label: "SEO & Content Specialist", value: "seo" },
+    // ── Product & Design ──
+    { label: "Product Manager", value: "pm" },
+    { label: "UI/UX Designer", value: "designer" },
+    { label: "Graphic Designer", value: "graphic_designer" },
+    // ── Marketing & Sales ──
     { label: "Growth & Marketing Lead", value: "growth_lead" },
-    { label: "Product Analytics", value: "analytics" },
+    { label: "SEO & Content Specialist", value: "seo" },
     { label: "Technical Content Writer", value: "tech_writer" },
     { label: "Sales Executive", value: "sales" },
-    // ── Design ──
-    { label: "UI/UX Designer", value: "designer" },
+    { label: "Customer Success Manager", value: "customer_success" },
     // ── Internships ──
-    { label: "Internship — Engineering", value: "intern_eng" },
-    { label: "Internship — Design", value: "intern_design" },
+    { label: "Internship — Full Stack Development", value: "intern_fullstack" },
+    { label: "Internship — Frontend Development", value: "intern_frontend" },
+    { label: "Internship — Backend Development", value: "intern_backend" },
+    { label: "Internship — UI/UX Design", value: "intern_design" },
     { label: "Internship — Marketing & Growth", value: "intern_mktg" },
   ];
 
