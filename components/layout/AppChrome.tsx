@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AskAiPanel } from "@/components/layout/AskAiPanel";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { DocsSearchPalette } from "@/components/docs/docs-search-palette";
 import { RouteBreadcrumb } from "@/components/navigation/RouteBreadcrumb";
 import { StructuredData } from "@/components/sections/StructuredData";
 import { SmoothScrollHandler } from "@/components/layout/SmoothScrollHandler";
@@ -103,10 +104,29 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
   const isStudioRoute = pathname.startsWith("/studio");
   const isAuthRoute = pathname === "/login";
   const [askAiOpen, setAskAiOpen] = useState(false);
+  const [docsSearchOpen, setDocsSearchOpen] = useState(false);
   const [pageTitle, setPageTitle] = useState(chromeContent?.brandName || "Classgrid");
+  const isDocsRoute = pathname.startsWith("/docs");
   const [showPromptBubble, setShowPromptBubble] = useState(false);
   const [promptStorageKey, setPromptStorageKey] = useState("");
   const [currentHash, setCurrentHash] = useState("");
+
+  // Global Ctrl+K / Cmd+K shortcut for docs search (capture phase to beat browser defaults)
+  useEffect(() => {
+    if (!isDocsRoute) return;
+
+    function handleDocsSearchShortcut(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        e.stopPropagation();
+        setDocsSearchOpen((prev) => !prev);
+      }
+    }
+
+    // Use capture phase to intercept before Chrome's address bar Ctrl+K
+    document.addEventListener("keydown", handleDocsSearchShortcut, true);
+    return () => document.removeEventListener("keydown", handleDocsSearchShortcut, true);
+  }, [isDocsRoute]);
 
   useEffect(() => {
     setPageTitle(cleanDocumentTitle(document.title, chromeContent?.brandName));
@@ -226,11 +246,13 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             onAskAiClick={() => setAskAiOpen(true)}
             askAiPrompt={pagePrompt}
             showAskAiPrompt={showPromptBubble && !askAiOpen}
+            docsMode={isDocsRoute}
+            onDocsSearchClick={() => setDocsSearchOpen(true)}
           />
         </Suspense>
-        {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && <RouteBreadcrumb />}
+        {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}
         <SmoothScrollHandler />
-        <main className="flex-1 overflow-x-clip">{children}</main>
+        <main className={`flex-1 ${isDocsRoute ? '' : 'overflow-x-clip'}`}>{children}</main>
         <Suspense fallback={null}>
           <Footer
             brandName={chromeContent?.brandName}
@@ -252,6 +274,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
           />
         </Suspense>
         <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
+        {isDocsRoute && (
+          <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
+        )}
       </div>
     </>
   );

@@ -475,6 +475,18 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
 
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`classgrid:ai-feedback:${messageId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.feedback === "up" || parsed.feedback === "down") {
+          setFeedback(parsed.feedback);
+        }
+      }
+    } catch (e) {}
+  }, [messageId]);
+
   async function handleCopy() {
     try {
       // Strip bold markers and links for plain text copy
@@ -491,7 +503,17 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   }
 
   function handleFeedback(type: "up" | "down") {
-    setFeedback(type === feedback ? null : type);
+    const newFeedback = type === feedback ? null : type;
+    setFeedback(newFeedback);
+    
+    try {
+      if (newFeedback) {
+        localStorage.setItem(`classgrid:ai-feedback:${messageId}`, JSON.stringify({ feedback: newFeedback }));
+      } else {
+        localStorage.removeItem(`classgrid:ai-feedback:${messageId}`);
+      }
+    } catch (e) {}
+    
     // Future: send feedback to analytics/API
   }
 

@@ -401,11 +401,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     home?.heroSecondaryCtaHref,
     placeholderHomePage.heroSecondaryCtaHref
   );
-  // TODO: RE-ENABLE when platform is live — change "#" back to "/view-platform"
-  // Force link to the tour if it's the secondary hero button or label matches
-  const heroSecondaryHref = (heroSecondaryLabel.toLowerCase().includes("platform") || heroSecondaryLabel.toLowerCase().includes("tour"))
-    ? "#"
-    : heroSecondaryHrefRaw;
+  const heroSecondaryHref = heroSecondaryHrefRaw;
 
   const empowerSection = {
     heading: withFallbackString(
@@ -720,11 +716,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     home?.modulesCalloutCtaHref,
     placeholderHomePage.modulesCalloutCtaHref
   );
-  // TODO: RE-ENABLE when platform is live — change "#" back to "/view-platform"
-  // Force link to tour for modules callout as well
-  const modulesCalloutCtaHref = modulesCalloutCtaLabel.toLowerCase().includes("platform")
-    ? "#"
-    : modulesCalloutCtaHrefRaw;
+  const modulesCalloutCtaHref = modulesCalloutCtaHrefRaw;
 
   const timelineSectionTitle = getLocalized(
     cmsHome.stakeholderSectionHeading || cmsHome.timelineTitle,
@@ -847,10 +839,13 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     home?.faqButtonText ?? home?.faqButtonLabel,
     placeholderHomePage.faqButtonText
   );
-  const faqButtonHref = withFallbackString(
+  let faqButtonHref = withFallbackString(
     home?.faqButtonHref,
     placeholderHomePage.faqButtonHref
   );
+  if (faqButtonHref === "/support") {
+    faqButtonHref = "/help-center";
+  }
 
   const mappedFaqEntries = Array.isArray(cmsFaqItems)
     ? cmsFaqItems

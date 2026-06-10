@@ -1,5 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 import { moduleType } from "./moduleType";
+import { apiDocType } from "./apiDocType";
 import {
   aboutLogoItemType,
   aboutPageType,
@@ -178,5 +179,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     articleQuestionType,
     classgridVideoType,
     classgridTeamVisionType,
+    apiDocType,
   ],
 }

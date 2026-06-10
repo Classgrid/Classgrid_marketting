@@ -20,6 +20,7 @@ export const websiteFeedbackType = defineType({
           { title: '📊 Case Study', value: 'case-study' },
           { title: '🎯 Use Case', value: 'use-case' },
           { title: '📖 Help Article', value: 'help-article' },
+          { title: '📚 Documentation', value: 'docs' },
           { title: '🌐 General', value: 'general' },
         ],
         layout: 'radio',
@@ -113,6 +114,7 @@ export const websiteFeedbackType = defineType({
         'case-study': '📊',
         'use-case': '🎯',
         'help-article': '📖',
+        docs: '📚',
         general: '🌐',
       }
       const statusEmoji = status === 'reviewed' ? '✅' : status === 'archived' ? '📦' : '🆕'
