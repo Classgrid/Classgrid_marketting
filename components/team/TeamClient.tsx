@@ -186,7 +186,7 @@ export default function TeamClient({ leadership, engineering, sales, support }: 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-lg text-zinc-600 dark:text-zinc-400"
+            className="text-lg text-muted-foreground"
           >
             We are a team of educators, engineers, and designers dedicated to transforming the way educational institutions manage their campus.
           </motion.p>

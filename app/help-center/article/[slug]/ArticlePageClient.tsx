@@ -78,15 +78,15 @@ const ptComponents = {
       <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mt-12 mb-6">{children}</h3>
     ),
     normal: ({ children }: any) => (
-      <p className="mb-6 text-zinc-600 dark:text-zinc-400 leading-relaxed">{children}</p>
+      <p className="mb-6 text-muted-foreground leading-relaxed">{children}</p>
     ),
   },
   list: {
     bullet: ({ children }: any) => (
-      <ul className="list-disc pl-6 mb-6 space-y-2 text-zinc-600 dark:text-zinc-400">{children}</ul>
+      <ul className="list-disc pl-6 mb-6 space-y-2 text-muted-foreground">{children}</ul>
     ),
     number: ({ children }: any) => (
-      <ol className="list-decimal pl-6 mb-6 space-y-4 text-zinc-600 dark:text-zinc-400 marker:text-emerald-600 dark:marker:text-emerald-500 marker:font-bold">
+      <ol className="list-decimal pl-6 mb-6 space-y-4 text-muted-foreground marker:text-emerald-600 dark:marker:text-emerald-500 marker:font-bold">
         {children}
       </ol>
     ),
@@ -293,7 +293,7 @@ export default function ArticlePageClient({
                     className={`block pl-4 py-2 text-sm transition-colors relative ${
                       isActive
                         ? "text-emerald-600 dark:text-emerald-400 font-semibold"
-                        : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                        : "text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-200"
                     }`}
                   >
                     {isActive && (
@@ -322,7 +322,7 @@ export default function ArticlePageClient({
             {extractLocaleString(article.title, lang)}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-6 mb-8 text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="flex flex-wrap items-center gap-6 mb-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Eye className="w-4 h-4 text-emerald-500" />
               <span>{viewCount.toLocaleString()} views</span>
@@ -348,7 +348,7 @@ export default function ArticlePageClient({
           </div>
 
           {article.summary && (
-            <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed mb-10 font-medium border-l-4 border-emerald-500/30 pl-4">
+            <p className="text-muted-foreground text-base leading-relaxed mb-10 font-medium border-l-4 border-emerald-500/30 pl-4">
               {extractLocaleString(article.summary, lang)}
             </p>
           )}
@@ -364,15 +364,15 @@ export default function ArticlePageClient({
                     return <h2 id={id} className="text-2xl font-bold text-zinc-900 dark:text-white mt-14 mb-6 scroll-mt-24 border-b border-zinc-200 dark:border-zinc-800 pb-3">{children}</h2>;
                   },
                   h3: ({ children }) => <h3 className="text-xl font-bold text-zinc-900 dark:text-white mt-10 mb-4">{children}</h3>,
-                  p: ({ children }) => <p className="mb-5 text-zinc-600 dark:text-zinc-400 leading-relaxed">{children}</p>,
+                  p: ({ children }) => <p className="mb-5 text-muted-foreground leading-relaxed">{children}</p>,
                   table: ({ children }) => (
                     <div className="overflow-x-auto my-8 rounded-xl border border-zinc-200 dark:border-zinc-800">
                       <table className="min-w-full text-sm">{children}</table>
                     </div>
                   ),
                   thead: ({ children }) => <thead className="bg-zinc-100 dark:bg-zinc-800/60">{children}</thead>,
-                  th: ({ children }) => <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 border-b border-zinc-200 dark:border-zinc-700">{children}</th>,
-                  td: ({ children }) => <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800 font-mono text-[13px]">{children}</td>,
+                  th: ({ children }) => <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-zinc-200 dark:border-zinc-700">{children}</th>,
+                  td: ({ children }) => <td className="px-4 py-3 text-muted-foreground border-b border-zinc-100 dark:border-zinc-800 font-mono text-[13px]">{children}</td>,
                   tr: ({ children }) => <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">{children}</tr>,
                   code: ({ className, children, ...props }) => {
                     const isBlock = className?.includes("language-");
@@ -399,9 +399,9 @@ export default function ArticlePageClient({
                     return <code className="px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 text-[13px] font-mono font-medium border border-zinc-200 dark:border-zinc-700" {...props}>{children}</code>;
                   },
                   pre: ({ children }) => <>{children}</>,
-                  ul: ({ children }) => <ul className="list-disc pl-6 mb-5 space-y-2 text-zinc-600 dark:text-zinc-400">{children}</ul>,
-                  ol: ({ children }) => <ol className="list-decimal pl-6 mb-5 space-y-3 text-zinc-600 dark:text-zinc-400 marker:text-emerald-600 dark:marker:text-emerald-500 marker:font-bold">{children}</ol>,
-                  blockquote: ({ children }) => <blockquote className="border-l-4 border-emerald-500/40 pl-4 py-1 my-6 text-zinc-600 dark:text-zinc-400 italic bg-emerald-500/5 rounded-r-lg pr-4">{children}</blockquote>,
+                  ul: ({ children }) => <ul className="list-disc pl-6 mb-5 space-y-2 text-muted-foreground">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-6 mb-5 space-y-3 text-muted-foreground marker:text-emerald-600 dark:marker:text-emerald-500 marker:font-bold">{children}</ol>,
+                  blockquote: ({ children }) => <blockquote className="border-l-4 border-emerald-500/40 pl-4 py-1 my-6 text-muted-foreground italic bg-emerald-500/5 rounded-r-lg pr-4">{children}</blockquote>,
                   strong: ({ children }) => <strong className="font-semibold text-zinc-900 dark:text-white">{children}</strong>,
                   hr: () => <hr className="my-10 border-zinc-200 dark:border-zinc-800" />,
                   a: ({ href, children }) => <a href={href} className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium" target={href?.startsWith("http") ? "_blank" : undefined}>{children}</a>,

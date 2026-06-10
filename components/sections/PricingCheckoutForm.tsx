@@ -98,7 +98,7 @@ export function PricingCheckoutForm() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-950/50">
       <h3 className="text-heading text-lg font-semibold text-slate-900 dark:text-white">{pricingCopy.checkoutTitle}</h3>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{pricingCopy.checkoutSubtitle}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{pricingCopy.checkoutSubtitle}</p>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <div className="space-y-2">

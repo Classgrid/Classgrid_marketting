@@ -47,7 +47,7 @@ const MASTER_MODULES = [
   { name: "Grade Entry & Results", category: "Assessment", school: "BASIC", coaching: "BASIC", college: "BASIC", engineering: "BASIC", icon: FileText, color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-100 dark:bg-rose-500/10" },
   { name: "Internal Assessment Tools", category: "Assessment", school: "NONE", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: FileText, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-100 dark:bg-amber-500/10" },
   { name: "CET/JEE/NEET Exam Conduction", category: "Assessment", school: "NONE", coaching: "BASIC", college: "NONE", engineering: "NONE", icon: FileText, color: "text-indigo-600 dark:text-indigo-400", bg: "bg-indigo-100 dark:bg-indigo-500/10" },
-  { name: "Past Paper & Mock Tests", category: "Assessment", school: "NONE", coaching: "BASIC", college: "NONE", engineering: "NONE", icon: FileText, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-100 dark:bg-slate-500/10" },
+  { name: "Past Paper & Mock Tests", category: "Assessment", school: "NONE", coaching: "BASIC", college: "NONE", engineering: "NONE", icon: FileText, color: "text-muted-foreground", bg: "bg-slate-100 dark:bg-slate-500/10" },
 
   // --- MANAGEMENT ---
   { name: "Admission Management", category: "Management", school: "BASIC", coaching: "BASIC", college: "BASIC", engineering: "BASIC", icon: Users, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-100 dark:bg-blue-500/10" },
@@ -60,7 +60,7 @@ const MASTER_MODULES = [
   // --- ADVANCED ---
   { name: "AI Assistant", category: "Advanced", school: "BASIC", coaching: "BASIC", college: "BASIC", engineering: "BASIC", icon: Sparkles, color: "text-cyan-600 dark:text-cyan-400", bg: "bg-cyan-100 dark:bg-cyan-500/10" },
   { name: "Advanced Analytics", category: "Advanced", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: LayoutDashboard, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-100 dark:bg-emerald-500/10" },
-  { name: "Compliance Audit Trails", category: "Advanced", school: "NONE", coaching: "NONE", college: "PREMIUM", engineering: "PREMIUM", icon: ShieldCheck, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-100 dark:bg-slate-500/10" },
+  { name: "Compliance Audit Trails", category: "Advanced", school: "NONE", coaching: "NONE", college: "PREMIUM", engineering: "PREMIUM", icon: ShieldCheck, color: "text-muted-foreground", bg: "bg-slate-100 dark:bg-slate-500/10" },
   { name: "Institution Website", category: "Advanced", school: "BASIC", coaching: "BASIC", college: "BASIC", engineering: "BASIC", icon: Briefcase, color: "text-indigo-600 dark:text-indigo-400", bg: "bg-indigo-100 dark:bg-indigo-500/10" },
   { name: "Digital Certificates", category: "Advanced", school: "BASIC", coaching: "BASIC", college: "BASIC", engineering: "BASIC", icon: GraduationCap, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-100 dark:bg-emerald-500/10" },
   { name: "Holiday Management", category: "Advanced", school: "BASIC", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Calendar, color: "text-violet-600 dark:text-violet-400", bg: "bg-violet-100 dark:bg-violet-500/10" },
@@ -73,7 +73,7 @@ const MASTER_MODULES = [
   { name: "Fee Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Wallet, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-100 dark:bg-emerald-500/10" },
   { name: "Library Management Dashboard", category: "Dashboards", school: "NONE", coaching: "NONE", college: "PREMIUM", engineering: "PREMIUM", icon: BookOpen, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-100 dark:bg-amber-500/10" },
   { name: "Student Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Users, color: "text-violet-600 dark:text-violet-400", bg: "bg-violet-100 dark:bg-violet-500/10" },
-  { name: "Faculty Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Briefcase, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-100 dark:bg-slate-500/10" },
+  { name: "Faculty Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Briefcase, color: "text-muted-foreground", bg: "bg-slate-100 dark:bg-slate-500/10" },
   { name: "Organization Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Building2, color: "text-indigo-600 dark:text-indigo-400", bg: "bg-indigo-100 dark:bg-indigo-500/10" },
   { name: "Canteen Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "NONE", college: "PREMIUM", engineering: "PREMIUM", icon: Coffee, color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-100 dark:bg-orange-500/10" },
   { name: "Leave Management Dashboard", category: "Dashboards", school: "PREMIUM", coaching: "PREMIUM", college: "PREMIUM", engineering: "PREMIUM", icon: Users, color: "text-indigo-600 dark:text-indigo-400", bg: "bg-indigo-100 dark:bg-indigo-500/10" },
@@ -229,7 +229,7 @@ export default function PricingPage() {
                     <Chip variant="emerald" className="border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold">The Core OS</Chip>
                   </div>
                   <h3 className="text-3xl font-bold text-slate-950 dark:text-white mb-2">Classgrid Premium</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+                  <p className="text-sm text-muted-foreground max-w-md">
                     One unified platform containing everything you need to run daily academic and administrative operations smoothly.
                   </p>
                 </div>
@@ -247,12 +247,12 @@ export default function PricingPage() {
               <div className="pt-8 border-t border-slate-100 dark:border-white/10 relative z-10">
                 <p className="text-sm font-semibold text-slate-950 dark:text-white mb-4">What's included by default:</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                  <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Complete Classroom Hub</li>
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Student & Faculty Dashboards</li>
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Attendance & Exam Engines</li>
                   </ul>
-                  <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Timetable & Scheduling</li>
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Digital ID & Communication</li>
                     <li className="flex gap-3 items-center"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Standard Customer Support</li>
@@ -266,7 +266,7 @@ export default function PricingPage() {
               <h3 className="text-xl font-bold text-emerald-700 dark:text-emerald-300 mb-2 flex items-center gap-2">
                 <Sparkles className="w-5 h-5" /> Optional Upgrades
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+              <p className="text-sm text-muted-foreground mb-6">
                 Scale your ERP with powerful add-on modules as your institution grows.
               </p>
               
@@ -278,7 +278,7 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-950 dark:text-white mb-0.5">Fee Management</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Automate collections, receipts & tracking.</p>
+                    <p className="text-xs text-muted-foreground">Automate collections, receipts & tracking.</p>
                   </div>
                 </div>
 
@@ -289,7 +289,7 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-950 dark:text-white mb-0.5">Admissions CRM</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Lead tracking, forms & counseling pipeline.</p>
+                    <p className="text-xs text-muted-foreground">Lead tracking, forms & counseling pipeline.</p>
                   </div>
                 </div>
 
@@ -303,7 +303,7 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-950 dark:text-white mb-0.5">Classgrid AI</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">AI sidekick & quiz generation tools.</p>
+                    <p className="text-xs text-muted-foreground">AI sidekick & quiz generation tools.</p>
                   </div>
                 </div>
 
@@ -314,7 +314,7 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-950 dark:text-white mb-0.5">Accreditation (NAAC)</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Automated reports for NBA & NAAC compliance.</p>
+                    <p className="text-xs text-muted-foreground">Automated reports for NBA & NAAC compliance.</p>
                   </div>
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function PricingPage() {
             <div className="text-center mb-12">
               <SectionAccentBar />
               <h2 className="text-3xl font-bold text-slate-950 dark:text-white mb-4">Detailed Module Matrix</h2>
-              <p className="text-slate-600 dark:text-slate-400">Compare all modules available for {INSTITUTION_LABELS[activeTab]}.</p>
+              <p className="text-muted-foreground">Compare all modules available for {INSTITUTION_LABELS[activeTab]}.</p>
             </div>
 
             <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30">
@@ -337,7 +337,7 @@ export default function PricingPage() {
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 dark:bg-white/[0.04] dark:border-white/[0.08]">
-                      <th className="p-4 md:p-6 text-sm font-semibold text-slate-500 dark:text-slate-300 w-2/4">Module</th>
+                      <th className="p-4 md:p-6 text-sm font-semibold text-muted-foreground w-2/4">Module</th>
                       <th className="p-4 md:p-6 text-sm font-bold text-slate-950 dark:text-white text-center w-1/4 border-l border-slate-200 dark:border-white/[0.08]">Basic Tier</th>
                       <th className="p-4 md:p-6 text-sm font-bold text-emerald-600 dark:text-emerald-300 text-center w-1/4 border-l border-slate-200 dark:border-white/[0.08] bg-emerald-50 dark:bg-emerald-500/[0.04]">Premium Tier</th>
                     </tr>
@@ -370,7 +370,7 @@ export default function PricingPage() {
                                     const Icon = module.icon;
                                     return (
                                     <tr key={module.name} className="border-b border-slate-100 transition-colors hover:bg-slate-50 dark:border-white/[0.05] dark:hover:bg-white/[0.035]">
-                                      <td className="p-4 md:p-6 text-sm font-medium text-slate-700 dark:text-slate-300 w-2/4">
+                                      <td className="p-4 md:p-6 text-sm font-medium text-muted-foreground w-2/4">
                                         <div className="flex items-center gap-3">
                                           <div className={`p-2 rounded-lg ${module.bg}`}>
                                             <Icon className={`w-4 h-4 ${module.color}`} />
@@ -422,7 +422,7 @@ export default function PricingPage() {
                 <Chip variant="emerald" icon={<ShieldCheck />} className="mb-4">Enterprise Custom</Chip>
                 <SectionAccentBar align="left" className="mb-4" />
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-950 dark:text-white mb-3">Running a Group of Institutions?</h2>
-                <p className="text-slate-600 dark:text-slate-400 max-w-xl">
+                <p className="text-muted-foreground max-w-xl">
                   Get volume discounts, dedicated success managers, custom integrations, and centralized reporting for multiple campuses.
                 </p>
               </div>

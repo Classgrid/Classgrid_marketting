@@ -87,7 +87,7 @@ export function ArticleQuestionBox({ articleSlug, articleTitle }: ArticleQuestio
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors focus:outline-none"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors focus:outline-none"
       >
         <span className="text-lg">🙋</span> Have a doubt?
       </button>

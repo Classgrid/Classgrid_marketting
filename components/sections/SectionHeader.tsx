@@ -27,7 +27,7 @@ export function SectionSubheadline({ children, className }: SectionSubheadlinePr
   return (
     <p
       className={cn(
-        "mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-400 md:text-lg",
+        "mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg",
         className
       )}
     >
@@ -50,9 +50,9 @@ export function SectionBodyText({
     {
       className: cn(
         tone === "lead" &&
-          "text-lg leading-relaxed text-slate-600 dark:text-slate-400",
+          "text-lg leading-relaxed text-muted-foreground",
         tone === "body" &&
-          "text-sm leading-relaxed text-slate-600 dark:text-slate-400 md:text-base",
+          "text-sm leading-relaxed text-muted-foreground md:text-base",
         tone === "secondary" && "text-sm text-slate-500 dark:text-slate-500",
         className
       ),

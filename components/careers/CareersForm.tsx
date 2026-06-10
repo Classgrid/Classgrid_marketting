@@ -124,7 +124,7 @@ export function CareersForm({
       ) : (
         <>
           <h2 className="text-xl font-semibold">{formTitle}</h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400">{formSubtitle}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{formSubtitle}</p>
           
           {errorMsg && (
             <div className="mt-4 p-3 bg-red-500/10 text-red-500 text-sm rounded-lg border border-red-500/20">
@@ -134,7 +134,7 @@ export function CareersForm({
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">{fieldName}</span>
+          <span className="mb-2 block text-muted-foreground">{fieldName}</span>
           <input
             type="text"
             name="name"
@@ -146,7 +146,7 @@ export function CareersForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">{fieldEmail}</span>
+            <span className="mb-2 block text-muted-foreground">{fieldEmail}</span>
             <input
               type="email"
               name="email"
@@ -156,7 +156,7 @@ export function CareersForm({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">Phone Number</span>
+            <span className="mb-2 block text-muted-foreground">Phone Number</span>
             <input
               type="tel"
               name="phone"
@@ -169,7 +169,7 @@ export function CareersForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">City (Maharashtra)</span>
+            <span className="mb-2 block text-muted-foreground">City (Maharashtra)</span>
             <select
               name="city"
               required
@@ -184,7 +184,7 @@ export function CareersForm({
             </select>
           </label>
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">{fieldRole}</span>
+            <span className="mb-2 block text-muted-foreground">{fieldRole}</span>
             <select
               name="role"
               required
@@ -200,7 +200,7 @@ export function CareersForm({
         </div>
 
         <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">Are you over the age of 18?</span>
+          <span className="mb-2 block text-muted-foreground">Are you over the age of 18?</span>
           <div className="flex gap-4 items-center h-11 px-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="age18" value="Yes" required className="accent-emerald-500 w-4 h-4" />
@@ -215,7 +215,7 @@ export function CareersForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">Twitter / X profile</span>
+            <span className="mb-2 block text-muted-foreground">Twitter / X profile</span>
             <input
               type="url"
               name="twitter"
@@ -225,7 +225,7 @@ export function CareersForm({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">GitHub profile</span>
+            <span className="mb-2 block text-muted-foreground">GitHub profile</span>
             <input
               type="url"
               name="github"
@@ -235,7 +235,7 @@ export function CareersForm({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-2 block text-slate-700 dark:text-zinc-300">LinkedIn profile</span>
+            <span className="mb-2 block text-muted-foreground">LinkedIn profile</span>
             <input
               type="url"
               name="linkedin"
@@ -248,7 +248,7 @@ export function CareersForm({
 
         {Object.keys(techStackGroups).length > 0 && (
           <div className="block text-sm">
-            <span className="mb-1 flex items-center justify-between text-slate-700 dark:text-zinc-300">
+            <span className="mb-1 flex items-center justify-between text-muted-foreground">
               <span>Your Tech Stack</span>
               <span className="text-xs text-slate-500">
                 {selectedStacks.length} / 10 selected
@@ -281,7 +281,7 @@ export function CareersForm({
             <button
               type="button"
               onClick={() => setShowStacks(!showStacks)}
-              className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-muted-foreground transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
             >
               {showStacks ? "▲ Hide Tech Stack List" : "▼ Select from 200+ Technologies"}
             </button>
@@ -307,7 +307,7 @@ export function CareersForm({
                             className={`rounded-md border px-2.5 py-1.5 text-xs font-medium transition-all ${
                               isSelected
                                 ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-zinc-400 dark:hover:border-zinc-600"
+                                : "border-slate-200 bg-white text-muted-foreground hover:border-slate-300 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:hover:border-zinc-600"
                             } ${isDisabled ? "cursor-not-allowed opacity-40" : ""}`}
                           >
                             {stack}
@@ -323,7 +323,7 @@ export function CareersForm({
         )}
 
         <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">Have you made any open source contributions in the past that you'd like to share with us?</span>
+          <span className="mb-2 block text-muted-foreground">Have you made any open source contributions in the past that you'd like to share with us?</span>
           <textarea
             name="openSource"
             rows={3}
@@ -334,7 +334,7 @@ export function CareersForm({
         </label>
 
         <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">Why are you interested in joining the Classgrid team?</span>
+          <span className="mb-2 block text-muted-foreground">Why are you interested in joining the Classgrid team?</span>
           <textarea
             name="whyJoin"
             rows={3}
@@ -345,7 +345,7 @@ export function CareersForm({
         </label>
 
         <label className="block text-sm">
-          <span className="mb-2 block text-slate-700 dark:text-zinc-300">Tell us about your experience working in an async and/or remote environment. What practices or approaches have worked well for you? What challenges have you faced?</span>
+          <span className="mb-2 block text-muted-foreground">Tell us about your experience working in an async and/or remote environment. What practices or approaches have worked well for you? What challenges have you faced?</span>
           <textarea
             name="asyncRemote"
             rows={4}
