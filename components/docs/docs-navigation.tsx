@@ -25,7 +25,7 @@ export function DocsNavigation() {
   if (!prev && !next) return null;
 
   return (
-    <nav className="mt-16 pt-8 border-t border-white/[0.08]">
+    <nav className="mt-16 pt-8 border-t border-white/[0.08] hidden sm:block">
       <div className="flex items-center justify-between">
         {/* Previous */}
         {prev ? (
