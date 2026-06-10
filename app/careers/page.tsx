@@ -146,9 +146,9 @@ export default async function Page() {
           <div className="text-center space-y-6 mb-12">
             <h1 className="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl mt-6">
               {title}
-              <span className="block text-slate-500 dark:text-zinc-400 mt-2">{titleAccent}</span>
+              <span className="block text-muted-foreground mt-2">{titleAccent}</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-600 dark:text-zinc-300 sm:text-lg">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {body}
             </p>
 

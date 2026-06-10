@@ -356,10 +356,10 @@ export default function RadialOrbitalTimeline({ activeTab, rings, roleDataMap = 
                   <Sparkles className="h-3 w-3" /> {activeData.badge}
                 </div>
                 <h3 className="mb-1 text-lg font-bold tracking-tight text-slate-900 dark:text-white">{activeData.title}</h3>
-                <p className="mb-4 text-xs font-medium leading-relaxed text-slate-500 dark:text-slate-400">{activeData.desc}</p>
+                <p className="mb-4 text-xs font-medium leading-relaxed text-muted-foreground">{activeData.desc}</p>
                 <ul className="space-y-2.5 relative z-10">
                   {activeData.features.map((f, i) => (
-                    <motion.li key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.08 }} className="flex items-start gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <motion.li key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.08 }} className="flex items-start gap-2 text-xs font-medium text-muted-foreground">
                       <CheckCircle2 className={`mt-0.5 h-3.5 w-3.5 shrink-0 map-text-${activeColorIdx}`} /> {f}
                     </motion.li>
                   ))}
@@ -385,7 +385,7 @@ export default function RadialOrbitalTimeline({ activeTab, rings, roleDataMap = 
                 <h3 className="mb-1 text-base font-bold tracking-tight text-slate-900 dark:text-white">Role Impact</h3>
                 <ul className="mb-4 space-y-2.5 relative z-10">
                   {activeData.stats.map((m, i) => (
-                    <motion.li key={i} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + i * 0.08 }} className="flex items-start gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <motion.li key={i} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + i * 0.08 }} className="flex items-start gap-2 text-xs font-medium text-muted-foreground">
                       <Zap className={`mt-0.5 h-3.5 w-3.5 shrink-0 map-text-${activeColorIdx}`} /> {m}
                     </motion.li>
                   ))}

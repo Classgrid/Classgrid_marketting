@@ -160,7 +160,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
               transition={{ duration: 0.6 }}
             >
               <div className="w-12 h-1 bg-emerald-500 mb-8"></div>
-              <p className="text-xl md:text-2xl text-zinc-300 leading-9 font-light antialiased">
+              <p className="text-xl md:text-2xl text-muted-foreground leading-9 font-light antialiased">
                 {data.overview}
               </p>
             </motion.div>
@@ -256,7 +256,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                     {value.rows.slice(1).map((row: any, i: number) => (
                       <tr key={i} className="transition-colors hover:bg-emerald-500/5">
                         {row.cells.map((cell: any, j: number) => (
-                          <td key={j} className="px-5 py-3.5 text-zinc-300 leading-relaxed border-r border-border/40 last:border-r-0">{cell}</td>
+                          <td key={j} className="px-5 py-3.5 text-muted-foreground leading-relaxed border-r border-border/40 last:border-r-0">{cell}</td>
                         ))}
                       </tr>
                     ))}
@@ -282,7 +282,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
             h2: ({ children }: any) => <h2 className="text-2xl font-semibold mb-4 text-white leading-snug first:mt-0">{children}</h2>,
             h3: ({ children }: any) => <h3 className="text-xl font-semibold mb-3 text-white first:mt-0">{children}</h3>,
             h4: ({ children }: any) => <h4 className="text-lg font-medium mb-2 text-white first:mt-0">{children}</h4>,
-            normal: ({ children }: any) => <p className="text-base text-zinc-300 mb-5 leading-7 antialiased">{children}</p>,
+            normal: ({ children }: any) => <p className="text-base text-muted-foreground mb-5 leading-7 antialiased">{children}</p>,
             blockquote: ({ children }: any) => (
               <blockquote className="my-6 border-l-2 border-emerald-500 pl-4 text-base leading-7 text-zinc-200 italic">{children}</blockquote>
             ),
@@ -290,16 +290,16 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
           marks: sharedMarks,
           list: {
             bullet: ({ children }: any) => <ul className="mt-3 mb-5 list-none space-y-2">{children}</ul>,
-            number: ({ children }: any) => <ol className="mt-3 mb-5 list-decimal space-y-2 pl-5 text-zinc-300">{children}</ol>,
+            number: ({ children }: any) => <ol className="mt-3 mb-5 list-decimal space-y-2 pl-5 text-muted-foreground">{children}</ol>,
           },
           listItem: {
             bullet: ({ children }: any) => (
-              <li className="relative pl-5 text-base leading-7 text-zinc-300">
+              <li className="relative pl-5 text-base leading-7 text-muted-foreground">
                 <span className="absolute left-0 top-[0.6em] h-1.5 w-1.5 rounded-full bg-emerald-500 block" />
                 {children}
               </li>
             ),
-            number: ({ children }: any) => <li className="pl-1 text-base leading-7 text-zinc-300">{children}</li>,
+            number: ({ children }: any) => <li className="pl-1 text-base leading-7 text-muted-foreground">{children}</li>,
           },
           types: sharedTypes,
         };
@@ -310,7 +310,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
             h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-serif font-bold mt-12 mb-6 text-white leading-tight first:mt-0">{children}</h2>,
             h3: ({ children }: any) => <h3 className="text-2xl md:text-3xl font-serif font-semibold mt-10 mb-5 text-white leading-snug first:mt-0">{children}</h3>,
             h4: ({ children }: any) => <h4 className="text-xl font-semibold mt-8 mb-4 text-white first:mt-0">{children}</h4>,
-            normal: ({ children }: any) => <p className="text-base md:text-lg text-zinc-300 mb-5 leading-7 md:leading-9 antialiased">{children}</p>,
+            normal: ({ children }: any) => <p className="text-base md:text-lg text-muted-foreground mb-5 leading-7 md:leading-9 antialiased">{children}</p>,
             blockquote: ({ children }: any) => (
               <blockquote className="my-10 rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/5 py-5 pl-6 pr-5 text-lg leading-8 text-zinc-200 italic">{children}</blockquote>
             ),
@@ -318,16 +318,16 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
           marks: sharedMarks,
           list: {
             bullet: ({ children }: any) => <ul className="mt-5 mb-8 list-none space-y-4">{children}</ul>,
-            number: ({ children }: any) => <ol className="mt-5 mb-8 list-decimal space-y-4 pl-6 text-zinc-300">{children}</ol>,
+            number: ({ children }: any) => <ol className="mt-5 mb-8 list-decimal space-y-4 pl-6 text-muted-foreground">{children}</ol>,
           },
           listItem: {
             bullet: ({ children }: any) => (
-              <li className="relative pl-7 text-lg leading-8 text-zinc-300">
+              <li className="relative pl-7 text-lg leading-8 text-muted-foreground">
                 <span className="absolute left-0 top-[0.65em] h-2 w-2 rounded-full bg-emerald-500 block" />
                 {children}
               </li>
             ),
-            number: ({ children }: any) => <li className="pl-2 text-lg leading-8 text-zinc-300">{children}</li>,
+            number: ({ children }: any) => <li className="pl-2 text-lg leading-8 text-muted-foreground">{children}</li>,
           },
           types: sharedTypes,
         };
@@ -521,7 +521,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">Conclusion</h2>
-              <p className="text-xl text-zinc-300 leading-9 font-light antialiased">
+              <p className="text-xl text-muted-foreground leading-9 font-light antialiased">
                 {data.conclusion}
               </p>
             </motion.div>

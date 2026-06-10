@@ -127,7 +127,7 @@ export function TeachersRolePage() {
           <ShieldCheck className="h-12 w-12 text-emerald-500 mx-auto mb-6" />
           <SectionAccentBar />
           <h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white">Privacy-first. Institution-scoped</h2>
-          <p className="mb-10 text-lg text-slate-600 dark:text-zinc-400">Your students' data is secure and strictly scoped to your institution. Your institution's Classgrid account is waiting.</p>
+          <p className="mb-10 text-lg text-muted-foreground">Your students' data is secure and strictly scoped to your institution. Your institution's Classgrid account is waiting.</p>
           <div className="flex items-center justify-center gap-4">
              <Link
                 href="/support/ticket"

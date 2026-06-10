@@ -41,7 +41,7 @@ export function ThemeModeSwitcher() {
               "h-8 w-8 rounded-full p-0",
               active
                 ? "bg-[linear-gradient(135deg,#4a90f5,#8b6fff)] text-white"
-                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white",
+                : "text-slate-500 hover:bg-slate-100 hover:text-muted-foreground dark:hover:bg-white/10 dark:hover:text-white",
             ].join(" ")}
           >
             <Icon className="size-3.5" />

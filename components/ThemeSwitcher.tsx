@@ -45,7 +45,7 @@ export function ThemeSwitcher({ className }: { className?: string }) {
               "inline-flex size-8 items-center justify-center rounded-full text-xs font-medium transition",
               isActive
                 ? "bg-slate-900 text-white dark:bg-white dark:text-black"
-                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white"
+                : "text-slate-500 hover:bg-slate-100 hover:text-muted-foreground dark:hover:bg-white/10 dark:hover:text-white"
             )}
             aria-label={`Switch theme to ${label}`}
             aria-pressed={isActive}
