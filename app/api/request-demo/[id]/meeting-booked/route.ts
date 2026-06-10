@@ -123,11 +123,11 @@ export async function POST(
         await transporter.sendMail({
           from: getNoReplyAddress(),
           replyTo: lead.adminEmail,
-          to: getSupportEmail(),
+          to: "support@classgrid.in",
           subject: `New Demo Booked: ${lead.institutionName}`,
           html: getAdminDemoNotificationHtml(lead, dateStr, meetingUrl),
         });
-        console.log(`[meeting-booked] Sent admin notification to ${getSupportEmail()}`);
+        console.log(`[meeting-booked] Sent admin notification to support@classgrid.in`);
       } catch (emailErr: any) {
         console.error("[meeting-booked] Confirmation email failed:", emailErr.message);
       }

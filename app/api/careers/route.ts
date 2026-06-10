@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail({
       from: getNoReplyAddress(),
-      to: "nikhilsubsun123@gmail.com",
+      to: "support@classgrid.in",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
       text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nTech Stack: ${techStackItems.join(", ")}`,
