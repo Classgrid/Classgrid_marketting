@@ -139,22 +139,7 @@ export function HeroSection({
               );
             }
 
-            const isViewPlatform = cta.href === "/view-platform";
-
-            if (isViewPlatform) {
-              return (
-                <div key={`${cta.label}-${cta.href}`} className={cn("w-full sm:w-auto", isContactSales ? "flex sm:hidden" : "")}>
-                  <span
-                    className={cn(
-                      "inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border px-8 py-2 text-[15px] sm:text-base font-semibold cursor-not-allowed opacity-60",
-                      "border-white/10 bg-transparent text-white"
-                    )}
-                  >
-                    {cta.label}
-                  </span>
-                </div>
-              );
-            }
+            // Removed isViewPlatform lock
 
             return (
               <div key={`${cta.label}-${cta.href}`} className={cn("w-full sm:w-auto", isContactSales ? "flex sm:hidden" : "")}>

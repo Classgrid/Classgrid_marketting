@@ -309,31 +309,59 @@ export function ClassgridRoleShowcase({
 
             {/* Right: IPhone mockup */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Glow orb behind phone */}
-                <div className="absolute inset-0 -m-12 rounded-full bg-emerald-400/12 blur-3xl" />
-                <IPhone15Pro className="relative w-[240px] shadow-[0_30px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.7)] md:w-[280px]">
-                  <div className="flex h-full flex-col overflow-hidden bg-background">
-                    <div
-                      key={`${activeRoleId}-${activeFeatureIdx}`}
-                      className="flex-1 overflow-hidden"
-                    >
-                      {activeFeature.imageUrl ? (
-                        <div className="relative h-full w-full">
-                          <Image
-                            src={activeFeature.imageUrl}
-                            alt={activeFeature.imageAlt ?? activeFeature.label}
-                            fill
-                            className="object-cover object-top"
-                            sizes="280px"
-                          />
-                        </div>
-                      ) : (
-                        <PhonePlaceholder label={activeFeature.label} />
-                      )}
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative">
+                  {/* Glow orb behind phone */}
+                  <div className="absolute inset-0 -m-12 rounded-full bg-emerald-400/12 blur-3xl" />
+                  <IPhone15Pro className="relative w-[240px] shadow-[0_30px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.7)] md:w-[280px]">
+                    <div className="flex h-full flex-col overflow-hidden bg-background">
+                      <div
+                        key={`${activeRoleId}-${activeFeatureIdx}`}
+                        className="flex-1 overflow-hidden"
+                      >
+                        {activeFeature.imageUrl ? (
+                          <div className="relative h-full w-full">
+                            <Image
+                              src={activeFeature.imageUrl}
+                              alt={activeFeature.imageAlt ?? activeFeature.label}
+                              fill
+                              className="object-cover object-top"
+                              sizes="280px"
+                            />
+                          </div>
+                        ) : (
+                          <PhonePlaceholder label={activeFeature.label} />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </IPhone15Pro>
+                  </IPhone15Pro>
+                </div>
+
+                {/* Google Play Badge */}
+                {(() => {
+                  const PLAY_STORE_LINKS: Record<string, string> = {
+                    faculty: "#faculty-app-link-here",
+                    student: "#student-app-link-here",
+                    parent: "#parent-app-link-here",
+                  };
+                  return (
+                    <motion.a
+                      key={`badge-${activeRoleId}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      href={PLAY_STORE_LINKS[activeRoleId] || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="relative z-10 transition-opacity hover:opacity-80"
+                    >
+                      <img 
+                        alt={`Get ${activeRole.label} App on Google Play`} 
+                        src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
+                        className="h-[52px] w-auto"
+                      />
+                    </motion.a>
+                  );
+                })()}
               </div>
             </div>
           </motion.div>

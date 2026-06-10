@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Design Comparison</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .container {
+      max-w-4xl;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* 1. Default Markdown (Standard Grid) */
+    .table-default {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .table-default th, .table-default td {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 16px;
+    }
+    .table-default th {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-weight: bold;
+    }
+    .table-default td {
+      color: #d4d4d8;
+    }
+
+    /* 2. Vercel Style (Screenshot Accurate) */
+    .table-vercel {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+      font-size: 14px;
+    }
+    .table-vercel th {
+      background-color: rgba(255, 255, 255, 0.04);
+      color: #a1a1aa; /* Muted gray header */
+      font-weight: normal; /* Not bold */
+      padding: 16px 24px;
+    }
+    .table-vercel th:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+    .table-vercel th:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    .table-vercel td {
+      color: #d4d4d8;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Faint row line */
+    }
+    .table-vercel tr:last-child td {
+      border-bottom: none;
+    }
+    .table-vercel tr:hover td {
+      background-color: transparent; 
+    }
+
+    /* 3. Supabase Style (Screenshot Accurate) */
+    .table-supabase {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 15px;
+      margin-left: -2px; /* Slight optical adjustment */
+    }
+    .table-supabase th {
+      color: #fff;
+      font-weight: 600;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+    }
+    .table-supabase td {
+      color: #a1a1aa;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .table-supabase th:first-child,
+    .table-supabase td:first-child {
+      padding-left: 0;
+    }
+    .table-supabase th:last-child,
+    .table-supabase td:last-child {
+      padding-right: 0;
+    }
+    .table-supabase tr:last-child td {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 60px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .description {
+      color: #a1a1aa;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body class="bg-black">
+  <div class="max-w-4xl mx-auto px-8 py-16">
+    <h1 class="text-3xl font-bold mb-2">Table Design Comparison</h1>
+    <p class="text-zinc-400 mb-12">Compare the three table styles below.</p>
+
+    <!-- DEFAULT -->
+    <h2 class="section-title">1. Default (Current Codebase Style)</h2>
+    <p class="description">This is how standard Markdown tables look by default with standard borders.</p>
+    
+    <div class="bg-[#111] p-6 rounded-xl border border-white/10">
+      <table class="table-default">
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>Hobby</th>
+            <th>Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Active CPU</td>
+            <td>4 hours included</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td>Provisioned Memory</td>
+            <td>360 GB-hrs included</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td>Invocations</td>
+            <td>1 million included</td>
+            <td>N/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VERCEL -->
+    <h2 class="section-title">2. Vercel Style</h2>
+    <p class="description">Extremely minimal. Headers are not bolded, text is light gray, very subtle borders.</p>
+    
+    <div class="bg-[#111] p-6 rounded-xl border border-white/10">
+      <table class="table-vercel">
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>Hobby</th>
+            <th>Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Active CPU</td>
+            <td>4 hours included</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td>Provisioned Memory</td>
+            <td>360 GB-hrs included</td>
+            <td>Costs vary by region</td>
+          </tr>
+          <tr>
+            <td>Invocations</td>
+            <td>1 million included</td>
+            <td>N/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SUPABASE -->
+    <h2 class="section-title">3. Supabase Style</h2>
+    <p class="description">Clean with higher contrast. Thicker header bottom border, white bold headers.</p>
+    
+    <div class="bg-[#111] p-6 rounded-xl border border-white/10">
+      <table class="table-supabase">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Quota</th>
+            <th>Over-Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Free</td>
+            <td>2 million</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>Pro</td>
+            <td>5 million</td>
+            <td>$2.50 per 1 million messages</td>
+          </tr>
+          <tr>
+            <td>Team</td>
+            <td>5 million</td>
+            <td>$2.50 per 1 million messages</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -4,5 +4,24 @@ description: "Welcome to the Classgrid API Documentation"
 ---
 
 Welcome to the official Classgrid API documentation. 
-
 Here you will find everything you need to know about integrating with our platform.
+
+## Getting Started
+To get started, you will need an API key from your Classgrid dashboard. This key must be included in the header of all your API requests. Our API follows standard REST principles and returns JSON-encoded responses. Make sure to keep your API key secure and never share it publicly.
+<br/><br/><br/><br/><br/><br/>
+
+## Authentication Protocol
+Authentication is handled via Bearer tokens. You should generate a short-lived access token using your master API key. The token must be passed in the `Authorization` header. If the token expires, you will receive a 401 Unauthorized response, and you must generate a new one.
+<br/><br/><br/><br/><br/><br/>
+
+## Core Concepts
+Classgrid relies on a few core concepts: Modules, Users, and Roles. Modules represent the different features available. Users are the individuals accessing the platform. Roles define the permissions granted to each user within the different modules. Understanding these concepts is crucial for building a solid integration.
+<br/><br/><br/><br/><br/><br/>
+
+## Error Handling
+Our API uses standard HTTP status codes to indicate the success or failure of a request. Codes in the 2xx range indicate success. Codes in the 4xx range indicate an error that failed given the information provided (e.g., a required parameter was omitted). Codes in the 5xx range indicate an error with Classgrid's servers.
+<br/><br/><br/><br/><br/><br/>
+
+## Rate Limits
+To ensure quality of service for all users, the Classgrid API enforces rate limits. You can make up to 1000 requests per minute per IP address. If you exceed this limit, you will receive a 429 Too Many Requests response.
+<br/><br/><br/><br/><br/><br/>

@@ -432,7 +432,7 @@ export const placeholderHomePage = {
     "Find answers to common questions about Classgrid, features, and setup.",
   faqButtonText: "Explore Help Center",
   faqButtonLabel: "Explore Help Center",
-  faqButtonHref: "/support",
+  faqButtonHref: "/help-center",
   faqEntries: faqContent,
   ctaFormTitle: demoCopy.title,
   ctaFormSubtitle: demoCopy.body,
