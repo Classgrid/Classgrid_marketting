@@ -97,7 +97,7 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-12 left-0 right-0 bg-[#0a0a0a] border-b border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-7rem)] px-4 py-4 z-[70]"
+              className="absolute top-0 left-0 right-0 bg-[#0a0a0a] border-b border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-4rem)] px-4 py-4 z-[70]"
             >
               <div className="flex items-center justify-between mb-3 mt-1 px-2">
                 <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Navigation</span>
@@ -130,16 +130,16 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-12 right-4 w-64 bg-[#111111] border border-white/10 rounded-lg shadow-2xl overflow-y-auto max-h-[60vh] py-2 z-[70]"
+              className="absolute top-0 right-0 left-0 sm:left-auto sm:w-80 bg-[#0a0a0a] border-b border-l border-white/10 shadow-2xl overflow-y-auto max-h-[calc(100vh-4rem)] py-4 z-[70]"
             >
-              <div className="px-4 py-2 mb-1 border-b border-white/5 flex items-center justify-between">
+              <div className="px-6 py-2 mb-2 border-b border-white/5 flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">On this page</span>
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setMobileTocOpen(false)}
-                  className="p-1 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                  className="p-1.5 -mr-1.5 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </motion.button>
               </div>
               <div className="flex flex-col mt-2">
