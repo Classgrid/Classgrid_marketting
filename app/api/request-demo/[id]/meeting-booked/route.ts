@@ -96,7 +96,7 @@ export async function POST(
     if (process.env.BREVO_SMTP_HOST) {
       try {
         const { getSmtpTransporter, getNoReplyAddress, getSupportEmail } = await import("@/lib/smtp-mailer");
-        const { getDemoConfirmationEmailHtml } = await import("@/lib/email-templates");
+        const { getDemoConfirmationEmailHtml, getAdminDemoNotificationHtml } = await import("@/lib/email-templates");
         const transporter = getSmtpTransporter();
         const scheduledDate = new Date(lead.scheduledAt);
         const dateStr = scheduledDate.toLocaleString("en-IN", {
@@ -117,7 +117,17 @@ export async function POST(
           subject: "Classgrid Demo Confirmed - Meeting Details Inside",
           html: getDemoConfirmationEmailHtml(lead.adminName, dateStr, meetingUrl),
         });
-        console.log(`[meeting-booked] Sent confirmation email to ${lead.adminEmail}`);
+        console.log(`[meeting-booked] Sent confirmation email to customer ${lead.adminEmail}`);
+
+        // Send notification email to SUPER ADMIN
+        await transporter.sendMail({
+          from: getNoReplyAddress(),
+          replyTo: lead.adminEmail,
+          to: getSupportEmail(),
+          subject: `New Demo Booked: ${lead.institutionName}`,
+          html: getAdminDemoNotificationHtml(lead, dateStr, meetingUrl),
+        });
+        console.log(`[meeting-booked] Sent admin notification to ${getSupportEmail()}`);
       } catch (emailErr: any) {
         console.error("[meeting-booked] Confirmation email failed:", emailErr.message);
       }

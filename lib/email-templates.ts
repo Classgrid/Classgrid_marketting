@@ -345,3 +345,33 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
     ignoreText: "You are receiving this because you booked a demo with Classgrid."
   });
 }
+
+// ------------- ADMIN DEMO NOTIFICATION -------------
+export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl: string): string {
+  const content = `
+    <h1>New Demo Scheduled!</h1>
+    <p>A new demo has been booked and confirmed by <strong>${lead.adminName}</strong>.</p>
+    
+    <div class="box">
+      <div class="meta">Meeting Details</div>
+      <p><strong>Date & Time:</strong> <span style="color: #10b981; font-weight: bold;">${dateStr}</span></p>
+      <p><strong>Meeting Link:</strong> <a href="${meetUrl}" style="color: #10b981;">${meetUrl}</a></p>
+      
+      <div class="meta" style="margin-top: 24px;">Lead Information</div>
+      <p><strong>Name:</strong> ${lead.adminName}</p>
+      <p><strong>Email:</strong> ${lead.adminEmail}</p>
+      <p><strong>Phone:</strong> ${lead.adminPhone || "N/A"}</p>
+      <p><strong>Institution:</strong> ${lead.institutionName}</p>
+      <p><strong>Organization Type:</strong> ${lead.orgType}</p>
+      <p><strong>Location:</strong> ${lead.city || "N/A"}, ${lead.state || "N/A"}</p>
+      <p><strong>Message:</strong> ${lead.message || "N/A"}</p>
+    </div>
+    
+    <p>This lead has already been saved to the database. Please ensure a team member is prepared for the meeting!</p>
+  `;
+  return baseTemplate({
+    content,
+    title: "New Demo Booked",
+    ignoreText: "Automated notification from Classgrid Admin System."
+  });
+}
