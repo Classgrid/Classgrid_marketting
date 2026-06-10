@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, Send, Paperclip, Eye, Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase-storage";
+import FilePreviewModal from "@/app/support/components/FilePreviewModal";
+import { Spinner } from "@/components/ui/spinner";
 
 type SalesRole = {
   label: string;
@@ -39,6 +42,17 @@ export function CareersForm({
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedStacks, setSelectedStacks] = useState<string[]>([]);
   const [showStacks, setShowStacks] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const clearFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const toggleStack = (stack: string) => {
     if (selectedStacks.includes(stack)) {
@@ -60,9 +74,50 @@ export function CareersForm({
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMsg("");
+    setUploadProgress(0);
+
+    let progressInterval: NodeJS.Timeout;
+    if (selectedFile) {
+      progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.floor(Math.random() * 15) + 5;
+        });
+      }, 400);
+    }
 
     try {
       const formData = new FormData(e.currentTarget);
+      
+      let resumeUrl = "";
+      if (selectedFile) {
+        if (selectedFile.size > 5 * 1024 * 1024) {
+          setErrorMsg("Resume must be less than 5MB.");
+          setIsSubmitting(false);
+          return;
+        }
+        
+        const timestamp = Date.now();
+        const sanitizedName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const filePath = `applications/${timestamp}_${sanitizedName}`;
+
+        const { data, error } = await supabase.storage
+          .from("resumes")
+          .upload(filePath, selectedFile, { cacheControl: "3600", upsert: false });
+
+        if (error) {
+          console.error("Supabase upload error:", error.message);
+          setErrorMsg("Failed to upload resume. Please try again.");
+          setIsSubmitting(false);
+          clearInterval(progressInterval!);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage.from("resumes").getPublicUrl(data.path);
+        resumeUrl = urlData.publicUrl;
+        setUploadProgress(100);
+      }
+
       const payload = {
         name: formData.get("name") as string,
         email: formData.get("email") as string,
@@ -78,6 +133,7 @@ export function CareersForm({
         linkedin: formData.get("linkedin") as string,
         openSource: formData.get("openSource") as string,
         asyncRemote: formData.get("asyncRemote") as string,
+        resumeUrl: resumeUrl,
       };
 
       const response = await fetch("/api/careers", {
@@ -101,6 +157,7 @@ export function CareersForm({
       console.error("Form submission error", error);
       setErrorMsg("Failed to submit. Please check your connection.");
     } finally {
+      if (selectedFile) clearInterval(progressInterval!);
       setIsSubmitting(false);
     }
   };
@@ -323,6 +380,79 @@ export function CareersForm({
         )}
 
         <label className="block text-sm">
+          <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB <span className="text-rose-500">*</span></span>
+          <div className="relative">
+            <motion.div 
+              whileHover={!isSubmitting ? { scale: 1.01 } : {}}
+              whileTap={!isSubmitting ? { scale: 0.99 } : {}}
+              className={`flex items-center gap-3 h-11 w-full rounded-lg border border-dashed bg-white px-3 transition-colors relative overflow-hidden ${
+                isSubmitting ? 'border-slate-200 dark:border-zinc-800' : 'border-slate-300 hover:border-slate-900 dark:border-zinc-700 dark:hover:border-white'
+              } dark:bg-[#0A0A0A]`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="resume"
+                accept=".pdf,.doc,.docx"
+                required
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setSelectedFile(e.target.files[0]);
+                  } else {
+                    clearFile();
+                  }
+                }}
+                className={`absolute inset-0 w-full h-full opacity-0 ${isSubmitting || selectedFile ? 'cursor-not-allowed pointer-events-none' : 'cursor-pointer'} z-10`}
+                disabled={isSubmitting || !!selectedFile}
+                title=""
+              />
+              {/* Background progress fill */}
+              {isSubmitting && selectedFile && (
+                <motion.div 
+                  className="absolute inset-y-0 left-0 bg-slate-900/5 dark:bg-white/10 z-0"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${uploadProgress}%` }}
+                  transition={{ ease: "easeInOut", duration: 0.3 }}
+                />
+              )}
+              
+              <Paperclip className="h-4 w-4 text-slate-500 dark:text-zinc-400 z-10 shrink-0" />
+              <span className="text-slate-600 dark:text-slate-400 truncate z-10 text-sm">
+                {selectedFile ? selectedFile.name : "Choose a file..."}
+              </span>
+              
+              {isSubmitting && selectedFile ? (
+                <span className="ml-auto text-xs font-bold text-slate-700 dark:text-zinc-300 z-10 shrink-0 tabular-nums">
+                  {uploadProgress}%
+                </span>
+              ) : selectedFile ? (
+                <div className="ml-auto flex items-center gap-1 z-30 shrink-0 relative">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mr-2 tabular-nums pointer-events-none">
+                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                  </span>
+                  <button 
+                    type="button" 
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPreviewOpen(true); }} 
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    title="Preview file"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); clearFile(); }} 
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md text-slate-500 hover:text-red-500 transition-colors"
+                    title="Remove file"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : null}
+            </motion.div>
+          </div>
+        </label>
+
+        <label className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Have you made any open source contributions in the past that you'd like to share with us?</span>
           <textarea
             name="openSource"
@@ -358,13 +488,25 @@ export function CareersForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 disabled:opacity-50 mt-4"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 disabled:opacity-50 mt-4"
         >
+          {isSubmitting && <Spinner className="h-5 w-5 text-inherit" />}
           {isSubmitting ? "Submitting..." : submitLabel}
-          {!isSubmitting && <Send className="ml-2 h-4 w-4 text-white" />}
+          {!isSubmitting && <Send className="h-4 w-4 text-white" />}
         </button>
       </form>
         </>
+      )}
+
+      {previewOpen && selectedFile && (
+        <FilePreviewModal
+          file={{ name: selectedFile.name, src: selectedFile }}
+          onClose={() => setPreviewOpen(false)}
+          onDelete={() => {
+            clearFile();
+            setPreviewOpen(false);
+          }}
+        />
       )}
     </>
   );
