@@ -269,7 +269,10 @@ export function Navbar({
                 />
               ) : null}
               {brandName ? (
-                <span className="text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-white/90">
+                <span className={cn(
+                  "text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-white/90",
+                  docsMode && "hidden sm:inline"
+                )}>
                   {brandName}
                 </span>
               ) : null}
@@ -431,12 +434,12 @@ export function Navbar({
                 type="button"
                 variant="outline"
                 className={cn(
-                  "relative h-7 md:h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-1.5 md:px-3 text-[11px] md:text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer",
+                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer",
                   showAskAiPrompt ? "border-white/[0.2] shadow-[0_0_14px_rgba(255,255,255,0.06)]" : ""
                 )}
                 onClick={onAskAiClick}
               >
-                <Bot className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4 text-white/60" />
+                <Bot className="mr-2 h-4 w-4 text-white/60" />
                 {dict.askAi}
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
@@ -458,10 +461,10 @@ export function Navbar({
             <Button
               type="button"
               variant="outline"
-              className="h-7 md:h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-1.5 md:px-3 text-[11px] md:text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white inline-flex items-center gap-1 md:gap-2 cursor-pointer"
+              className="h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white inline-flex items-center gap-1.5 md:gap-2 cursor-pointer"
               onClick={onDocsSearchClick}
             >
-              <Search className="h-3 w-3 md:h-3.5 md:w-3.5 text-white/50" />
+              <Search className="h-3.5 w-3.5 text-white/50" />
               <span className="hidden lg:inline">Search Documentation</span>
               <span className="inline lg:hidden">Search...</span>
               <kbd className="ml-1 hidden sm:inline-flex items-center gap-0.5 rounded-[5px] border border-white/[0.1] bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-medium text-white/35 cursor-pointer">
