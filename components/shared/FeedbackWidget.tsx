@@ -61,7 +61,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
             <p className="text-[15px] font-bold text-slate-900 dark:text-white">
               {feedbackState === 'error' ? "Something went wrong" : "Your feedback has been received!"}
             </p>
-            <p className="text-[13px] text-slate-500 dark:text-neutral-400">
+            <p className="text-[13px] text-muted-foreground">
               {feedbackState === 'error' ? "Please try again later." : "Thank you for your help."}
             </p>
             {/* Keep emojis visible but greyed out */}
@@ -76,7 +76,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
             {/* Top Row: Label + Emojis */}
             <div className={cn("flex items-center px-4 py-2.5 w-full", pageType === 'docs' ? "justify-center" : "justify-between")}>
               {pageType !== 'docs' && (
-                <span className="text-[13px] font-medium text-slate-600 dark:text-neutral-400">
+                <span className="text-[13px] font-medium text-muted-foreground">
                   Was this helpful?
                 </span>
               )}

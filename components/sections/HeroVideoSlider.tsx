@@ -422,7 +422,7 @@ export function HeroVideoSlider({
             {description?.trim() ? (
               <motion.p
                 variants={paragraphVariant}
-                className="mx-auto mt-4 max-w-xl text-base text-slate-500 dark:text-slate-400"
+                className="mx-auto mt-4 max-w-xl text-base text-muted-foreground"
               >
                 {description}
               </motion.p>

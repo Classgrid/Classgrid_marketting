@@ -4,7 +4,7 @@
    DOCS CONTENT STYLING (Replaces Tailwind Typography / prose)
 ───────────────────────────────────────────────────────────────────────────── */
 .docs-content {
-  color: #a1a1aa; /* zinc-400 */
+  color: #ededed; /* Vercel-level brightness */
   line-height: 1.75;
   font-size: 1rem;
 }
@@ -161,7 +161,7 @@
 }
 
 .docs-content table td {
-  color: #a1a1aa;
+  color: #ededed;
   padding: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }

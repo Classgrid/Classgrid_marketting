@@ -195,7 +195,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
             <h3 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-3xl">
               {currentCard.label}
             </h3>
-            <p className="text-base font-medium text-gray-600 dark:text-gray-400 md:text-lg">
+            <p className="text-base font-medium text-muted-foreground md:text-lg">
               {currentCard.subtitle}
             </p>
           </MotionDiv>
@@ -215,7 +215,7 @@ export default function IntroAnimation({ slides }: { slides?: ShowcaseSlide[] })
                 <svg className="mt-0.5 mr-3 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-medium text-muted-foreground">
                   {highlight}
                 </span>
               </div>

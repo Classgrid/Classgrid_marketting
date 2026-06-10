@@ -609,7 +609,7 @@ function AssistantMessageContent({ content }: { content: string }) {
                     {block.rows.map((row, rIndex) => (
                       <TableRow key={rIndex}>
                         {row.map((cell, cIndex) => (
-                          <TableCell key={cIndex} className="text-slate-700 dark:text-gray-300">
+                          <TableCell key={cIndex} className="text-muted-foreground">
                             {renderInlineText(cell)}
                           </TableCell>
                         ))}

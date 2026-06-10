@@ -75,7 +75,7 @@ function FAQRow({
             }}
             style={{ overflow: "hidden" }}
           >
-            <div className="pb-6 pr-4 text-base leading-7 text-slate-600 dark:text-slate-300">
+            <div className="pb-6 pr-4 text-base leading-7 text-muted-foreground">
               {faq.answer}
             </div>
           </motion.div>
@@ -150,7 +150,7 @@ export function FAQSection({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
-              className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-500 dark:text-slate-400"
+              className="mx-auto mt-5 max-w-2xl text-base leading-8 text-muted-foreground"
             >
               {description}
             </motion.p>

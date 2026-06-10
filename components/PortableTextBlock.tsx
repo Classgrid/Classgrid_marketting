@@ -27,7 +27,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
   return {
     block: {
       normal: ({ children }) => (
-        <p className="mt-5 mx-auto max-w-[750px] text-base leading-7 text-slate-700 antialiased font-normal dark:text-neutral-400">
+        <p className="mt-5 mx-auto max-w-[750px] text-base leading-7 text-muted-foreground antialiased font-normal">
           {children}
         </p>
       ),
@@ -50,7 +50,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         </h4>
       ),
       blockquote: ({ children }) => (
-        <blockquote className="my-8 mx-auto max-w-[750px] rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/10 py-4 pl-5 pr-4 text-base leading-7 text-slate-700 antialiased dark:text-neutral-300">
+        <blockquote className="my-8 mx-auto max-w-[750px] rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/10 py-4 pl-5 pr-4 text-base leading-7 text-muted-foreground antialiased">
           {children}
         </blockquote>
       ),
@@ -62,20 +62,20 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         </ul>
       ),
       number: ({ children }) => (
-        <ol className="mt-5 mb-8 mx-auto max-w-[750px] list-decimal space-y-3 pl-5 text-base text-slate-600 antialiased marker:text-muted-foreground/50 dark:text-neutral-400">
+        <ol className="mt-5 mb-8 mx-auto max-w-[750px] list-decimal space-y-3 pl-5 text-base text-muted-foreground antialiased marker:text-muted-foreground/50">
           {children}
         </ol>
       ),
     },
     listItem: {
       bullet: ({ children }) => (
-        <li className="relative pl-6 text-base leading-7 text-slate-600 dark:text-neutral-400">
+        <li className="relative pl-6 text-base leading-7 text-muted-foreground">
           <span className="absolute left-0 top-[0.6em] h-2 w-2 rounded-full bg-emerald-500 block" />
           {children}
         </li>
       ),
       number: ({ children }) => (
-        <li className="pl-2 text-base leading-7 text-slate-600 dark:text-neutral-400">
+        <li className="pl-2 text-base leading-7 text-muted-foreground">
           {children}
         </li>
       ),

@@ -260,7 +260,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               Classgrid vs {comparison.competitorName}
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-slate-600 dark:text-neutral-400">
+            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-muted-foreground">
               {comparison.metaDescription || `A detailed guide to Classgrid vs ${comparison.competitorName}: compute architecture, AI infrastructure, security, and when to choose each platform for your institution.`}
             </p>
 
@@ -340,7 +340,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* Strengths */}
                   <section id="strengths" className="space-y-6 pt-4">
                     <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Strengths of each platform</h2>
-                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                    <p className="text-[15px] leading-relaxed text-muted-foreground">
                       Each platform has distinct strengths depending on your institutional requirements and architecture patterns.
                     </p>
                   </section>
@@ -348,7 +348,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* When to choose Classgrid */}
                   <section id="when-to-choose" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
-                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                    <p className="text-[15px] leading-relaxed text-muted-foreground">
                       Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
                     </p>
                     <VercelTable
@@ -368,12 +368,12 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* AI Tools */}
                   <section id="ai-tools" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">AI-powered institutional tools</h3>
-                    <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                    <p className="text-[15px] leading-relaxed text-muted-foreground">
                       <span className="font-medium text-slate-900 dark:text-white">Classgrid AI</span> accelerates institutional workflows with AI assistance.
                     </p>
                     <div className="space-y-4">
                       <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
-                      <ul className="ml-4 space-y-2 text-[15px] text-slate-600 dark:text-neutral-400">
+                      <ul className="ml-4 space-y-2 text-[15px] text-muted-foreground">
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
@@ -388,7 +388,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               {featureMatrix.length > 0 && (
                 <section id="competitor-comparison" className="space-y-6 pt-4">
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">{comparison.competitorName} comparison</h3>
-                  <p className="text-[15px] leading-relaxed text-slate-600 dark:text-neutral-400">
+                  <p className="text-[15px] leading-relaxed text-muted-foreground">
                     <span className="font-medium text-slate-900 dark:text-white">{comparison.competitorName}</span> provides foundational campus management features but may differ in automation depth, real-time capabilities, and deployment architecture.
                   </p>
                   <VercelTable

@@ -95,14 +95,14 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           {/* Stars & Verification */}
           <div className="flex items-center gap-3">
             {renderStars(rating)}
-            <span className="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400/80">
+            <span className="text-xs md:text-sm font-medium text-muted-foreground/80">
               Verified Review
             </span>
           </div>
 
           {/* Quote body */}
           {quote ? (
-            <div className="text-[15px] md:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            <div className="text-[15px] md:text-lg leading-relaxed text-muted-foreground">
               {Array.isArray(quote) ? (
                 <PortableText value={quote} />
               ) : (
@@ -120,7 +120,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
             </p>
           ) : null}
           {(roleLine || companyLine) && (
-            <div className="text-base text-slate-700 dark:text-slate-300 font-medium mt-1">
+            <div className="text-base text-muted-foreground font-medium mt-1">
               {roleLine ? <p>{roleLine},</p> : null}
               {companyLine ? (
                 <p>{companyLine}</p>

@@ -35,7 +35,7 @@ export default async function Page({ params }: CampaignPageProps) {
 			<h1 className="text-heading text-3xl font-bold text-slate-900 dark:text-white md:text-5xl">
 				{(campaign as any)?.title ?? (campaign as any)?.headline ?? (campaignsCopy as any).fallbackTitle}
 			</h1>
-			<p className="mt-3 text-slate-600 dark:text-slate-300">
+			<p className="mt-3 text-muted-foreground">
 				{(campaign as any)?.body ?? (campaign as any)?.subheadline ?? (campaignsCopy as any).fallbackBody}
 			</p>
 

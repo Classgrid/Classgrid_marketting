@@ -194,7 +194,7 @@ export default function ContactClient() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="fullName" className="font-semibold text-zinc-700 dark:text-zinc-300">Full Name</Label>
+                          <Label htmlFor="fullName" className="font-semibold text-muted-foreground">Full Name</Label>
                           <InputGroup className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300">
                             <InputGroupAddon>
                               <InputGroupText className="bg-transparent border-0 pl-4">
@@ -206,7 +206,7 @@ export default function ContactClient() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="phoneNumber" className="font-semibold text-zinc-700 dark:text-zinc-300">Phone Number</Label>
+                          <Label htmlFor="phoneNumber" className="font-semibold text-muted-foreground">Phone Number</Label>
                           <InputGroup className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300">
                             <InputGroupAddon>
                               <InputGroupText className="bg-transparent border-0 pl-4 text-zinc-500 font-medium">+91</InputGroupText>
@@ -225,7 +225,7 @@ export default function ContactClient() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="emailAddress" className="font-semibold text-zinc-700 dark:text-zinc-300">Email Address</Label>
+                        <Label htmlFor="emailAddress" className="font-semibold text-muted-foreground">Email Address</Label>
                         <InputGroup className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300">
                           <InputGroupAddon>
                             <InputGroupText className="bg-transparent border-0 pl-4">
@@ -246,7 +246,7 @@ export default function ContactClient() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="message" className="font-semibold text-zinc-700 dark:text-zinc-300">Your Message</Label>
+                        <Label htmlFor="message" className="font-semibold text-muted-foreground">Your Message</Label>
                         <InputGroup className="min-h-[140px] max-h-[300px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all duration-300 overflow-y-auto">
                           <InputGroupAddon align="block-start">
                             <InputGroupText className="bg-transparent border-0 pl-4 pt-4">
