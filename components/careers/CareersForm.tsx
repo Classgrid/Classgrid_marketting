@@ -281,7 +281,7 @@ export function CareersForm({
             <button
               type="button"
               onClick={() => setShowStacks(!showStacks)}
-              className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] text-muted-foreground dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-medium text-muted-foreground transition-all hover:border-slate-400 hover:bg-slate-100 dark:border-zinc-700 dark:bg-[#111] dark:hover:border-zinc-600 dark:hover:bg-[#1a1a1a]"
             >
               {showStacks ? "▲ Hide Tech Stack List" : "▼ Select from 200+ Technologies"}
             </button>
@@ -307,7 +307,7 @@ export function CareersForm({
                             className={`rounded-md border px-2.5 py-1.5 text-xs font-medium transition-all ${
                               isSelected
                                 ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-zinc-700 dark:bg-[#0A0A0A] text-muted-foreground dark:hover:border-zinc-600"
+                                : "border-slate-200 bg-white text-muted-foreground hover:border-slate-300 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:hover:border-zinc-600"
                             } ${isDisabled ? "cursor-not-allowed opacity-40" : ""}`}
                           >
                             {stack}
