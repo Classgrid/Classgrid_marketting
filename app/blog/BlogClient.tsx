@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { formatDate } from "date-fns";
 import { Search, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -288,6 +289,16 @@ export function BlogClient({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      {/* Google One Tap Login Popup */}
+      <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
+      <div 
+        id="g_id_onload"
+        data-client_id="392201629690-cap30hea8h682f9qcjbpqua2kom6lsml.apps.googleusercontent.com"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-auto_prompt="true"
+      />
+      
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
         <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm tracking-wide text-emerald-500">
           Blog
