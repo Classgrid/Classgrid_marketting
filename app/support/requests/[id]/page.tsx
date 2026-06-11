@@ -141,32 +141,31 @@ function TicketDetailPageInner() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
 
-  // ── Strict session guard — must be logged in ──────────────────────────────
-  // If not authenticated, redirect to sign-in page immediately.
-  // The email query param is ONLY for display; the session email is the authority.
+  // ── Auth guard — must be logged in ──────────────
   useEffect(() => {
     if (sessionStatus === "loading") return; // wait for session to resolve
 
     if (sessionStatus === "unauthenticated") {
-      // Not logged in — redirect to sign-in, return here after login
+      // Not authenticated — redirect to login page
       const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.href = `/auth/signin?callbackUrl=${returnUrl}`;
+      window.location.href = `/login?callbackUrl=${returnUrl}`;
       return;
     }
 
-    // Logged in — verify the session email matches the query email (ownership check)
     const sessionEmail = normalizeSupportEmail(session?.user?.email);
+
+    // Verify the active email matches the query email (ownership check)
     const paramEmail = normalizeSupportEmail(queryEmail);
 
     if (paramEmail && sessionEmail && sessionEmail.toLowerCase() !== paramEmail.toLowerCase()) {
-      // Logged in but trying to access someone else's ticket via URL
+      // Trying to access someone else's ticket via URL
       setAccessDenied(true);
       setLoading(false);
       return;
     }
   }, [sessionStatus, session, queryEmail]);
 
-  // The email to use for all API calls — always from session, never from URL alone
+  // The email to use for all API calls
   const verifiedEmail = normalizeSupportEmail(session?.user?.email);
 
   // ── Fetch ticket ──────────────────────────────────────────────────────────
@@ -206,8 +205,8 @@ function TicketDetailPageInner() {
   };
 
   useEffect(() => {
-    // Only fetch once session is confirmed and email is available
-    if (sessionStatus !== "authenticated" || !verifiedEmail || accessDenied) return;
+    // Only fetch once session is confirmed (or unauthenticated if we have a valid email)
+    if (sessionStatus === "loading" || !verifiedEmail || accessDenied) return;
     fetchTicket();
   }, [sessionStatus, verifiedEmail, ticketId, accessDenied]);
 

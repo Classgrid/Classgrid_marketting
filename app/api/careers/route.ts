@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" style="height:40px;" />
   </div>
   <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:32px;">
-    <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">New Job Application</h2>
+    <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">Someone Wants to Join the Classgrid Team!</h2>
     <table style="width:100%;border-collapse:collapse;">
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;width:130px;vertical-align:top;">Name</td>

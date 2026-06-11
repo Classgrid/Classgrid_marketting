@@ -166,67 +166,115 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
           {/* LEFT — three Select dropdowns (Sort + Month + Module) */}
           <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto">
             {/* Sort order — same as Blog */}
-            <Select
-              value={sortOrder}
-              onValueChange={(v) => { setSortOrder(v); setCurrentPage(1); }}
-            >
-              <SelectTrigger
-                aria-label="Sort Order"
-                className="h-11 w-[130px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+            <div className="relative">
+              <Select
+                value={sortOrder}
+                onValueChange={(v) => { setSortOrder(v); setCurrentPage(1); }}
               >
-                <SelectValue placeholder="Sort: Latest" />
-              </SelectTrigger>
-              <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
-                <SelectItem value="latest">Latest</SelectItem>
-                <SelectItem value="oldest">Oldest</SelectItem>
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  aria-label="Sort Order"
+                  className="h-11 w-[130px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+                >
+                  <SelectValue placeholder="Sort: Latest" />
+                </SelectTrigger>
+                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
+                  <SelectItem value="latest">Latest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                </SelectContent>
+              </Select>
+              <select
+                value={sortOrder}
+                onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1); }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+              >
+                <option value="latest">Latest</option>
+                <option value="oldest">Oldest</option>
+              </select>
+            </div>
 
             {/* Month filter — same as Blog */}
-            <Select
-              value={monthFilter}
-              onValueChange={(v) => { setMonthFilter(v); setCurrentPage(1); }}
-            >
-              <SelectTrigger
-                aria-label="Month Filter"
-                className="h-11 w-[150px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+            <div className="relative">
+              <Select
+                value={monthFilter}
+                onValueChange={(v) => { setMonthFilter(v); setCurrentPage(1); }}
               >
-                <SelectValue placeholder="Month" />
-              </SelectTrigger>
-              <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
-                <SelectItem value="all">All Months</SelectItem>
-                <SelectItem value="jan">January</SelectItem>
-                <SelectItem value="feb">February</SelectItem>
-                <SelectItem value="mar">March</SelectItem>
-                <SelectItem value="apr">April</SelectItem>
-                <SelectItem value="may">May</SelectItem>
-                <SelectItem value="jun">June</SelectItem>
-                <SelectItem value="jul">July</SelectItem>
-                <SelectItem value="aug">August</SelectItem>
-                <SelectItem value="sep">September</SelectItem>
-                <SelectItem value="oct">October</SelectItem>
-                <SelectItem value="nov">November</SelectItem>
-                <SelectItem value="dec">December</SelectItem>
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  aria-label="Month Filter"
+                  className="h-11 w-[150px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+                >
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
+                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="jan">January</SelectItem>
+                  <SelectItem value="feb">February</SelectItem>
+                  <SelectItem value="mar">March</SelectItem>
+                  <SelectItem value="apr">April</SelectItem>
+                  <SelectItem value="may">May</SelectItem>
+                  <SelectItem value="jun">June</SelectItem>
+                  <SelectItem value="jul">July</SelectItem>
+                  <SelectItem value="aug">August</SelectItem>
+                  <SelectItem value="sep">September</SelectItem>
+                  <SelectItem value="oct">October</SelectItem>
+                  <SelectItem value="nov">November</SelectItem>
+                  <SelectItem value="dec">December</SelectItem>
+                </SelectContent>
+              </Select>
+              <select
+                value={monthFilter}
+                onChange={(e) => { setMonthFilter(e.target.value); setCurrentPage(1); }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+              >
+                <option value="all">All Months</option>
+                <option value="jan">January</option>
+                <option value="feb">February</option>
+                <option value="mar">March</option>
+                <option value="apr">April</option>
+                <option value="may">May</option>
+                <option value="jun">June</option>
+                <option value="jul">July</option>
+                <option value="aug">August</option>
+                <option value="sep">September</option>
+                <option value="oct">October</option>
+                <option value="nov">November</option>
+                <option value="dec">December</option>
+              </select>
+            </div>
 
             {/* Module filter — changelog-specific */}
-            <Select
-              value={activeModule}
-              onValueChange={(v) => { setActiveModule(v); setCurrentPage(1); }}
-            >
-              <SelectTrigger
-                aria-label="Module Filter"
-                className="h-11 w-[160px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+            <div className="relative">
+              <Select
+                value={activeModule}
+                onValueChange={(v) => { setActiveModule(v); setCurrentPage(1); }}
               >
-                <SelectValue placeholder="Module" />
-              </SelectTrigger>
-              <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
+                <SelectTrigger
+                  aria-label="Module Filter"
+                  className="h-11 w-[160px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+                >
+                  <SelectValue placeholder="Module" />
+                </SelectTrigger>
+                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
+                  {moduleOptions.map((opt) => (
+                    <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <select
+                value={activeModule}
+                onChange={(e) => { setActiveModule(e.target.value); setCurrentPage(1); }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+              >
                 {moduleOptions.map((opt) => (
-                  <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                  <option key={opt.id} value={opt.id}>{opt.label}</option>
                 ))}
-              </SelectContent>
-            </Select>
+              </select>
+            </div>
           </div>
 
           {/* RIGHT — Update Type pills (like Blog's category pills) */}
