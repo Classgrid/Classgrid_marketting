@@ -13,7 +13,7 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, gender, email, phone, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
+    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
 
     if (!email?.trim() || !firstName?.trim() || !lastName?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim() || !termsConsent) {
       return NextResponse.json(
@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
     const sanitizedCurrentOccupation = escapeHtml(currentOccupation?.trim() || "Not provided");
     const sanitizedExperience = escapeHtml(experience?.trim() || "Not provided");
     const sanitizedAvailability = escapeHtml(availability?.trim() || "Not provided");
-    const sanitizedWorkType = escapeHtml(workType?.trim() || "Not provided");
+    const sanitizedWorkType = escapeHtml(workType || "Not specified");
+    const sanitizedSkills = escapeHtml(skills || "Not provided");
     
     // New fields
     const sanitizedAge = escapeHtml(age18?.trim() || "Not provided");
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       to: "support@classgrid.in",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nLocation: ${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka} → ${sanitizedCityVillage}\nEducation: ${sanitizedDegree} (${sanitizedYearOfStudy})\nTech Stack: ${techStackItems.join(", ")}`,
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
@@ -99,20 +100,68 @@ export async function POST(request: NextRequest) {
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedPhone}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Location</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Gender</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedGender}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Role</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedRole} (${sanitizedWorkType})</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Country</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${escapeHtml(country || "India")}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Professional Info</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCurrentOccupation} • ${sanitizedExperience} Exp • Joining: ${sanitizedAvailability}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">State</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedState}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Education</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDegree} in ${sanitizedBranch} (${sanitizedYearOfStudy})<br/>${sanitizedCollege} • CGPA: ${sanitizedCgpa}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">District</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDistrict}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Taluka</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedTaluka}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">City/Village</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCityVillage}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Interested Role</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedRole}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Work Type</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedWorkType}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Occupation</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCurrentOccupation}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Experience</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedExperience}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Expected Joining</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedAvailability}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Degree</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDegree}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Branch</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedBranch}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Year of Study</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedYearOfStudy}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">College / Univ</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCollege}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">CGPA</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCgpa}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Over 18?</td>
@@ -147,6 +196,11 @@ export async function POST(request: NextRequest) {
     <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
       <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Tech Stack (${techStackItems.length} selected)</p>
       <div style="margin:0;line-height:2;">${techStackHtml}</div>
+    </div>
+
+    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
+      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Additional Skills</p>
+      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedSkills}</div>
     </div>
 
     <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
