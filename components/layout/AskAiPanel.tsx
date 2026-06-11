@@ -694,6 +694,34 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isTerminated, setIsTerminated] = useState(false);
+  
+  // Track previous page to answer "what page was I on" questions
+  const [previousPage, setPreviousPage] = useState<{ path?: string; title?: string } | null>(null);
+
+  useEffect(() => {
+    if (!pageContext?.path) return;
+    
+    try {
+      const savedCurrent = sessionStorage.getItem("classgrid_current_page");
+      const current = savedCurrent ? JSON.parse(savedCurrent) : null;
+      
+      if (current && current.path !== pageContext.path) {
+        // The page has changed, update previous
+        sessionStorage.setItem("classgrid_prev_page", JSON.stringify(current));
+        setPreviousPage(current);
+      } else {
+        // Load previous if it exists
+        const savedPrev = sessionStorage.getItem("classgrid_prev_page");
+        if (savedPrev) setPreviousPage(JSON.parse(savedPrev));
+      }
+      
+      // Always update current
+      sessionStorage.setItem("classgrid_current_page", JSON.stringify({ 
+        path: pageContext.path, 
+        title: pageContext.title || document.title 
+      }));
+    } catch (_) {}
+  }, [pageContext?.path, pageContext?.title]);
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -1025,7 +1053,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             .filter((m) => m.role === "user" || m.role === "assistant")
             .slice(-10)
             .map((m) => ({ role: m.role, content: m.content })),
-          pageContext: pageContext,
+          pageContext: {
+            ...pageContext,
+            previousPath: previousPage?.path,
+            previousTitle: previousPage?.title,
+          },
         }),
       });
 
