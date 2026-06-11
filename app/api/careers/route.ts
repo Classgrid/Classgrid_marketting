@@ -13,11 +13,11 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, city, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote, resumeUrl } = body;
+    const { firstName, lastName, gender, email, phone, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
 
-    if (!email?.trim() || !name?.trim() || !role?.trim() || !phone?.trim()) {
+    if (!email?.trim() || !firstName?.trim() || !lastName?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim() || !termsConsent) {
       return NextResponse.json(
-        { success: false, message: "Name, email, phone, and role are required." },
+        { success: false, message: "Required fields are missing or terms not accepted." },
         { status: 400 }
       );
     }
@@ -30,17 +30,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const sanitizedName = escapeHtml(name.trim());
+    const sanitizedName = escapeHtml(`${firstName.trim()} ${lastName.trim()}`);
     const sanitizedEmail = escapeHtml(email.trim().toLowerCase());
     const sanitizedPhone = escapeHtml(phone.trim());
-    const sanitizedCity = escapeHtml(city?.trim() || "Not provided");
+    const sanitizedGender = escapeHtml(gender?.trim() || "Not provided");
+    const sanitizedState = escapeHtml(state?.trim() || "Not provided");
+    const sanitizedDistrict = escapeHtml(district?.trim() || "Not provided");
+    const sanitizedTaluka = escapeHtml(taluka?.trim() || "Not provided");
+    const sanitizedCityVillage = escapeHtml(cityVillage?.trim() || "Not provided");
     const sanitizedRole = escapeHtml(role.trim());
+    const sanitizedDegree = escapeHtml(degree.trim());
+    const sanitizedYearOfStudy = escapeHtml(yearOfStudy.trim());
+    const sanitizedCollege = escapeHtml(college?.trim() || "Not provided");
+    const sanitizedBranch = escapeHtml(branch?.trim() || "Not provided");
+    const sanitizedCgpa = escapeHtml(cgpa?.trim() || "Not provided");
+    const sanitizedCurrentOccupation = escapeHtml(currentOccupation?.trim() || "Not provided");
+    const sanitizedExperience = escapeHtml(experience?.trim() || "Not provided");
+    const sanitizedAvailability = escapeHtml(availability?.trim() || "Not provided");
+    const sanitizedWorkType = escapeHtml(workType?.trim() || "Not provided");
     
     // New fields
     const sanitizedAge = escapeHtml(age18?.trim() || "Not provided");
     const sanitizedTwitter = escapeHtml(twitter?.trim() || "Not provided");
     const sanitizedGithub = escapeHtml(github?.trim() || "Not provided");
     const sanitizedLinkedin = escapeHtml(linkedin?.trim() || "Not provided");
+    const sanitizedPortfolio = escapeHtml(portfolio?.trim() || "Not provided");
+    const sanitizedCodingProfile = escapeHtml(codingProfile?.trim() || "Not provided");
     
     // Text areas & Arrays
     const techStackItems = (techStack || "").trim().split(",").map((s: string) => s.trim()).filter(Boolean);
@@ -60,7 +75,7 @@ export async function POST(request: NextRequest) {
       to: "support@classgrid.in",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nTech Stack: ${techStackItems.join(", ")}`,
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nLocation: ${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka} → ${sanitizedCityVillage}\nEducation: ${sanitizedDegree} (${sanitizedYearOfStudy})\nTech Stack: ${techStackItems.join(", ")}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
@@ -73,7 +88,7 @@ export async function POST(request: NextRequest) {
     <table style="width:100%;border-collapse:collapse;">
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;width:130px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedName}</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedName} (${sanitizedGender})</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Email</td>
@@ -84,12 +99,20 @@ export async function POST(request: NextRequest) {
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedPhone}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">City</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCity}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Location</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Role</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedRole}</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedRole} (${sanitizedWorkType})</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Professional Info</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCurrentOccupation} • ${sanitizedExperience} Exp • Joining: ${sanitizedAvailability}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Education</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDegree} in ${sanitizedBranch} (${sanitizedYearOfStudy})<br/>${sanitizedCollege} • CGPA: ${sanitizedCgpa}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Over 18?</td>
@@ -106,6 +129,14 @@ export async function POST(request: NextRequest) {
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Twitter / X</td>
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedTwitter !== "Not provided" ? `<a href="${sanitizedTwitter}" style="color:#10b981;text-decoration:none;">${sanitizedTwitter}</a>` : "Not provided"}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Portfolio</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedPortfolio !== "Not provided" ? `<a href="${sanitizedPortfolio}" style="color:#10b981;text-decoration:none;">${sanitizedPortfolio}</a>` : "Not provided"}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Coding Profile</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCodingProfile !== "Not provided" ? `<a href="${sanitizedCodingProfile}" style="color:#10b981;text-decoration:none;">${sanitizedCodingProfile}</a>` : "Not provided"}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Resume</td>

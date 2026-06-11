@@ -7,7 +7,9 @@ export interface IDemoRequest extends Document {
   adminEmail: string;
   adminPhone: string;
   state: string;
-  city: string;
+  district: string;
+  taluka: string;
+  cityVillage: string;
   role?: string;
   source?: string;
   message?: string;
@@ -36,7 +38,9 @@ const DemoRequestSchema = new Schema<IDemoRequest>(
     adminEmail: { type: String, required: true },
     adminPhone: { type: String, required: true },
     state: { type: String, required: true },
-    city: { type: String, required: true },
+    district: { type: String, required: true },
+    taluka: { type: String, required: true },
+    cityVillage: { type: String, required: true },
     role: { type: String },
     source: { type: String },
     message: { type: String },

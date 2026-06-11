@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import locationData from "@/data/india-locations.json";
 import {
   User,
   Mail,
@@ -110,7 +111,11 @@ function createDemoSchema(copy?: DemoRequestFormCopy) {
       .string()
       .regex(/^[0-9]{10,15}$/, copy?.validationPhoneInvalid || ""),
     state: z.string().min(2, copy?.validationStateRequired || ""),
-    city: z.string().min(2, copy?.validationCityRequired || ""),
+    district: z.string().min(2, "District is required"),
+    taluka: z.string().min(2, "Taluka is required"),
+    customTaluka: z.string().optional(),
+    customDistrict: z.string().optional(),
+    cityVillage: z.string().min(2, "Institution City/Village is required"),
     message: z.string().optional(),
   });
 }
@@ -180,6 +185,8 @@ export function DemoRequestForm({
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<DemoFormValues>({
     resolver: zodResolver(demoSchema),
@@ -190,10 +197,56 @@ export function DemoRequestForm({
       adminEmail: "",
       adminPhone: "",
       state: "",
-      city: "",
+      district: "",
+      taluka: "",
+      customTaluka: "",
+      customDistrict: "",
+      cityVillage: "",
       message: "",
     },
   });
+
+  const selectedState = watch("state");
+  const selectedDistrict = watch("district");
+  const selectedTaluka = watch("taluka");
+
+  const allStates = useMemo(() => {
+    return [
+      ...Object.keys(locationData.states),
+      ...Object.keys(locationData.unionTerritories),
+    ].sort();
+  }, []);
+
+  const districts = useMemo(() => {
+    if (!selectedState) return [];
+    const stateData =
+      (locationData.states as Record<string, Record<string, string[]>>)[selectedState] ||
+      (locationData.unionTerritories as Record<string, Record<string, string[]>>)[selectedState] ||
+      {};
+    return Object.keys(stateData).sort();
+  }, [selectedState]);
+
+  const talukas = useMemo(() => {
+    if (!selectedState || !selectedDistrict) return [];
+    const stateData =
+      (locationData.states as Record<string, Record<string, string[]>>)[selectedState] ||
+      (locationData.unionTerritories as Record<string, Record<string, string[]>>)[selectedState] ||
+      {};
+    return (stateData[selectedDistrict] || []).sort();
+  }, [selectedState, selectedDistrict]);
+
+  const handleStateChange = (val: string) => {
+    setValue("district", "");
+    setValue("customDistrict", "");
+    setValue("taluka", "");
+    setValue("customTaluka", "");
+  };
+
+  const handleDistrictChange = (val: string) => {
+    setValue("customDistrict", "");
+    setValue("taluka", val === "Other" ? "Other" : "");
+    setValue("customTaluka", "");
+  };
 
   const refreshCaptcha = () => {
     setCaptchaCode(generateCaptcha());
@@ -219,12 +272,16 @@ export function DemoRequestForm({
     setError("");
 
     try {
+      const finalTaluka = payload.taluka === "Other" ? payload.customTaluka : payload.taluka;
+      const finalDistrict = payload.district === "Other" ? payload.customDistrict : payload.district;
+      const apiPayload = { ...payload, district: finalDistrict, taluka: finalTaluka, turnstileToken };
+
       const response = await fetch(
         "/api/request-demo",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload, turnstileToken }),
+          body: JSON.stringify(apiPayload),
         }
       );
       const data = await response.json().catch(() => ({}));
@@ -371,14 +428,127 @@ export function DemoRequestForm({
                 />
               </IconInput>
 
-              <IconInput icon={MapPin} label={copy?.stateLabel || ""} error={errors.state?.message}>
+              {/* State */}
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                  State / UT <span className="text-rose-500">*</span>
+                </Label>
+                <Controller
+                  name="state"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleStateChange(val); }}>
+                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                          <MapPin className="h-4 w-4" />
+                        </div>
+                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                          <SelectValue placeholder="Select State" />
+                        </SelectTrigger>
+                      </div>
+                      <SelectContent>
+                        {allStates.map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.state?.message && <p className="text-[10px] text-rose-500">{errors.state.message}</p>}
+              </div>
+
+              {/* District */}
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                  District <span className="text-rose-500">*</span>
+                </Label>
+                <Controller
+                  name="district"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleDistrictChange(val); }} disabled={!selectedState}>
+                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
+                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                          <MapPin className="h-4 w-4" />
+                        </div>
+                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
+                          <SelectValue placeholder="Select District" />
+                        </SelectTrigger>
+                      </div>
+                      <SelectContent>
+                        {districts.map((d) => (
+                          <SelectItem key={d} value={d}>{d}</SelectItem>
+                        ))}
+                        <SelectItem value="Other">Other (Please specify)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.district?.message && <p className="text-[10px] text-rose-500">{errors.district.message}</p>}
+              </div>
+
+              {selectedDistrict === "Other" && (
+                <IconInput icon={MapPin} label="Enter your District" error={errors.customDistrict?.message}>
+                  <Input
+                    placeholder="Your District name"
+                    className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
+                    {...register("customDistrict")}
+                  />
+                </IconInput>
+              )}
+
+              {/* Taluka */}
+              {selectedDistrict !== "Other" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    Taluka <span className="text-rose-500">*</span>
+                  </Label>
+                  <Controller
+                    name="taluka"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange} disabled={!selectedDistrict}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
+                            <SelectValue placeholder="Select Taluka" />
+                          </SelectTrigger>
+                        </div>
+                        <SelectContent>
+                          {talukas.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                          <SelectItem value="Other">Other (Please specify)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.taluka?.message && <p className="text-[10px] text-rose-500">{errors.taluka.message}</p>}
+                </div>
+              )}
+
+              {selectedTaluka === "Other" && (
+                <IconInput icon={MapPin} label="Enter your Taluka" error={errors.customTaluka?.message}>
+                  <Input
+                    placeholder="Your Taluka name"
+                    className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
+                    {...register("customTaluka")}
+                  />
+                </IconInput>
+              )}
+
+              {/* City/Village */}
+              <IconInput icon={MapPin} label="Institution City / Village" error={errors.cityVillage?.message}>
                 <Input
-                  placeholder={copy?.statePlaceholder}
+                  placeholder="Institution City or Village"
                   className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
-                  {...register("state")}
+                  {...register("cityVillage")}
                 />
               </IconInput>
 
+              {/* OrgType */}
               <div className="space-y-1.5">
                 {(copy?.solutionLabel || "").trim() ? (
                   <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
@@ -394,7 +564,7 @@ export function DemoRequestForm({
                         <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
                           <Search className="h-4 w-4" />
                         </div>
-                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between border-0 bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                       </div>
@@ -410,14 +580,6 @@ export function DemoRequestForm({
                 />
                 {errors.orgType?.message && <p className="text-[10px] text-rose-500">{errors.orgType.message}</p>}
               </div>
-
-              <IconInput icon={MapPin} label={copy?.cityLabel || ""} error={errors.city?.message}>
-                <Input
-                  placeholder={copy?.cityPlaceholder}
-                  className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
-                  {...register("city")}
-                />
-              </IconInput>
             </div>
           </div>
 
