@@ -269,18 +269,33 @@ export default function MyRequestsPage() {
                 <span className="text-xs font-medium text-muted-foreground">
                   Status:
                 </span>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-10 px-3 rounded-lg border border-border bg-muted text-sm font-medium text-foreground focus:ring-2 focus:ring-emerald-500/40 w-[130px]">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent side="bottom" className="min-w-[130px]">
-                    <SelectItem value="Any">Any</SelectItem>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="in_progress">In progress</SelectItem>
-                    <SelectItem value="resolved">Resolved</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="h-10 px-3 rounded-lg border border-border bg-muted text-sm font-medium text-foreground focus:ring-2 focus:ring-emerald-500/40 w-[130px]">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="min-w-[130px]">
+                      <SelectItem value="Any">Any</SelectItem>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="in_progress">In progress</SelectItem>
+                      <SelectItem value="resolved">Resolved</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="Any">Any</option>
+                    <option value="open">Open</option>
+                    <option value="in_progress">In progress</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                </div>
               </div>
             </div>
 
