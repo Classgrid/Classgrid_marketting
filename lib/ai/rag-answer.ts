@@ -76,6 +76,8 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.hash ? `URL hash: ${pageContext.hash}` : "",
     pageContext.section ? `Current section: ${pageContext.section}` : "",
     pageContext.summary ? `Page summary: ${pageContext.summary}` : "",
+    pageContext.previousTitle ? `Previous page title: ${pageContext.previousTitle}` : "",
+    pageContext.previousPath ? `Previous page path: ${pageContext.previousPath}` : "",
   ]
     .filter(Boolean)
     .join("\n");
