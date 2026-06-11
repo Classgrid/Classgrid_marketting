@@ -190,7 +190,7 @@ function buildSystemPrompt(params: {
     "- SECTION 4 — LINKS: Use a heading '### Resources & Links' and list them in this exact order:",
     "  * Competitor's OFFICIAL HOMEPAGE (e.g. `[VM Edulife Official Website](https://...)`) — use the main URL found in search results. Do not add warnings like 'inferred'.",
     "  * Any other review or reference links about the competitor that the search tool returned.",
-    "  * Classgrid links: [Product Modules](/product/modules), [Pricing](/pricing), [Book a Demo](/#book-demo)",
+    "  * Classgrid links: [Product Modules](/product/modules), [Pricing](/pricing), [Book a Demo](/#demo)",
     "  * If a Classgrid comparison page exists at /compare/[competitor-name], include it.",
     "",
     "- LINK FORMAT: Always use markdown links with SHORT labels — [Platform Name](url) — NEVER paste raw URLs.",
