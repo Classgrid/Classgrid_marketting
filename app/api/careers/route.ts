@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
     const sanitizedExperience = escapeHtml(experience?.trim() || "Not provided");
     const sanitizedAvailability = escapeHtml(availability?.trim() || "Not provided");
     const sanitizedWorkType = escapeHtml(workType || "Not specified");
-    const sanitizedGender = escapeHtml(gender || "Not specified");
     const sanitizedSkills = escapeHtml(skills || "Not provided");
     
     // New fields
