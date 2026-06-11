@@ -75,8 +75,8 @@ export async function POST(request: NextRequest) {
       from: getNoReplyAddress(),
       to: "support@classgrid.in",
       replyTo: sanitizedEmail,
-      subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`,
+      subject: `🚀 New Team Member Request: ${sanitizedName} wants to join as ${sanitizedRole}`,
+      text: `Someone wants to join the Classgrid team!:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" style="height:40px;" />
   </div>
   <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:32px;">
-    <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">New Job Application</h2>
+    <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">Someone Wants to Join the Classgrid Team!</h2>
     <table style="width:100%;border-collapse:collapse;">
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;width:130px;vertical-align:top;">Name</td>
