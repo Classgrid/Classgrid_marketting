@@ -13,9 +13,9 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, city, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote, resumeUrl } = body;
+    const { name, email, phone, state, district, taluka, cityVillage, degree, yearOfStudy, role, techStack, whyJoin, age18, twitter, github, linkedin, openSource, asyncRemote, resumeUrl } = body;
 
-    if (!email?.trim() || !name?.trim() || !role?.trim() || !phone?.trim()) {
+    if (!email?.trim() || !name?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim()) {
       return NextResponse.json(
         { success: false, message: "Name, email, phone, and role are required." },
         { status: 400 }
@@ -33,8 +33,13 @@ export async function POST(request: NextRequest) {
     const sanitizedName = escapeHtml(name.trim());
     const sanitizedEmail = escapeHtml(email.trim().toLowerCase());
     const sanitizedPhone = escapeHtml(phone.trim());
-    const sanitizedCity = escapeHtml(city?.trim() || "Not provided");
+    const sanitizedState = escapeHtml(state?.trim() || "Not provided");
+    const sanitizedDistrict = escapeHtml(district?.trim() || "Not provided");
+    const sanitizedTaluka = escapeHtml(taluka?.trim() || "Not provided");
+    const sanitizedCityVillage = escapeHtml(cityVillage?.trim() || "Not provided");
     const sanitizedRole = escapeHtml(role.trim());
+    const sanitizedDegree = escapeHtml(degree.trim());
+    const sanitizedYearOfStudy = escapeHtml(yearOfStudy.trim());
     
     // New fields
     const sanitizedAge = escapeHtml(age18?.trim() || "Not provided");
@@ -60,7 +65,7 @@ export async function POST(request: NextRequest) {
       to: "support@classgrid.in",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nTech Stack: ${techStackItems.join(", ")}`,
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nLocation: ${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka} → ${sanitizedCityVillage}\nEducation: ${sanitizedDegree} (${sanitizedYearOfStudy})\nTech Stack: ${techStackItems.join(", ")}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
@@ -84,12 +89,16 @@ export async function POST(request: NextRequest) {
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedPhone}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">City</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCity}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Location</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Role</td>
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedRole}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Education</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDegree} (${sanitizedYearOfStudy})</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Over 18?</td>

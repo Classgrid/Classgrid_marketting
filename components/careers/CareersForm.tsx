@@ -1,11 +1,27 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Send, Paperclip, Eye, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase-storage";
 import FilePreviewModal from "@/app/support/components/FilePreviewModal";
 import { Spinner } from "@/components/ui/spinner";
+import locationData from "@/data/india-locations.json";
+
+const DEGREES = [
+  "B.Tech / B.E.", "B.Sc", "B.Com", "B.A.", "BBA", "BCA", "B.Arch", "B.Pharm", 
+  "MBBS", "BDS", "BPT", "B.Sc Nursing", "B.Ed", "LLB", "BA LLB", "BBA LLB", "B.Des", "B.Voc", 
+  "M.Tech / M.E.", "M.Sc", "M.Com", "M.A.", "MBA", "MCA", "M.Arch", "M.Pharm", 
+  "MD / MS", "MDS", "MPT", "M.Sc Nursing", "M.Ed", "LLM", "M.Des", "Ph.D", 
+  "Diploma in Engineering", "Diploma in Pharmacy", "Diploma in Management", "ITI", 
+  "BMM", "BMS", "BHM (Hotel Management)", "BFA", "B.Lib.I.Sc", "M.Lib.I.Sc", 
+  "B.P.Ed", "M.P.Ed", "Integrated B.Tech+M.Tech", "Integrated B.Sc+M.Sc", 
+  "Integrated BBA+MBA", "Other"
+];
+
+const YEARS_OF_STUDY = [
+  "1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "Graduated", "Post-Graduated", "Dropped Out"
+];
 
 type SalesRole = {
   label: string;
@@ -47,6 +63,51 @@ export function CareersForm({
   const [previewOpen, setPreviewOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // --- Location cascading state ---
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedTaluka, setSelectedTaluka] = useState("");
+
+  // Merge states + union territories into one sorted list
+  const allStates = useMemo(() => {
+    return [
+      ...Object.keys(locationData.states),
+      ...Object.keys(locationData.unionTerritories),
+    ].sort();
+  }, []);
+
+  // Get districts for selected state
+  const districts = useMemo(() => {
+    if (!selectedState) return [];
+    const stateData =
+      (locationData.states as Record<string, Record<string, string[]>>)[selectedState] ||
+      (locationData.unionTerritories as Record<string, Record<string, string[]>>)[selectedState] ||
+      {};
+    return Object.keys(stateData).sort();
+  }, [selectedState]);
+
+  // Get talukas for selected district
+  const talukas = useMemo(() => {
+    if (!selectedState || !selectedDistrict) return [];
+    const stateData =
+      (locationData.states as Record<string, Record<string, string[]>>)[selectedState] ||
+      (locationData.unionTerritories as Record<string, Record<string, string[]>>)[selectedState] ||
+      {};
+    return (stateData[selectedDistrict] || []).sort();
+  }, [selectedState, selectedDistrict]);
+
+  // Reset child dropdowns when parent changes
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    setSelectedDistrict("");
+    setSelectedTaluka("");
+  };
+
+  const handleDistrictChange = (district: string) => {
+    setSelectedDistrict(district);
+    setSelectedTaluka("");
+  };
+
   const clearFile = () => {
     setSelectedFile(null);
     if (fileInputRef.current) {
@@ -61,14 +122,6 @@ export function CareersForm({
       setSelectedStacks([...selectedStacks, stack]);
     }
   };
-
-  const cities = [
-    "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Nashik", "Chhatrapati Sambhajinagar (Aurangabad)",
-    "Thane", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Satara", "Sangli", "Solapur", "Kolhapur",
-    "Dhule", "Nandurbar", "Jalgaon", "Ahilyanagar (Ahmednagar)", "Jalna", "Beed", "Dharashiv (Osmanabad)",
-    "Latur", "Nanded", "Parbhani", "Hingoli", "Amravati", "Akola", "Buldhana", "Washim", "Yavatmal",
-    "Bhandara", "Gondia", "Chandrapur", "Gadchiroli", "Wardha"
-  ].sort();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -122,7 +175,12 @@ export function CareersForm({
         name: formData.get("name") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
-        city: formData.get("city") as string,
+        state: selectedState,
+        district: selectedDistrict,
+        taluka: selectedTaluka === "Other" ? formData.get("customTaluka") as string : selectedTaluka,
+        cityVillage: formData.get("cityVillage") as string,
+        degree: formData.get("degree") as string,
+        yearOfStudy: formData.get("yearOfStudy") as string,
         role: formData.get("role") as string,
         techStack: selectedStacks.join(", "),
         skills: formData.get("skills") as string,
@@ -224,22 +282,114 @@ export function CareersForm({
           </label>
         </div>
 
+        {/* Location: State → District → Taluka */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">State / UT</span>
+            <select
+              name="state"
+              required
+              value={selectedState}
+              onChange={(e) => handleStateChange(e.target.value)}
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            >
+              <option value="" disabled>Select State</option>
+              {allStates.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">District</span>
+            <select
+              name="district"
+              required
+              value={selectedDistrict}
+              onChange={(e) => handleDistrictChange(e.target.value)}
+              disabled={!selectedState || districts.length === 0}
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="" disabled>{selectedState && districts.length === 0 ? "Coming soon" : "Select District"}</option>
+              {districts.map((district) => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Taluka</span>
+            <select
+              name="taluka"
+              required
+              value={selectedTaluka}
+              onChange={(e) => setSelectedTaluka(e.target.value)}
+              disabled={!selectedDistrict || talukas.length === 0}
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="" disabled>{selectedDistrict && talukas.length === 0 ? "Coming soon" : "Select Taluka"}</option>
+              {talukas.map((taluka) => (
+                <option key={taluka} value={taluka}>{taluka}</option>
+              ))}
+              <option value="Other">Other (Please specify)</option>
+            </select>
+          </label>
+        </div>
+
+        {selectedTaluka === "Other" && (
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Enter your Taluka</span>
+            <input
+              type="text"
+              name="customTaluka"
+              required
+              placeholder="Your Taluka name"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </label>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block text-sm">
-            <span className="mb-2 block text-muted-foreground">City (Maharashtra)</span>
+            <span className="mb-2 block text-muted-foreground">Highest Qualification / Degree</span>
             <select
-              name="city"
+              name="degree"
               required
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
               defaultValue=""
             >
-              <option value="" disabled>Select a city</option>
-              {cities.map((city) => (
-                <option key={city} value={city}>{city}</option>
+              <option value="" disabled>Select your degree</option>
+              {DEGREES.map(deg => (
+                <option key={deg} value={deg}>{deg}</option>
               ))}
-              <option value="Other">Other / Outside Maharashtra</option>
             </select>
           </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Current Year of Study</span>
+            <select
+              name="yearOfStudy"
+              required
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              defaultValue=""
+            >
+              <option value="" disabled>Select year</option>
+              {YEARS_OF_STUDY.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <label className="block text-sm">
+          <span className="mb-2 block text-muted-foreground">City / Village</span>
+          <input
+            type="text"
+            name="cityVillage"
+            required
+            placeholder="Your City or Village name"
+            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+          />
+        </label>
+
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">{fieldRole}</span>
             <select
