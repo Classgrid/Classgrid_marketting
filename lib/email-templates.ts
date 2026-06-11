@@ -366,8 +366,10 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
       <p><strong>Phone:</strong> ${lead.adminPhone || "N/A"}</p>
       <p><strong>Institution:</strong> ${lead.institutionName}</p>
       <p><strong>Organization Type:</strong> ${lead.orgType}</p>
-      <p><strong>Location:</strong> ${lead.city || "N/A"}, ${lead.state || "N/A"}</p>
+      <p><strong>Role:</strong> ${lead.role || "N/A"}</p>
+      <p><strong>Location:</strong> ${lead.cityVillage || "N/A"}, ${lead.taluka || "N/A"}, ${lead.district || "N/A"}, ${lead.state || "N/A"}</p>
       <p><strong>Message:</strong> ${lead.message || "N/A"}</p>
+      <p><strong>Source:</strong> ${lead.source || "N/A"}</p>
     </div>
     
     <p>These meeting details have been successfully synced to the dashboard. Please ensure a team member is prepared for the meeting!</p>
