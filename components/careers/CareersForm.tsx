@@ -759,6 +759,16 @@ export function CareersForm({
         )}
 
         <motion.label variants={itemVariants} className="block text-sm">
+          <span className="mb-2 block text-muted-foreground">Additional Skills (Comma separated)</span>
+          <textarea
+            name="skills"
+            rows={2}
+            placeholder="e.g. Project Management, Graphic Design, Public Speaking..."
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
+          ></textarea>
+        </motion.label>
+
+        <motion.label variants={itemVariants} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB</span>
           <div className="relative">
             <motion.div 
