@@ -695,31 +695,29 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [error, setError] = useState("");
   const [isTerminated, setIsTerminated] = useState(false);
   
-  // Track previous page to answer "what page was I on" questions
-  const [previousPage, setPreviousPage] = useState<{ path?: string; title?: string } | null>(null);
+  // Track page history to answer "what page was I on" questions
+  const [pageHistory, setPageHistory] = useState<{ path: string; title: string }[]>([]);
 
   useEffect(() => {
     if (!pageContext?.path) return;
     
     try {
-      const savedCurrent = sessionStorage.getItem("classgrid_current_page");
-      const current = savedCurrent ? JSON.parse(savedCurrent) : null;
+      // Load current history from storage
+      const savedHistory = sessionStorage.getItem("classgrid_page_history");
+      let history: { path: string; title: string }[] = savedHistory ? JSON.parse(savedHistory) : [];
       
-      if (current && current.path !== pageContext.path) {
-        // The page has changed, update previous
-        sessionStorage.setItem("classgrid_prev_page", JSON.stringify(current));
-        setPreviousPage(current);
-      } else {
-        // Load previous if it exists
-        const savedPrev = sessionStorage.getItem("classgrid_prev_page");
-        if (savedPrev) setPreviousPage(JSON.parse(savedPrev));
-      }
-      
-      // Always update current
-      sessionStorage.setItem("classgrid_current_page", JSON.stringify({ 
+      const newEntry = { 
         path: pageContext.path, 
         title: pageContext.title || document.title 
-      }));
+      };
+
+      // If the current page is different from the last page in history, add it
+      if (history.length === 0 || history[history.length - 1].path !== newEntry.path) {
+        history = [...history, newEntry].slice(-8); // Keep max 8 pages
+        sessionStorage.setItem("classgrid_page_history", JSON.stringify(history));
+      }
+      
+      setPageHistory(history);
     } catch (_) {}
   }, [pageContext?.path, pageContext?.title]);
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
@@ -1055,8 +1053,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             .map((m) => ({ role: m.role, content: m.content })),
           pageContext: {
             ...pageContext,
-            previousPath: previousPage?.path,
-            previousTitle: previousPage?.title,
+            pageHistory: pageHistory,
           },
         }),
       });
