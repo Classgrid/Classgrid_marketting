@@ -76,11 +76,10 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.hash ? `URL hash: ${pageContext.hash}` : "",
     pageContext.section ? `Current section: ${pageContext.section}` : "",
     pageContext.summary ? `Page summary: ${pageContext.summary}` : "",
-    pageContext.previousTitle ? `Previous page title: ${pageContext.previousTitle}` : "",
-    pageContext.previousPath ? `Previous page path: ${pageContext.previousPath}` : "",
+
     pageContext.pageHistory && pageContext.pageHistory.length > 0
       ? `\nRecent browsing history (last ${pageContext.pageHistory.length} pages):\n` +
-        pageContext.pageHistory.map((p, i) => `  ${i + 1}. ${p.title} (${p.path})`).join("\n")
+        pageContext.pageHistory.map((p, i) => `  ${i + 1}. [${p.title}](${p.path})`).join("\n")
       : "",
   ]
     .filter(Boolean)
