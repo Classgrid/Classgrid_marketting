@@ -26,8 +26,10 @@ export async function POST(req: Request) {
       adminName: body.adminName,
       adminEmail: body.adminEmail,
       adminPhone: body.adminPhone,
-      state: body.state, // Missing required field!
-      city: body.city,   // Missing required field!
+      state: body.state,
+      district: body.district,
+      taluka: body.taluka,
+      cityVillage: body.cityVillage,
       role: body.role,
       message: body.message,
       source: body.source,
