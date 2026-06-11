@@ -13,7 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import locationData from "@/data/india-locations.json";
 
 const DEGREES = [
-  "B.Tech / B.E.", "B.Sc", "B.Com", "B.A.", "BBA", "BCA", "B.Arch", "B.Pharm", 
+  "B.Tech", "B.E.", "B.Sc", "B.Com", "B.A.", "BBA", "BCA", "B.Arch", "B.Pharm", 
   "MBBS", "BDS", "BPT", "B.Sc Nursing", "B.Ed", "LLB", "BA LLB", "BBA LLB", "B.Des", "B.Voc", 
   "M.Tech / M.E.", "M.Sc", "M.Com", "M.A.", "MBA", "MCA", "M.Arch", "M.Pharm", 
   "MD / MS", "MDS", "MPT", "M.Sc Nursing", "M.Ed", "LLM", "M.Des", "Ph.D", 
