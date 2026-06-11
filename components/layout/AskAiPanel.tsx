@@ -1315,7 +1315,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                         )}
                       >
                         {isUser ? (
-                          <p className="text-sm leading-relaxed">{message.content}</p>
+                          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{message.content}</p>
                         ) : (
                           <AssistantMessageContent content={message.content} />
                         )}
