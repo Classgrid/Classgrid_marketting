@@ -694,6 +694,32 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isTerminated, setIsTerminated] = useState(false);
+  
+  // Track page history to answer "what page was I on" questions
+  const [pageHistory, setPageHistory] = useState<{ path: string; title: string }[]>([]);
+
+  useEffect(() => {
+    if (!pageContext?.path) return;
+    
+    try {
+      // Load current history from storage
+      const savedHistory = sessionStorage.getItem("classgrid_page_history");
+      let history: { path: string; title: string }[] = savedHistory ? JSON.parse(savedHistory) : [];
+      
+      const newEntry = { 
+        path: pageContext.path, 
+        title: pageContext.title || document.title 
+      };
+
+      // If the current page is different from the last page in history, add it
+      if (history.length === 0 || history[history.length - 1].path !== newEntry.path) {
+        history = [...history, newEntry].slice(-8); // Keep max 8 pages
+        sessionStorage.setItem("classgrid_page_history", JSON.stringify(history));
+      }
+      
+      setPageHistory(history);
+    } catch (_) {}
+  }, [pageContext?.path, pageContext?.title]);
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -1025,7 +1051,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             .filter((m) => m.role === "user" || m.role === "assistant")
             .slice(-10)
             .map((m) => ({ role: m.role, content: m.content })),
-          pageContext: pageContext,
+          pageContext: {
+            ...pageContext,
+            pageHistory: pageHistory,
+          },
         }),
       });
 
