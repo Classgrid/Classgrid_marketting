@@ -105,19 +105,38 @@ export async function POST(request: NextRequest) {
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Location</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${escapeHtml(country || "India")} → ${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;line-height:1.6;">
+          State: ${sanitizedState}<br/>
+          District: ${sanitizedDistrict}<br/>
+          Taluka: ${sanitizedTaluka}<br/>
+          City/Village: ${sanitizedCityVillage}<br/>
+          Country: ${escapeHtml(country || "India")}
+        </td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Role</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedRole} (${sanitizedWorkType})</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;line-height:1.6;">
+          Role: ${sanitizedRole}<br/>
+          Work Type: ${sanitizedWorkType}
+        </td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Professional Info</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedCurrentOccupation} • ${sanitizedExperience} Exp • Joining: ${sanitizedAvailability}</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;line-height:1.6;">
+          Occupation: ${sanitizedCurrentOccupation}<br/>
+          Experience: ${sanitizedExperience}<br/>
+          Joining: ${sanitizedAvailability}
+        </td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Education</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedDegree} in ${sanitizedBranch} (${sanitizedYearOfStudy})<br/>${sanitizedCollege} • CGPA: ${sanitizedCgpa}</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;line-height:1.6;">
+          Degree: ${sanitizedDegree}<br/>
+          Branch: ${sanitizedBranch}<br/>
+          Year: ${sanitizedYearOfStudy}<br/>
+          College: ${sanitizedCollege}<br/>
+          CGPA: ${sanitizedCgpa}
+        </td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Over 18?</td>
