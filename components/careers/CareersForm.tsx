@@ -458,7 +458,7 @@ export function CareersForm({
             <select
               name="degree"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select your degree</option>
@@ -472,7 +472,7 @@ export function CareersForm({
             <select
               name="yearOfStudy"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select year</option>
@@ -491,7 +491,7 @@ export function CareersForm({
               name="college"
               required
               placeholder="Your College Name"
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
             />
           </label>
           <label className="block text-sm">
@@ -501,7 +501,7 @@ export function CareersForm({
               name="branch"
               required
               placeholder="e.g. CSE, IT, ECE"
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
             />
           </label>
           <label className="block text-sm">
@@ -511,7 +511,7 @@ export function CareersForm({
               name="cgpa"
               required
               placeholder="Optional"
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
             />
           </label>
         </motion.div>
@@ -523,7 +523,7 @@ export function CareersForm({
             name="cityVillage"
             required
             placeholder="Your City or Village name"
-            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
           />
         </motion.label>
 
@@ -533,7 +533,7 @@ export function CareersForm({
             <select
               name="role"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>{rolePlaceholder}</option>
@@ -550,7 +550,7 @@ export function CareersForm({
             <select
               name="currentOccupation"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select Occupation</option>
@@ -564,7 +564,7 @@ export function CareersForm({
             <select
               name="experience"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select Experience</option>
@@ -583,7 +583,7 @@ export function CareersForm({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className={`h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-left font-normal outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] flex items-center gap-2 ${!availabilityDate ? "text-slate-500 dark:text-zinc-500" : "text-slate-900 dark:text-white"}`}
+                  className={`h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-left font-normal outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] flex items-center gap-2 ${!availabilityDate ? "text-slate-500 dark:text-zinc-500" : "text-slate-900 dark:text-white"}`}
                   onClick={() => { setTempDate(availabilityDate); setIsCalendarOpen(true); }}
                 >
                   <CalendarIcon className="h-4 w-4" />
@@ -759,6 +759,16 @@ export function CareersForm({
         )}
 
         <motion.label variants={itemVariants} className="block text-sm">
+          <span className="mb-2 block text-muted-foreground">Additional Skills (Comma separated)</span>
+          <textarea
+            name="skills"
+            rows={2}
+            placeholder="e.g. Project Management, Graphic Design, Public Speaking..."
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
+          ></textarea>
+        </motion.label>
+
+        <motion.label variants={itemVariants} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB</span>
           <div className="relative">
             <motion.div 
@@ -838,7 +848,7 @@ export function CareersForm({
             rows={3}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
         </motion.label>
 
@@ -849,7 +859,7 @@ export function CareersForm({
             rows={3}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
         </motion.label>
 
@@ -860,7 +870,7 @@ export function CareersForm({
             rows={4}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
         </motion.label>
 

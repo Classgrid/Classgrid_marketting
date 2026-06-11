@@ -320,59 +320,110 @@ export function BlogClient({
 
       <section className="flex flex-col items-start justify-between gap-4 py-4 md:flex-row md:items-center">
         <div className="flex flex-wrap items-center gap-3">
-          <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger
-              aria-label="Sort Order"
-              className="h-11 w-[130px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+          <div className="relative">
+            <Select value={sortOrder} onValueChange={setSortOrder}>
+              <SelectTrigger
+                aria-label="Sort Order"
+                className="h-11 w-[130px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+              >
+                <SelectValue placeholder="Sort: Latest" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
+                <SelectItem value="latest">Latest</SelectItem>
+                <SelectItem value="popular">Popular</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+              </SelectContent>
+            </Select>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
             >
-              <SelectValue placeholder="Sort: Latest" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
-              <SelectItem value="latest">Latest</SelectItem>
-              <SelectItem value="popular">Popular</SelectItem>
-              <SelectItem value="oldest">Oldest</SelectItem>
-            </SelectContent>
-          </Select>
+              <option value="latest">Latest</option>
+              <option value="popular">Popular</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
 
-          <Select value={monthFilter} onValueChange={setMonthFilter}>
-            <SelectTrigger
-              aria-label="Month Filter"
-              className="h-11 w-[150px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+          <div className="relative">
+            <Select value={monthFilter} onValueChange={setMonthFilter}>
+              <SelectTrigger
+                aria-label="Month Filter"
+                className="h-11 w-[150px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+              >
+                <SelectValue placeholder="Month" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
+                <SelectItem value="all">All Months</SelectItem>
+                <SelectItem value="jan">January</SelectItem>
+                <SelectItem value="feb">February</SelectItem>
+                <SelectItem value="mar">March</SelectItem>
+                <SelectItem value="apr">April</SelectItem>
+                <SelectItem value="may">May</SelectItem>
+                <SelectItem value="jun">June</SelectItem>
+                <SelectItem value="jul">July</SelectItem>
+                <SelectItem value="aug">August</SelectItem>
+                <SelectItem value="sep">September</SelectItem>
+                <SelectItem value="oct">October</SelectItem>
+                <SelectItem value="nov">November</SelectItem>
+                <SelectItem value="dec">December</SelectItem>
+              </SelectContent>
+            </Select>
+            <select
+              value={monthFilter}
+              onChange={(e) => setMonthFilter(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
             >
-              <SelectValue placeholder="Month" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
-              <SelectItem value="all">All Months</SelectItem>
-              <SelectItem value="jan">January</SelectItem>
-              <SelectItem value="feb">February</SelectItem>
-              <SelectItem value="mar">March</SelectItem>
-              <SelectItem value="apr">April</SelectItem>
-              <SelectItem value="may">May</SelectItem>
-              <SelectItem value="jun">June</SelectItem>
-              <SelectItem value="jul">July</SelectItem>
-              <SelectItem value="aug">August</SelectItem>
-              <SelectItem value="sep">September</SelectItem>
-              <SelectItem value="oct">October</SelectItem>
-              <SelectItem value="nov">November</SelectItem>
-              <SelectItem value="dec">December</SelectItem>
-            </SelectContent>
-          </Select>
+              <option value="all">All Months</option>
+              <option value="jan">January</option>
+              <option value="feb">February</option>
+              <option value="mar">March</option>
+              <option value="apr">April</option>
+              <option value="may">May</option>
+              <option value="jun">June</option>
+              <option value="jul">July</option>
+              <option value="aug">August</option>
+              <option value="sep">September</option>
+              <option value="oct">October</option>
+              <option value="nov">November</option>
+              <option value="dec">December</option>
+            </select>
+          </div>
 
-          <Select value={yearFilter} onValueChange={setYearFilter}>
-            <SelectTrigger
-              aria-label="Year Filter"
-              className="h-11 w-[120px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+          <div className="relative">
+            <Select value={yearFilter} onValueChange={setYearFilter}>
+              <SelectTrigger
+                aria-label="Year Filter"
+                className="h-11 w-[120px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+              >
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
+                {years.map((year) => (
+                  <SelectItem key={year} value={year}>
+                    {year === "all" ? "All Years" : year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
             >
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card text-card-foreground">
               {years.map((year) => (
-                <SelectItem key={year} value={year}>
+                <option key={year} value={year}>
                   {year === "all" ? "All Years" : year}
-                </SelectItem>
+                </option>
               ))}
-            </SelectContent>
-          </Select>
+            </select>
+          </div>
         </div>
 
         <div className="scrollbar-hide flex w-full gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
