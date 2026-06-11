@@ -141,33 +141,34 @@ function TicketDetailPageInner() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
 
-  // ── Strict session guard — must be logged in ──────────────────────────────
-  // If not authenticated, redirect to sign-in page immediately.
-  // The email query param is ONLY for display; the session email is the authority.
+  // ── Auth guard — must have email (session or local storage) ──────────────
   useEffect(() => {
     if (sessionStatus === "loading") return; // wait for session to resolve
 
-    if (sessionStatus === "unauthenticated") {
-      // Not logged in — redirect to sign-in, return here after login
+    const sessionEmail = normalizeSupportEmail(session?.user?.email);
+    const savedEmail = normalizeSupportEmail(localStorage.getItem("support_email"));
+    const activeEmail = sessionEmail || savedEmail;
+
+    if (!activeEmail) {
+      // Not authenticated via any method — redirect to requests list to enter email
       const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.href = `/auth/signin?callbackUrl=${returnUrl}`;
+      window.location.href = `/support/requests?redirect=${returnUrl}`;
       return;
     }
 
-    // Logged in — verify the session email matches the query email (ownership check)
-    const sessionEmail = normalizeSupportEmail(session?.user?.email);
+    // Verify the active email matches the query email (ownership check)
     const paramEmail = normalizeSupportEmail(queryEmail);
 
-    if (paramEmail && sessionEmail && sessionEmail.toLowerCase() !== paramEmail.toLowerCase()) {
-      // Logged in but trying to access someone else's ticket via URL
+    if (paramEmail && activeEmail && activeEmail.toLowerCase() !== paramEmail.toLowerCase()) {
+      // Trying to access someone else's ticket via URL
       setAccessDenied(true);
       setLoading(false);
       return;
     }
   }, [sessionStatus, session, queryEmail]);
 
-  // The email to use for all API calls — always from session, never from URL alone
-  const verifiedEmail = normalizeSupportEmail(session?.user?.email);
+  // The email to use for all API calls
+  const verifiedEmail = normalizeSupportEmail(session?.user?.email) || normalizeSupportEmail(typeof window !== "undefined" ? localStorage.getItem("support_email") : "");
 
   // ── Fetch ticket ──────────────────────────────────────────────────────────
 
