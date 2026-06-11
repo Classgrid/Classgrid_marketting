@@ -7,6 +7,9 @@ export type PageContext = {
   summary?: string;
   hash?: string;
   section?: string;
+  previousPath?: string;
+  previousTitle?: string;
+  pageHistory?: { path: string; title: string }[];
 };
 
 export type ExtractedRagSection = {
