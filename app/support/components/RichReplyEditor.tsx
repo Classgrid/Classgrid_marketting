@@ -242,22 +242,41 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
 
           {/* Toolbar */}
           <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto flex-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <Select
-              onValueChange={(val) => {
-                editorRef.current?.focus();
-                document.execCommand("formatBlock", false, val);
-                syncContent();
-              }}
-            >
-              <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[110px]">
-                <SelectValue placeholder="Heading" />
-              </SelectTrigger>
-              <SelectContent side="bottom" className="min-w-[130px]">
-                <SelectItem value="h2">Heading 2</SelectItem>
-                <SelectItem value="h3">Heading 3</SelectItem>
-                <SelectItem value="p">Paragraph</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Select
+                onValueChange={(val) => {
+                  editorRef.current?.focus();
+                  document.execCommand("formatBlock", false, val);
+                  syncContent();
+                }}
+              >
+                <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[110px]">
+                  <SelectValue placeholder="Heading" />
+                </SelectTrigger>
+                <SelectContent side="bottom" className="min-w-[130px]">
+                  <SelectItem value="h2">Heading 2</SelectItem>
+                  <SelectItem value="h3">Heading 3</SelectItem>
+                  <SelectItem value="p">Paragraph</SelectItem>
+                </SelectContent>
+              </Select>
+              <select
+                onChange={(e) => {
+                  editorRef.current?.focus();
+                  document.execCommand("formatBlock", false, e.target.value);
+                  syncContent();
+                  e.target.value = "";
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                defaultValue=""
+              >
+                <option value="" disabled>Heading</option>
+                <option value="h2">Heading 2</option>
+                <option value="h3">Heading 3</option>
+                <option value="p">Paragraph</option>
+              </select>
+            </div>
             <Sep />
             <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { document.execCommand("bold"); syncContent(); }} title="Bold" />
             <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { document.execCommand("italic"); syncContent(); }} title="Italic" />

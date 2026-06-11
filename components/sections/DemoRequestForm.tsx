@@ -437,21 +437,35 @@ export function DemoRequestForm({
                   name="state"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleStateChange(val); }}>
-                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
-                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          <MapPin className="h-4 w-4" />
+                    <div className="relative">
+                      <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleStateChange(val); }}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                            <SelectValue placeholder="Select State" />
+                          </SelectTrigger>
                         </div>
-                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
-                          <SelectValue placeholder="Select State" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
+                        <SelectContent>
+                          {allStates.map((s) => (
+                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <select
+                        value={field.value}
+                        onChange={(e) => { field.onChange(e.target.value); handleStateChange(e.target.value); }}
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                      >
+                        <option value="" disabled>Select State</option>
                         {allStates.map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                          <option key={s} value={s}>{s}</option>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </select>
+                    </div>
                   )}
                 />
                 {errors.state?.message && <p className="text-[10px] text-rose-500">{errors.state.message}</p>}
@@ -466,22 +480,38 @@ export function DemoRequestForm({
                   name="district"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleDistrictChange(val); }} disabled={!selectedState}>
-                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
-                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          <MapPin className="h-4 w-4" />
+                    <div className="relative">
+                      <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleDistrictChange(val); }} disabled={!selectedState}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
+                            <SelectValue placeholder="Select District" />
+                          </SelectTrigger>
                         </div>
-                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
-                          <SelectValue placeholder="Select District" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
+                        <SelectContent>
+                          {districts.map((d) => (
+                            <SelectItem key={d} value={d}>{d}</SelectItem>
+                          ))}
+                          <SelectItem value="Other">Other (Please specify)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <select
+                        value={field.value}
+                        onChange={(e) => { field.onChange(e.target.value); handleDistrictChange(e.target.value); }}
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        disabled={!selectedState}
+                        className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none disabled:cursor-not-allowed"
+                      >
+                        <option value="" disabled>Select District</option>
                         {districts.map((d) => (
-                          <SelectItem key={d} value={d}>{d}</SelectItem>
+                          <option key={d} value={d}>{d}</option>
                         ))}
-                        <SelectItem value="Other">Other (Please specify)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                        <option value="Other">Other (Please specify)</option>
+                      </select>
+                    </div>
                   )}
                 />
                 {errors.district?.message && <p className="text-[10px] text-rose-500">{errors.district.message}</p>}
@@ -507,22 +537,38 @@ export function DemoRequestForm({
                     name="taluka"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange} disabled={!selectedDistrict}>
-                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
-                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
-                            <MapPin className="h-4 w-4" />
+                      <div className="relative">
+                        <Select value={field.value} onValueChange={field.onChange} disabled={!selectedDistrict}>
+                          <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
+                            <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                              <MapPin className="h-4 w-4" />
+                            </div>
+                            <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
+                              <SelectValue placeholder="Select Taluka" />
+                            </SelectTrigger>
                           </div>
-                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
-                            <SelectValue placeholder="Select Taluka" />
-                          </SelectTrigger>
-                        </div>
-                        <SelectContent>
+                          <SelectContent>
+                            {talukas.map((t) => (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                            <SelectItem value="Other">Other (Please specify)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <select
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          disabled={!selectedDistrict}
+                          className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none disabled:cursor-not-allowed"
+                        >
+                          <option value="" disabled>Select Taluka</option>
                           {talukas.map((t) => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                            <option key={t} value={t}>{t}</option>
                           ))}
-                          <SelectItem value="Other">Other (Please specify)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                          <option value="Other">Other (Please specify)</option>
+                        </select>
+                      </div>
                     )}
                   />
                   {errors.taluka?.message && <p className="text-[10px] text-rose-500">{errors.taluka.message}</p>}
@@ -559,23 +605,37 @@ export function DemoRequestForm({
                   name="orgType"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
-                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          <Search className="h-4 w-4" />
+                    <div className="relative">
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <Search className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
                         </div>
-                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
+                        <SelectContent>
+                          {solutionOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <select
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                      >
+                        <option value="" disabled>Select type</option>
                         {solutionOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
+                          <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </select>
+                    </div>
                   )}
                 />
                 {errors.orgType?.message && <p className="text-[10px] text-rose-500">{errors.orgType.message}</p>}

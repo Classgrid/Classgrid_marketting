@@ -183,41 +183,89 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
 
         {/* ── FILTER BAR — 4 dropdowns, all from Sanity data ── */}
         <section className="flex flex-nowrap sm:flex-wrap items-center gap-3 py-8 border-b border-border mb-12 overflow-x-auto scrollbar-hide">
-          <Select value={yearFilter} onValueChange={(v) => { setYearFilter(v); setCurrentPage(1); }}>
-            <SelectTrigger aria-label="Year" className="h-11 w-[130px] rounded-xl border border-border bg-card shadow-sm">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card">
-              {yearOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="relative">
+            <Select value={yearFilter} onValueChange={(v) => { setYearFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger aria-label="Year" className="h-11 w-[130px] rounded-xl border border-border bg-card shadow-sm">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card">
+                {yearOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <select
+              value={yearFilter}
+              onChange={(e) => { setYearFilter(e.target.value); setCurrentPage(1); }}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+            >
+              <option value="" disabled>Year</option>
+              {yearOptions.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </div>
 
-          <Select value={institutionFilter} onValueChange={(v) => { setInstitutionFilter(v); setCurrentPage(1); }}>
-            <SelectTrigger aria-label="Institution Type" className="h-11 w-[160px] rounded-xl border border-border bg-card shadow-sm">
-              <SelectValue placeholder="Institution Type" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card">
-              {institutionOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="relative">
+            <Select value={institutionFilter} onValueChange={(v) => { setInstitutionFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger aria-label="Institution Type" className="h-11 w-[160px] rounded-xl border border-border bg-card shadow-sm">
+                <SelectValue placeholder="Institution Type" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card">
+                {institutionOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <select
+              value={institutionFilter}
+              onChange={(e) => { setInstitutionFilter(e.target.value); setCurrentPage(1); }}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+            >
+              <option value="" disabled>Institution Type</option>
+              {institutionOptions.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </div>
 
-          <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setCurrentPage(1); }}>
-            <SelectTrigger aria-label="Case Study Type" className="h-11 w-[170px] rounded-xl border border-border bg-card shadow-sm">
-              <SelectValue placeholder="Case Study Type" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card">
-              {categoryOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="relative">
+            <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger aria-label="Case Study Type" className="h-11 w-[170px] rounded-xl border border-border bg-card shadow-sm">
+                <SelectValue placeholder="Case Study Type" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card">
+                {categoryOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <select
+              value={categoryFilter}
+              onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+            >
+              <option value="" disabled>Case Study Type</option>
+              {categoryOptions.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </div>
 
-          <Select value={moduleFilter} onValueChange={(v) => { setModuleFilter(v); setCurrentPage(1); }}>
-            <SelectTrigger aria-label="Module" className="h-11 w-[150px] rounded-xl border border-border bg-card shadow-sm">
-              <SelectValue placeholder="Module" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border bg-card">
-              {moduleOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="relative">
+            <Select value={moduleFilter} onValueChange={(v) => { setModuleFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger aria-label="Module" className="h-11 w-[150px] rounded-xl border border-border bg-card shadow-sm">
+                <SelectValue placeholder="Module" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border bg-card">
+                {moduleOptions.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <select
+              value={moduleFilter}
+              onChange={(e) => { setModuleFilter(e.target.value); setCurrentPage(1); }}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+            >
+              <option value="" disabled>Module</option>
+              {moduleOptions.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </div>
         </section>
 
 

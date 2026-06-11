@@ -527,32 +527,63 @@ export default function RaiseTicketPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label className="text-sm font-semibold text-foreground">Category</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
-                    <SelectItem value="general">General</SelectItem>
-                    <SelectItem value="technical">Technical Issue</SelectItem>
-                    <SelectItem value="billing">Billing &amp; Payments</SelectItem>
-                    <SelectItem value="account">Account &amp; Access</SelectItem>
-                    <SelectItem value="feature">Feature Request</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
+                      <SelectItem value="general">General</SelectItem>
+                      <SelectItem value="technical">Technical Issue</SelectItem>
+                      <SelectItem value="billing">Billing &amp; Payments</SelectItem>
+                      <SelectItem value="account">Account &amp; Access</SelectItem>
+                      <SelectItem value="feature">Feature Request</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="" disabled>Select category</option>
+                    <option value="general">General</option>
+                    <option value="technical">Technical Issue</option>
+                    <option value="billing">Billing &amp; Payments</option>
+                    <option value="account">Account &amp; Access</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-semibold text-foreground">Priority</Label>
-                <Select value={priority} onValueChange={setPriority}>
-                  <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
-                    <SelectItem value="low">🟢 Low — Minor issue, not urgent</SelectItem>
-                    <SelectItem value="medium">🟡 Medium — Affecting my work</SelectItem>
-                    <SelectItem value="high">🔴 High — Blocking critical operations</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={priority} onValueChange={setPriority}>
+                    <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
+                      <SelectItem value="low">🟢 Low — Minor issue, not urgent</SelectItem>
+                      <SelectItem value="medium">🟡 Medium — Affecting my work</SelectItem>
+                      <SelectItem value="high">🔴 High — Blocking critical operations</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="" disabled>Select priority</option>
+                    <option value="low">🟢 Low — Minor issue, not urgent</option>
+                    <option value="medium">🟡 Medium — Affecting my work</option>
+                    <option value="high">🔴 High — Blocking critical operations</option>
+                  </select>
+                </div>
               </div>
             </div>
 

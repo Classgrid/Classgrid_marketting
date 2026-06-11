@@ -528,36 +528,71 @@ export default function InquiryPage() {
                 <Label className="text-sm font-semibold text-foreground">
                   Category <span className="text-destructive">*</span>
                 </Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                    <SelectValue placeholder="Select a topic" />
-                  </SelectTrigger>
-                  <SelectContent side="bottom" alignItemWithTrigger={false} className="max-h-[280px] overflow-y-auto">
-                    <SelectItem value="technical">Technical Support / ERP / AI / API</SelectItem>
-                    <SelectItem value="billing">Billing &amp; Subscription</SelectItem>
-                    <SelectItem value="academics">Academics / Attendance / Admissions</SelectItem>
-                    <SelectItem value="exams">Examination Systems</SelectItem>
-                    <SelectItem value="communication">Communication &amp; Scheduling</SelectItem>
-                    <SelectItem value="finance">HR &amp; Payroll / Finance</SelectItem>
-                    <SelectItem value="getting_started">Getting Started</SelectItem>
-                    <SelectItem value="account_security">Account &amp; Security</SelectItem>
-                    <SelectItem value="general">General Inquiry</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
+                      <SelectValue placeholder="Select a topic" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" alignItemWithTrigger={false} className="max-h-[280px] overflow-y-auto">
+                      <SelectItem value="technical">Technical Support / ERP / AI / API</SelectItem>
+                      <SelectItem value="billing">Billing &amp; Subscription</SelectItem>
+                      <SelectItem value="academics">Academics / Attendance / Admissions</SelectItem>
+                      <SelectItem value="exams">Examination Systems</SelectItem>
+                      <SelectItem value="communication">Communication &amp; Scheduling</SelectItem>
+                      <SelectItem value="finance">HR &amp; Payroll / Finance</SelectItem>
+                      <SelectItem value="getting_started">Getting Started</SelectItem>
+                      <SelectItem value="account_security">Account &amp; Security</SelectItem>
+                      <SelectItem value="general">General Inquiry</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="" disabled>Select a topic</option>
+                    <option value="technical">Technical Support / ERP / AI / API</option>
+                    <option value="billing">Billing &amp; Subscription</option>
+                    <option value="academics">Academics / Attendance / Admissions</option>
+                    <option value="exams">Examination Systems</option>
+                    <option value="communication">Communication &amp; Scheduling</option>
+                    <option value="finance">HR &amp; Payroll / Finance</option>
+                    <option value="getting_started">Getting Started</option>
+                    <option value="account_security">Account &amp; Security</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-semibold text-foreground">Priority</Label>
-                <Select value={priority} onValueChange={setPriority}>
-                  <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
-                    <SelectItem value="low">🟢 Low — General question</SelectItem>
-                    <SelectItem value="medium">🟡 Medium — Need help soon</SelectItem>
-                    <SelectItem value="high">🔴 High — Urgent / Blocking operations</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={priority} onValueChange={setPriority}>
+                    <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
+                      <SelectItem value="low">🟢 Low — General question</SelectItem>
+                      <SelectItem value="medium">🟡 Medium — Need help soon</SelectItem>
+                      <SelectItem value="high">🔴 High — Urgent / Blocking operations</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="" disabled>Select priority</option>
+                    <option value="low">🟢 Low — General question</option>
+                    <option value="medium">🟡 Medium — Need help soon</option>
+                    <option value="high">🔴 High — Urgent / Blocking operations</option>
+                  </select>
+                </div>
               </div>
             </div>
 
