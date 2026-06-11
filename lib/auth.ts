@@ -6,6 +6,7 @@ import { connectMongo } from "@/lib/mongodb";
 import ForumUser from "@/lib/models/ForumUser";
 import ForumOTP from "@/lib/models/ForumOTP";
 import mongoose from "mongoose";
+import { OAuth2Client } from "google-auth-library";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,6 +17,51 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    CredentialsProvider({
+      id: "google-one-tap",
+      name: "Google One Tap",
+      credentials: {
+        credential: { type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.credential) throw new Error("No credential provided");
+        
+        try {
+          const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+          const ticket = await client.verifyIdToken({
+            idToken: credentials.credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+          });
+          
+          const payload = ticket.getPayload();
+          if (!payload) throw new Error("Invalid token payload");
+          
+          const { email, name, picture } = payload;
+          if (!email) throw new Error("No email in token");
+
+          await connectMongo();
+          
+          let user = await ForumUser.findOne({ email });
+          if (!user) {
+            user = await ForumUser.create({
+              email,
+              name: name || undefined,
+              avatar: picture || undefined,
+              provider: "google",
+              emailVerified: true,
+            });
+          } else if (!user.avatar && picture) {
+            user.avatar = picture;
+            await user.save();
+          }
+
+          return { id: user._id.toString(), email: user.email, name: user.name, image: user.avatar };
+        } catch (error) {
+          console.error("Google One Tap Error:", error);
+          throw new Error("Google Verification Failed");
+        }
+      }
     }),
     CredentialsProvider({
       name: "OTP",
