@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Send, Paperclip, Eye, Trash2 } from "lucide-react";
+import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/lib/supabase-storage";
 import FilePreviewModal from "@/app/support/components/FilePreviewModal";
 import { Spinner } from "@/components/ui/spinner";
@@ -67,6 +70,9 @@ export function CareersForm({
   const [selectedState, setSelectedState] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedTaluka, setSelectedTaluka] = useState("");
+  const [availabilityDate, setAvailabilityDate] = useState<Date>();
+  const [tempDate, setTempDate] = useState<Date>();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Merge states + union territories into one sorted list
   const allStates = useMemo(() => {
@@ -105,7 +111,7 @@ export function CareersForm({
 
   const handleDistrictChange = (district: string) => {
     setSelectedDistrict(district);
-    setSelectedTaluka("");
+    setSelectedTaluka(district === "Other" ? "Other" : "");
   };
 
   const clearFile = () => {
@@ -172,15 +178,24 @@ export function CareersForm({
       }
 
       const payload = {
-        name: formData.get("name") as string,
+        firstName: formData.get("firstName") as string,
+        lastName: formData.get("lastName") as string,
+        gender: formData.get("gender") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
         state: selectedState,
-        district: selectedDistrict,
+        district: selectedDistrict === "Other" ? formData.get("customDistrict") as string : selectedDistrict,
         taluka: selectedTaluka === "Other" ? formData.get("customTaluka") as string : selectedTaluka,
         cityVillage: formData.get("cityVillage") as string,
         degree: formData.get("degree") as string,
         yearOfStudy: formData.get("yearOfStudy") as string,
+        college: formData.get("college") as string,
+        branch: formData.get("branch") as string,
+        cgpa: formData.get("cgpa") as string,
+        currentOccupation: formData.get("currentOccupation") as string,
+        experience: formData.get("experience") as string,
+        availability: availabilityDate ? format(availabilityDate, 'yyyy-MM-dd') : "",
+        workType: formData.get("workType") as string,
         role: formData.get("role") as string,
         techStack: selectedStacks.join(", "),
         skills: formData.get("skills") as string,
@@ -189,9 +204,12 @@ export function CareersForm({
         twitter: formData.get("twitter") as string,
         github: formData.get("github") as string,
         linkedin: formData.get("linkedin") as string,
+        portfolio: formData.get("portfolio") as string,
+        codingProfile: formData.get("codingProfile") as string,
         openSource: formData.get("openSource") as string,
         asyncRemote: formData.get("asyncRemote") as string,
         resumeUrl: resumeUrl,
+        termsConsent: formData.get("termsConsent") === "on",
       };
 
       const response = await fetch("/api/careers", {
@@ -247,19 +265,43 @@ export function CareersForm({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <label className="block text-sm">
-          <span className="mb-2 block text-muted-foreground">{fieldName}</span>
-          <input
-            type="text"
-            name="name"
-            required
-            placeholder="John Doe"
-            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
-          />
-        </label>
+          <motion.form 
+            onSubmit={handleSubmit} 
+            className="mt-6 space-y-6"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.04 }
+              }
+            }}
+          >
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">First Name</span>
+            <input
+              type="text"
+              name="firstName"
+              required
+              placeholder="John"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Last Name</span>
+            <input
+              type="text"
+              name="lastName"
+              required
+              placeholder="Doe"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </label>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">{fieldEmail}</span>
             <input
@@ -280,10 +322,53 @@ export function CareersForm({
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
           </label>
-        </div>
+        </motion.div>
 
-        {/* Location: State → District → Taluka */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Gender</span>
+            <select
+              name="gender"
+              required
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              defaultValue=""
+            >
+              <option value="" disabled>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Are you over the age of 18?</span>
+            <div className="flex gap-4 items-center h-11 px-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age18" value="Yes" required className="accent-emerald-500 w-4 h-4" />
+                <span className="text-slate-900 dark:text-white">Yes</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age18" value="No" required className="accent-emerald-500 w-4 h-4" />
+                <span className="text-slate-900 dark:text-white">No</span>
+              </label>
+            </div>
+          </label>
+        </motion.div>
+
+        {/* Location: Country → State → District → Taluka */}
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Country</span>
+            <div className="flex items-center gap-2 h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-slate-900 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-900 dark:text-white opacity-80">
+              <img 
+                src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Flag_of_India.svg.png" 
+                alt="India" 
+                className="h-auto w-[22px] rounded-none object-contain shadow-sm border border-slate-200/50 dark:border-zinc-700/50" 
+              />
+              <span className="font-medium text-[15px]">India</span>
+              <input type="hidden" name="country" value="India" />
+            </div>
+          </label>
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">State / UT</span>
             <select
@@ -306,36 +391,52 @@ export function CareersForm({
               required
               value={selectedDistrict}
               onChange={(e) => handleDistrictChange(e.target.value)}
-              disabled={!selectedState || districts.length === 0}
+              disabled={!selectedState}
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="" disabled>{selectedState && districts.length === 0 ? "Coming soon" : "Select District"}</option>
               {districts.map((district) => (
                 <option key={district} value={district}>{district}</option>
               ))}
-            </select>
-          </label>
-          <label className="block text-sm">
-            <span className="mb-2 block text-muted-foreground">Taluka</span>
-            <select
-              name="taluka"
-              required
-              value={selectedTaluka}
-              onChange={(e) => setSelectedTaluka(e.target.value)}
-              disabled={!selectedDistrict || talukas.length === 0}
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option value="" disabled>{selectedDistrict && talukas.length === 0 ? "Coming soon" : "Select Taluka"}</option>
-              {talukas.map((taluka) => (
-                <option key={taluka} value={taluka}>{taluka}</option>
-              ))}
               <option value="Other">Other (Please specify)</option>
             </select>
           </label>
-        </div>
+          {selectedDistrict !== "Other" && (
+            <label className="block text-sm">
+              <span className="mb-2 block text-muted-foreground">Taluka</span>
+              <select
+                name="taluka"
+                required
+                value={selectedTaluka}
+                onChange={(e) => setSelectedTaluka(e.target.value)}
+                disabled={!selectedDistrict}
+                className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="" disabled>{selectedDistrict && talukas.length === 0 ? "Coming soon" : "Select Taluka"}</option>
+                {talukas.map((taluka) => (
+                  <option key={taluka} value={taluka}>{taluka}</option>
+                ))}
+                <option value="Other">Other (Please specify)</option>
+              </select>
+            </label>
+          )}
+        </motion.div>
+
+        {selectedDistrict === "Other" && (
+          <motion.label variants={{ hidden: { opacity: 0, height: 0 }, show: { opacity: 1, height: "auto" } }} className="block text-sm overflow-hidden">
+            <span className="mb-2 block text-muted-foreground">Enter your District</span>
+            <input
+              type="text"
+              name="customDistrict"
+              required
+              placeholder="Your District name"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </motion.label>
+        )}
 
         {selectedTaluka === "Other" && (
-          <label className="block text-sm">
+          <motion.label variants={{ hidden: { opacity: 0, height: 0 }, show: { opacity: 1, height: "auto" } }} className="block text-sm overflow-hidden">
             <span className="mb-2 block text-muted-foreground">Enter your Taluka</span>
             <input
               type="text"
@@ -344,16 +445,16 @@ export function CareersForm({
               placeholder="Your Taluka name"
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
-          </label>
+          </motion.label>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">Highest Qualification / Degree</span>
             <select
               name="degree"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select your degree</option>
@@ -367,7 +468,7 @@ export function CareersForm({
             <select
               name="yearOfStudy"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>Select year</option>
@@ -376,26 +477,59 @@ export function CareersForm({
               ))}
             </select>
           </label>
-        </div>
+        </motion.div>
 
-        <label className="block text-sm">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">College / University Name</span>
+            <input
+              type="text"
+              name="college"
+              required
+              placeholder="Your College Name"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Branch / Specialization</span>
+            <input
+              type="text"
+              name="branch"
+              required
+              placeholder="e.g. CSE, IT, ECE"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">CGPA / Percentage</span>
+            <input
+              type="text"
+              name="cgpa"
+              required
+              placeholder="Optional"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+            />
+          </label>
+        </motion.div>
+
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">City / Village</span>
           <input
             type="text"
             name="cityVillage"
             required
             placeholder="Your City or Village name"
-            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
           />
-        </label>
+        </motion.label>
 
-        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-1 gap-4">
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">{fieldRole}</span>
             <select
               name="role"
               required
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
               defaultValue=""
             >
               <option value="" disabled>{rolePlaceholder}</option>
@@ -404,23 +538,93 @@ export function CareersForm({
               ))}
             </select>
           </label>
-        </div>
+        </motion.div>
 
-        <label className="block text-sm">
-          <span className="mb-2 block text-muted-foreground">Are you over the age of 18?</span>
-          <div className="flex gap-4 items-center h-11 px-3">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="age18" value="Yes" required className="accent-emerald-500 w-4 h-4" />
-              <span className="text-slate-900 dark:text-white">Yes</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="age18" value="No" required className="accent-emerald-500 w-4 h-4" />
-              <span className="text-slate-900 dark:text-white">No</span>
-            </label>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Current Occupation</span>
+            <select
+              name="currentOccupation"
+              required
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              defaultValue=""
+            >
+              <option value="" disabled>Select Occupation</option>
+              <option value="Student">Student</option>
+              <option value="Fresher">Fresher</option>
+              <option value="Working Professional">Working Professional</option>
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Years of Experience</span>
+            <select
+              name="experience"
+              required
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
+              defaultValue=""
+            >
+              <option value="" disabled>Select Experience</option>
+              <option value="0">0 (Fresher)</option>
+              <option value="1-2">1–2 Years</option>
+              <option value="3-5">3–5 Years</option>
+              <option value="5+">5+ Years</option>
+            </select>
+          </label>
+        </motion.div>
+
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Expected Joining Date</span>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={`h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-left font-normal outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] flex items-center gap-2 ${!availabilityDate ? "text-slate-500 dark:text-zinc-500" : "text-slate-900 dark:text-white"}`}
+                  onClick={() => { setTempDate(availabilityDate); setIsCalendarOpen(true); }}
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                  {availabilityDate ? format(availabilityDate, "PPP") : "Select date"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3 shadow-2xl rounded-xl border border-slate-200 dark:border-zinc-800 animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95" align="start">
+                <Calendar
+                  mode="single"
+                  selected={tempDate}
+                  onSelect={setTempDate}
+                  initialFocus
+                  required
+                  fixedWeeks
+                  className="p-0 border-none"
+                />
+                <div className="p-2 border-t border-slate-100 dark:border-zinc-800 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => { setAvailabilityDate(tempDate); setIsCalendarOpen(false); }}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-transparent text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-all border border-transparent dark:hover:border-zinc-700 hover:scale-[0.98]"
+                  >
+                    Apply <span className="opacity-50 text-[10px]">↵</span>
+                  </button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
-        </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Preferred Work Type</span>
+            <select
+              name="workType"
+              required
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+              defaultValue=""
+            >
+              <option value="" disabled>Select Work Type</option>
+              <option value="Remote">Remote</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="On-site">On-site</option>
+            </select>
+          </label>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">Twitter / X profile</span>
             <input
@@ -451,10 +655,31 @@ export function CareersForm({
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
           </label>
-        </div>
+        </motion.div>
+
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Portfolio / Personal Website</span>
+            <input
+              type="url"
+              name="portfolio"
+              placeholder="https:// (Optional)"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-2 block text-muted-foreground">Coding Profile (LeetCode/HackerRank)</span>
+            <input
+              type="url"
+              name="codingProfile"
+              placeholder="https:// (Optional)"
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+            />
+          </label>
+        </motion.div>
 
         {Object.keys(techStackGroups).length > 0 && (
-          <div className="block text-sm">
+          <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
             <span className="mb-1 flex items-center justify-between text-muted-foreground">
               <span>Your Tech Stack</span>
               <span className="text-xs text-slate-500">
@@ -526,11 +751,11 @@ export function CareersForm({
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
 
-        <label className="block text-sm">
-          <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB <span className="text-rose-500">*</span></span>
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
+          <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB</span>
           <div className="relative">
             <motion.div 
               whileHover={!isSubmitting ? { scale: 1.01 } : {}}
@@ -600,51 +825,59 @@ export function CareersForm({
               ) : null}
             </motion.div>
           </div>
-        </label>
+        </motion.label>
 
-        <label className="block text-sm">
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Have you made any open source contributions in the past that you'd like to share with us?</span>
           <textarea
             name="openSource"
             rows={3}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
-        </label>
+        </motion.label>
 
-        <label className="block text-sm">
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Why are you interested in joining the Classgrid team?</span>
           <textarea
             name="whyJoin"
             rows={3}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
-        </label>
+        </motion.label>
 
-        <label className="block text-sm">
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
           <span className="mb-2 block text-muted-foreground">Tell us about your experience working in an async and/or remote environment. What practices or approaches have worked well for you? What challenges have you faced?</span>
           <textarea
             name="asyncRemote"
             rows={4}
             required
             placeholder="Type here..."
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none transition-all focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white resize-y"
           ></textarea>
-        </label>
+        </motion.label>
 
-        <button
+        <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 text-sm cursor-pointer mt-6 mb-2">
+          <input type="checkbox" name="termsConsent" required className="accent-emerald-500 w-4 h-4 mt-1" />
+          <span className="text-muted-foreground leading-relaxed">
+            I agree to the <a href="/terms" className="text-emerald-500 hover:underline">Terms & Conditions</a> and <a href="/privacy" className="text-emerald-500 hover:underline">Privacy Policy</a>, and I consent to my data being processed for recruitment purposes.
+          </span>
+        </motion.label>
+
+        <motion.button
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 disabled:opacity-50 mt-4"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 mt-4"
         >
           {isSubmitting && <Spinner className="h-5 w-5 text-inherit" />}
           {isSubmitting ? "Submitting..." : submitLabel}
           {!isSubmitting && <Send className="h-4 w-4 text-white" />}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
         </>
       )}
 
