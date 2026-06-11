@@ -76,6 +76,11 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.hash ? `URL hash: ${pageContext.hash}` : "",
     pageContext.section ? `Current section: ${pageContext.section}` : "",
     pageContext.summary ? `Page summary: ${pageContext.summary}` : "",
+
+    pageContext.pageHistory && pageContext.pageHistory.length > 0
+      ? `\nRecent browsing history (last ${pageContext.pageHistory.length} pages):\n` +
+        pageContext.pageHistory.map((p, i) => `  ${i + 1}. [${p.title}](${p.path})`).join("\n")
+      : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -148,7 +153,7 @@ function buildSystemPrompt(params: {
     "- If the answer is not in the knowledge base AND you cannot find it using the search_web tool, then you may say you do not have that exact detail and recommend the closest Classgrid resource.",
     "- If you mention Help Center, Classgrid Talk, Terms, Privacy, Pricing, Support, Blog, Changelog, modules, docs, forms, or Contact Support, attach a direct link from context or the resource directory.",
     "- Prefer the current page context first, then broader site-wide and platform-wide RAG context.",
-    "- For pricing questions, answer only from retrieved pricing/CMS/page context. If retrieved context has pricing details, summarize those details and link to Pricing.",
+    "- For pricing questions, answer only from retrieved pricing/CMS/page context. If retrieved context has pricing details, summarize those details and provide a link to the [Pricing](/pricing) page.",
     "- If exact numeric prices are not present, state that pricing is customized based on the institution's specific size and needs, and invite them to Book a Demo for a personalized quote. NEVER use phrases like 'not publicly available', 'not publicly declared', or 'I don't have access to that' for any topic.",
     "- Do not say pricing details are unavailable when retrieved pricing chunks, pricing page metadata, or pricing FAQs are present.",
     "- For Book a Demo, joining, registration, onboarding, or 'how do we use Classgrid' questions, explain this exact flow: Book a Demo form -> Email Verification (OTP) -> User MUST schedule their meeting/demo directly on the screen using the calendar -> Classgrid Talk for immediate questions -> Live demonstration/walkthrough -> guided onboarding.",
@@ -166,10 +171,17 @@ function buildSystemPrompt(params: {
     "SOURCE CITATION RULES (MANDATORY — follow these for EVERY response):",
     "- ALWAYS provide source links so users can verify your information.",
     "- For Classgrid information: include the relevant page link (e.g. [Product Modules](/product/modules), [Pricing](/pricing)).",
-    "- LINK FORMAT RULE: NEVER output raw paths (like '/about') or raw URLs (like 'https://...') as plain text. ALWAYS wrap them in a clickable markdown link with a readable label, like [About Us](/about) or [Status Page](https://classgrid1.statuspage.io).",
+    "- EXTREMELY STRICT LINK RULE (GLOBAL): NEVER EVER output a raw path like '/pricing', '/contact', or '/case-studies' ANYWHERE in your response. Do not use slashes for plain text paths. You MUST ALWAYS format them as markdown links with descriptive text (e.g., [Pricing](/pricing)).",
     "- For competitor/external links: ALWAYS use markdown links with SHORT labels. Write [Platform Name](url) or [Platform on Techjockey](url).",
     "- NEVER present external information without a source link. If you cannot provide a source, state 'I was unable to find a verified source for this specific detail.'",
     "- For Classgrid-specific answers, always link to the most relevant Classgrid page where the user can verify the information.",
+    "",
+    "BROWSING HISTORY RULES:",
+    "- When the user asks what page they were on, be friendly, conversational, and use emojis! 😊",
+    "- IMPORTANT: If the path is `/`, it means they were on the 'Homepage'.",
+    "- Tell them what page they were on previously, and what page they are on now. Do NOT just output a robotic numbered list.",
+    "- Example response: 'You were previously on the [Homepage](/), and now you are on the [Pricing](/pricing) page! What would you like to explore next? 😊'",
+    "- ALWAYS format the page names as clickable markdown links.",
     "",
     "FORBIDDEN PAGES (these pages DO NOT EXIST — NEVER reference them):",
     "- /features — This page DOES NOT EXIST. Always link to [Product Modules](/product/modules) instead.",

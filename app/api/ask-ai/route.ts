@@ -84,6 +84,14 @@ function normalizePageContext(input: unknown): PageContext | undefined {
     summary: normalizeText(raw.summary),
     hash: normalizeText(raw.hash),
     section: normalizeText(raw.section),
+    previousPath: normalizeText(raw.previousPath),
+    previousTitle: normalizeText(raw.previousTitle),
+    pageHistory: Array.isArray(raw.pageHistory) 
+      ? raw.pageHistory.map((p: any) => ({ 
+          path: normalizeText(p.path), 
+          title: normalizeText(p.title) 
+        })) 
+      : undefined,
   };
 
   return Object.values(pageContext).some(Boolean) ? pageContext : undefined;
