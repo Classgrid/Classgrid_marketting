@@ -47,10 +47,16 @@ const customBadWords = [
 leoProfanity.add(customBadWords);
 
 function containsProfanity(text: string): boolean {
-  // leoProfanity.check() is great for English. We also do a quick regex match 
-  // for our custom words just to be extremely strict with substrings.
-  const normalized = text.toLowerCase();
-  const hasCustomWord = customBadWords.some(word => normalized.includes(word.toLowerCase()));
+  // leoProfanity.check() is great for English. We also do a regex match 
+  // with Unicode-aware word boundaries to prevent false positives (like 'claude' matching 'laude').
+  const hasCustomWord = customBadWords.some(word => {
+    // Escape special regex characters in the custom word
+    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // (^|[^\p{L}\p{N}]) matches start of string or a non-letter/non-number
+    // ([^\p{L}\p{N}]|$) matches a non-letter/non-number or end of string
+    const regex = new RegExp(`(^|[^\\p{L}\\p{N}])${escapedWord}([^\\p{L}\\p{N}]|$)`, 'iu');
+    return regex.test(text);
+  });
 
   return leoProfanity.check(text) || hasCustomWord;
 }
