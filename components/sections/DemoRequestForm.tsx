@@ -114,6 +114,7 @@ function createDemoSchema(copy?: DemoRequestFormCopy) {
     district: z.string().min(2, "District is required"),
     taluka: z.string().min(2, "Taluka is required"),
     customTaluka: z.string().optional(),
+    customDistrict: z.string().optional(),
     cityVillage: z.string().min(2, "Institution City/Village is required"),
     message: z.string().optional(),
   });
@@ -199,6 +200,7 @@ export function DemoRequestForm({
       district: "",
       taluka: "",
       customTaluka: "",
+      customDistrict: "",
       cityVillage: "",
       message: "",
     },
@@ -235,12 +237,14 @@ export function DemoRequestForm({
 
   const handleStateChange = (val: string) => {
     setValue("district", "");
+    setValue("customDistrict", "");
     setValue("taluka", "");
     setValue("customTaluka", "");
   };
 
   const handleDistrictChange = (val: string) => {
-    setValue("taluka", "");
+    setValue("customDistrict", "");
+    setValue("taluka", val === "Other" ? "Other" : "");
     setValue("customTaluka", "");
   };
 
@@ -269,7 +273,8 @@ export function DemoRequestForm({
 
     try {
       const finalTaluka = payload.taluka === "Other" ? payload.customTaluka : payload.taluka;
-      const apiPayload = { ...payload, taluka: finalTaluka, turnstileToken };
+      const finalDistrict = payload.district === "Other" ? payload.customDistrict : payload.district;
+      const apiPayload = { ...payload, district: finalDistrict, taluka: finalTaluka, turnstileToken };
 
       const response = await fetch(
         "/api/request-demo",
@@ -461,7 +466,7 @@ export function DemoRequestForm({
                   name="district"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleDistrictChange(val); }} disabled={!selectedState || districts.length === 0}>
+                    <Select value={field.value} onValueChange={(val) => { field.onChange(val); handleDistrictChange(val); }} disabled={!selectedState}>
                       <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
                         <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
                           <MapPin className="h-4 w-4" />
@@ -474,6 +479,7 @@ export function DemoRequestForm({
                         {districts.map((d) => (
                           <SelectItem key={d} value={d}>{d}</SelectItem>
                         ))}
+                        <SelectItem value="Other">Other (Please specify)</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -481,35 +487,47 @@ export function DemoRequestForm({
                 {errors.district?.message && <p className="text-[10px] text-rose-500">{errors.district.message}</p>}
               </div>
 
+              {selectedDistrict === "Other" && (
+                <IconInput icon={MapPin} label="Enter your District" error={errors.customDistrict?.message}>
+                  <Input
+                    placeholder="Your District name"
+                    className="h-10 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
+                    {...register("customDistrict")}
+                  />
+                </IconInput>
+              )}
+
               {/* Taluka */}
-              <div className="space-y-1.5">
-                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                  Taluka <span className="text-rose-500">*</span>
-                </Label>
-                <Controller
-                  name="taluka"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange} disabled={!selectedDistrict || talukas.length === 0}>
-                      <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
-                        <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          <MapPin className="h-4 w-4" />
+              {selectedDistrict !== "Other" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    Taluka <span className="text-rose-500">*</span>
+                  </Label>
+                  <Controller
+                    name="taluka"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange} disabled={!selectedDistrict}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10 opacity-disabled">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
+                            <SelectValue placeholder="Select Taluka" />
+                          </SelectTrigger>
                         </div>
-                        <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white disabled:cursor-not-allowed">
-                          <SelectValue placeholder="Select Taluka" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
-                        {talukas.map((t) => (
-                          <SelectItem key={t} value={t}>{t}</SelectItem>
-                        ))}
-                        <SelectItem value="Other">Other (Please specify)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.taluka?.message && <p className="text-[10px] text-rose-500">{errors.taluka.message}</p>}
-              </div>
+                        <SelectContent>
+                          {talukas.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                          <SelectItem value="Other">Other (Please specify)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.taluka?.message && <p className="text-[10px] text-rose-500">{errors.taluka.message}</p>}
+                </div>
+              )}
 
               {selectedTaluka === "Other" && (
                 <IconInput icon={MapPin} label="Enter your Taluka" error={errors.customTaluka?.message}>
