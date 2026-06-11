@@ -49,7 +49,7 @@ function Calendar({
         ),
         month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
         nav: cn(
-          "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
+          "absolute top-0 right-0 flex items-center gap-1",
           defaultClassNames.nav
         ),
         button_previous: cn(
@@ -63,7 +63,7 @@ function Calendar({
           defaultClassNames.button_next
         ),
         month_caption: cn(
-          "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
+          "flex h-(--cell-size) items-center justify-start ml-2",
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
@@ -117,7 +117,7 @@ function Calendar({
           defaultClassNames.range_end
         ),
         today: cn(
-          "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+          "font-semibold text-emerald-600 dark:text-emerald-400 [&>button]:after:absolute [&>button]:after:bottom-1 [&>button]:after:left-1/2 [&>button]:after:-translate-x-1/2 [&>button]:after:h-1 [&>button]:after:w-1 [&>button]:after:rounded-full [&>button]:after:bg-emerald-500 [&>button[data-selected-single=true]]:after:bg-white dark:[&>button[data-selected-single=true]]:after:bg-black",
           defaultClassNames.today
         ),
         outside: cn(
