@@ -13,7 +13,7 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, gender, email, phone, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
+    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
 
     if (!email?.trim() || !firstName?.trim() || !lastName?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim() || !termsConsent) {
       return NextResponse.json(
@@ -47,7 +47,9 @@ export async function POST(request: NextRequest) {
     const sanitizedCurrentOccupation = escapeHtml(currentOccupation?.trim() || "Not provided");
     const sanitizedExperience = escapeHtml(experience?.trim() || "Not provided");
     const sanitizedAvailability = escapeHtml(availability?.trim() || "Not provided");
-    const sanitizedWorkType = escapeHtml(workType?.trim() || "Not provided");
+    const sanitizedWorkType = escapeHtml(workType || "Not specified");
+    const sanitizedGender = escapeHtml(gender || "Not specified");
+    const sanitizedSkills = escapeHtml(skills || "Not provided");
     
     // New fields
     const sanitizedAge = escapeHtml(age18?.trim() || "Not provided");
@@ -99,8 +101,12 @@ export async function POST(request: NextRequest) {
         <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedPhone}</td>
       </tr>
       <tr>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Gender</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedGender}</td>
+      </tr>
+      <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Location</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">${escapeHtml(country || "India")} → ${sanitizedState} → ${sanitizedDistrict} → ${sanitizedTaluka}<br/><span style="color:#10b981;">City/Village: ${sanitizedCityVillage}</span></td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Role</td>
@@ -147,6 +153,11 @@ export async function POST(request: NextRequest) {
     <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
       <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Tech Stack (${techStackItems.length} selected)</p>
       <div style="margin:0;line-height:2;">${techStackHtml}</div>
+    </div>
+
+    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
+      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Additional Skills</p>
+      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedSkills}</div>
     </div>
 
     <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">

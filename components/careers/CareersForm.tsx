@@ -186,6 +186,7 @@ export function CareersForm({
         gender: formData.get("gender") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
+        country: formData.get("country") as string,
         state: selectedState,
         district: selectedDistrict === "Other" ? formData.get("customDistrict") as string : selectedDistrict,
         taluka: selectedTaluka === "Other" ? formData.get("customTaluka") as string : selectedTaluka,
