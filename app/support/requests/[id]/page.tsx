@@ -207,8 +207,8 @@ function TicketDetailPageInner() {
   };
 
   useEffect(() => {
-    // Only fetch once session is confirmed and email is available
-    if (sessionStatus !== "authenticated" || !verifiedEmail || accessDenied) return;
+    // Only fetch once session is confirmed (or unauthenticated if we have a valid email)
+    if (sessionStatus === "loading" || !verifiedEmail || accessDenied) return;
     fetchTicket();
   }, [sessionStatus, verifiedEmail, ticketId, accessDenied]);
 
