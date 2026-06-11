@@ -66,7 +66,6 @@ export function CareersForm({
   const [previewOpen, setPreviewOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-<<<<<<< HEAD
   // --- Location cascading state ---
   const [selectedState, setSelectedState] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -826,7 +825,6 @@ export function CareersForm({
               ) : null}
             </motion.div>
           </div>
-<<<<<<< HEAD
         </motion.label>
 
         <motion.label variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="block text-sm">
