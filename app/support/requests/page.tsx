@@ -16,7 +16,7 @@ import {
   Info,
 } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Button } from "@/components/ui/button";
@@ -73,23 +73,21 @@ export default function MyRequestsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Prefer the signed-in session email. Fall back to a saved/manual email for public inquiry tracking.
   useEffect(() => {
     if (status === "loading") return;
 
-    const sessionEmail = normalizeSupportEmail(session?.user?.email);
-    const savedEmail = normalizeSupportEmail(localStorage.getItem("support_email"));
-    const validEmail = sessionEmail || savedEmail;
+    if (status === "unauthenticated") {
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/login?callbackUrl=${returnUrl}`;
+      return;
+    }
 
-    if (validEmail) {
-      localStorage.setItem("support_email", validEmail);
-      setEmail(validEmail);
+    const sessionEmail = normalizeSupportEmail(session?.user?.email);
+    if (sessionEmail) {
+      setEmail(sessionEmail);
       setIsAuthenticated(true);
-      fetchTickets(validEmail);
+      fetchTickets(sessionEmail);
     } else {
-      localStorage.removeItem("support_email");
-      setEmail("");
-      setTickets([]);
       setIsAuthenticated(false);
     }
   }, [status, session?.user?.email]);
@@ -97,7 +95,6 @@ export default function MyRequestsPage() {
   const fetchTickets = async (userEmail: string) => {
     const validEmail = normalizeSupportEmail(userEmail);
     if (!validEmail) {
-      localStorage.removeItem("support_email");
       setIsAuthenticated(false);
       setTickets([]);
       setError("Email is required to load your tickets.");
@@ -114,11 +111,6 @@ export default function MyRequestsPage() {
       if (data.success) {
         setTickets(data.tickets);
         setIsPlatformUserApi(!!data.isPlatformUser);
-      } else if (res.status === 403) {
-        // Email not registered — kick back to login screen
-        localStorage.removeItem("support_email");
-        setIsAuthenticated(false);
-        setError(data.message || "This email is not registered on Classgrid.");
       } else {
         setError(data.message || "Failed to load tickets.");
       }
@@ -129,48 +121,8 @@ export default function MyRequestsPage() {
     }
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const validEmail = normalizeSupportEmail(email);
-    if (!validEmail) {
-      setError("Email is required to load your tickets.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    
-    try {
-      const res = await fetch(`/api/support-proxy/tickets?email=${encodeURIComponent(validEmail)}`);
-      const data = await res.json();
-      
-      if (res.status === 403) {
-        setError(data.message || "This email is not registered on Classgrid. Only registered users can access support.");
-        setLoading(false);
-        return;
-      }
-      
-      if (data.success) {
-        localStorage.setItem("support_email", validEmail);
-        setEmail(validEmail);
-        setIsAuthenticated(true);
-        setTickets(data.tickets);
-        setIsPlatformUserApi(!!data.isPlatformUser);
-      } else {
-        setError(data.message || "Something went wrong.");
-      }
-    } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("support_email");
-    setIsAuthenticated(false);
-    setTickets([]);
-    setEmail("");
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/login" });
   };
 
   const filteredRequests = tickets.filter((r) =>
@@ -190,54 +142,14 @@ export default function MyRequestsPage() {
     <main className="min-h-screen bg-background py-24 px-4 md:px-12 selection:bg-emerald-500/30 transition-colors duration-300">
       <div className="max-w-[960px] mx-auto">
         
-        {isCheckingSession ? (
+        {isCheckingSession || !isAuthenticated ? (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-md mx-auto mt-10 bg-card border border-border rounded-2xl p-8 shadow-sm text-center"
           >
             <Spinner className="w-6 h-6 mx-auto text-muted-foreground" />
-          </motion.div>
-        ) : !isAuthenticated ? (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-md mx-auto mt-10 bg-card border border-border rounded-2xl p-8 shadow-sm text-center"
-          >
-            <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Track Your Tickets</h2>
-            <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-              Enter the email address you used to submit your request to view your conversation history and reply.
-            </p>
-            
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-sm text-red-600 dark:text-red-400 text-left">
-                  {error}
-                </div>
-              )}
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@company.com"
-                className="w-full h-12 px-4 rounded-xl border border-border bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <><Spinner className="w-4 h-4 text-inherit" /> Verifying...</>
-                ) : (
-                  "View My Tickets"
-                )}
-              </button>
-            </form>
+            <p className="mt-4 text-sm text-muted-foreground">Authenticating...</p>
           </motion.div>
         ) : (
           <motion.div

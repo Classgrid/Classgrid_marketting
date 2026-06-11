@@ -141,25 +141,23 @@ function TicketDetailPageInner() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
 
-  // ── Auth guard — must have email (session or local storage) ──────────────
+  // ── Auth guard — must be logged in ──────────────
   useEffect(() => {
     if (sessionStatus === "loading") return; // wait for session to resolve
 
-    const sessionEmail = normalizeSupportEmail(session?.user?.email);
-    const savedEmail = normalizeSupportEmail(localStorage.getItem("support_email"));
-    const activeEmail = sessionEmail || savedEmail;
-
-    if (!activeEmail) {
-      // Not authenticated via any method — redirect to requests list to enter email
+    if (sessionStatus === "unauthenticated") {
+      // Not authenticated — redirect to login page
       const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.href = `/support/requests?redirect=${returnUrl}`;
+      window.location.href = `/login?callbackUrl=${returnUrl}`;
       return;
     }
+
+    const sessionEmail = normalizeSupportEmail(session?.user?.email);
 
     // Verify the active email matches the query email (ownership check)
     const paramEmail = normalizeSupportEmail(queryEmail);
 
-    if (paramEmail && activeEmail && activeEmail.toLowerCase() !== paramEmail.toLowerCase()) {
+    if (paramEmail && sessionEmail && sessionEmail.toLowerCase() !== paramEmail.toLowerCase()) {
       // Trying to access someone else's ticket via URL
       setAccessDenied(true);
       setLoading(false);
@@ -168,7 +166,7 @@ function TicketDetailPageInner() {
   }, [sessionStatus, session, queryEmail]);
 
   // The email to use for all API calls
-  const verifiedEmail = normalizeSupportEmail(session?.user?.email) || normalizeSupportEmail(typeof window !== "undefined" ? localStorage.getItem("support_email") : "");
+  const verifiedEmail = normalizeSupportEmail(session?.user?.email);
 
   // ── Fetch ticket ──────────────────────────────────────────────────────────
 
