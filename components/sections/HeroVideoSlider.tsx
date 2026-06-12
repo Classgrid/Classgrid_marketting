@@ -466,7 +466,6 @@ export function HeroVideoSlider({
                   }}
                   src={activeVideo.url}
                   poster={fallbackPosterUrl?.trim() || undefined}
-                  autoPlay={isPlaying}
                   muted={isMuted}
                   playsInline
                   onTimeUpdate={handleTimeUpdate}
