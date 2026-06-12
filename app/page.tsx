@@ -954,9 +954,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
   const showHero =
     Boolean(headline || subtext || heroPrimaryLabel || heroSecondaryLabel || badge);
-  const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid === true : true;
+  const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid !== false : true;
   const showShowcase =
-    moduleGridEnabled &&
     Boolean(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle || showcaseSlides.length);
   const showTrust =
     Boolean(trustedBy || trustSectionDescription || stats.length || trustedLogos.length);
