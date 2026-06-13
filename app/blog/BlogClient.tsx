@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import GoogleOneTap from "@/components/auth/GoogleOneTap";
+// import GoogleOneTap from "@/components/auth/GoogleOneTap";
 import {
   Pagination,
   PaginationContent,
@@ -291,7 +291,7 @@ export function BlogClient({
   return (
     <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
       {/* Reusable Google One Tap Login Popup */}
-      <GoogleOneTap />
+      {/* <GoogleOneTap /> */}
       
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
         <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm tracking-wide text-emerald-500">

@@ -18,6 +18,7 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
+/*
     CredentialsProvider({
       id: "google-one-tap",
       name: "Google One Tap",
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
         }
       }
     }),
+    */
     CredentialsProvider({
       name: "OTP",
       credentials: {

@@ -20,7 +20,7 @@ import { buildLangHref, extractLocaleString, type SupportedLang } from "@/lib/lo
 import { BlueprintBox, BlueprintSection } from "@/components/ui/BlueprintBox";
 import { ScrollSpyTOC } from "@/components/shared/ScrollSpyTOC";
 import { cn } from "@/lib/utils";
-import GoogleOneTap from "@/components/auth/GoogleOneTap";
+// import GoogleOneTap from "@/components/auth/GoogleOneTap";
 
 const MotionDiv = motion.div as any;
 const MotionHr = motion.hr as any;
@@ -193,7 +193,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
 
   return (
     <>
-      <GoogleOneTap />
+      {/* <GoogleOneTap /> */}
       {/* Progress Reading Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-emerald-500 origin-left z-[100]"

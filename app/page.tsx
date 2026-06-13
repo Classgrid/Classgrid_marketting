@@ -60,6 +60,9 @@ const ClassgridRoleShowcase = dynamic(() =>
 const HeroVideoSlider = dynamic(() =>
   import("@/components/sections/HeroVideoSlider").then((module) => module.HeroVideoSlider)
 );
+const YouTubeStylePlayer = dynamic(() =>
+  import("@/components/sections/YouTubeStylePlayer").then((module) => module.YouTubeStylePlayer)
+);
 const EmpowerSliderSection = dynamic(() =>
   import("@/components/sections/EmpowerSliderSection").then((module) => module.EmpowerSliderSection)
 );
@@ -954,9 +957,8 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
   const showHero =
     Boolean(headline || subtext || heroPrimaryLabel || heroSecondaryLabel || badge);
-  const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid === true : true;
+  const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid !== false : true;
   const showShowcase =
-    moduleGridEnabled &&
     Boolean(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle || showcaseSlides.length);
   const showTrust =
     Boolean(trustedBy || trustSectionDescription || stats.length || trustedLogos.length);
@@ -977,6 +979,11 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
   const clientTestimonialsEnabled = sectionSettings ? sectionSettings.showClientTestimonials === true : true;
   const testimonialVideosEnabled = sectionSettings ? sectionSettings.showTestimonialVideos === true : true;
   const showVideoSection = testimonialVideosEnabled && Boolean(testimonialVideos?.length || productVideoUrl);
+  // Read player style from first testimonial video document
+  const firstVideoStyle = Array.isArray(cmsTestimonialVideos) && cmsTestimonialVideos.length > 0
+    ? (cmsTestimonialVideos[0] as any)?.playerStyle
+    : undefined;
+  const videoPlayerStyle = firstVideoStyle === 'youtube' ? 'youtube' : 'classic';
   const showTestimonials = clientTestimonialsEnabled && Boolean(testimonials.length);
   const showWhyClassgrid = true;
   const showClassgridVideo = (cmsClassgridVideo as any)?.isVisible === true;
@@ -1173,15 +1180,27 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showVideoSection ? (
         <Reveal>
-          <HeroVideoSlider
-            videos={testimonialVideos}
-            fallbackVideoUrl={productVideoUrl}
-            fallbackPosterUrl={productVideoPosterUrl}
-            fallbackPosterAlt={productVideoPosterAlt}
-            title={videoSectionTitle}
-            description={videoSectionDescription}
-            useFallbackContent={false}
-          />
+          {videoPlayerStyle === 'youtube' ? (
+            <YouTubeStylePlayer
+              videos={testimonialVideos}
+              fallbackVideoUrl={productVideoUrl}
+              fallbackPosterUrl={productVideoPosterUrl}
+              fallbackPosterAlt={productVideoPosterAlt}
+              title={videoSectionTitle}
+              description={videoSectionDescription}
+              useFallbackContent={false}
+            />
+          ) : (
+            <HeroVideoSlider
+              videos={testimonialVideos}
+              fallbackVideoUrl={productVideoUrl}
+              fallbackPosterUrl={productVideoPosterUrl}
+              fallbackPosterAlt={productVideoPosterAlt}
+              title={videoSectionTitle}
+              description={videoSectionDescription}
+              useFallbackContent={false}
+            />
+          )}
         </Reveal>
       ) : null}
 
