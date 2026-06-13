@@ -110,13 +110,13 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
               animate="visible"
               exit="exit"
             >
-              <div className="relative aspect-square md:aspect-[16/10] w-full overflow-hidden rounded-2xl md:rounded-[24px] border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
                 {active.imageUrl ? (
                   <Image
                     src={active.imageUrl}
                     alt={active.imageAlt || active.headline}
                     fill
-                    className="object-cover"
+                    className="object-contain md:object-cover"
                     sizes="(max-width: 1024px) 100vw, 55vw"
                     priority
                   />
