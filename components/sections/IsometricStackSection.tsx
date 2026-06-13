@@ -165,9 +165,12 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
       const triggerEl = innerEl || el;
       const rect = triggerEl.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const triggerOffset = Math.min(24, viewportHeight * 0.04);
-      const contentIsAtViewportTop = rect.top <= triggerOffset;
-      const contentStillFillsViewport = rect.bottom >= viewportHeight * 0.6;
+      
+      // Trigger when the section enters the bottom half of the screen
+      // instead of waiting until it hits the very top. This masks the animation
+      // delay because it plays while the user is still scrolling it into view.
+      const contentIsAtViewportTop = rect.top <= viewportHeight * 0.65;
+      const contentStillFillsViewport = rect.bottom >= viewportHeight * 0.3;
 
       if (contentIsAtViewportTop && contentStillFillsViewport) {
         triggerStackExpansion();
