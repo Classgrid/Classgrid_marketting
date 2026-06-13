@@ -77,7 +77,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
   const paragraphs = splitParagraph(active.body);
 
   return (
-    <section className="group/slider relative z-20 -mt-px w-full overflow-hidden bg-transparent pt-6 pb-6 md:pt-8 md:pb-8">
+    <section className="relative z-20 -mt-px w-full overflow-hidden bg-transparent pt-6 pb-6 md:pt-8 md:pb-8">
       <div className="mx-auto max-w-[1200px] px-4 md:px-8">
 
         {/* ── Section Headline ── */}
@@ -104,7 +104,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
           >
             {/* ── Image Side ── */}
             <motion.div
-              className="w-full lg:w-[55%] relative"
+              className="group/slider w-full lg:w-[55%] relative"
               variants={imageFade}
               initial="hidden"
               animate="visible"
