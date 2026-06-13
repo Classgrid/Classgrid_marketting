@@ -164,9 +164,16 @@ export function YouTubeStylePlayer({
 
   /* ---- Fullscreen listener ---- */
   useEffect(() => {
-    const cb = () => setFullscreen(!!document.fullscreenElement);
+    const cb = () =>
+      setFullscreen(
+        !!(document.fullscreenElement || (document as any).webkitFullscreenElement)
+      );
     document.addEventListener("fullscreenchange", cb);
-    return () => document.removeEventListener("fullscreenchange", cb);
+    document.addEventListener("webkitfullscreenchange", cb);
+    return () => {
+      document.removeEventListener("fullscreenchange", cb);
+      document.removeEventListener("webkitfullscreenchange", cb);
+    };
   }, []);
 
   /* ---- Cleanup ---- */
@@ -241,11 +248,21 @@ export function YouTubeStylePlayer({
 
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(() => {});
+    const el = containerRef.current;
+    if (!el) return;
+    const doc = document as any;
+    if (!document.fullscreenElement && !doc.webkitFullscreenElement) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => {});
+      } else if ((el as any).webkitRequestFullscreen) {
+        (el as any).webkitRequestFullscreen();
+      }
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen();
+      }
     }
   };
 
@@ -302,8 +319,16 @@ export function YouTubeStylePlayer({
 
         {/* Player container */}
         <div className="relative mx-auto max-w-[950px]">
-          {/* AnimatePresence bounds */}
-          <div className="relative aspect-video w-full overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
+          {/* AnimatePresence bounds — containerRef here so fullscreen targets a stable element */}
+          <div
+            ref={containerRef}
+            className="relative aspect-video w-full overflow-hidden bg-black shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
+            onMouseMove={revealArrows}
+            onMouseLeave={() => {
+              if (hideTimer.current) clearTimeout(hideTimer.current);
+              setShowArrows(false);
+            }}
+          >
             <AnimatePresence initial={false} custom={direction}>
               {playlist.map((video, i) => i === idx && (
                 <motion.div
@@ -317,14 +342,8 @@ export function YouTubeStylePlayer({
                 >
                   {/* The actual player UI that slides together */}
                   <div
-                    ref={containerRef}
                     className="group relative w-full h-full bg-black cursor-pointer select-none"
                     onClick={togglePlay}
-                    onMouseMove={revealArrows}
-                    onMouseLeave={() => {
-                      if (hideTimer.current) clearTimeout(hideTimer.current);
-                      setShowArrows(false);
-                    }}
                   >
                     {/* Video element */}
                     <video
