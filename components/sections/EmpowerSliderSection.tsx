@@ -77,7 +77,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
   const paragraphs = splitParagraph(active.body);
 
   return (
-    <section className="relative z-20 -mt-px w-full overflow-hidden bg-transparent pt-6 pb-6 md:pt-8 md:pb-8">
+    <section className="group/slider relative z-20 -mt-px w-full overflow-hidden bg-transparent pt-6 pb-6 md:pt-8 md:pb-8">
       <div className="mx-auto max-w-[1200px] px-4 md:px-8">
 
         {/* ── Section Headline ── */}
@@ -137,14 +137,14 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                 <>
                   <button
                     onClick={prevSlide}
-                    className="absolute left-2 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
+                    className="absolute left-2 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100"
                     aria-label="Previous slide"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="absolute right-2 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95"
+                    className="absolute right-2 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100"
                     aria-label="Next slide"
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -220,9 +220,7 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                         aria-label={`Go to slide ${idx + 1}`}
                       />
                     ))}
-                    <span className="ml-3 text-xs font-medium text-slate-500 dark:text-white/30">
-                      {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
-                    </span>
+
                   </motion.div>
                 )}
               </div>
