@@ -62,10 +62,10 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
   const prevSlide = () =>
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // Auto-advance every 6 seconds, resets on manual interaction
+  // Auto-advance every 7 seconds, resets on manual interaction
   useEffect(() => {
     if (!slides || slides.length <= 1) return;
-    const timer = setInterval(nextSlide, 15000);
+    const timer = setInterval(nextSlide, 7000);
     return () => clearInterval(timer);
   }, [nextSlide, current, slides]);
 
@@ -110,13 +110,13 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
               animate="visible"
               exit="exit"
             >
-              <div className="relative aspect-square md:aspect-[16/10] w-full overflow-hidden rounded-lg border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-[16/10] w-full overflow-hidden rounded-2xl md:rounded-[24px] border border-slate-200 dark:border-white/[0.06] shadow-lg dark:shadow-[0_30px_80px_rgba(0,0,0,0.45)] bg-slate-50 dark:bg-background flex items-center justify-center">
                 {active.imageUrl ? (
                   <Image
                     src={active.imageUrl}
                     alt={active.imageAlt || active.headline}
                     fill
-                    className="object-contain md:object-cover"
+                    className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 55vw"
                     priority
                   />
@@ -137,14 +137,14 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
                 <>
                   <button
                     onClick={prevSlide}
-                    className="absolute left-2 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100"
+                    className="absolute left-2 md:-left-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
                     aria-label="Previous slide"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="absolute right-2 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100"
+                    className="absolute right-2 md:-right-6 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 dark:bg-white/5 text-slate-600 dark:text-white/70 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:scale-110 active:scale-95 opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
                     aria-label="Next slide"
                   >
                     <ChevronRight className="h-5 w-5" />
