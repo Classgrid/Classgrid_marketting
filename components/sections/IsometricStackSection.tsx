@@ -150,7 +150,7 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
       stackEntrySettleTimerRef.current = window.setTimeout(() => {
         setStackEntryState("expanded");
         stackEntrySettleTimerRef.current = null;
-      }, 2450);
+      }, 1200); // reduced from 2450ms to match CSS duration and prevent scroll-past
     };
 
     const checkSectionPosition = () => {
