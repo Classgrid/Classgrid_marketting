@@ -17,7 +17,9 @@ import {
   MessageSquare,
   RefreshCw,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  Globe,
+  Briefcase
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -116,6 +118,10 @@ function createDemoSchema(copy?: DemoRequestFormCopy) {
     customTaluka: z.string().optional(),
     customDistrict: z.string().optional(),
     cityVillage: z.string().min(2, "Institution City/Village is required"),
+    website: z.string().optional().refine(val => !val || /^(https?:\/\/)/.test(val), {
+      message: "Please include http:// or https://"
+    }),
+    role: z.string().min(2, "Role is required"),
     message: z.string().optional(),
   });
 }
@@ -168,8 +174,7 @@ export function DemoRequestForm({
   const solutionOptions = getSolutionOptions(copy);
   const demoSchema = createDemoSchema(copy);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || "";
-  const defaultOrgType =
-    typeof solutionOptions[0]?.value === "string" ? solutionOptions[0].value : FALLBACK_ORG_TYPES[0];
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [captchaCode, setCaptchaCode] = useState("");
@@ -192,7 +197,7 @@ export function DemoRequestForm({
     resolver: zodResolver(demoSchema),
     defaultValues: {
       institutionName: "",
-      orgType: defaultOrgType,
+      orgType: "",
       adminName: "",
       adminEmail: "",
       adminPhone: "",
@@ -202,6 +207,8 @@ export function DemoRequestForm({
       customTaluka: "",
       customDistrict: "",
       cityVillage: "",
+      website: "",
+      role: "",
       message: "",
     },
   });
@@ -209,6 +216,23 @@ export function DemoRequestForm({
   const selectedState = watch("state");
   const selectedDistrict = watch("district");
   const selectedTaluka = watch("taluka");
+  const selectedOrgType = watch("orgType");
+
+  const roleOptions = useMemo(() => {
+    switch (selectedOrgType) {
+      case "school":
+        return ["Principal", "Teacher", "Administrator", "IT Staff", "Other"];
+      case "engineering":
+      case "diploma":
+        return ["Director / Principal", "HOD", "Faculty", "Administrator", "IT Staff", "Other"];
+      case "junior_college":
+        return ["Principal", "Teacher / Faculty", "Administrator", "IT Staff", "Other"];
+      case "coaching":
+        return ["Owner / Director", "Faculty", "Administrator", "Other"];
+      default:
+        return ["Principal / Director", "Administrator", "Teacher / Faculty", "IT Staff", "Other"];
+    }
+  }, [selectedOrgType]);
 
   const allStates = useMemo(() => {
     return [
@@ -639,6 +663,69 @@ export function DemoRequestForm({
                   )}
                 />
                 {errors.orgType?.message && <p className="text-[10px] text-rose-500">{errors.orgType.message}</p>}
+              </div>
+
+              {/* Role */}
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Role <span className="text-rose-500">*</span>
+                </Label>
+                <Controller
+                  name="role"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                          <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            <Briefcase className="h-4 w-4" />
+                          </div>
+                          <SelectTrigger className="flex h-10 flex-1 items-center justify-between rounded-none border-0 !bg-transparent px-3 text-sm text-slate-800 shadow-none ring-0 focus-visible:ring-0 dark:text-white">
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
+                        </div>
+                        <SelectContent>
+                          {roleOptions.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <select
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                      >
+                        <option value="" disabled>Select your role</option>
+                        {roleOptions.map((role) => (
+                          <option key={role} value={role}>{role}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                />
+                {errors.role?.message && <p className="text-[10px] text-rose-500">{errors.role.message}</p>}
+              </div>
+
+              {/* Institute Website */}
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Institute Website <span className="font-normal text-muted-foreground">(Optional)</span>
+                </Label>
+                <div className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-white/10">
+                  <div className="flex w-10 shrink-0 items-center justify-center bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400">
+                    <Globe className="h-4 w-4" />
+                  </div>
+                  <Input
+                    placeholder="https://..."
+                    className="h-10 flex-1 rounded-none border-0 bg-transparent text-slate-800 shadow-none focus-visible:ring-0 dark:text-white"
+                    {...register("website")}
+                  />
+                </div>
+                {errors.website?.message && <p className="text-[10px] text-rose-500">{errors.website.message}</p>}
               </div>
             </div>
           </div>

@@ -118,17 +118,17 @@ export async function POST(req: Request) {
     const cookieHeader = req.headers.get("cookie") || "";
     let bannedUntil: Date | null = null;
 
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
     const queryConditions: any[] = [{ ipAddress: ip }];
     if (userEmail) queryConditions.push({ userEmail: userEmail });
 
     const previousStrike = await ModerationFlag.findOne({
       $or: queryConditions,
-      createdAt: { $gte: fifteenMinutesAgo }
+      createdAt: { $gte: threeMinutesAgo }
     } as any);
     
     if (previousStrike) {
-      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 15 * 60 * 1000);
+      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 1000);
     }
 
     // Check if cookie contains a valid timestamp
@@ -142,7 +142,7 @@ export async function POST(req: Request) {
         bannedUntil = new Date(parsedTime);
       } else if (cookieValue === "true") {
         // Fallback for old cookie format
-        bannedUntil = new Date(Date.now() + 15 * 60 * 1000);
+        bannedUntil = new Date(Date.now() + 3 * 60 * 1000);
       }
     }
 
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
     // --- 1. MODERATION / PROFANITY CHECK FOR NEW MESSAGES ---
     if (containsProfanity(question)) {
       const now = new Date();
-      const banExpiry = new Date(now.getTime() + 15 * 60 * 1000);
+      const banExpiry = new Date(now.getTime() + 3 * 60 * 1000);
 
       // Log the incident in MongoDB
       await ModerationFlag.create({
@@ -177,7 +177,7 @@ export async function POST(req: Request) {
         message: question,
       });
 
-      // Stop the conversation immediately and drop a 15-minute ban cookie
+      // Stop the conversation immediately and drop a 3-minute ban cookie
       const banExpiryStr = banExpiry.toLocaleTimeString("en-IN", {
         hour: "numeric",
         minute: "2-digit",
@@ -190,7 +190,7 @@ export async function POST(req: Request) {
       }, { status: 403 });
 
       response.cookies.set("ai_chat_restricted", banExpiry.getTime().toString(), {
-        maxAge: 15 * 60, // 15 minutes
+        maxAge: 3 * 60, // 3 minutes
         path: "/",
         httpOnly: true,
       });

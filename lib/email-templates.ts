@@ -371,9 +371,17 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
       <p><strong>District:</strong> ${lead.district || "N/A"}</p>
       <p><strong>Taluka:</strong> ${lead.taluka || "N/A"}</p>
       <p><strong>City/Village:</strong> ${lead.cityVillage || "N/A"}</p>
-      <p><strong>Message:</strong> ${lead.message || "N/A"}</p>
-      <p><strong>Source:</strong> ${lead.source || "N/A"}</p>
+      <p><strong>Website:</strong> ${lead.website ? `<a href="${lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}" style="color: #10b981;">${lead.website}</a>` : "N/A"}</p>
     </div>
+
+    ${lead.message ? `
+    <div style="margin-top: 24px;">
+      <h3 style="color: #10b981; font-size: 16px; margin-bottom: 8px;"><strong><u style="text-decoration-color: #10b981;">Message from Lead:</u></strong></h3>
+      <p style="padding: 16px; background-color: #2a2a2a; border-left: 4px solid #10b981; border-radius: 4px; font-style: italic; color: #ffffff;">
+        ${lead.message}
+      </p>
+    </div>
+    ` : ''}
     
     <p>These meeting details have been successfully synced to the dashboard. Please ensure a team member is prepared for the meeting!</p>
   `;

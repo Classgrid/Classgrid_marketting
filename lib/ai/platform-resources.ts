@@ -15,6 +15,13 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
     keywords: ["help", "support", "article", "guide", "documentation"],
   },
   {
+    label: "Documentation",
+    href: "/docs",
+    description: "Official technical documentation, API references, and comprehensive platform guides.",
+    category: "support",
+    keywords: ["docs", "documentation", "api", "guide", "developer"],
+  },
+  {
     label: "Support",
     href: "/support",
     description: "Support overview for guided onboarding, training, and technical help.",

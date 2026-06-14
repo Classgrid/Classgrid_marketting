@@ -153,6 +153,7 @@ export const testimonialsQuery = `*[_type == "testimonial"] | order(_createdAt d
 
 export const testimonialVideosQuery = `*[_type == "testimonialVideo"] | order(_createdAt desc){
   _id,
+  playerStyle,
   name,
   role,
   subtitle,

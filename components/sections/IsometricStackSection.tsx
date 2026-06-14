@@ -109,15 +109,21 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
   // visualIndex drives the SVG stretch visual; text always uses activeIndex
   const visualIndex = hoveredIndex ?? activeIndex;
   const sectionRef = useRef<HTMLElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
   const lastWheelTime = useRef(0);
   const activeIndexRef = useRef(0); // keeps the wheel handler always in sync
   const stackEntryTriggeredRef = useRef(false);
   const stackEntrySettleTimerRef = useRef<number | null>(null);
+  const stackEntryStateRef = useRef<StackEntryState>("collapsed");
 
-  // Keep the ref in sync with state
+  // Keep the refs in sync with state
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
+
+  useEffect(() => {
+    stackEntryStateRef.current = stackEntryState;
+  }, [stackEntryState]);
 
   // Trigger the one-shot stack entry animation when the section reaches the viewport top.
   // DISABLED on mobile — stack shows statically
@@ -144,7 +150,7 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
       stackEntrySettleTimerRef.current = window.setTimeout(() => {
         setStackEntryState("expanded");
         stackEntrySettleTimerRef.current = null;
-      }, 2450);
+      }, 1200); // reduced from 2450ms to match CSS duration and prevent scroll-past
     };
 
     const checkSectionPosition = () => {
@@ -152,13 +158,21 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
 
       if (stackEntryTriggeredRef.current) return;
 
-      const rect = el.getBoundingClientRect();
+      // Use the inner content area (SVG + text columns) as the trigger,
+      // not the section header. This ensures the animation only starts
+      // when the actual stack content is fully visible in the viewport.
+      const innerEl = innerRef.current;
+      const triggerEl = innerEl || el;
+      const rect = triggerEl.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const triggerOffset = Math.min(24, viewportHeight * 0.04);
-      const sectionIsAtViewportTop = rect.top <= triggerOffset;
-      const sectionStillFillsViewport = rect.bottom >= viewportHeight * 0.72;
+      
+      // Trigger when the section enters the bottom half of the screen
+      // instead of waiting until it hits the very top. This masks the animation
+      // delay because it plays while the user is still scrolling it into view.
+      const contentIsAtViewportTop = rect.top <= viewportHeight * 0.65;
+      const contentStillFillsViewport = rect.bottom >= viewportHeight * 0.3;
 
-      if (sectionIsAtViewportTop && sectionStillFillsViewport) {
+      if (contentIsAtViewportTop && contentStillFillsViewport) {
         triggerStackExpansion();
       }
     };
@@ -204,8 +218,32 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
     if (isMobile) return;
 
     const handleWheel = (e: WheelEvent) => {
+      // Only intercept scroll AFTER the stack entry animation has been triggered
+      if (!stackEntryTriggeredRef.current) return;
+
       const now = Date.now();
       const idx = activeIndexRef.current;
+
+      // Check if the inner content is still in the viewport — if it drifted
+      // due to fast/momentum scrolling, snap it back before intercepting
+      const innerEl = innerRef.current;
+      if (innerEl) {
+        const innerRect = innerEl.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // Only bail out when the section is truly off-screen (less than 20% visible)
+        const isOutOfView = innerRect.top > vh * 0.8 || innerRect.bottom < vh * 0.2;
+
+        if (isOutOfView) {
+          // Section has drifted too far — don't intercept, let the page scroll naturally
+          return;
+        }
+
+        // If section is slightly off-center, snap it back into position
+        const isDrifted = Math.abs(innerRect.top) > 80;
+        if (isDrifted && idx > 0 && idx < PHASES.length - 1) {
+          innerEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
 
       // Variable cooldown: lite on edges, full in the middle
       const LITE_COOLDOWN = 200;   // cards 0 and 5 — quick transitions
@@ -268,7 +306,7 @@ export function IsometricStackSection({ kicker, headline, subheadline, phases }:
         )}
 
         {/* ═══ TWO-COLUMN INNER ═══ */}
-        <div className="cg-iso-inner">
+        <div className="cg-iso-inner" ref={innerRef}>
 
         {/* ═══ LEFT: TEXT CAROUSEL ═══ */}
         <div className="cg-iso-text">
