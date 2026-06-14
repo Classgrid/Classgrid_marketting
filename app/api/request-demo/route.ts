@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       taluka: body.taluka,
       cityVillage: body.cityVillage,
       role: body.role,
+      website: body.website,
       message: body.message,
       source: body.source,
       status: "pending",

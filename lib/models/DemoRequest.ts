@@ -11,6 +11,7 @@ export interface IDemoRequest extends Document {
   taluka: string;
   cityVillage: string;
   role?: string;
+  website?: string;
   source?: string;
   message?: string;
   status: "pending" | "contacted" | "demo_scheduled" | "rejected";
@@ -42,6 +43,7 @@ const DemoRequestSchema = new Schema<IDemoRequest>(
     taluka: { type: String, required: true },
     cityVillage: { type: String, required: true },
     role: { type: String },
+    website: { type: String },
     source: { type: String },
     message: { type: String },
     status: {
