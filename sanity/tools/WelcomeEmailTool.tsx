@@ -13,7 +13,10 @@ export function WelcomeEmailTool() {
   const handleSend = async () => {
     setStatus('sending')
     try {
-      const res = await fetch('/api/team/welcome', {
+      const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const baseUrl = isLocalhost ? 'http://localhost:3000' : 'https://classgrid.in';
+      
+      const res = await fetch(`${baseUrl}/api/team/welcome`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, personalEmail, classgridEmail, password }),

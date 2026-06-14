@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // Adjust this to specific domains if needed (e.g., 'https://studio.classgrid.in')
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS(request: Request) {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(req: Request) {
   try {
     const { name, personalEmail, classgridEmail, password } = await req.json();
 
     if (!name || !personalEmail || !classgridEmail || !password) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400, headers: corsHeaders });
     }
 
     const port = Number(process.env.BREVO_SMTP_PORT || 587);
@@ -149,12 +159,12 @@ export async function POST(req: Request) {
 
     await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { headers: corsHeaders });
   } catch (error) {
     console.error('Failed to send welcome email:', error);
     return NextResponse.json(
       { error: 'Failed to send welcome email' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
