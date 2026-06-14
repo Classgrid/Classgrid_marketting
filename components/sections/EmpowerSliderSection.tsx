@@ -97,11 +97,12 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
         )}
 
         {/* ── Slide Content ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active.id}
-            className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16"
-          >
+        <div className="min-h-[850px] md:min-h-[600px] lg:min-h-[450px] w-full relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.id}
+              className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16"
+            >
             {/* ── Image Side ── */}
             <motion.div
               className="group/slider w-full lg:w-[55%] relative"
@@ -226,7 +227,8 @@ export function EmpowerSliderSection({ sectionHeadline, slides }: EmpowerSliderS
               </div>
             </div>
           </motion.div>
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );

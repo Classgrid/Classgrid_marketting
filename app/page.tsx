@@ -958,8 +958,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
   const showHero =
     Boolean(headline || subtext || heroPrimaryLabel || heroSecondaryLabel || badge);
   const moduleGridEnabled = sectionSettings ? sectionSettings.showModuleGrid !== false : true;
-  const showShowcase =
-    Boolean(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle || showcaseSlides.length);
+  const showShowcase = true; // Forced true
   const showTrust =
     Boolean(trustedBy || trustSectionDescription || stats.length || trustedLogos.length);
   const showOrganization = Boolean(organizationSectionTitle && organizationCards.length);
