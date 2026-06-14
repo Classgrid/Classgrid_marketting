@@ -269,10 +269,13 @@ export async function POST(req: Request) {
         try {
           sendEvent({ type: "status", label: "thinking" });
 
+          const rawUserName = normalizeText(body?.userName);
+          const firstName = rawUserName ? rawUserName.split(" ")[0] : undefined;
+
           const result = await generateClassgridRagAnswer({
             question,
             channel: "web",
-            userName: normalizeText(body?.userName),
+            userName: firstName,
             history: mergedHistory,
             pageContext: normalizePageContext(body?.pageContext),
             onStatus: (label: string) => sendEvent({ type: "status", label }),

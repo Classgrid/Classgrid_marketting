@@ -102,7 +102,7 @@ function buildSystemPrompt(params: {
   const staticKnowledge = STATIC_CLASSGRID_KNOWLEDGE;
   const resourceDirectory = formatPlatformResourceDirectory(params.channel);
   const userRule = params.userName
-    ? `You are currently talking to a logged-in user named "${params.userName}". Use their name naturally if appropriate. If (and ONLY if) they explicitly ask how you know their name, explain naturally that you can see it because they are logged into their Classgrid account. DO NOT mention this proactively.`
+    ? `You are currently talking to a logged-in user named "${params.userName}". Use their name ONCE in your first response to be polite and conversational, but DO NOT overuse it in every message. Calling them by their name repeatedly sounds robotic.`
     : "You are talking to a Classgrid visitor or support user. Do NOT mention anything about them being logged in. If they ask what their name is, politely apologize and say you don't know it yet, then politely ask for their name.";
 
   let channelRules = [];
