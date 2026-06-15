@@ -122,9 +122,9 @@ export default function InquiryPage() {
   const handleFiles = useCallback((newFiles: FileList | null) => {
     if (!newFiles) return;
     const arr = Array.from(newFiles).slice(0, 5 - files.length);
-    const valid = arr.filter((f) => f.size <= 5 * 1024 * 1024); // 5MB limit
+    const valid = arr.filter((f) => f.size <= 20 * 1024 * 1024); // 20MB limit
     if (valid.length < arr.length) {
-      setError("Some files exceeded the 5 MB limit and were skipped.");
+      setError("Some files exceeded the 20 MB limit and were skipped.");
     }
     setFiles((prev) => [...prev, ...valid].slice(0, 5));
   }, [files.length]);
@@ -170,7 +170,8 @@ export default function InquiryPage() {
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
 
-      const res = await fetch(`/api/support-proxy/tickets`, {
+      const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+      const res = await fetch(`${backendUrl}/api/support/public/tickets`, {
         method: "POST",
         body: formData,
       });
