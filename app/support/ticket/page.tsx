@@ -533,10 +533,22 @@ export default function RaiseTicketPage() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
-                      <SelectItem value="general">General</SelectItem>
-                      <SelectItem value="technical">Technical Issue</SelectItem>
-                      <SelectItem value="billing">Billing &amp; Payments</SelectItem>
-                      <SelectItem value="account">Account &amp; Access</SelectItem>
+                      <SelectItem value="login">Login &amp; Authentication Issues</SelectItem>
+                      <SelectItem value="dashboard">Dashboard Not Loading</SelectItem>
+                      <SelectItem value="profile">Profile &amp; Settings</SelectItem>
+                      <SelectItem value="attendance">Attendance &amp; Biometric</SelectItem>
+                      <SelectItem value="fee">Fee Payment &amp; Receipts</SelectItem>
+                      <SelectItem value="examination">Examination &amp; Results</SelectItem>
+                      <SelectItem value="timetable">Timetable &amp; Scheduling</SelectItem>
+                      <SelectItem value="assignments">Assignments &amp; Submissions</SelectItem>
+                      <SelectItem value="live-classes">Live Classes &amp; Video</SelectItem>
+                      <SelectItem value="chat">Chat &amp; Notifications</SelectItem>
+                      <SelectItem value="admission">Admission &amp; Enrollment</SelectItem>
+                      <SelectItem value="library">Library &amp; Resources</SelectItem>
+                      <SelectItem value="documents">Documents &amp; Uploads</SelectItem>
+                      <SelectItem value="erp">ERP Module Issues</SelectItem>
+                      <SelectItem value="ai">AI Assistant</SelectItem>
+                      <SelectItem value="bug">Bug Report</SelectItem>
                       <SelectItem value="feature">Feature Request</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
@@ -549,10 +561,22 @@ export default function RaiseTicketPage() {
                     className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
                   >
                     <option value="" disabled>Select category</option>
-                    <option value="general">General</option>
-                    <option value="technical">Technical Issue</option>
-                    <option value="billing">Billing &amp; Payments</option>
-                    <option value="account">Account &amp; Access</option>
+                    <option value="login">Login &amp; Authentication Issues</option>
+                    <option value="dashboard">Dashboard Not Loading</option>
+                    <option value="profile">Profile &amp; Settings</option>
+                    <option value="attendance">Attendance &amp; Biometric</option>
+                    <option value="fee">Fee Payment &amp; Receipts</option>
+                    <option value="examination">Examination &amp; Results</option>
+                    <option value="timetable">Timetable &amp; Scheduling</option>
+                    <option value="assignments">Assignments &amp; Submissions</option>
+                    <option value="live-classes">Live Classes &amp; Video</option>
+                    <option value="chat">Chat &amp; Notifications</option>
+                    <option value="admission">Admission &amp; Enrollment</option>
+                    <option value="library">Library &amp; Resources</option>
+                    <option value="documents">Documents &amp; Uploads</option>
+                    <option value="erp">ERP Module Issues</option>
+                    <option value="ai">AI Assistant</option>
+                    <option value="bug">Bug Report</option>
                     <option value="feature">Feature Request</option>
                     <option value="other">Other</option>
                   </select>
