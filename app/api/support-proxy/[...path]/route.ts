@@ -55,14 +55,16 @@ export async function POST(
 
     let res;
     if (contentType.includes("multipart/form-data")) {
-      // Forward FormData (file uploads) as-is
-      const formData = await request.formData();
+      // Forward the raw stream to preserve multipart boundaries exactly
       res = await fetch(url, {
         method: "POST",
-        body: formData,
+        body: request.body as any,
         headers: {
+          "Content-Type": contentType,
           "ngrok-skip-browser-warning": "true",
         },
+        // @ts-ignore
+        duplex: "half",
       });
     } else {
       // Forward JSON body
