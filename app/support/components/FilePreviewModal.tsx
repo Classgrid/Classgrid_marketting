@@ -37,11 +37,18 @@ interface FilePreviewModalProps {
 function getMimeType(file: FilePreviewSource): string {
   if (file.mimeType) return file.mimeType;
   if (typeof file.src !== "string") return (file.src as { type?: string }).type || "";
-  // Guess from URL extension
-  const ext = (file.name || "").split(".").pop()?.toLowerCase() || "";
+  
+  // Try to get extension from name, fallback to src URL if name has no extension
+  let nameStr = file.name || "";
+  if (!nameStr.includes(".")) {
+    nameStr = file.src.split("?")[0] || "";
+  }
+  const ext = nameStr.split(".").pop()?.toLowerCase() || "";
+  
   const map: Record<string, string> = {
     png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
     gif: "image/gif", webp: "image/webp", svg: "image/svg+xml",
+    avif: "image/avif",
     pdf: "application/pdf",
     doc: "application/msword",
     docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

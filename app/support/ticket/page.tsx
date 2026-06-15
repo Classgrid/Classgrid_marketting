@@ -117,9 +117,9 @@ export default function RaiseTicketPage() {
   const handleFiles = useCallback((newFiles: FileList | null) => {
     if (!newFiles) return;
     const arr = Array.from(newFiles).slice(0, 5 - files.length);
-    const valid = arr.filter((f) => f.size <= 20 * 1024 * 1024); // 20MB limit
+    const valid = arr.filter((f) => f.size <= 10 * 1024 * 1024); // 10MB limit
     if (valid.length < arr.length) {
-      setError("Some files exceeded the 20 MB limit and were skipped.");
+      setError("Some files exceeded the 5 MB limit and were skipped.");
     }
     setFiles((prev) => [...prev, ...valid].slice(0, 5));
   }, [files.length]);
@@ -486,8 +486,8 @@ export default function RaiseTicketPage() {
                   readOnly={!!session?.user?.name}
                   placeholder="John Doe"
                   className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${session?.user?.name
-                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
-                      : "bg-background text-foreground placeholder:text-muted-foreground"
+                    ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
+                    : "bg-background text-foreground placeholder:text-muted-foreground"
                     }`}
                 />
               </div>
@@ -503,8 +503,8 @@ export default function RaiseTicketPage() {
                   readOnly={!!knownEmail}
                   placeholder="you@company.com"
                   className={`w-full h-11 px-4 rounded-lg border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all ${knownEmail
-                      ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
-                      : "bg-background text-foreground placeholder:text-muted-foreground"
+                    ? "bg-muted/30 text-muted-foreground cursor-not-allowed focus:ring-0 focus:border-input"
+                    : "bg-background text-foreground placeholder:text-muted-foreground"
                     }`}
                 />
               </div>
@@ -838,8 +838,8 @@ export default function RaiseTicketPage() {
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
                 className={`w-full border border-dashed rounded-xl p-5 sm:p-8 text-center transition-all cursor-pointer ${dragActive
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-muted/30 hover:bg-muted/60"
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-muted/30 hover:bg-muted/60"
                   }`}
               >
                 <input
@@ -1007,8 +1007,8 @@ function ToolBtn({ icon, active, onClick }: { icon: React.ReactNode; active?: bo
       onClick={onClick}
       onMouseDown={(e) => e.preventDefault()}
       className={`p-1.5 rounded transition-colors ${active
-          ? "bg-accent text-accent-foreground"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        ? "bg-accent text-accent-foreground"
+        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
         }`}
     >
       {icon}
