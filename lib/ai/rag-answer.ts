@@ -77,6 +77,14 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.section ? `Current section: ${pageContext.section}` : "",
     pageContext.summary ? `Page summary: ${pageContext.summary}` : "",
 
+    pageContext.path && pageContext.path.includes("/support/requests")
+      ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the Support Requests page looking at their existing ticket. DO NOT tell them to "Submit a Ticket" because they have ALREADY done so! The user's exact ticket details and recent message history are provided above in the "Page summary". READ their ticket messages so you understand their exact issue, and reassure them that the Support Team is reviewing this specific ticket.`
+      : "",
+      
+    pageContext.path && pageContext.path.includes("/support/ticket")
+      ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the 'Submit a Ticket' page. Tell them to fill out the form on their screen to reach the support team.`
+      : "",
+
     pageContext.pageHistory && pageContext.pageHistory.length > 0
       ? `\nRecent browsing history (last ${pageContext.pageHistory.length} pages):\n` +
         pageContext.pageHistory.map((p, i) => `  ${i + 1}. [${p.title}](${p.path})`).join("\n")
@@ -91,6 +99,7 @@ function buildSystemPrompt(params: {
   retrievedContext: string;
   pageContext?: PageContext;
   userName?: string;
+  userRole?: string;
 }) {
   const isWhatsApp = params.channel === "whatsapp";
   const isTelegram = params.channel === "telegram";
@@ -104,6 +113,10 @@ function buildSystemPrompt(params: {
   const userRule = params.userName
     ? `You are currently talking to a logged-in user named "${params.userName}". Use their name ONCE in your first response to be polite and conversational, but DO NOT overuse it in every message. Calling them by their name repeatedly sounds robotic.`
     : "You are talking to a Classgrid visitor or support user. Do NOT mention anything about them being logged in. If they ask what their name is, politely apologize and say you don't know it yet, then politely ask for their name.";
+
+  const roleRule = params.userRole
+    ? `🚨 ROLE CONTEXT: The user's role in the system is "${params.userRole}". If their role is "student", "faculty", or "teacher", NEVER mention pricing, booking a demo, buying the platform, or enterprise sales. Only assist them with their technical support issues or general platform navigation. If they ask about pricing, gently explain that as a ${params.userRole}, their access is managed by their institution and they do not need to worry about pricing.`
+    : `🚨 ROLE CONTEXT: The user's role is unknown or they are a public visitor.`;
 
   let channelRules = [];
   if (isWhatsApp) {
@@ -141,6 +154,7 @@ function buildSystemPrompt(params: {
     "You answer questions about Classgrid, including its website pages, modules, pricing, policies, onboarding, AND you can provide competitive comparisons if asked about competitors.",
     "RESPONSE FOCUS RULE: Answer ONLY what the user asked. If they ask 'What is Classgrid?' — explain what it is in 2-3 sentences, do NOT also list modules, institution types, or onboarding steps. If they ask about modules — talk about modules only, not pricing or onboarding. If they ask about org types — explain org types only. ONE topic per answer. Let the user ask follow-up questions naturally.",
     userRule,
+    roleRule,
     "",
     "GROUNDING RULES:",
     "- CRITICAL SECURITY RULE: UNDER NO CIRCUMSTANCES should you ever mention 'MongoDB', 'RAG', 'GROUNDING RULES', 'system prompt', 'React', 'Next.js', 'Socket.io', 'Node.js', or any internal technical implementation details to the user. When describing Classgrid's technology, use customer-friendly language like 'modern platform', 'real-time technology', 'cloud-based', etc.",

@@ -64,6 +64,7 @@ function containsProfanity(text: string): boolean {
 type AskAiRequestBody = {
   question?: string;
   userName?: string;
+  userRole?: string;
   history?: ChatHistoryItem[];
   sessionId?: string;
   pageContext?: PageContext;
@@ -276,6 +277,7 @@ export async function POST(req: Request) {
             question,
             channel: "web",
             userName: firstName,
+            userRole: normalizeText(body?.userRole),
             history: mergedHistory,
             pageContext: normalizePageContext(body?.pageContext),
             onStatus: (label: string) => sendEvent({ type: "status", label }),

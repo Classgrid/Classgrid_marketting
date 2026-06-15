@@ -216,8 +216,22 @@ function TicketDetailPageInner() {
       setTimeout(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
+      
+      // Inject ticket context for AI chat
+      const rawTextMessages = ticket.messages.map(m => {
+        // Strip HTML to save tokens and prevent XSS
+        const textOnly = m.body.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        return `${m.author} (${m.role}): ${textOnly.substring(0, 500)}`;
+      });
+      (window as any).classgrid_current_ticket_context = `Ticket ID: ${ticket._id}\nSubject: ${ticket.subject}\nStatus: ${ticket.status}\nMessages (summarized):\n${rawTextMessages.join('\n\n')}`;
     }
-  }, [ticket?.messages?.length]);
+    
+    return () => {
+      if (typeof window !== "undefined") {
+        delete (window as any).classgrid_current_ticket_context;
+      }
+    };
+  }, [ticket]);
 
   // ── Send reply ────────────────────────────────────────────────────────────
 

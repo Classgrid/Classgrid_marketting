@@ -1054,6 +1054,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           pageContext: {
             ...pageContext,
             pageHistory: pageHistory,
+            summary: pageContext?.summary || (typeof window !== "undefined" ? (window as any).classgrid_current_ticket_context : undefined),
           },
         }),
       });
