@@ -334,7 +334,7 @@ export async function POST(req: Request) {
                 formData.append("email", email);
                 formData.append("subject", "AI Chat Escalation: Support Request");
                 formData.append("message", "Auto-escalated from AI Chat.\n\nAI Problem Summary:\n" + aiSummary + "\n\nLast User Message:\n" + question);
-                formData.append("category", "ai");
+                formData.append("category", "technical");
                 formData.append("priority", "medium");
 
                 const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
