@@ -324,7 +324,7 @@ export async function POST(req: Request) {
             const aiSummary = escalateMatch[1].trim();
             answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
             
-            const email = body?.userEmail;
+            const email = userEmail || body?.userEmail;
             let ticketCreated = false;
 
             if (email) {
