@@ -87,11 +87,11 @@ function normalizePageContext(input: unknown): PageContext | undefined {
     section: normalizeText(raw.section),
     previousPath: normalizeText(raw.previousPath),
     previousTitle: normalizeText(raw.previousTitle),
-    pageHistory: Array.isArray(raw.pageHistory) 
-      ? raw.pageHistory.map((p: any) => ({ 
-          path: normalizeText(p.path), 
-          title: normalizeText(p.title) 
-        })) 
+    pageHistory: Array.isArray(raw.pageHistory)
+      ? raw.pageHistory.map((p: any) => ({
+        path: normalizeText(p.path),
+        title: normalizeText(p.title)
+      }))
       : undefined,
   };
 
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
       $or: queryConditions,
       createdAt: { $gte: threeMinutesAgo }
     } as any);
-    
+
     if (previousStrike) {
       bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 1000);
     }
@@ -291,21 +291,7 @@ export async function POST(req: Request) {
         try {
           sendEvent({ type: "status", label: "thinking" });
 
-          // If profanity was detected, bypass Groq completely and stream a polite refusal
-          if (isProfane) {
-            const answer = "I'm sorry, but I cannot respond to inappropriate language. Please keep the conversation professional. How can I help you with Classgrid today?";
-            
-            await saveMessageToSession(sessionId, { role: "assistant", content: answer });
-            
-            sendEvent({
-              type: "answer",
-              answer,
-              sessionId,
-              sources: [],
-              retrieval: { chunks: 0, usedFallbackSearch: false },
-            });
-            return;
-          }
+
 
           const rawUserName = normalizeText(body?.userName);
           const firstName = rawUserName ? rawUserName.split(" ")[0] : undefined;
