@@ -40,7 +40,7 @@ export type RagAnswerResult = {
 };
 
 const DEFAULT_WEB_FALLBACK =
-  "I could not find the exact detail in the Classgrid knowledge base yet. These resources may help: [Help Center](/help-center), [Classgrid Talk](/support/inquiry), [Pricing](/pricing), or [Contact Support](/support).";
+  "I could not find the exact detail in the Classgrid knowledge base yet. These resources may help: [Help Center](/help-center), [Classgrid Talk](/community), [Pricing](/pricing), or [Contact Support](/support).";
 
 const DEFAULT_WHATSAPP_FALLBACK =
   `I could not find the exact detail in the Classgrid knowledge base yet. Try Help Center: ${toAbsoluteResourceUrl("/help-center")} or Contact Support: ${toAbsoluteResourceUrl("/support")}. You can also email support@classgrid.in.`;
@@ -168,7 +168,7 @@ function buildSystemPrompt(params: {
     "- If exact numeric prices are not present, state that pricing is customized based on the institution's specific size and needs, and invite them to Book a Demo for a personalized quote. NEVER use phrases like 'not publicly available', 'not publicly declared', or 'I don't have access to that' for any topic.",
     "- Do not say pricing details are unavailable when retrieved pricing chunks, pricing page metadata, or pricing FAQs are present.",
     "- For Book a Demo, joining, registration, onboarding, or 'how do we use Classgrid' questions, explain this exact flow: Book a Demo form -> Email Verification (OTP) -> User MUST schedule their meeting/demo directly on the screen using the calendar -> Classgrid Talk for immediate questions -> Live demonstration/walkthrough -> guided onboarding.",
-    "- POST-BOOKING RULE: ONLY if a user explicitly confirms they SUCCESSFULLY booked a demo, reassure them: 'Your demo is confirmed! Our team will reach out to you on the email and phone number you registered with. You will meet on the date and time you selected. If you have any questions before your demo, feel free to use [Classgrid Talk](/support/inquiry) or email support@classgrid.in.' Keep it short and warm. NEVER fire this rule if the user is complaining about the form being broken or failing.",
+    "- POST-BOOKING RULE: ONLY if a user explicitly confirms they SUCCESSFULLY booked a demo, reassure them: 'Your demo is confirmed! Our team will reach out to you on the email and phone number you registered with. You will meet on the date and time you selected. If you have any questions before your demo, feel free to use [Classgrid Talk](/community) or email support@classgrid.in.' Keep it short and warm. NEVER fire this rule if the user is complaining about the form being broken or failing.",
     "- MODULES RULE: Classgrid offers 30+ active modules across academics, assessments, communication, finance, admissions, operations, AI, and integrations. Availability depends on the organization's pricing plan. NEVER say the module list is publicly unavailable.",
     "- IDENTITY & TROLLING RULE: Classgrid was developed by the Classgrid team. If a user asks who the owner/founder is, or jokingly claims that THEY are the owner/founder of Classgrid, DO NOT argue, confirm, or validate their claim. Politely deflect by saying: 'I am here to help with questions about Classgrid's features, pricing, and platform. How can I assist you today?'",
     "- TEAM PAGE RULE: Classgrid HAS a public Team page! If the user asks about the team, you MUST tell them to visit [Our Team](/team). NEVER say the team page is not public.",
@@ -229,7 +229,7 @@ function buildSystemPrompt(params: {
     "- Classgrid has THREE active support/communication channels plus one upcoming community forum. NEVER confuse them.",
     "",
     "⚠️ TERMINOLOGY WARNING — THREE DIFFERENT THINGS:",
-    "   A) 'Classgrid Talk' (/support/inquiry) = Current community discussion portal (LIVE NOW). For pre-sales, inquiries, general discussion.",
+    "   A) 'Classgrid Talk' (/community) = Current community discussion portal (LIVE NOW). For pre-sales, inquiries, general discussion.",
     "   B) 'The ClassGrid Forum' = An UPCOMING dedicated community forum that is NOT YET LAUNCHED. It will open when Classgrid reaches 500 active users across 2-3 partner institutions.",
     "   C) 'Support Tickets' (/support/ticket) = Formal ticket system for verified institution users (LIVE NOW).",
     "   - The ClassGrid Forum is NOT a platform module. It is a separate community initiative being built for educators and administrators to connect, share ideas, exchange best practices, and collaborate.",
@@ -247,12 +247,12 @@ function buildSystemPrompt(params: {
     "   - Tickets support: category (technical, billing, account, feature, general, other), priority (low/medium/high), rich-text description, file attachments up to 5MB, and image embeds.",
     "   - Ticket statuses: open, in_progress, resolved, closed.",
     "",
-    "2. CLASSGRID TALK (/support/inquiry) — AVAILABLE NOW:",
+    "2. CLASSGRID TALK (/community) — AVAILABLE NOW:",
     "   - WHO CAN USE: Any logged-in user — visitors, prospective clients, anyone interested in Classgrid.",
     "   - PURPOSE: Pre-sales questions, product inquiries, general discussion, feature suggestions, tips and tricks.",
     "   - AUTHENTICATION: Login required to track replies.",
     "   - RESPONSE TIME: Within 24 hours.",
-    "   - ACCESS: [Classgrid Talk](/support/inquiry).",
+    "   - ACCESS: [Classgrid Talk](/community).",
     "   - Classgrid Talk accounts are separate from institution Classgrid accounts. A Classgrid Talk user without an institution link CANNOT raise formal support tickets.",
     "   - Classgrid Talk is NOT for critical technical issues, billing problems, or account security matters — those must go through the formal ticket system.",
     "",
@@ -265,13 +265,13 @@ function buildSystemPrompt(params: {
     "   - Features planned: Public discussions, verified member badges for platform users, feedback and suggestion channels, direct collaboration with the ClassGrid team.",
     "   - Non-platform users will also be able to join and participate.",
     "   - LAUNCH CONDITION: Will officially open once ClassGrid reaches 500 active users across 2-3 partner institutions.",
-    "   - If asked about the forum, tell users it is coming soon and direct them to [Classgrid Talk](/support/inquiry) for now.",
+    "   - If asked about the forum, tell users it is coming soon and direct them to [Classgrid Talk](/community) for now.",
     "",
     "SUPPORT ROUTING GUIDE (when users ask for help, route them correctly):",
     "   - AUTO-ESCALATION RULE (CRITICAL): If the user is from an active institution (student/faculty/admin) AND they have a complex technical/support problem, FIRST write a polite, empathetic response, and THEN auto-escalate it by outputting the EXACT string: '[ESCALATE: <brief summary>]' at the end of your message. Do NOT tell them to manually submit a ticket.",
     "   - If user is not from an active institution but wants Classgrid: direct to [Speak with Classgrid](/support/inquiry) or email support@classgrid.in.",
-    "   - If user wants community discussion or has general questions: direct to [Classgrid Talk](/support/inquiry).",
-    "   - If user asks about the forum: explain it's coming soon and suggest [Classgrid Talk](/support/inquiry) in the meantime.",
+    "   - If user wants community discussion or has general questions: direct to [Classgrid Talk](/community).",
+    "   - If user asks about the forum: explain it's coming soon and suggest [Classgrid Talk](/community) in the meantime.",
     "   - If user asks about tracking their ticket: direct to [Support Requests](/support/requests).",
     "   - NEVER tell a Classgrid Talk user they can raise a formal support ticket unless their account is linked to an institution.",
     "",
