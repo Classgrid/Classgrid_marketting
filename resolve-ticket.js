@@ -13,7 +13,7 @@ async function run() {
 
     const ticketId = new mongoose.Types.ObjectId("6a312c9f7231c6f781230cfc");
 
-    const adminReply = `<p>Just checking in on this issue! Did the IndexedDB clearing steps solve the endless loop? If it worked, you can go ahead and mark this ticket as "Resolved". Otherwise, let me know and I will force a manual backend token invalidation.</p>
+    const adminReply = `<p>Since the issue is now fixed, I am marking this ticket as <strong>Resolved</strong>. If you experience this issue again, feel free to open a new ticket!</p>
 <p>Regards,<br/>Nikhil Shinde<br/>Classgrid Support Team</p>`;
 
     const result = await collection.updateOne(
@@ -32,6 +32,7 @@ async function run() {
           } 
         },
         $set: {
+          status: "resolved",
           lastComment: new Date()
         }
       }
@@ -55,7 +56,7 @@ async function run() {
         }
     );
 
-    console.log("Successfully replied to ticket with a follow-up message!");
+    console.log("Successfully resolved the ticket!");
   } catch(e) {
     console.error("Error:", e);
   } finally {
