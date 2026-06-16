@@ -78,7 +78,20 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
     const savedHTML = useRef<string>("");
     const tooltipTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const syncContent = useCallback(() => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        if (editorRef.current) {
+          onChange(editorRef.current.innerHTML);
+        }
+      }, 300);
+    }, [onChange]);
+
+    // Immediate sync (used by toolbar actions, submit, etc.)
+    const syncContentNow = useCallback(() => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
       if (editorRef.current) {
         onChange(editorRef.current.innerHTML);
       }
@@ -101,11 +114,12 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           const text = editorRef.current?.innerText?.trim() || "";
           if (text) {
             e.preventDefault();
+            syncContentNow();
             onSubmit();
           }
         }
       },
-      [onSubmit]
+      [onSubmit, syncContentNow]
     );
 
     // Paste handler — preserves rich HTML from ChatGPT etc.

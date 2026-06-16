@@ -71,6 +71,7 @@ export default function InquiryPage() {
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const descDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Pre-fill from session once loaded
   useEffect(() => {
@@ -148,7 +149,11 @@ export default function InquiryPage() {
   // ─── Submit ───
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !subject.trim() || !description.trim()) {
+    // Read latest content from editor DOM before validating
+    const editorEl = document.getElementById("richEditor");
+    const latestDescription = editorEl ? editorEl.innerHTML : description;
+    if (latestDescription !== description) setDescription(latestDescription);
+    if (!email.trim() || !subject.trim() || !latestDescription.trim()) {
       setError("Email, subject, and description are required.");
       return;
     }
@@ -730,7 +735,13 @@ export default function InquiryPage() {
                 <div
                   id="richEditor"
                   contentEditable
-                  onInput={(e) => setDescription((e.target as HTMLDivElement).innerHTML)}
+                  onInput={() => {
+                    if (descDebounceRef.current) clearTimeout(descDebounceRef.current);
+                    descDebounceRef.current = setTimeout(() => {
+                      const el = document.getElementById("richEditor");
+                      if (el) setDescription(el.innerHTML);
+                    }, 300);
+                  }}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
                     if (target.tagName === 'IMG') {

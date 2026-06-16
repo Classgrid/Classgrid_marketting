@@ -78,6 +78,7 @@ export default function RaiseTicketPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const savedEditorHTML = useRef<string>("");
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const descDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Pre-fill from session once loaded
   useEffect(() => {
@@ -143,7 +144,11 @@ export default function RaiseTicketPage() {
   // ─── Submit ───
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !subject.trim() || !description.trim()) {
+    // Read latest content from editor DOM before validating
+    const editorEl = document.getElementById("richEditor");
+    const latestDescription = editorEl ? editorEl.innerHTML : description;
+    if (latestDescription !== description) setDescription(latestDescription);
+    if (!email.trim() || !subject.trim() || !latestDescription.trim()) {
       setError("Email, subject, and description are required.");
       return;
     }
@@ -738,7 +743,13 @@ export default function RaiseTicketPage() {
                   <div
                     id="richEditor"
                     contentEditable
-                    onInput={(e) => setDescription((e.target as HTMLDivElement).innerHTML)}
+                    onInput={() => {
+                      if (descDebounceRef.current) clearTimeout(descDebounceRef.current);
+                      descDebounceRef.current = setTimeout(() => {
+                        const el = document.getElementById("richEditor");
+                        if (el) setDescription(el.innerHTML);
+                      }, 300);
+                    }}
                     onPaste={(e) => {
                       const html = e.clipboardData.getData("text/html");
                       if (html) {

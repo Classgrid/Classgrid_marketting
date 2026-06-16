@@ -401,9 +401,6 @@ function TicketDetailPageInner() {
                           <span>{getInitials(msg.author)}</span>
                         )}
                       </div>
-                      {msg.role === "admin" && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-background" />
-                      )}
                     </div>
 
                     {/* Content */}

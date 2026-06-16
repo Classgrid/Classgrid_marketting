@@ -178,7 +178,24 @@ SUPPORT SYSTEM (CRITICAL — UNDERSTAND THESE DIFFERENCES):
 
 1. Classgrid Talk (/community) — AVAILABLE NOW. A community discussion portal for pre-sales questions, product inquiries, and general Classgrid discussion. Any logged-in user can participate. Response time: within 24 hours.
 2. Support Tickets (/support/ticket) — AVAILABLE NOW. For VERIFIED PLATFORM USERS ONLY — students, faculty, and administrators linked to an active Classgrid institution. For technical issues, bug reports, account help. Response time: as soon as possible.
+   - Exact fields required on the form:
+     1. Name (Your full name, read-only if logged in)
+     2. Email Address (Your active email address, read-only if logged in)
+     3. Subject (Required, brief title for the issue)
+     4. Category (Required, options include: Login, Dashboard, Attendance, Fee, Examination, Bug Report, Feature Request, etc.)
+     5. Priority (Required, options: Low, Medium, High)
+     6. Description (Required, detailed explanation using rich text editor)
+     7. Attachments (Optional, up to 5 files, max 10MB each)
 3. Inquiry Form (/support/inquiry) — AVAILABLE NOW. For prospective institutions or anyone without a subscription.
+   - Exact fields required on the form: 
+     1. Name (Your full name, read-only if logged in)
+     2. Email Address (Your active email address, read-only if logged in)
+     3. Institution Name (Required, e.g. "Cambridge High School")
+     4. Category (Required, options include: General Inquiry, Technical Support, Billing, etc.)
+     5. Priority (Required, options: Low, Medium, High)
+     6. Subject (Required, brief title up to 200 characters)
+     7. Description (Required, detailed message using rich text editor)
+     8. Attachments (Optional, up to 5 files, max 10MB each)
 4. The ClassGrid Forum — COMING SOON (NOT YET LAUNCHED). A dedicated community forum for educators and administrators to connect, share ideas, and collaborate. Will feature public discussions, verified member badges, and feedback channels. Launch condition: 500 active users across 2-3 partner institutions.
 
 Classgrid Talk and the ClassGrid Forum are DIFFERENT things.
