@@ -51,6 +51,7 @@ function Sep() {
 export interface RichReplyEditorRef {
   clear: () => void;
   getHTML: () => string;
+  getFiles: () => File[];
 }
 
 interface RichReplyEditorProps {
@@ -80,6 +81,9 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
     const [uploadProgress, setUploadProgress] = useState(0);
     const [linkTooltip, setLinkTooltip] = useState<LinkTooltipState | null>(null);
     const [isPlainText, setIsPlainText] = useState(false);
+    const [savedSelection, setSavedSelection] = useState<Range | null>(null);
+    const [files, setFiles] = useState<File[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const savedHTML = useRef<string>("");
     const tooltipTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -124,9 +128,11 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           editorRef.current.innerHTML = "";
           onChange("");
         }
+        setFiles([]);
       },
       getHTML: () => editorRef.current?.innerHTML || "",
-    }), [onChange]);
+      getFiles: () => files,
+    }), [onChange, files]);
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
@@ -287,12 +293,24 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
     // Link insertion via LinkModal
     const handleLinkInsert = useCallback((url: string, text?: string) => {
       editorRef.current?.focus();
+      const sel = window.getSelection();
+      if (savedSelection && sel) {
+        sel.removeAllRanges();
+        sel.addRange(savedSelection);
+      }
+
       const label = text || url;
-      document.execCommand("insertHTML", false,
-        `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>&nbsp;`
-      );
+      if (text && savedSelection && !savedSelection.collapsed) {
+         document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+      } else if (!savedSelection || savedSelection.collapsed) {
+         document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>&nbsp;`);
+      } else {
+         document.execCommand("createLink", false, url);
+      }
+
       syncContent();
-    }, [syncContent]);
+      setSavedSelection(null);
+    }, [syncContent, savedSelection]);
 
     // Image upload handler
     const handleImageUpload = useCallback(() => {
@@ -489,7 +507,15 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); syncContent(); }} title="Underline" />
             <Sep />
             <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />
-            <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => setLinkModalOpen(true)} title="Insert link" />
+            <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => {
+              const sel = window.getSelection();
+              if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
+                setSavedSelection(sel.getRangeAt(0));
+              } else {
+                setSavedSelection(null);
+              }
+              setLinkModalOpen(true);
+            }} title="Insert link" />
             <Sep />
             <ToolBtn icon={<AlignLeft className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyLeft"); syncContent(); }} title="Align Left" />
             <ToolBtn icon={<AlignCenter className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyCenter"); syncContent(); }} title="Align Center" />
@@ -581,6 +607,49 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               </div>
             )}
           </div>
+        </div>
+
+        {/* Attachments UI below toolbar */}
+        {files.length > 0 && (
+          <div className="px-4 py-2 bg-muted/20 border-t border-border flex flex-wrap gap-2">
+            {files.map((file, idx) => (
+              <div key={`${file.name}-${idx}`} className="flex items-center gap-1.5 px-2 py-1 bg-card border border-border rounded text-xs">
+                <span className="truncate max-w-[150px] text-muted-foreground">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => setFiles(f => f.filter((_, i) => i !== idx))}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="px-3 py-2 bg-muted/10 border-t border-border flex items-center rounded-b-xl">
+          <input
+            type="file"
+            multiple
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xlsx"
+            onChange={(e) => {
+              if (e.target.files) {
+                const arr = Array.from(e.target.files);
+                const valid = arr.filter(f => f.size <= 10 * 1024 * 1024);
+                setFiles(prev => [...prev, ...valid].slice(0, 5));
+              }
+              e.target.value = "";
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted/50 transition-colors"
+          >
+            <Paperclip className="w-3.5 h-3.5" />
+            Add an attachment
+          </button>
         </div>
 
         {/* Link Modal */}

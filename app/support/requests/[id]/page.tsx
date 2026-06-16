@@ -236,15 +236,33 @@ function TicketDetailPageInner() {
   // ── Send reply ────────────────────────────────────────────────────────────
 
   const handleReply = async () => {
-    if (!replyText.trim() || isSending || !ticket) return;
+    const files = editorRef.current?.getFiles() || [];
+    const hasFiles = files.length > 0;
+    
+    if ((!replyText.trim() && !hasFiles) || isSending || !ticket) return;
 
     setIsSending(true);
     setReplyError("");
 
     try {
-      const res = await fetch(
-        `/api/support-proxy/tickets/${ticketId}/reply`,
-        {
+      const files = editorRef.current?.getFiles() || [];
+      const hasFiles = files.length > 0;
+
+      let res;
+      if (hasFiles) {
+        const formData = new FormData();
+        const messageToSend = replyText.trim() || (hasFiles ? "Sent an attachment" : "");
+        formData.append("email", verifiedEmail);
+        formData.append("message", messageToSend);
+        formData.append("name", ticket.requester?.name || "User");
+        files.forEach((f) => formData.append("files", f));
+
+        res = await fetch(`/api/support-proxy/tickets/${ticketId}/reply`, {
+          method: "POST",
+          body: formData,
+        });
+      } else {
+        res = await fetch(`/api/support-proxy/tickets/${ticketId}/reply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -252,8 +270,8 @@ function TicketDetailPageInner() {
             message: replyText.trim(),
             name: ticket.requester?.name || "User",
           }),
-        }
-      );
+        });
+      }
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -460,7 +478,7 @@ function TicketDetailPageInner() {
                     </p>
                     <button
                       onClick={handleReply}
-                      disabled={!replyText.trim() || isSending}
+                      disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending}
                       className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
                     >
                       {isSending ? (

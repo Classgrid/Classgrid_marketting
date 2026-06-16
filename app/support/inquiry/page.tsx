@@ -74,6 +74,7 @@ export default function InquiryPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [savedSelection, setSavedSelection] = useState<Range | null>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const descDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -738,7 +739,16 @@ export default function InquiryPage() {
                   />
                   <ToolBtn
                     icon={<Link2 className="w-3.5 h-3.5" />}
-                    onClick={() => setLinkModalOpen(true)}
+                    onClick={() => {
+                      const editor = document.getElementById("richEditor");
+                      const sel = window.getSelection();
+                      if (sel && sel.rangeCount > 0 && editor?.contains(sel.anchorNode)) {
+                        setSavedSelection(sel.getRangeAt(0));
+                      } else {
+                        setSavedSelection(null);
+                      }
+                      setLinkModalOpen(true);
+                    }}
                   />
                   <Sep />
                   <ToolBtn icon={<AlignLeft className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyLeft"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
@@ -1071,12 +1081,23 @@ export default function InquiryPage() {
         onInsert={(url, text) => {
           const editor = document.getElementById("richEditor");
           if (editor) editor.focus();
-          if (text) {
-            document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`);
-          } else {
-            document.execCommand("createLink", false, url);
+          const sel = window.getSelection();
+          if (savedSelection && sel) {
+            sel.removeAllRanges();
+            sel.addRange(savedSelection);
           }
+
+          const label = text || url;
+          if (text && savedSelection && !savedSelection.collapsed) {
+             document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+          } else if (!savedSelection || savedSelection.collapsed) {
+             document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>&nbsp;`);
+          } else {
+             document.execCommand("createLink", false, url);
+          }
+
           if (editor) setDescription(editor.innerHTML);
+          setSavedSelection(null);
         }}
       />
     </main>
