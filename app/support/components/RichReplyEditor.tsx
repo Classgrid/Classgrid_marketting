@@ -98,6 +98,21 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
       }
     }, [onChange]);
 
+    // Ensure the editor has focus AND a valid cursor position
+    const ensureEditorFocus = useCallback(() => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      editor.focus();
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) {
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+    }, []);
+
     // Expose clear and getHTML methods
     useImperativeHandle(ref, () => ({
       clear: () => {
@@ -336,19 +351,19 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               </select>
             </div>
             <Sep />
-            <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("bold"); syncContent(); }} title="Bold" />
-            <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("italic"); syncContent(); }} title="Italic" />
-            <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("underline"); syncContent(); }} title="Underline" />
+            <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("bold"); syncContent(); }} title="Bold" />
+            <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("italic"); syncContent(); }} title="Italic" />
+            <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); syncContent(); }} title="Underline" />
             <Sep />
             <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />
             <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => setLinkModalOpen(true)} title="Insert link" />
             <Sep />
-            <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("insertOrderedList"); syncContent(); }} title="Numbered list" />
-            <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("insertUnorderedList"); syncContent(); }} title="Bullet list" />
-            <ToolBtn icon={<Quote className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("formatBlock", false, "blockquote"); syncContent(); }} title="Quote" />
+            <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertOrderedList"); syncContent(); }} title="Numbered list" />
+            <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertUnorderedList"); syncContent(); }} title="Bullet list" />
+            <ToolBtn icon={<Quote className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("formatBlock", false, "blockquote"); syncContent(); }} title="Quote" />
             <Sep />
-            <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("undo"); syncContent(); }} title="Undo" />
-            <ToolBtn icon={<Redo2 className="w-3.5 h-3.5" />} onClick={() => { editorRef.current?.focus(); document.execCommand("redo"); syncContent(); }} title="Redo" />
+            <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("undo"); syncContent(); }} title="Undo" />
+            <ToolBtn icon={<Redo2 className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("redo"); syncContent(); }} title="Redo" />
             {/* Upload progress + Plain text toggle */}
             <div className="ml-auto flex items-center gap-3">
               {uploadingImage && (
@@ -394,7 +409,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onClick={handleEditorClick}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 dark:[&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-500 [&_a]:underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:decoration-primary [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
+              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-500 [&_a]:underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:decoration-primary [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
               style={{ minHeight, maxHeight: 300, overflowY: "auto" }}
             />
 

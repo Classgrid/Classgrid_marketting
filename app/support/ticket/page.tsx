@@ -81,6 +81,21 @@ export default function RaiseTicketPage() {
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const descDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Ensure the editor has focus AND a valid cursor position
+  const ensureEditorFocus = () => {
+    const editor = document.getElementById("richEditor");
+    if (!editor) return;
+    editor.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) {
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  };
+
   // Pre-fill from session once loaded
   useEffect(() => {
     if (session?.user) {
@@ -666,9 +681,9 @@ export default function RaiseTicketPage() {
                     </SelectContent>
                   </Select>
                   <Sep />
-                  <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("bold"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
-                  <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("italic"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
-                  <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("bold"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("italic"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <Sep />
                   <ToolBtn
                     icon={<ImageIcon className="w-3.5 h-3.5" />}
@@ -719,11 +734,11 @@ export default function RaiseTicketPage() {
                     onClick={() => setLinkModalOpen(true)}
                   />
                   <Sep />
-                  <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("insertOrderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
-                  <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("insertUnorderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertOrderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertUnorderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <ToolBtn
                     icon={<Quote className="w-3.5 h-3.5" />}
-                    onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("formatBlock", false, "blockquote"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }}
+                    onClick={() => { ensureEditorFocus(); document.execCommand("formatBlock", false, "blockquote"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }}
                   />
                   <Sep />
                   <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("undo")} />
@@ -807,7 +822,7 @@ export default function RaiseTicketPage() {
                       if (related?.closest?.(".link-tooltip-popup")) return;
                       tooltipTimeoutRef.current = setTimeout(() => setLinkTooltip(null), 300);
                     }}
-                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-muted [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary [&_a]:underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary [&_a]:underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                     style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                   />
                   {/* Link Hover Tooltip */}
