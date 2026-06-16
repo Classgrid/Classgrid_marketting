@@ -403,7 +403,7 @@ function publicHrefForSourceFile(relative: string) {
   const fileName = path.basename(relative, ".ts");
   const map: Record<string, string> = {
     about: "/about",
-    campusCommunity: "/community",
+    campusCommunity: "/support/inquiry",
     changelog: "/changelog",
     compare: "/compare",
     forms: "/demo",

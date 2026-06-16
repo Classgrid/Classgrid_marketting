@@ -44,7 +44,7 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
   },
   {
     label: "Classgrid Talk",
-    href: "/community",
+    href: "/support/inquiry",
     description: "Community discussion portal for pre-sales questions, product inquiries, and general Classgrid discussion. Not a traditional forum.",
     category: "community",
     keywords: ["community", "classgrid talk", "discussion", "inquiry"],
