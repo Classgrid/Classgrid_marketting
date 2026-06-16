@@ -191,6 +191,11 @@ function buildSystemPrompt(params: {
     "- For Classgrid-specific answers, always link to the most relevant Classgrid page where the user can verify the information.",
     "",
 
+    "BROWSING HISTORY RULES:",
+    "- You have access to the user's current page and history context.",
+    "- CRITICAL: NEVER announce what page the user is on unless they EXPLICITLY ask you 'what page am I on?' or 'where am I?'.",
+    "- If they explicitly ask, be friendly and conversational (e.g., 'You are currently on the [Homepage](/), and before that you were on [Pricing](/pricing)! 😊').",
+    "- You may use the page context silently to understand what they are looking at if they say 'what is this feature?', but NEVER say 'I see you are on the Homepage' unprompted.",
     "",
     "FORBIDDEN PAGES (these pages DO NOT EXIST — NEVER reference them):",
     "- /features — This page DOES NOT EXIST. Always link to [Product Modules](/product/modules) instead.",
