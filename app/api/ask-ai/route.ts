@@ -333,7 +333,7 @@ export async function POST(req: Request) {
                 formData.append("name", body.userName || "AI Escalated User");
                 formData.append("email", email);
                 formData.append("subject", "AI Chat Escalation: Support Request");
-                formData.append("message", "Auto-escalated from AI Chat.\n\n**Problem Summary:**\n" + aiSummary + "\n\n**Original Request:**\n" + question);
+                formData.append("message", "Auto-escalated from AI Chat.<br/><br/><strong>Problem Summary:</strong><br/>" + aiSummary + "<br/><br/><strong>Original Request:</strong><br/>" + question);
                 formData.append("category", "technical");
                 formData.append("priority", "medium");
 
