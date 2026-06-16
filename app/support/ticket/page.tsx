@@ -760,39 +760,41 @@ export default function RaiseTicketPage() {
                     onClick={() => { ensureEditorFocus(); document.execCommand("formatBlock", false, "blockquote"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }}
                   />
                   <Sep />
-                  <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("undo")} />
-                  <ToolBtn icon={<Redo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("redo")} />
-                  {/* Plain text toggle */}
-                  <div className="ml-auto flex items-center gap-3">
-                    {uploadingImage && (
-                      <div className="flex items-center gap-2">
-                        <div className="text-[10px] font-bold text-primary">Uploading {uploadProgress}%</div>
-                        <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
-                          <div className="h-full bg-primary transition-all duration-200" style={{ width: `${uploadProgress}%` }} />
+                  <div className="ml-auto flex items-center gap-1">
+                    <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("undo")} />
+                    <ToolBtn icon={<Redo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("redo")} />
+                    {/* Plain text toggle */}
+                    <div className="flex items-center gap-3 ml-1 sm:ml-2">
+                      {uploadingImage && (
+                        <div className="flex items-center gap-2">
+                          <div className="text-[10px] font-bold text-primary">Uploading {uploadProgress}%</div>
+                          <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
+                            <div className="h-full bg-primary transition-all duration-200" style={{ width: `${uploadProgress}%` }} />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const editor = document.getElementById("richEditor");
-                        if (!editor) return;
-                        if (isPlainText) {
-                          // Restore rich text
-                          editor.innerHTML = savedEditorHTML.current;
-                          setIsPlainText(false);
-                        } else {
-                          // Save HTML and show plain text
-                          savedEditorHTML.current = editor.innerHTML;
-                          editor.innerText = editor.innerText;
-                          setIsPlainText(true);
-                        }
-                        setDescription(editor.innerHTML);
-                      }}
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded transition-colors ${isPlainText ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"}`}
-                    >
-                      {isPlainText ? "Rich text" : "Plain text"}
-                    </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const editor = document.getElementById("richEditor");
+                          if (!editor) return;
+                          if (isPlainText) {
+                            // Restore rich text
+                            editor.innerHTML = savedEditorHTML.current;
+                            setIsPlainText(false);
+                          } else {
+                            // Save HTML and show plain text
+                            savedEditorHTML.current = editor.innerHTML;
+                            editor.innerText = editor.innerText;
+                            setIsPlainText(true);
+                          }
+                          setDescription(editor.innerHTML);
+                        }}
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded transition-colors ${isPlainText ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"}`}
+                      >
+                        {isPlainText ? "Rich text" : "Plain text"}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 {/* Editable Area */}
