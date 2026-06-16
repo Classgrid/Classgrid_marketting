@@ -22,6 +22,7 @@ type TicketMessage = {
   body: string;
   date: string;
   footer?: string;
+  attachments?: any[];
 };
 
 type TicketData = {
@@ -437,7 +438,7 @@ function TicketDetailPageInner() {
                         </p>
                       </div>
                       <div
-                        className="whitespace-pre-wrap text-base text-foreground leading-relaxed [&>p]:mb-4 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>li]:mb-1.5 [&>strong]:font-bold [&>h1]:text-xl [&>h1]:font-bold [&>h1]:mb-3 [&>h2]:text-lg [&>h2]:font-bold [&>h2]:mb-3 [&>h3]:text-base [&>h3]:font-bold [&>h3]:mb-2 [&>blockquote]:border-l-4 [&>blockquote]:border-primary/50 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-3 [&>pre]:bg-muted [&>pre]:p-3 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>code]:bg-muted [&>code]:px-1 [&>code]:rounded [&_a]:!text-blue-500 [&_a]:!no-underline hover:[&_a]:!text-blue-400 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:border [&_img]:border-border [&_img]:my-4 [&_img]:max-h-[500px] [&_img]:object-contain"
+                        className="whitespace-pre-wrap text-base text-foreground leading-relaxed [&>p]:mb-4 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>li]:mb-1.5 [&>strong]:font-bold [&>h1]:text-xl [&>h1]:font-bold [&>h1]:mb-3 [&>h2]:text-lg [&>h2]:font-bold [&>h2]:mb-3 [&>h3]:text-base [&>h3]:font-bold [&>h3]:mb-2 [&>blockquote]:border-l-4 [&>blockquote]:border-primary/50 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-3 [&>pre]:bg-muted [&>pre]:p-3 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>code]:bg-muted [&>code]:px-1 [&>code]:rounded [&_a]:!text-blue-500 [&_a]:!no-underline hover:[&_a]:!text-blue-400 [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:border [&_img]:border-border [&_img]:my-4 [&_img]:max-h-[500px] [&_img]:object-contain"
                         dangerouslySetInnerHTML={{ __html: msg.body }}
                         onClick={(e) => {
                           const target = e.target as HTMLElement;
@@ -448,6 +449,35 @@ function TicketDetailPageInner() {
                           }
                         }}
                       />
+
+                      {/* Message Attachments */}
+                      {msg.attachments && msg.attachments.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {msg.attachments.map((att: any, aIdx: number) => {
+                            const path = typeof att === 'string' ? att : (att.url || att.path || '');
+                            if (!path || typeof path !== 'string') return null;
+
+                            const fullFileName = typeof att !== 'string' && att.filename ? att.filename : (path.split('/').pop() || `File ${aIdx + 1}`);
+                            const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
+                            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co';
+                            const fileUrl = path.startsWith('http') ? path : `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
+
+                            return (
+                              <button
+                                key={`msg-att-${aIdx}`}
+                                onClick={() => setPreviewFile({ name: fileName, src: fileUrl })}
+                                className="group flex items-center gap-2 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 rounded-lg text-xs transition-all shadow-sm"
+                                title="View attachment"
+                              >
+                                <div className="w-6 h-6 rounded-md bg-muted group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
+                                  <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                                </div>
+                                <span className="font-medium text-foreground truncate max-w-[200px]">{fileName}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -546,51 +576,60 @@ function TicketDetailPageInner() {
                   {messages.length} message{messages.length !== 1 ? "s" : ""} in this thread
                 </div>
 
-                {/* Attachments */}
-                {ticket.attachments && ticket.attachments.length > 0 && (
-                  <>
-                    <hr className="border-border" />
-                    <div>
-                      <dt className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
-                        <Paperclip className="w-3.5 h-3.5" />
-                        Attachments ({ticket.attachments.length})
-                      </dt>
-                      <div className="space-y-2">
-                        {ticket.attachments.map((attachmentItem: any, idx) => {
-                          const path = typeof attachmentItem === 'string' ? attachmentItem : (attachmentItem?.url || attachmentItem?.path || '');
-                          if (!path || typeof path !== 'string') return null;
+                {/* Attachments (Combined from ticket + all messages) */}
+                {(() => {
+                  const combinedAttachments = [
+                    ...(ticket.attachments || []),
+                    ...messages.flatMap(m => m.attachments || [])
+                  ].filter((v, i, a) => {
+                    const getPath = (item: any) => typeof item === 'string' ? item : (item.url || item.path || '');
+                    return a.findIndex(t => getPath(t) === getPath(v)) === i;
+                  });
 
-                          const fullFileName = path.split('/').pop() || `File ${idx + 1}`;
-                          // Storage service now prepends UUID: uuid_filename.ext
-                          const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
-                          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
-                          return (
-                            <div
-                              key={idx}
-                              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs"
-                            >
-                              <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                              <span className="truncate flex-1 text-foreground" title={fileName}>
-                                {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co';
-                                  const fileUrl = `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
-                                  setPreviewFile({ name: fileName, src: fileUrl });
-                                }}
-                                className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-                                title="View file"
+                  if (combinedAttachments.length === 0) return null;
+
+                  return (
+                    <>
+                      <hr className="border-border" />
+                      <div>
+                        <dt className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
+                          <Paperclip className="w-3.5 h-3.5" />
+                          All Attachments ({combinedAttachments.length})
+                        </dt>
+                        <div className="space-y-2">
+                          {combinedAttachments.map((attachmentItem: any, idx) => {
+                            const path = typeof attachmentItem === 'string' ? attachmentItem : (attachmentItem?.url || attachmentItem?.path || '');
+                            if (!path || typeof path !== 'string') return null;
+
+                            const fullFileName = typeof attachmentItem !== 'string' && attachmentItem.filename ? attachmentItem.filename : (path.split('/').pop() || `File ${idx + 1}`);
+                            const fileName = fullFileName.includes('_') ? fullFileName.substring(fullFileName.indexOf('_') + 1) : fullFileName;
+                            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bumxgscngzjadyozdpce.supabase.co';
+                            const fileUrl = path.startsWith('http') ? path : `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
+
+                            return (
+                              <div
+                                key={`sidebar-att-${idx}`}
+                                className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs"
                               >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          );
-                        })}
+                                <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                <span className="truncate flex-1 text-foreground" title={fileName}>
+                                  {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
+                                </span>
+                                <button
+                                  onClick={() => setPreviewFile({ name: fileName, src: fileUrl })}
+                                  className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                                  title="View file"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  );
+                })()}
               </dl>
             </motion.div>
           </div>

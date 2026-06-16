@@ -90,14 +90,30 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
 
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // Strip <p> and <div> wrappers from inside <li> elements so all list items are uniform
+    const cleanListItems = useCallback(() => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      editor.querySelectorAll("li > p, li > div").forEach((wrapper) => {
+        const li = wrapper.parentElement;
+        if (!li) return;
+        // Move all children of the <p>/<div> directly into the <li>
+        while (wrapper.firstChild) {
+          li.insertBefore(wrapper.firstChild, wrapper);
+        }
+        wrapper.remove();
+      });
+    }, []);
+
     const syncContent = useCallback(() => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         if (editorRef.current) {
+          cleanListItems();
           onChange(editorRef.current.innerHTML);
         }
       }, 300);
-    }, [onChange]);
+    }, [onChange, cleanListItems]);
 
     // Immediate sync (used by toolbar actions, submit, etc.)
     const syncContentNow = useCallback(() => {
@@ -239,12 +255,12 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             const isInsideList = container?.closest?.("ul, ol, li, blockquote");
             if (isInsideList) {
               if (e.shiftKey) {
-                // User insists Shift+Enter must also create a new list item (not a soft break)
                 e.preventDefault();
                 const li = container.closest("li");
                 if (li && li.parentNode) {
                   const newLi = document.createElement("li");
-                  newLi.innerHTML = "<br>";
+                  // Use a zero-width space instead of <br> so it doesn't create a permanent gap!
+                  newLi.innerHTML = "&#8203;"; 
                   if (li.nextSibling) {
                     li.parentNode.insertBefore(newLi, li.nextSibling);
                   } else {
@@ -253,14 +269,14 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                   const newRange = document.createRange();
                   newRange.setStart(newLi, 0);
                   newRange.collapse(true);
-                  sel.removeAllRanges();
-                  sel.addRange(newRange);
+                  sel?.removeAllRanges();
+                  sel?.addRange(newRange);
                 } else {
                   document.execCommand('insertParagraph');
                 }
               }
               syncContent();
-              return; // Don't prevent default, don't send
+              return; // Crucial: returning here prevents the form from submitting on normal Enter
             }
           }
         }
@@ -574,7 +590,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onClick={handleEditorClick}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:decoration-primary [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
+              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:!mb-0 [&_li]:!py-0.5 [&_li_*]:!mb-0 [&_li_*]:!mt-0 [&_li_p]:!leading-relaxed [&_li_div]:!leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
               style={{ minHeight, maxHeight: 300, overflowY: "auto" }}
             />
 
@@ -612,14 +628,18 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
 
         {/* Attachments UI below toolbar */}
         {files.length > 0 && (
-          <div className="px-4 py-2 bg-muted/20 border-t border-border flex flex-wrap gap-2">
+          <div className="px-4 py-3 bg-muted/5 border-t border-border flex flex-wrap gap-2">
             {files.map((file, idx) => (
-              <div key={`${file.name}-${idx}`} className="flex items-center gap-1.5 px-2 py-1 bg-card border border-border rounded text-xs">
-                <span className="truncate max-w-[150px] text-muted-foreground">{file.name}</span>
+              <div key={`${file.name}-${idx}`} className="group flex items-center gap-2 px-3 py-1.5 bg-background border border-border rounded-full shadow-sm text-xs transition-all hover:border-primary/50 hover:shadow">
+                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Paperclip className="w-3 h-3 text-primary" />
+                </div>
+                <span className="truncate max-w-[120px] sm:max-w-[150px] font-medium text-foreground">{file.name}</span>
+                <span className="text-muted-foreground/60 text-[10px]">{(file.size / 1024).toFixed(0)}kb</span>
                 <button
                   type="button"
                   onClick={() => setFiles(f => f.filter((_, i) => i !== idx))}
-                  className="text-muted-foreground hover:text-destructive"
+                  className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors ml-1"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -627,7 +647,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             ))}
           </div>
         )}
-        <div className="px-3 py-2 bg-muted/10 border-t border-border flex items-center rounded-b-xl">
+        <div className="px-4 py-3 bg-card border-t border-border flex items-center justify-between rounded-b-xl">
           <input
             type="file"
             multiple
@@ -646,11 +666,18 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted/50 transition-colors"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-full border border-dashed border-border hover:border-primary hover:bg-primary/5 transition-all"
           >
-            <Paperclip className="w-3.5 h-3.5" />
-            Add an attachment
+            <div className="w-6 h-6 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+              <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+              Attach files
+            </span>
           </button>
+          <div className="text-[10px] text-muted-foreground/60 font-medium tracking-wide uppercase">
+            Max 10MB per file
+          </div>
         </div>
 
         {/* Link Modal */}

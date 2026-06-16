@@ -645,7 +645,7 @@ export default function RaiseTicketPage() {
               </Label>
               <div className="rounded-lg border border-input bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary transition-all">
                 {/* Working Toolbar */}
-                <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto [scrollbar-width:none]">
+                <div className="flex flex-wrap items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/50">
                   <Select
                     onValueChange={(val) => {
                       const editor = document.getElementById("richEditor");
@@ -918,7 +918,7 @@ export default function RaiseTicketPage() {
                             const li = container.closest("li");
                             if (li && li.parentNode) {
                               const newLi = document.createElement("li");
-                              newLi.innerHTML = "<br>";
+                              newLi.innerHTML = "&#8203;";
                               if (li.nextSibling) {
                                 li.parentNode.insertBefore(newLi, li.nextSibling);
                               } else {
@@ -958,7 +958,7 @@ export default function RaiseTicketPage() {
                       if (related?.closest?.(".link-tooltip-popup")) return;
                       tooltipTimeoutRef.current = setTimeout(() => setLinkTooltip(null), 300);
                     }}
-                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                     style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                   />
                   {/* Link Hover Tooltip */}

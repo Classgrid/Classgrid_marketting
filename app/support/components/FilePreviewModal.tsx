@@ -61,7 +61,15 @@ function getMimeType(file: FilePreviewSource): string {
 
 function isImage(mime: string) { return mime.startsWith("image/"); }
 function isPDF(mime: string) { return mime === "application/pdf"; }
-function isText(mime: string) { return mime.startsWith("text/"); }
+function isText(mime: string) { return mime.startsWith("text/") && mime !== "text/csv"; }
+function isOfficeDoc(mime: string) {
+  return [
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv"
+  ].includes(mime);
+}
 
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -258,6 +266,17 @@ export default function FilePreviewModal({ file, onClose, onDelete }: FilePrevie
             />
           )}
 
+          {/* Office Doc viewer (Public URLs only) */}
+          {isOfficeDoc(mime) && srcUrl && !srcUrl.startsWith("blob:") && (
+            <div className="w-full max-w-5xl h-[85vh] bg-white rounded-lg border border-zinc-700 overflow-hidden flex flex-col">
+              <iframe
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(srcUrl)}`}
+                title={file.name}
+                className="w-full flex-1 border-0"
+              />
+            </div>
+          )}
+
           {/* Plain text viewer */}
           {isText(mime) && textContent !== null && (
             <div className="w-full max-w-3xl max-h-[80vh] overflow-auto bg-zinc-900 border border-zinc-700 rounded-lg p-6">
@@ -267,8 +286,8 @@ export default function FilePreviewModal({ file, onClose, onDelete }: FilePrevie
             </div>
           )}
 
-          {/* Unsupported file type */}
-          {!isImage(mime) && !isPDF(mime) && !isText(mime) && (
+          {/* Unsupported file type (or local office docs) */}
+          {!isImage(mime) && !isPDF(mime) && !isText(mime) && !(isOfficeDoc(mime) && srcUrl && !srcUrl.startsWith("blob:")) && (
             <div className="flex flex-col items-center gap-5 text-center">
               <div className="w-20 h-20 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center">
                 <File className="w-10 h-10 text-zinc-400" />
