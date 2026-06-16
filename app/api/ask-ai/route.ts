@@ -5,6 +5,7 @@ import { connectMongo } from "@/lib/mongodb";
 import { ModerationFlag } from "@/lib/models/ModerationFlag";
 import { AiRateLimit } from "../../../lib/models/AiRateLimit";
 import { sendSafetyEmail } from "@/lib/email";
+import { getRedisClient } from "@/lib/redis";
 
 import {
   generateClassgridRagAnswer,
@@ -320,9 +321,19 @@ export async function POST(req: Request) {
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
           const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)\]/);
-          if (escalateMatch) {
+          // Prevent double escalation: check if this session already created a ticket
+          const escalationRedis = getRedisClient();
+          const escalationKey = `ai:escalated:${sessionId}`;
+          const alreadyEscalated = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+
+          if (escalateMatch && !alreadyEscalated) {
             const aiSummary = escalateMatch[1].trim();
             answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
+
+            // Backend safeguard: if AI only output the code with no polite text, add a fallback
+            if (!answer || answer.length < 15) {
+              answer = "I understand this is frustrating, especially with a deadline approaching. I've flagged this issue to our support team so they can look into it right away! 🙏";
+            }
             
             const email = userEmail || body?.userEmail;
             let ticketCreated = false;
@@ -380,8 +391,18 @@ export async function POST(req: Request) {
 
             if (ticketCreated) {
               answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our team will review it shortly.*";
+              // Mark this session as escalated so we don't create duplicate tickets
+              if (escalationRedis) {
+                await escalationRedis.set(escalationKey, "true", "EX", 3600);
+              }
             } else {
               answer += "\n\n*Note: I attempted to automatically create a Support Ticket for you, but there was an issue communicating with the database. Please visit [Submit a Ticket](/support/ticket) to submit it manually.*";
+            }
+          } else if (escalateMatch && alreadyEscalated) {
+            // AI tried to escalate again but we already have a ticket — just strip the code silently
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
+            if (!answer || answer.length < 15) {
+              answer = "Your issue has already been escalated to our support team! They are reviewing it now. Is there anything else I can help you with? 😊";
             }
           }
 
