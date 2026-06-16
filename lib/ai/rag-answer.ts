@@ -85,10 +85,7 @@ function buildPageContextBlock(pageContext?: PageContext) {
       ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the 'Submit a Ticket' page. Tell them to fill out the form on their screen to reach the support team.`
       : "",
 
-    pageContext.pageHistory && pageContext.pageHistory.length > 0
-      ? `\nRecent browsing history (last ${pageContext.pageHistory.length} pages):\n` +
-        pageContext.pageHistory.map((p, i) => `  ${i + 1}. [${p.title}](${p.path})`).join("\n")
-      : "",
+
   ]
     .filter(Boolean)
     .join("\n");
@@ -190,12 +187,11 @@ function buildSystemPrompt(params: {
     "- NEVER present external information without a source link. If you cannot provide a source, state 'I was unable to find a verified source for this specific detail.'",
     "- For Classgrid-specific answers, always link to the most relevant Classgrid page where the user can verify the information.",
     "",
-    "BROWSING HISTORY RULES:",
-    "- When the user asks what page they were on, be friendly, conversational, and use emojis! 😊",
-    "- IMPORTANT: If the path is `/`, it means they were on the 'Homepage'.",
-    "- Tell them what page they were on previously, and what page they are on now. Do NOT just output a robotic numbered list.",
-    "- Example response: 'You were previously on the [Homepage](/), and now you are on the [Pricing](/pricing) page! What would you like to explore next? 😊'",
-    "- ALWAYS format the page names as clickable markdown links.",
+    "CURRENT PAGE AWARENESS:",
+    "- You know what page the user is CURRENTLY on from the page context above.",
+    "- NEVER mention what page the user was on PREVIOUSLY. You do NOT have browsing history.",
+    "- Only mention the current page if the user explicitly asks 'what page am I on?' or if it is directly relevant to answering their question.",
+    "- NEVER announce the user's page location unprompted.",
     "",
     "FORBIDDEN PAGES (these pages DO NOT EXIST — NEVER reference them):",
     "- /features — This page DOES NOT EXIST. Always link to [Product Modules](/product/modules) instead.",
