@@ -55,6 +55,13 @@ export const aiEscalationType = defineType({
       readOnly: true,
     }),
     defineField({
+      name: "aiSummary",
+      title: "AI Problem Summary",
+      type: "text",
+      description: "Brief summary of the issue extracted by the AI.",
+      readOnly: true,
+    }),
+    defineField({
       name: "chatTranscript",
       title: "Chat Transcript",
       type: "array",
@@ -66,6 +73,18 @@ export const aiEscalationType = defineType({
             { name: "content", type: "text", title: "Message" },
             { name: "timestamp", type: "datetime", title: "Timestamp" },
           ],
+          preview: {
+            select: {
+              title: "content",
+              subtitle: "role",
+            },
+            prepare(selection: any) {
+              return {
+                title: selection.title ? (selection.title.length > 50 ? selection.title.substring(0, 50) + "..." : selection.title) : "Empty message",
+                subtitle: selection.subtitle ? selection.subtitle.toUpperCase() : "UNKNOWN",
+              };
+            },
+          },
         },
       ],
       description: "The chat history leading up to the escalation.",

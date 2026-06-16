@@ -1046,6 +1046,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         body: JSON.stringify({
           question: trimmed,
           userName: session?.user?.name ?? undefined,
+          userEmail: session?.user?.email ?? undefined,
           sessionId: sessionId ?? undefined,
           history: nextMessages
             .filter((m) => m.role === "user" || m.role === "assistant")

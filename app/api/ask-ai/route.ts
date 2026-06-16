@@ -308,8 +308,11 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          if (answer.includes("[ESCALATE]")) {
-            answer = answer.replace(/\[ESCALATE\]/g, "").trim();
+          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)\]/);
+          if (escalateMatch) {
+            const aiSummary = escalateMatch[1].trim();
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
+            
             const email = body?.userEmail;
             let ticketCreated = false;
 
@@ -319,7 +322,7 @@ export async function POST(req: Request) {
                 formData.append("name", body.userName || "AI Escalated User");
                 formData.append("email", email);
                 formData.append("subject", "AI Chat Escalation: Support Request");
-                formData.append("message", "Auto-escalated from AI Chat.\n\nLast User Message:\n" + question + "\n\nAI Response:\n" + answer);
+                formData.append("message", "Auto-escalated from AI Chat.\n\nAI Problem Summary:\n" + aiSummary + "\n\nLast User Message:\n" + question);
                 formData.append("category", "ai");
                 formData.append("priority", "medium");
 
@@ -354,14 +357,10 @@ export async function POST(req: Request) {
                 deviceInfo: deviceLog,
                 status: "pending",
                 ticketCreated: ticketCreated,
+                aiSummary: aiSummary,
                 chatTranscript: [
-                  ...mergedHistory.slice(-5).map((m: any) => ({
-                    role: m.role,
-                    content: m.content,
-                    timestamp: new Date().toISOString(),
-                  })),
-                  { role: "user", content: question, timestamp: new Date().toISOString() },
-                  { role: "assistant", content: answer, timestamp: new Date().toISOString() }
+                  { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                  { _key: `assistant-${Date.now()}`, role: "assistant", content: answer, timestamp: new Date().toISOString() }
                 ]
               });
             } catch (e) {
