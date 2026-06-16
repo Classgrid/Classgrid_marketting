@@ -789,6 +789,27 @@ export default function InquiryPage() {
                     }
                   }}
                   onKeyDown={(e) => {
+                    if (e.ctrlKey && e.shiftKey) {
+                      if (e.key === "7") {
+                        e.preventDefault();
+                        document.execCommand("insertOrderedList");
+                        setDescription(document.getElementById("richEditor")?.innerHTML || "");
+                        return;
+                      }
+                      if (e.key === "8") {
+                        e.preventDefault();
+                        document.execCommand("insertUnorderedList");
+                        setDescription(document.getElementById("richEditor")?.innerHTML || "");
+                        return;
+                      }
+                      if (e.key === "9") {
+                        e.preventDefault();
+                        document.execCommand("formatBlock", false, "blockquote");
+                        setDescription(document.getElementById("richEditor")?.innerHTML || "");
+                        return;
+                      }
+                    }
+
                     if (e.key === " " || e.key === "Enter") {
                       const sel = window.getSelection();
                       if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
@@ -813,6 +834,8 @@ export default function InquiryPage() {
                             sel.collapseToEnd();
                             if (e.key === " ") {
                               document.execCommand('insertText', false, ' ');
+                            } else if (e.shiftKey) {
+                              document.execCommand('insertLineBreak');
                             } else {
                               document.execCommand('insertParagraph');
                             }

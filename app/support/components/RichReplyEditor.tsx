@@ -126,6 +126,28 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
+        // Keyboard Shortcuts for Lists & Quotes (Google Docs style)
+        if (e.ctrlKey && e.shiftKey) {
+          if (e.key === "7") {
+            e.preventDefault();
+            document.execCommand("insertOrderedList");
+            syncContent();
+            return;
+          }
+          if (e.key === "8") {
+            e.preventDefault();
+            document.execCommand("insertUnorderedList");
+            syncContent();
+            return;
+          }
+          if (e.key === "9") {
+            e.preventDefault();
+            document.execCommand("formatBlock", false, "blockquote");
+            syncContent();
+            return;
+          }
+        }
+
         // Auto-link detection on Space or Enter
         if (e.key === " " || e.key === "Enter") {
           const sel = window.getSelection();
@@ -161,9 +183,11 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                 // Insert the prevented space or enter
                 if (e.key === " ") {
                   document.execCommand('insertText', false, ' ');
+                } else if (e.shiftKey) {
+                  document.execCommand('insertLineBreak');
                 } else {
                   // If it was enter, let's see if we should submit or insert new line
-                  if (!e.shiftKey && onSubmit) {
+                  if (onSubmit) {
                     const editorText = editorRef.current?.innerText?.trim() || "";
                     if (editorText) {
                       syncContentNow();
