@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { connectMongo } from "@/lib/mongodb";
 import { ModerationFlag } from "@/lib/models/ModerationFlag";
 import { AiRateLimit } from "../../../lib/models/AiRateLimit";
+import { sendSafetyEmail } from "@/lib/email";
 
 import {
   generateClassgridRagAnswer,
@@ -202,6 +203,12 @@ export async function POST(req: Request) {
             .append('flaggedMessages', [newFlaggedMessage])
             .commit();
           console.log(`[Safety] Appended violation to existing incident in Sanity for ${identifier}`);
+          
+          if (userEmail) {
+            const strikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
+            const flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
+            await sendSafetyEmail(userEmail, body?.userName || "", strikeCount, flaggedMsgs);
+          }
         } else {
           // Create new incident
           await writeClient.create({
@@ -214,6 +221,10 @@ export async function POST(req: Request) {
             flaggedMessages: [newFlaggedMessage],
           });
           console.log(`[Safety] Created new safety incident in Sanity for ${identifier}`);
+          
+          if (userEmail) {
+            await sendSafetyEmail(userEmail, body?.userName || "", 1, [newFlaggedMessage]);
+          }
         }
       } catch (err) {
         console.error("[Safety] Failed to log incident to Sanity:", err);
