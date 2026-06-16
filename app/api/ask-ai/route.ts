@@ -147,6 +147,7 @@ export async function POST(req: Request) {
       }
     }
 
+    /*
     if (bannedUntil) {
       const banTimeStr = bannedUntil.toLocaleTimeString("en-IN", {
         hour: "numeric",
@@ -159,6 +160,7 @@ export async function POST(req: Request) {
         bannedUntil: bannedUntil.toISOString()
       }, { status: 403 });
     }
+    */
 
     // Lightweight ban-check from frontend — no need to call Groq
     if (question === "__ban_check__") {
@@ -168,35 +170,54 @@ export async function POST(req: Request) {
     // --- 1. MODERATION / PROFANITY CHECK FOR NEW MESSAGES ---
     if (containsProfanity(question)) {
       const now = new Date();
-      const banExpiry = new Date(now.getTime() + 3 * 60 * 1000);
 
-      // Log the incident in MongoDB
-      await ModerationFlag.create({
-        userEmail: userEmail || undefined,
-        ipAddress: ip,
-        reason: "Vulgarity in AI Chat",
-        message: question,
-      });
+      try {
+        const { createClient } = require('next-sanity');
+        const writeClient = createClient({
+          projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+          dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+          apiVersion: "2024-01-01",
+          token: process.env.SANITY_API_WRITE_TOKEN,
+          useCdn: false,
+        });
 
-      // Stop the conversation immediately and drop a 3-minute ban cookie
-      const banExpiryStr = banExpiry.toLocaleTimeString("en-IN", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        timeZone: "Asia/Kolkata",
-      });
-      const response = NextResponse.json({
-        error: `Your message violates our safety guidelines. The conversation has been terminated. Access resumes at ${banExpiryStr} IST.`,
-        bannedUntil: banExpiry.toISOString()
-      }, { status: 403 });
+        // Unique identifier for the user: email or IP
+        const identifier = userEmail || ip;
 
-      response.cookies.set("ai_chat_restricted", banExpiry.getTime().toString(), {
-        maxAge: 3 * 60, // 3 minutes
-        path: "/",
-        httpOnly: true,
-      });
+        // Check if an incident already exists for this identifier
+        const query = `*[_type == "safetyIncident" && (userEmail == $identifier || ipAddress == $identifier)][0]`;
+        const existingIncident = await writeClient.fetch(query, { identifier });
 
-      return response;
+        const newFlaggedMessage = {
+          _key: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          message: question,
+          timestamp: now.toISOString(),
+        };
+
+        if (existingIncident) {
+          // Append to existing flagged messages array
+          await writeClient
+            .patch(existingIncident._id)
+            .setIfMissing({ flaggedMessages: [] })
+            .append('flaggedMessages', [newFlaggedMessage])
+            .commit();
+          console.log(`[Safety] Appended violation to existing incident in Sanity for ${identifier}`);
+        } else {
+          // Create new incident
+          await writeClient.create({
+            _type: "safetyIncident",
+            userEmail: userEmail || "",
+            userName: body?.userName || "",
+            ipAddress: ip,
+            device: req.headers.get("user-agent") || "Unknown Device",
+            status: "pending",
+            flaggedMessages: [newFlaggedMessage],
+          });
+          console.log(`[Safety] Created new safety incident in Sanity for ${identifier}`);
+        }
+      } catch (err) {
+        console.error("[Safety] Failed to log incident to Sanity:", err);
+      }
     }
     // --- END MODERATION CHECK ---
 
@@ -269,6 +290,22 @@ export async function POST(req: Request) {
 
         try {
           sendEvent({ type: "status", label: "thinking" });
+
+          // If profanity was detected, bypass Groq completely and stream a polite refusal
+          if (isProfane) {
+            const answer = "I'm sorry, but I cannot respond to inappropriate language. Please keep the conversation professional. How can I help you with Classgrid today?";
+            
+            await saveMessageToSession(sessionId, { role: "assistant", content: answer });
+            
+            sendEvent({
+              type: "answer",
+              answer,
+              sessionId,
+              sources: [],
+              retrieval: { chunks: 0, usedFallbackSearch: false },
+            });
+            return;
+          }
 
           const rawUserName = normalizeText(body?.userName);
           const firstName = rawUserName ? rawUserName.split(" ")[0] : undefined;

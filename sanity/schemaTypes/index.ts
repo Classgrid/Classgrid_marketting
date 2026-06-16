@@ -1,6 +1,7 @@
 import type { SchemaTypeDefinition } from "sanity";
 import { moduleType } from "./moduleType";
 import { apiDocType } from "./apiDocType";
+import { safetyIncidentType } from "./safetyIncidentType";
 import {
   aboutLogoItemType,
   aboutPageType,
@@ -180,5 +181,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     classgridVideoType,
     classgridTeamVisionType,
     apiDocType,
+    safetyIncidentType,
   ],
 }
