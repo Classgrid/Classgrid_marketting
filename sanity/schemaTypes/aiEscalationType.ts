@@ -1,0 +1,93 @@
+import { defineField, defineType } from "sanity";
+
+export const aiEscalationType = defineType({
+  name: "aiEscalation",
+  title: "AI Escalations",
+  type: "document",
+  fields: [
+    defineField({
+      name: "userEmail",
+      title: "User Email",
+      type: "string",
+      description: "Email of the user, if logged in.",
+      readOnly: true,
+    }),
+    defineField({
+      name: "userName",
+      title: "User Name",
+      type: "string",
+      description: "Name of the user, if logged in.",
+      readOnly: true,
+    }),
+    defineField({
+      name: "ipAddress",
+      title: "IP Address",
+      type: "string",
+      description: "IP Address of the user.",
+      readOnly: true,
+    }),
+    defineField({
+      name: "deviceInfo",
+      title: "Device Info",
+      type: "string",
+      description: "User-Agent string of the browser.",
+      readOnly: true,
+    }),
+    defineField({
+      name: "status",
+      title: "Review Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Pending Review", value: "pending" },
+          { title: "Reviewed - Ignored", value: "ignored" },
+          { title: "Ticket Handled", value: "handled" },
+        ],
+      },
+      initialValue: "pending",
+    }),
+    defineField({
+      name: "ticketCreated",
+      title: "Auto-Ticket Created",
+      type: "boolean",
+      description: "Was a support ticket automatically created in the main database for this?",
+      initialValue: false,
+      readOnly: true,
+    }),
+    defineField({
+      name: "chatTranscript",
+      title: "Chat Transcript",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "role", type: "string", title: "Role" },
+            { name: "content", type: "text", title: "Message" },
+            { name: "timestamp", type: "datetime", title: "Timestamp" },
+          ],
+        },
+      ],
+      description: "The chat history leading up to the escalation.",
+      readOnly: true,
+    }),
+  ],
+  preview: {
+    select: {
+      email: "userEmail",
+      ip: "ipAddress",
+      status: "status",
+      ticketCreated: "ticketCreated",
+    },
+    prepare(selection) {
+      const { email, ip, status, ticketCreated } = selection;
+      const title = email || ip || "Anonymous User";
+      let subtitle = status;
+      if (ticketCreated) subtitle += " (Ticket Created)";
+      return {
+        title: `Escalation: ${title}`,
+        subtitle: subtitle,
+      };
+    },
+  },
+});

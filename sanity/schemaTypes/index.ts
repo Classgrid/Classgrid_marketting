@@ -2,6 +2,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import { moduleType } from "./moduleType";
 import { apiDocType } from "./apiDocType";
 import { safetyIncidentType } from "./safetyIncidentType";
+import { aiEscalationType } from "./aiEscalationType";
 import {
   aboutLogoItemType,
   aboutPageType,
@@ -182,5 +183,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     classgridTeamVisionType,
     apiDocType,
     safetyIncidentType,
+    aiEscalationType,
   ],
 }

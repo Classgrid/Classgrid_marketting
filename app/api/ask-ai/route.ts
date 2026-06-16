@@ -306,7 +306,74 @@ export async function POST(req: Request) {
             onStatus: (label: string) => sendEvent({ type: "status", label }),
           });
 
-          const answer = result.answer || DEFAULT_ERROR_MESSAGE;
+          let answer = result.answer || DEFAULT_ERROR_MESSAGE;
+
+          if (answer.includes("[ESCALATE]")) {
+            answer = answer.replace(/\[ESCALATE\]/g, "").trim();
+            const email = body?.userEmail;
+            let ticketCreated = false;
+
+            if (email) {
+              try {
+                const formData = new FormData();
+                formData.append("name", body.userName || "AI Escalated User");
+                formData.append("email", email);
+                formData.append("subject", "AI Chat Escalation: Support Request");
+                formData.append("message", "Auto-escalated from AI Chat.\n\nLast User Message:\n" + question + "\n\nAI Response:\n" + answer);
+                formData.append("category", "ai");
+                formData.append("priority", "medium");
+
+                const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+                const res = await fetch(`${backendUrl}/api/support/public/tickets`, {
+                  method: "POST",
+                  body: formData,
+                });
+
+                if (res.ok) ticketCreated = true;
+              } catch (e) {
+                console.error("Failed to auto-create ticket:", e);
+              }
+            }
+
+            try {
+              const { createClient } = require('next-sanity');
+              const writeClient = createClient({
+                projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+                dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+                apiVersion: "2024-01-01",
+                token: process.env.SANITY_API_WRITE_TOKEN,
+                useCdn: false,
+              });
+
+              const deviceLog = req.headers.get("user-agent") || "Unknown Device";
+              await writeClient.create({
+                _type: "aiEscalation",
+                userEmail: email || "",
+                userName: body?.userName || "",
+                ipAddress: ip,
+                deviceInfo: deviceLog,
+                status: "pending",
+                ticketCreated: ticketCreated,
+                chatTranscript: [
+                  ...mergedHistory.slice(-5).map((m: any) => ({
+                    role: m.role,
+                    content: m.content,
+                    timestamp: new Date().toISOString(),
+                  })),
+                  { role: "user", content: question, timestamp: new Date().toISOString() },
+                  { role: "assistant", content: answer, timestamp: new Date().toISOString() }
+                ]
+              });
+            } catch (e) {
+              console.error("Failed to log escalation to Sanity:", e);
+            }
+
+            if (ticketCreated) {
+              answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our human team will review it shortly.*";
+            } else {
+              answer += "\n\n*Note: I have escalated this internally. Since you are not logged in as a verified institution user, I cannot automatically create a ticket for you. If you need immediate help, please email support@classgrid.in or ask this on [Classgrid Talk](/community).*";
+            }
+          }
 
           // Save the AI response to Redis session memory
           await saveMessageToSession(sessionId, { role: "assistant", content: answer });
