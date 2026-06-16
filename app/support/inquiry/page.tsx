@@ -13,6 +13,7 @@ import {
   Info,
   Bold,
   Italic,
+  Underline,
   Link2,
   List,
   ListOrdered,
@@ -630,25 +631,49 @@ export default function InquiryPage() {
               <div className="rounded-lg border border-input bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary transition-all">
                 {/* Working Toolbar */}
                 <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/50 overflow-x-auto [scrollbar-width:none]">
-                  <select
-                    className="text-xs font-medium bg-transparent text-muted-foreground border-none focus:ring-0 pr-6 cursor-pointer"
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === "p") document.execCommand("formatBlock", false, "p");
-                      else document.execCommand("formatBlock", false, val);
-                      e.target.value = "";
+                  <Select
+                    onValueChange={(val) => {
+                      const editor = document.getElementById("richEditor");
+                      if (editor) editor.focus();
+                      document.execCommand("formatBlock", false, val);
+                      if (editor) setDescription(editor.innerHTML);
                     }}
-                    defaultValue=""
                   >
-                    <option value="" disabled>Choose heading</option>
-                    <option value="h1">Heading 1</option>
-                    <option value="h2">Heading 2</option>
-                    <option value="h3">Heading 3</option>
-                    <option value="p">Paragraph</option>
-                  </select>
+                    <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[130px]">
+                      <SelectValue placeholder="Choose heading" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="min-w-[140px]">
+                      <SelectItem value="h1">Heading 1</SelectItem>
+                      <SelectItem value="h2">Heading 2</SelectItem>
+                      <SelectItem value="h3">Heading 3</SelectItem>
+                      <SelectItem value="p">Paragraph</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    onValueChange={(val) => {
+                      const editor = document.getElementById("richEditor");
+                      if (editor) editor.focus();
+                      document.execCommand("fontSize", false, val);
+                      if (editor) setDescription(editor.innerHTML);
+                    }}
+                  >
+                    <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[80px]">
+                      <SelectValue placeholder="Size" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="min-w-[100px]">
+                      <SelectItem value="1">Size 1</SelectItem>
+                      <SelectItem value="2">Size 2</SelectItem>
+                      <SelectItem value="3">Size 3</SelectItem>
+                      <SelectItem value="4">Size 4</SelectItem>
+                      <SelectItem value="5">Size 5</SelectItem>
+                      <SelectItem value="6">Size 6</SelectItem>
+                      <SelectItem value="7">Size 7</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Sep />
-                  <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => document.execCommand("bold")} />
-                  <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => document.execCommand("italic")} />
+                  <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("bold"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("italic"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <Sep />
                   <ToolBtn
                     icon={<ImageIcon className="w-3.5 h-3.5" />}
@@ -697,11 +722,11 @@ export default function InquiryPage() {
                     onClick={() => setLinkModalOpen(true)}
                   />
                   <Sep />
-                  <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => document.execCommand("insertOrderedList")} />
-                  <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => document.execCommand("insertUnorderedList")} />
+                  <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("insertOrderedList"); document.getElementById("richEditor") && setDescription(document.getElementById("richEditor")!.innerHTML); }} />
+                  <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("insertUnorderedList"); document.getElementById("richEditor") && setDescription(document.getElementById("richEditor")!.innerHTML); }} />
                   <ToolBtn
                     icon={<Quote className="w-3.5 h-3.5" />}
-                    onClick={() => document.execCommand("formatBlock", false, "blockquote")}
+                    onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("formatBlock", false, "blockquote"); document.getElementById("richEditor") && setDescription(document.getElementById("richEditor")!.innerHTML); }}
                   />
                   <Sep />
                   <ToolBtn icon={<Undo2 className="w-3.5 h-3.5" />} onClick={() => document.execCommand("undo")} />
@@ -748,7 +773,7 @@ export default function InquiryPage() {
                       setPreviewImage((target as HTMLImageElement).src);
                     }
                   }}
-                  className="p-4 bg-transparent text-sm text-foreground outline-none whitespace-pre-wrap [&_p]:mb-4 last:[&_p]:mb-0 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-muted [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-4 [&_a]:text-primary [&_a]:underline [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                  className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none whitespace-pre-wrap [&_p]:mb-4 last:[&_p]:mb-0 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-muted [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-4 [&_a]:text-primary [&_a]:underline [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                   style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                 />
               </div>

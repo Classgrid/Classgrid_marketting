@@ -4,6 +4,7 @@ import React, { useRef, useCallback, useImperativeHandle, forwardRef, useState }
 import {
   Bold,
   Italic,
+  Underline,
   Link2,
   List,
   ListOrdered,
@@ -291,9 +292,53 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                 <option value="p">Paragraph</option>
               </select>
             </div>
+            <div className="relative">
+              <Select
+                onValueChange={(val) => {
+                  editorRef.current?.focus();
+                  document.execCommand("fontSize", false, val);
+                  syncContent();
+                }}
+              >
+                <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[80px]">
+                  <SelectValue placeholder="Size" />
+                </SelectTrigger>
+                <SelectContent side="bottom" className="min-w-[100px]">
+                  <SelectItem value="1">Size 1</SelectItem>
+                  <SelectItem value="2">Size 2</SelectItem>
+                  <SelectItem value="3">Size 3</SelectItem>
+                  <SelectItem value="4">Size 4</SelectItem>
+                  <SelectItem value="5">Size 5</SelectItem>
+                  <SelectItem value="6">Size 6</SelectItem>
+                  <SelectItem value="7">Size 7</SelectItem>
+                </SelectContent>
+              </Select>
+              <select
+                onChange={(e) => {
+                  editorRef.current?.focus();
+                  document.execCommand("fontSize", false, e.target.value);
+                  syncContent();
+                  e.target.value = "";
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                defaultValue=""
+              >
+                <option value="" disabled>Size</option>
+                <option value="1">Size 1</option>
+                <option value="2">Size 2</option>
+                <option value="3">Size 3</option>
+                <option value="4">Size 4</option>
+                <option value="5">Size 5</option>
+                <option value="6">Size 6</option>
+                <option value="7">Size 7</option>
+              </select>
+            </div>
             <Sep />
             <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { document.execCommand("bold"); syncContent(); }} title="Bold" />
             <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { document.execCommand("italic"); syncContent(); }} title="Italic" />
+            <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { document.execCommand("underline"); syncContent(); }} title="Underline" />
             <Sep />
             <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />
             <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => setLinkModalOpen(true)} title="Insert link" />
@@ -349,7 +394,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onClick={handleEditorClick}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              className="p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 dark:[&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-500 [&_a]:underline [&_a]:cursor-pointer [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
+              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 dark:[&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-500 [&_a]:underline [&_a]:cursor-pointer [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
               style={{ minHeight, maxHeight: 300, overflowY: "auto" }}
             />
 

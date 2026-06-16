@@ -12,6 +12,7 @@ import {
   Info,
   Bold,
   Italic,
+  Underline,
   Link2,
   List,
   ListOrdered,
@@ -643,9 +644,31 @@ export default function RaiseTicketPage() {
                       <SelectItem value="p">Paragraph</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select
+                    onValueChange={(val) => {
+                      const editor = document.getElementById("richEditor");
+                      if (editor) editor.focus();
+                      document.execCommand("fontSize", false, val);
+                      if (editor) setDescription(editor.innerHTML);
+                    }}
+                  >
+                    <SelectTrigger className="h-7 text-xs font-medium bg-transparent border-none shadow-none focus:ring-0 text-muted-foreground px-2 w-[80px]">
+                      <SelectValue placeholder="Size" />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" className="min-w-[100px]">
+                      <SelectItem value="1">Size 1</SelectItem>
+                      <SelectItem value="2">Size 2</SelectItem>
+                      <SelectItem value="3">Size 3</SelectItem>
+                      <SelectItem value="4">Size 4</SelectItem>
+                      <SelectItem value="5">Size 5</SelectItem>
+                      <SelectItem value="6">Size 6</SelectItem>
+                      <SelectItem value="7">Size 7</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Sep />
                   <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("bold"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("italic"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { document.getElementById("richEditor")?.focus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <Sep />
                   <ToolBtn
                     icon={<ImageIcon className="w-3.5 h-3.5" />}
@@ -784,7 +807,7 @@ export default function RaiseTicketPage() {
                       if (related?.closest?.(".link-tooltip-popup")) return;
                       tooltipTimeoutRef.current = setTimeout(() => setLinkTooltip(null), 300);
                     }}
-                    className="p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-muted [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary [&_a]:underline [&_a]:cursor-pointer [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-muted [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-primary [&_a]:underline [&_a]:cursor-pointer [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                     style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                   />
                   {/* Link Hover Tooltip */}
