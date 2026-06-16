@@ -15,6 +15,10 @@ import {
   X,
   ExternalLink,
   Trash2,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 import LinkModal from "@/app/support/components/LinkModal";
 import { uploadToSupabase } from "@/lib/supabase-storage";
@@ -148,13 +152,38 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           }
         }
 
-        // Auto-link detection on Space or Enter
+        // Markdown auto-formatting (lists) & Auto-link
         if (e.key === " " || e.key === "Enter") {
           const sel = window.getSelection();
           if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
             const text = sel.focusNode.textContent || "";
             const offset = sel.focusOffset;
             const textBeforeCursor = text.slice(0, offset);
+
+            // Markdown List Auto-format on Space
+            if (e.key === " " && offset === text.length) {
+              if (textBeforeCursor === "*" || textBeforeCursor === "-") {
+                e.preventDefault();
+                const range = document.createRange();
+                range.setStart(sel.focusNode, 0);
+                range.setEnd(sel.focusNode, offset);
+                range.deleteContents();
+                document.execCommand("insertUnorderedList");
+                syncContent();
+                return;
+              }
+              if (/^\d+\.$/.test(textBeforeCursor)) {
+                e.preventDefault();
+                const range = document.createRange();
+                range.setStart(sel.focusNode, 0);
+                range.setEnd(sel.focusNode, offset);
+                range.deleteContents();
+                document.execCommand("insertOrderedList");
+                syncContent();
+                return;
+              }
+            }
+
             const match = textBeforeCursor.match(/(?:^|\s)([^\s]+)$/);
             
             if (match) {
@@ -183,20 +212,9 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                 // Insert the prevented space or enter
                 if (e.key === " ") {
                   document.execCommand('insertText', false, ' ');
-                } else if (e.shiftKey) {
-                  document.execCommand('insertLineBreak');
                 } else {
-                  // If it was enter, let's see if we should submit or insert new line
-                  if (onSubmit) {
-                    const editorText = editorRef.current?.innerText?.trim() || "";
-                    if (editorText) {
-                      syncContentNow();
-                      onSubmit();
-                      return;
-                    }
-                  } else {
-                    document.execCommand('insertParagraph');
-                  }
+                  // Let browser handle enter naturally
+                  document.execCommand('insertParagraph');
                 }
                 syncContent();
                 return; // Done auto-linking
@@ -205,7 +223,42 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           }
         }
 
-        // Standard submit on Enter
+        // When inside a list or blockquote, Enter/Shift+Enter should create new items, NOT send
+        if (e.key === "Enter") {
+          const sel = window.getSelection();
+          const node = sel?.focusNode;
+          if (node) {
+            const container = (node.nodeType === Node.TEXT_NODE ? node.parentElement : node) as HTMLElement;
+            const isInsideList = container?.closest?.("ul, ol, li, blockquote");
+            if (isInsideList) {
+              if (e.shiftKey) {
+                // User insists Shift+Enter must also create a new list item (not a soft break)
+                e.preventDefault();
+                const li = container.closest("li");
+                if (li && li.parentNode) {
+                  const newLi = document.createElement("li");
+                  newLi.innerHTML = "<br>";
+                  if (li.nextSibling) {
+                    li.parentNode.insertBefore(newLi, li.nextSibling);
+                  } else {
+                    li.parentNode.appendChild(newLi);
+                  }
+                  const newRange = document.createRange();
+                  newRange.setStart(newLi, 0);
+                  newRange.collapse(true);
+                  sel.removeAllRanges();
+                  sel.addRange(newRange);
+                } else {
+                  document.execCommand('insertParagraph');
+                }
+              }
+              syncContent();
+              return; // Don't prevent default, don't send
+            }
+          }
+        }
+
+        // Standard submit on Enter (only when NOT in a list)
         if (e.key === "Enter" && !e.shiftKey && onSubmit) {
           const text = editorRef.current?.innerText?.trim() || "";
           if (text) {
@@ -438,6 +491,11 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />
             <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => setLinkModalOpen(true)} title="Insert link" />
             <Sep />
+            <ToolBtn icon={<AlignLeft className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyLeft"); syncContent(); }} title="Align Left" />
+            <ToolBtn icon={<AlignCenter className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyCenter"); syncContent(); }} title="Align Center" />
+            <ToolBtn icon={<AlignRight className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyRight"); syncContent(); }} title="Align Right" />
+            <ToolBtn icon={<AlignJustify className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyFull"); syncContent(); }} title="Justify" />
+            <Sep />
             <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertOrderedList"); syncContent(); }} title="Numbered list" />
             <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertUnorderedList"); syncContent(); }} title="Bullet list" />
             <ToolBtn icon={<Quote className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("formatBlock", false, "blockquote"); syncContent(); }} title="Quote" />
@@ -489,7 +547,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onClick={handleEditorClick}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-blue-500 [&_a]:underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:decoration-primary [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
+              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-blue-500 [&_a]:no-underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:decoration-primary [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
               style={{ minHeight, maxHeight: 300, overflowY: "auto" }}
             />
 

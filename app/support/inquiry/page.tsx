@@ -33,6 +33,10 @@ import {
   Send,
   ShieldCheck,
   Eye,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -737,6 +741,11 @@ export default function InquiryPage() {
                     onClick={() => setLinkModalOpen(true)}
                   />
                   <Sep />
+                  <ToolBtn icon={<AlignLeft className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyLeft"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<AlignCenter className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyCenter"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<AlignRight className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyRight"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <ToolBtn icon={<AlignJustify className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("justifyFull"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
+                  <Sep />
                   <ToolBtn icon={<ListOrdered className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertOrderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <ToolBtn icon={<List className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("insertUnorderedList"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <ToolBtn
@@ -810,12 +819,40 @@ export default function InquiryPage() {
                       }
                     }
 
+                    // Markdown auto-formatting (lists) & Auto-link
                     if (e.key === " " || e.key === "Enter") {
                       const sel = window.getSelection();
                       if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
                         const text = sel.focusNode.textContent || "";
                         const offset = sel.focusOffset;
                         const textBeforeCursor = text.slice(0, offset);
+
+                        // Markdown List Auto-format on Space
+                        if (e.key === " " && offset === text.length) {
+                          if (textBeforeCursor === "*" || textBeforeCursor === "-") {
+                            e.preventDefault();
+                            const range = document.createRange();
+                            range.setStart(sel.focusNode, 0);
+                            range.setEnd(sel.focusNode, offset);
+                            range.deleteContents();
+                            document.execCommand("insertUnorderedList");
+                            const el = document.getElementById("richEditor");
+                            if (el) setDescription(el.innerHTML);
+                            return;
+                          }
+                          if (/^\d+\.$/.test(textBeforeCursor)) {
+                            e.preventDefault();
+                            const range = document.createRange();
+                            range.setStart(sel.focusNode, 0);
+                            range.setEnd(sel.focusNode, offset);
+                            range.deleteContents();
+                            document.execCommand("insertOrderedList");
+                            const el = document.getElementById("richEditor");
+                            if (el) setDescription(el.innerHTML);
+                            return;
+                          }
+                        }
+
                         const match = textBeforeCursor.match(/(?:^|\s)([^\s]+)$/);
                         if (match) {
                           const word = match[1];
@@ -834,8 +871,6 @@ export default function InquiryPage() {
                             sel.collapseToEnd();
                             if (e.key === " ") {
                               document.execCommand('insertText', false, ' ');
-                            } else if (e.shiftKey) {
-                              document.execCommand('insertLineBreak');
                             } else {
                               document.execCommand('insertParagraph');
                             }
@@ -846,8 +881,40 @@ export default function InquiryPage() {
                         }
                       }
                     }
+
+                    // When inside a list or blockquote, force Shift+Enter to act like a regular Enter
+                    if (e.key === "Enter" && e.shiftKey) {
+                      const sel = window.getSelection();
+                      const node = sel?.focusNode;
+                      if (node) {
+                        const container = (node.nodeType === Node.TEXT_NODE ? node.parentElement : node) as HTMLElement;
+                        const isInsideList = container?.closest?.("ul, ol, li, blockquote");
+                        if (isInsideList) {
+                          e.preventDefault();
+                          const li = container.closest("li");
+                          if (li && li.parentNode) {
+                            const newLi = document.createElement("li");
+                            newLi.innerHTML = "<br>";
+                            if (li.nextSibling) {
+                              li.parentNode.insertBefore(newLi, li.nextSibling);
+                            } else {
+                              li.parentNode.appendChild(newLi);
+                            }
+                            const newRange = document.createRange();
+                            newRange.setStart(newLi, 0);
+                            newRange.collapse(true);
+                            sel.removeAllRanges();
+                            sel.addRange(newRange);
+                          } else {
+                            document.execCommand('insertParagraph');
+                          }
+                          const el = document.getElementById("richEditor");
+                          if (el) setDescription(el.innerHTML);
+                        }
+                      }
+                    }
                   }}
-                  className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none whitespace-pre-wrap [&_p]:mb-4 last:[&_p]:mb-0 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-4 [&_a]:text-blue-500 [&_a]:underline [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                  className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none whitespace-pre-wrap [&_p]:mb-4 last:[&_p]:mb-0 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-4 [&_a]:text-blue-500 [&_a]:no-underline [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                   style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                 />
               </div>
