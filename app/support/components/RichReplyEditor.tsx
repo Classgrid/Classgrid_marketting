@@ -19,6 +19,7 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Paperclip,
 } from "lucide-react";
 import LinkModal from "@/app/support/components/LinkModal";
 import { uploadToSupabase } from "@/lib/supabase-storage";
