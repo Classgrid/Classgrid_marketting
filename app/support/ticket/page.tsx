@@ -948,7 +948,7 @@ export default function RaiseTicketPage() {
                       if (related?.closest?.(".link-tooltip-popup")) return;
                       tooltipTimeoutRef.current = setTimeout(() => setLinkTooltip(null), 300);
                     }}
-                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-blue-500 [&_a]:no-underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
+                    className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                     style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                   />
                   {/* Link Hover Tooltip */}
@@ -1159,6 +1159,7 @@ export default function RaiseTicketPage() {
       <LinkModal
         open={linkModalOpen}
         onClose={() => setLinkModalOpen(false)}
+        initialText={typeof window !== "undefined" ? window.getSelection()?.toString() : ""}
         onInsert={(url, text) => {
           const editor = document.getElementById("richEditor");
           if (editor) editor.focus();

@@ -10,9 +10,10 @@ interface LinkModalProps {
   open: boolean;
   onClose: () => void;
   onInsert: (url: string, text?: string) => void;
+  initialText?: string;
 }
 
-export default function LinkModal({ open, onClose, onInsert }: LinkModalProps) {
+export default function LinkModal({ open, onClose, onInsert, initialText }: LinkModalProps) {
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
   const [error, setError] = useState("");
@@ -21,12 +22,25 @@ export default function LinkModal({ open, onClose, onInsert }: LinkModalProps) {
   // Focus url input when opened
   useEffect(() => {
     if (open) {
-      setUrl("");
-      setText("");
+      if (initialText) {
+        const trimmed = initialText.trim();
+        const isUrl = /^(https?:\/\/[^\s]+|www\.[^\s]+)$/i.test(trimmed);
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(trimmed);
+        if (isUrl || isEmail) {
+          setUrl(trimmed);
+          setText("");
+        } else {
+          setUrl("");
+          setText(trimmed);
+        }
+      } else {
+        setUrl("");
+        setText("");
+      }
       setError("");
       setTimeout(() => urlInputRef.current?.focus(), 100);
     }
-  }, [open]);
+  }, [open, initialText]);
 
   const validateAndInsert = useCallback(() => {
     const trimmed = url.trim();
