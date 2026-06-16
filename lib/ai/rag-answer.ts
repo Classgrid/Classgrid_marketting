@@ -78,7 +78,7 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.summary ? `Page summary: ${pageContext.summary}` : "",
 
     pageContext.path && pageContext.path.includes("/support/requests")
-      ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the Support Requests page looking at their existing ticket. DO NOT tell them to "Submit a Ticket" because they have ALREADY done so! The user's exact ticket details and recent message history are provided above in the "Page summary". READ their ticket messages so you understand their exact issue, and reassure them that the Support Team is reviewing this specific ticket.`
+      ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the Support Requests page looking at their existing ticket. DO NOT tell them to "Submit a Ticket" because they have ALREADY done so! The user's exact ticket details, status, and ALL message history (including admin/team replies) are provided above in the "Page summary". You HAVE access to this data — READ IT. When the user asks "did the team reply?", look at the messages in the Page summary and tell them exactly what the team said. NEVER say "I don't have real-time access" — you DO have access through the Page summary above. If there are admin replies, quote them. If there are no admin replies yet, say so honestly.`
       : "",
       
     pageContext.path && pageContext.path.includes("/support/ticket")
