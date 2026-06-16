@@ -369,9 +369,9 @@ export async function POST(req: Request) {
             }
 
             if (ticketCreated) {
-              answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our human team will review it shortly.*";
+              answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our team will review it shortly.*";
             } else {
-              answer += "\n\n*Note: I have logged this internally for review. Since you are not logged in, I cannot automatically create a formal ticket for you.\n\n• If you are a student or staff member, please [Log In to Submit a Ticket](/support/ticket).\n• For general inquiries or if you are not from an institution, please use [Classgrid Talk](/community).*";
+              answer += "\n\n*Note: I have logged this internally for review. Since I cannot verify an active institution account for you, I could not automatically create a formal Support Ticket.\n\n• If you are a student or staff member, please visit [Submit a Ticket](/support/ticket).\n• For general inquiries or if you are not from an institution, please ask on [Classgrid Talk](/community).*";
             }
           }
 
