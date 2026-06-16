@@ -381,7 +381,7 @@ export async function POST(req: Request) {
             if (ticketCreated) {
               answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our team will review it shortly.*";
             } else {
-              answer += "\n\n*Note: I have logged this internally for review. Since I cannot verify an active institution account for you, I could not automatically create a formal Support Ticket.\n\n• If you are a student or staff member, please visit [Submit a Ticket](/support/ticket).\n• For general inquiries or if you are not from an institution, please ask on [Classgrid Talk](/community).*";
+              answer += "\n\n*Note: I attempted to automatically create a Support Ticket for you, but there was an issue communicating with the database. Please visit [Submit a Ticket](/support/ticket) to submit it manually.*";
             }
           }
 

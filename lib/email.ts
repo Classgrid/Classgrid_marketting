@@ -75,12 +75,12 @@ export async function sendSafetyEmail(
 
   try {
     await transporter.sendMail({
-      from: \`"\${SENDER.name}" <\${SENDER.address}>\`,
+      from: `"${SENDER.name}" <${SENDER.address}>`,
       to: toEmail,
       subject,
       html,
     });
-    console.log(\`[Safety Email] Sent \${isBanned ? 'ban' : 'warning'} email to \${toEmail}\`);
+    console.log(`[Safety Email] Sent ${isBanned ? 'ban' : 'warning'} email to ${toEmail}`);
   } catch (error) {
     console.error("[Safety Email] Failed to send email:", error);
   }
