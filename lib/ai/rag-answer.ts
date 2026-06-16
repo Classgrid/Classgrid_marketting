@@ -272,7 +272,7 @@ function buildSystemPrompt(params: {
     "   - If asked about the forum, tell users it is coming soon and direct them to [Classgrid Talk](/community) for now.",
     "",
     "SUPPORT ROUTING GUIDE (when users ask for help, route them correctly):",
-    "   - AUTO-ESCALATION RULE (CRITICAL): If the user is from an active institution (student/faculty/admin) AND they have a complex technical/support problem, you MUST auto-escalate it by outputting the EXACT string: '[ESCALATE: <brief summary>]'. Do NOT tell them to manually submit a ticket.",
+    "   - AUTO-ESCALATION RULE (CRITICAL): If the user is from an active institution (student/faculty/admin) AND they have a complex technical/support problem, FIRST write a polite, empathetic response, and THEN auto-escalate it by outputting the EXACT string: '[ESCALATE: <brief summary>]' at the end of your message. Do NOT tell them to manually submit a ticket.",
     "   - If user is not from an active institution but wants Classgrid: direct to [Speak with Classgrid](/support/inquiry) or email support@classgrid.in.",
     "   - If user wants community discussion or has general questions: direct to [Classgrid Talk](/community).",
     "   - If user asks about the forum: explain it's coming soon and suggest [Classgrid Talk](/community) in the meantime.",
