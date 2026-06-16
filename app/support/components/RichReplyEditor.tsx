@@ -126,6 +126,62 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
+        // Auto-link detection on Space or Enter
+        if (e.key === " " || e.key === "Enter") {
+          const sel = window.getSelection();
+          if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
+            const text = sel.focusNode.textContent || "";
+            const offset = sel.focusOffset;
+            const textBeforeCursor = text.slice(0, offset);
+            const match = textBeforeCursor.match(/(?:^|\s)([^\s]+)$/);
+            
+            if (match) {
+              const word = match[1];
+              const isUrl = /^(https?:\/\/[^\s]+|www\.[^\s]+)$/i.test(word);
+              const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(word);
+              
+              if (isUrl || isEmail) {
+                e.preventDefault(); // Stop default space/enter
+                const url = isEmail ? `mailto:${word}` : (word.startsWith('http') ? word : `https://${word}`);
+                
+                // Select the word
+                const wordStartOffset = offset - word.length;
+                const range = document.createRange();
+                range.setStart(sel.focusNode, wordStartOffset);
+                range.setEnd(sel.focusNode, offset);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                
+                // Convert to link
+                document.execCommand('createLink', false, url);
+                
+                // Clear selection to the end
+                sel.collapseToEnd();
+                
+                // Insert the prevented space or enter
+                if (e.key === " ") {
+                  document.execCommand('insertText', false, ' ');
+                } else {
+                  // If it was enter, let's see if we should submit or insert new line
+                  if (!e.shiftKey && onSubmit) {
+                    const editorText = editorRef.current?.innerText?.trim() || "";
+                    if (editorText) {
+                      syncContentNow();
+                      onSubmit();
+                      return;
+                    }
+                  } else {
+                    document.execCommand('insertParagraph');
+                  }
+                }
+                syncContent();
+                return; // Done auto-linking
+              }
+            }
+          }
+        }
+
+        // Standard submit on Enter
         if (e.key === "Enter" && !e.shiftKey && onSubmit) {
           const text = editorRef.current?.innerText?.trim() || "";
           if (text) {
@@ -135,7 +191,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           }
         }
       },
-      [onSubmit, syncContentNow]
+      [onSubmit, syncContentNow, syncContent]
     );
 
     // Paste handler — preserves rich HTML from ChatGPT etc.

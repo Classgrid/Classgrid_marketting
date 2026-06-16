@@ -802,6 +802,42 @@ export default function RaiseTicketPage() {
                         setPreviewImage((target as HTMLImageElement).src);
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === " " || e.key === "Enter") {
+                        const sel = window.getSelection();
+                        if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
+                          const text = sel.focusNode.textContent || "";
+                          const offset = sel.focusOffset;
+                          const textBeforeCursor = text.slice(0, offset);
+                          const match = textBeforeCursor.match(/(?:^|\s)([^\s]+)$/);
+                          if (match) {
+                            const word = match[1];
+                            const isUrl = /^(https?:\/\/[^\s]+|www\.[^\s]+)$/i.test(word);
+                            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(word);
+                            if (isUrl || isEmail) {
+                              e.preventDefault();
+                              const url = isEmail ? `mailto:${word}` : (word.startsWith('http') ? word : `https://${word}`);
+                              const wordStartOffset = offset - word.length;
+                              const range = document.createRange();
+                              range.setStart(sel.focusNode, wordStartOffset);
+                              range.setEnd(sel.focusNode, offset);
+                              sel.removeAllRanges();
+                              sel.addRange(range);
+                              document.execCommand('createLink', false, url);
+                              sel.collapseToEnd();
+                              if (e.key === " ") {
+                                document.execCommand('insertText', false, ' ');
+                              } else {
+                                document.execCommand('insertParagraph');
+                              }
+                              const el = document.getElementById("richEditor");
+                              if (el) setDescription(el.innerHTML);
+                              return;
+                            }
+                          }
+                        }
+                      }
+                    }}
                     onMouseOver={(e) => {
                       const target = e.target as HTMLElement;
                       const anchor = target.closest("a");

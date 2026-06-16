@@ -788,6 +788,42 @@ export default function InquiryPage() {
                       setPreviewImage((target as HTMLImageElement).src);
                     }
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      const sel = window.getSelection();
+                      if (sel && sel.focusNode && sel.focusNode.nodeType === Node.TEXT_NODE) {
+                        const text = sel.focusNode.textContent || "";
+                        const offset = sel.focusOffset;
+                        const textBeforeCursor = text.slice(0, offset);
+                        const match = textBeforeCursor.match(/(?:^|\s)([^\s]+)$/);
+                        if (match) {
+                          const word = match[1];
+                          const isUrl = /^(https?:\/\/[^\s]+|www\.[^\s]+)$/i.test(word);
+                          const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(word);
+                          if (isUrl || isEmail) {
+                            e.preventDefault();
+                            const url = isEmail ? `mailto:${word}` : (word.startsWith('http') ? word : `https://${word}`);
+                            const wordStartOffset = offset - word.length;
+                            const range = document.createRange();
+                            range.setStart(sel.focusNode, wordStartOffset);
+                            range.setEnd(sel.focusNode, offset);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                            document.execCommand('createLink', false, url);
+                            sel.collapseToEnd();
+                            if (e.key === " ") {
+                              document.execCommand('insertText', false, ' ');
+                            } else {
+                              document.execCommand('insertParagraph');
+                            }
+                            const el = document.getElementById("richEditor");
+                            if (el) setDescription(el.innerHTML);
+                            return;
+                          }
+                        }
+                      }
+                    }
+                  }}
                   className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none whitespace-pre-wrap [&_p]:mb-4 last:[&_p]:mb-0 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-4 [&_a]:text-primary [&_a]:underline [&_u]:decoration-primary [&_u]:underline-offset-4 [&_u]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-md [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80 transition-opacity"
                   style={{ minHeight: 200, maxHeight: 400, overflowY: 'auto' }}
                 />
