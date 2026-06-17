@@ -440,7 +440,7 @@ export async function POST(req: Request) {
               if (email && email !== "anonymous@classgrid.in") {
                 answer += "\n\n*Note: I attempted to automatically create a Support Ticket for you, but there was an issue communicating with the database. Please visit [Submit a Ticket](/support/ticket) to submit it manually.*";
               } else {
-                answer += "\n\n*Note: I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account.*";
+                answer = "I'd love to help escalate this for you, but I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
