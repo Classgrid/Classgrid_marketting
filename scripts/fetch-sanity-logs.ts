@@ -10,6 +10,8 @@ const client = createClient({
   useCdn: false
 });
 
-client.fetch('*[_type == "aiEscalation"] | order(_createdAt desc)[0...3]')
-  .then(docs => console.log(JSON.stringify(docs, null, 2)))
+client.fetch('*[_type == "aiEscalation"] | order(_createdAt desc)[0...10]')
+  .then(docs => {
+    docs.forEach(d => console.log(`${d._createdAt} | ID: ${d._id} | TicketId/Error: ${d.ticketId} | Status: ${d.status}`));
+  })
   .catch(console.error);

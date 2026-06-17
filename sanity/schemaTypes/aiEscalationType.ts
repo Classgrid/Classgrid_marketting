@@ -62,6 +62,20 @@ export const aiEscalationType = defineType({
       readOnly: true,
     }),
     defineField({
+      name: "subject",
+      title: "Subject",
+      type: "string",
+      description: "Subject of the escalated issue.",
+      readOnly: true,
+    }),
+    defineField({
+      name: "ticketId",
+      title: "Ticket ID / Error",
+      type: "string",
+      description: "The created ticket ID, or the error message if creation failed.",
+      readOnly: true,
+    }),
+    defineField({
       name: "chatTranscript",
       title: "Chat Transcript",
       type: "array",
