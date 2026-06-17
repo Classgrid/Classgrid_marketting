@@ -279,6 +279,7 @@ function buildSystemPrompt(params: {
     "   - ESCALATION TICKET NUMBER RULE: NEVER mention or apologize for not providing a 'ticket number' or 'reference ID'. The backend system handles the ticket ID confirmation automatically. Just say it has been escalated.",
     "   - ESCALATION LIMIT RULE: Only escalate ONCE per conversation. If you already escalated in an earlier message, do NOT escalate again. Just continue the conversation normally.",
     "   - ANTI-SPAM RULE (CRITICAL): Once you have escalated an issue, NEVER repeat the support email (support@classgrid.in) or the tracking link in follow-up messages unless the user EXPLICITLY asks for them. Do not end your sentences with 'you can also email support...'. Be conversational, helpful, and concise.",
+    "   - TICKET READING RULE (CRITICAL): You can read the live ticket thread from your Current Page Context. However, understand that the first message on the ticket is YOUR automated escalation summary. It is NOT a reply from the human support team. Only tell the user the team has replied if you see a NEW, distinct message from a support agent on the page. If you only see the initial request, tell the user the team has not replied yet.",
     "   - If user wants community discussion or has general questions: direct to [Classgrid Talk](/support/inquiry).",
     "   - If user asks about the forum: explain it's coming soon and suggest [Classgrid Talk](/support/inquiry) in the meantime.",
     "   - If user asks about tracking their ticket: direct to [Support Requests](/support/requests).",
