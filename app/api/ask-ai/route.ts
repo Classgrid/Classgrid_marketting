@@ -364,17 +364,19 @@ export async function POST(req: Request) {
                   ticketCreated = true;
                   try {
                     const ticketResponse = await res.json();
-                    // Try common response shapes: { ticket: { _id } }, { data: { _id } }, { _id }, { id }
                     ticketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id
                       || ticketResponse?.data?._id || ticketResponse?.data?.id
                       || ticketResponse?._id || ticketResponse?.id
                       || null;
-                  } catch (_) {
-                    // Response wasn't JSON — ticket was still created, just no ID to show
-                  }
+                  } catch (_) {}
+                } else {
+                  const errorText = await res.text();
+                  console.error("Ticket API failed with status", res.status, "body:", errorText);
+                  ticketId = `ERROR: ${res.status} ${errorText.substring(0, 100)}`;
                 }
               } catch (e) {
                 console.error("Failed to auto-create ticket:", e);
+                ticketId = `CATCH_ERROR: ${e.message}`;
               }
             }
 
