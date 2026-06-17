@@ -177,7 +177,7 @@ const directoryColumns: Array<{ heading: string; links: MenuLink[] }> = [
     links: [
       { label: "Features", href: "/features" },
       { label: "Integrations", href: "/integrations" },
-      { label: "Community Forum", href: "/community" },
+      { label: "Community Forum", href: "https://forum.classgrid.in" },
       { label: "Security", href: "/security" },
 
     ],
