@@ -111,9 +111,14 @@ export const authOptions: NextAuthOptions = {
         let user = await ForumUser.findOne({ email });
 
         if (!user) {
+          // If they didn't provide a name, it means they used the "Sign In" tab instead of "Sign Up"
+          if (!credentials.name) {
+            throw new Error("Account does not exist. Please sign up instead.");
+          }
+          
           user = await ForumUser.create({
             email,
-            name: credentials.name || undefined,
+            name: credentials.name,
             provider: "email",
             emailVerified: true,
           });
