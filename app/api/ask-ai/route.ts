@@ -393,35 +393,37 @@ export async function POST(req: Request) {
               }
             }
 
-            try {
-              const { createClient } = require('next-sanity');
-              const writeClient = createClient({
-                projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-                dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-                apiVersion: "2024-01-01",
-                token: process.env.SANITY_API_WRITE_TOKEN,
-                useCdn: false,
-              });
+            if (!isGuest) {
+              try {
+                const { createClient } = require('next-sanity');
+                const writeClient = createClient({
+                  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+                  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+                  apiVersion: "2024-01-01",
+                  token: process.env.SANITY_API_WRITE_TOKEN,
+                  useCdn: false,
+                });
 
-              const deviceLog = req.headers.get("user-agent") || "Unknown Device";
-              await writeClient.create({
-                _type: "aiEscalation",
-                userEmail: email || "",
-                userName: body?.userName || "",
-                ipAddress: ip,
-                deviceInfo: deviceLog,
-                status: ticketCreated ? "handled" : "pending",
-                ticketCreated: ticketCreated,
-                aiSummary: aiSummary,
-                subject: aiSubject,
-                ticketId: ticketId || "",
-                chatTranscript: [
-                  { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
-                  { _key: `assistant-${Date.now()}`, role: "assistant", content: answer, timestamp: new Date().toISOString() }
-                ]
-              });
-            } catch (e) {
-              console.error("Failed to log escalation to Sanity:", e);
+                const deviceLog = req.headers.get("user-agent") || "Unknown Device";
+                await writeClient.create({
+                  _type: "aiEscalation",
+                  userEmail: email || "",
+                  userName: body?.userName || "",
+                  ipAddress: ip,
+                  deviceInfo: deviceLog,
+                  status: ticketCreated ? "handled" : "pending",
+                  ticketCreated: ticketCreated,
+                  aiSummary: aiSummary,
+                  subject: aiSubject,
+                  ticketId: ticketId || "",
+                  chatTranscript: [
+                    { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                    { _key: `assistant-${Date.now()}`, role: "assistant", content: answer, timestamp: new Date().toISOString() }
+                  ]
+                });
+              } catch (e) {
+                console.error("Failed to log escalation to Sanity:", e);
+              }
             }
 
             if (ticketCreated) {
