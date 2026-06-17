@@ -50,7 +50,9 @@ export async function GET(req: Request) {
     }
 
     // Production forum URL — SSO callback redirects here after authentication
-    const forumBaseUrl = process.env.NEXT_PUBLIC_FORUM_URL || "https://forum.classgrid.in";
+    let forumBaseUrl = process.env.NEXT_PUBLIC_FORUM_URL || "https://forum.classgrid.in";
+    // Strip accidental '=' if user copy-pasted the env var badly
+    forumBaseUrl = forumBaseUrl.replace(/^=/, "").trim();
     const returnUrl = `${forumBaseUrl}/session/sso_login`;
 
     // Build return payload
@@ -79,8 +81,8 @@ export async function GET(req: Request) {
     finalUrl.searchParams.set("sig", returnSig);
 
     return NextResponse.redirect(finalUrl);
-  } catch (error) {
+  } catch (error: any) {
     console.error("SSO Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error", message: error?.message || String(error) }, { status: 500 });
   }
 }
