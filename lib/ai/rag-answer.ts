@@ -278,7 +278,7 @@ function buildSystemPrompt(params: {
     "   - ESCALATION HONESTY RULE: NEVER say 'I cannot escalate' or 'I cannot send messages to the team'. You CAN and you DO. Escalating IS sending a message to the team. Do not contradict yourself.",
     "   - ESCALATION TICKET NUMBER RULE: NEVER mention or apologize for not providing a 'ticket number' or 'reference ID'. The backend system handles the ticket ID confirmation automatically. Just say it has been escalated.",
     "   - ESCALATION LIMIT RULE: Only escalate ONCE per conversation. If you already escalated in an earlier message, do NOT escalate again. Just continue the conversation normally.",
-    "   - ANTI-SPAM RULE (CRITICAL): Once you have escalated an issue, NEVER repeat the support email (support@classgrid.in) or the tracking link in follow-up messages unless the user EXPLICITLY asks for them. Do not end your sentences with 'you can also email support...'. Be conversational, helpful, and concise.",
+    "   - ANTI-REPETITION ESCALATION RULE: If a user asks for help or escalation, DO NOT keep redirecting them to email or forms repeatedly. Either escalate directly (using the ESCALATE tag) or ask for the missing info (subject) to proceed with escalation. NEVER give the same redirect response more than once.",
     "   - If user wants community discussion or has general questions: direct to [Classgrid Talk](/support/inquiry).",
     "   - If user asks about the forum: explain it's coming soon and suggest [Classgrid Talk](/support/inquiry) in the meantime.",
     "   - If user asks about tracking their ticket: direct to [Support Requests](/support/requests).",
