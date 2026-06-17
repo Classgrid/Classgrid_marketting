@@ -49,9 +49,8 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Invalid SSO payload - missing nonce" }, { status: 400 });
     }
 
-    // Override return_sso_url — Discourse's dev Rails server internally reports port 3000
-    // which conflicts with our Next.js server. Force it to the Ember-served URL (port 4200).
-    const forumBaseUrl = process.env.NEXT_PUBLIC_FORUM_URL || "http://localhost:4200";
+    // Production forum URL — SSO callback redirects here after authentication
+    const forumBaseUrl = process.env.NEXT_PUBLIC_FORUM_URL || "https://forum.classgrid.in";
     const returnUrl = `${forumBaseUrl}/session/sso_login`;
 
     // Build return payload
