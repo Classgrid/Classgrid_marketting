@@ -321,7 +321,7 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/);
+          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/);
           // Prevent double escalation: check if this session already created a ticket
           const escalationRedis = getRedisClient();
           const escalationKey = `ai:escalated:${sessionId}`;
@@ -330,7 +330,10 @@ export async function POST(req: Request) {
           if (escalateMatch && !alreadyEscalated) {
             const aiSummary = escalateMatch[1].trim();
             const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/g, "").trim();
+            const aiCategory = escalateMatch[3]?.trim().toLowerCase() || "technical";
+            const aiPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+            
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
@@ -339,6 +342,7 @@ export async function POST(req: Request) {
             
             const email = userEmail || body?.userEmail;
             let ticketCreated = false;
+            let ticketId: string | null = null;
 
             if (email) {
               try {
@@ -347,8 +351,8 @@ export async function POST(req: Request) {
                 formData.append("email", email);
                 formData.append("subject", aiSubject);
                 formData.append("message", "Auto-escalated from AI Chat.<br/><br/><strong>Problem Summary:</strong><br/>" + aiSummary + "<br/><br/><strong>Original Request:</strong><br/>" + question);
-                formData.append("category", "technical");
-                formData.append("priority", "medium");
+                formData.append("category", aiCategory);
+                formData.append("priority", aiPriority);
 
                 const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
                 const res = await fetch(`${backendUrl}/api/support/public/tickets`, {
@@ -356,7 +360,19 @@ export async function POST(req: Request) {
                   body: formData,
                 });
 
-                if (res.ok) ticketCreated = true;
+                if (res.ok) {
+                  ticketCreated = true;
+                  try {
+                    const ticketResponse = await res.json();
+                    // Try common response shapes: { ticket: { _id } }, { data: { _id } }, { _id }, { id }
+                    ticketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id
+                      || ticketResponse?.data?._id || ticketResponse?.data?.id
+                      || ticketResponse?._id || ticketResponse?.id
+                      || null;
+                  } catch (_) {
+                    // Response wasn't JSON — ticket was still created, just no ID to show
+                  }
+                }
               } catch (e) {
                 console.error("Failed to auto-create ticket:", e);
               }
@@ -383,6 +399,7 @@ export async function POST(req: Request) {
                 ticketCreated: ticketCreated,
                 aiSummary: aiSummary,
                 subject: aiSubject,
+                ticketId: ticketId || "",
                 chatTranscript: [
                   { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
                   { _key: `assistant-${Date.now()}`, role: "assistant", content: answer, timestamp: new Date().toISOString() }
@@ -393,7 +410,10 @@ export async function POST(req: Request) {
             }
 
             if (ticketCreated) {
-              answer += "\n\n*I have automatically escalated this issue and created a Support Ticket on your behalf. Our team will review it shortly.*";
+              const ticketLink = ticketId
+                ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(email || "")})*`
+                : "\n\n*✅ Support Ticket created! Track your request at [Support Requests](/support/requests).*";
+              answer += ticketLink;
               // Mark this session as escalated so we don't create duplicate tickets
               if (escalationRedis) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
@@ -403,7 +423,7 @@ export async function POST(req: Request) {
             }
           } else if (escalateMatch && alreadyEscalated) {
             // AI tried to escalate again but we already have a ticket — just strip the code silently
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
             if (!answer || answer.length < 15) {
               answer = "Your issue has already been escalated to our support team! They are reviewing it now. Is there anything else I can help you with? 😊";
             }
