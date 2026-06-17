@@ -29,6 +29,7 @@ export type GenerateRagAnswerOptions = {
   userName?: string;
   history?: ChatHistoryItem[];
   pageContext?: PageContext;
+  isGuest?: boolean;
   topK?: number;
   onStatus?: (label: string) => void;
 };
@@ -97,6 +98,7 @@ function buildSystemPrompt(params: {
   pageContext?: PageContext;
   userName?: string;
   userRole?: string;
+  isGuest?: boolean;
 }) {
   const isWhatsApp = params.channel === "whatsapp";
   const isTelegram = params.channel === "telegram";
@@ -276,6 +278,9 @@ function buildSystemPrompt(params: {
     "     - PRIORITY MUST be one of: low, medium, high. (e.g. critical login failure is 'high', general pre-sales question is 'low' or 'medium').",
     "     EXAMPLE: 'I completely understand your need to speak with our team directly! I've escalated this to our support team so they can reach out to you as soon as possible. 🙏 [ESCALATE: User wants to speak with human support for pre-sales inquiry | SUBJECT: Pre-sales inquiry - Request to speak with human support | CATEGORY: general | PRIORITY: medium]'",
     "   - ESCALATION HONESTY RULE: NEVER say 'I cannot escalate' or 'I cannot send messages to the team'. You CAN and you DO. Escalating IS sending a message to the team. Do not contradict yourself.",
+    params.isGuest 
+      ? "   - GUEST USER ESCALATION RULE: The current user is a GUEST and is NOT LOGGED IN. Therefore, when you escalate, DO NOT promise them that 'the team will reach out to you using the details you registered with'. They have no registered details! Simply say 'I have passed this to the team for review' and output the [ESCALATE] tag." 
+      : "",
     "   - ESCALATION TICKET NUMBER RULE: NEVER mention or apologize for not providing a 'ticket number' or 'reference ID'. The backend system handles the ticket ID confirmation automatically. Just say it has been escalated.",
     "   - ESCALATION LIMIT RULE: Only escalate ONCE per conversation. If you already escalated in an earlier message, do NOT escalate again. Just continue the conversation normally.",
     "   - ANTI-SPAM RULE (CRITICAL): Once you have escalated an issue, NEVER repeat the support email (support@classgrid.in) or the tracking link in follow-up messages unless the user EXPLICITLY asks for them. Do not end your sentences with 'you can also email support...'. Be conversational, helpful, and concise.",

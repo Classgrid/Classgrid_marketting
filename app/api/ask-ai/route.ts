@@ -308,6 +308,8 @@ export async function POST(req: Request) {
 
           const rawUserName = normalizeText(body?.userName);
           const firstName = rawUserName ? rawUserName.split(" ")[0] : undefined;
+          
+          const isGuest = !userEmail && (!body?.userEmail || body.userEmail === "anonymous@classgrid.in");
 
           const result = await generateClassgridRagAnswer({
             question,
@@ -316,6 +318,7 @@ export async function POST(req: Request) {
             userRole: normalizeText(body?.userRole),
             history: mergedHistory,
             pageContext: normalizePageContext(body?.pageContext),
+            isGuest,
             onStatus: (label: string) => sendEvent({ type: "status", label }),
           });
 
