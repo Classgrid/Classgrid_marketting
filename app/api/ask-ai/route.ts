@@ -407,7 +407,7 @@ export async function POST(req: Request) {
                 userName: body?.userName || "",
                 ipAddress: ip,
                 deviceInfo: deviceLog,
-                status: "pending",
+                status: ticketCreated ? "handled" : "pending",
                 ticketCreated: ticketCreated,
                 aiSummary: aiSummary,
                 subject: aiSubject,

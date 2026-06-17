@@ -115,8 +115,18 @@ export const aiEscalationType = defineType({
     prepare(selection) {
       const { email, ip, status, ticketCreated } = selection;
       const title = email || ip || "Anonymous User";
-      let subtitle = status;
-      if (ticketCreated) subtitle += " (Ticket Created)";
+      let subtitle = "";
+      if (ticketCreated) {
+        subtitle = "✅ Ticket Created";
+      } else if (status === "pending") {
+        subtitle = "⏳ Pending Review";
+      } else if (status === "ignored") {
+        subtitle = "❌ Ignored";
+      } else if (status === "handled") {
+        subtitle = "✅ Ticket Handled";
+      } else {
+        subtitle = status || "Unknown";
+      }
       return {
         title: `Escalation: ${title}`,
         subtitle: subtitle,
