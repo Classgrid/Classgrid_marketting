@@ -431,7 +431,12 @@ export async function POST(req: Request) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
               }
             } else {
-              answer += "\n\n*Note: I attempted to automatically create a Support Ticket for you, but there was an issue communicating with the database. Please visit [Submit a Ticket](/support/ticket) to submit it manually.*";
+              // If ticket failed, give an appropriate fallback link
+              if (email && email !== "anonymous@classgrid.in") {
+                answer += "\n\n*Note: I attempted to automatically create a Support Ticket for you, but there was an issue communicating with the database. Please visit [Submit a Ticket](/support/ticket) to submit it manually.*";
+              } else {
+                answer += "\n\n*Note: I cannot automatically create support tickets for guests. Since you are not logged in, please use our [Inquiry Form](/support/inquiry) or email **support@classgrid.in** to reach the team.*";
+              }
             }
           } else if (escalateMatch && alreadyEscalated) {
             // AI tried to escalate again but we already have a ticket — just strip the code silently
