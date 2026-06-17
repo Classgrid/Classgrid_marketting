@@ -66,6 +66,7 @@ function containsProfanity(text: string): boolean {
 type AskAiRequestBody = {
   question?: string;
   userName?: string;
+  userEmail?: string;
   userRole?: string;
   history?: ChatHistoryItem[];
   sessionId?: string;
@@ -320,7 +321,7 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)\]/);
+          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/);
           // Prevent double escalation: check if this session already created a ticket
           const escalationRedis = getRedisClient();
           const escalationKey = `ai:escalated:${sessionId}`;
@@ -328,7 +329,8 @@ export async function POST(req: Request) {
 
           if (escalateMatch && !alreadyEscalated) {
             const aiSummary = escalateMatch[1].trim();
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
+            const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/g, "").trim();
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
@@ -343,7 +345,7 @@ export async function POST(req: Request) {
                 const formData = new FormData();
                 formData.append("name", body.userName || "AI Escalated User");
                 formData.append("email", email);
-                formData.append("subject", "AI Chat Escalation: Support Request");
+                formData.append("subject", aiSubject);
                 formData.append("message", "Auto-escalated from AI Chat.<br/><br/><strong>Problem Summary:</strong><br/>" + aiSummary + "<br/><br/><strong>Original Request:</strong><br/>" + question);
                 formData.append("category", "technical");
                 formData.append("priority", "medium");
@@ -380,6 +382,7 @@ export async function POST(req: Request) {
                 status: "pending",
                 ticketCreated: ticketCreated,
                 aiSummary: aiSummary,
+                subject: aiSubject,
                 chatTranscript: [
                   { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
                   { _key: `assistant-${Date.now()}`, role: "assistant", content: answer, timestamp: new Date().toISOString() }
@@ -400,7 +403,7 @@ export async function POST(req: Request) {
             }
           } else if (escalateMatch && alreadyEscalated) {
             // AI tried to escalate again but we already have a ticket — just strip the code silently
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?\]/g, "").trim();
             if (!answer || answer.length < 15) {
               answer = "Your issue has already been escalated to our support team! They are reviewing it now. Is there anything else I can help you with? 😊";
             }
