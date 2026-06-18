@@ -99,6 +99,7 @@
     "sanity": "^4.22.0",
     "shiki": "^4.2.0",
     "sonner": "^2.0.7",
+    "ssh2": "^1.17.0",
     "styled-components": "^6.3.12",
     "tailwind-merge": "^2.5.1",
     "three": "^0.181.2",

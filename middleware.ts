@@ -34,15 +34,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 301);
   }
 
-  /* ------------------------------------------------------------------ */
-  /*  NextAuth protected routes (existing logic)                         */
-  /* ------------------------------------------------------------------ */
-  if (pathname === "/api/sso/discourse") {
-    const token = await getToken({ req: request });
-    if (!token) {
-      return NextResponse.redirect(new URL("/api/auth/signin", request.url));
-    }
-  }
 
   return NextResponse.next();
 }
