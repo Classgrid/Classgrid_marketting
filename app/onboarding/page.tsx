@@ -237,17 +237,28 @@ function OnboardingContent() {
                 </div>
               </div>
 
-              {/* Status Message */}
+              {/* Premium Status Message UI */}
               <AnimatePresence>
                 {message && (
-                  <motion.p 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className={`text-xs font-medium ${isAvailable ? "text-green-500" : "text-red-500"}`}
+                  <motion.div 
+                    initial={{ opacity: 0, y: -5, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -5, height: 0 }}
+                    className="overflow-hidden"
                   >
-                    {message}
-                  </motion.p>
+                    <div className={`mt-2 flex items-center gap-2 rounded-md px-3 py-2.5 text-[13px] font-medium border ${
+                      isAvailable 
+                        ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                        : "bg-red-500/10 text-red-400 border-red-500/20"
+                    }`}>
+                      {isAvailable ? (
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      ) : (
+                        <XCircle className="w-4 h-4 shrink-0" />
+                      )}
+                      {message}
+                    </div>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
