@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
 function LogoutContent() {
   const searchParams = useSearchParams();
