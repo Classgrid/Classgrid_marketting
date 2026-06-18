@@ -10,10 +10,10 @@ function LogoutContent() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   useEffect(() => {
-    // Add a small 1.5 second delay so the user actually sees the smooth logging out animation!
+    // Add a 3 second delay so the user actually sees the smooth logging out animation!
     const timer = setTimeout(() => {
       signOut({ callbackUrl });
-    }, 1500);
+    }, 3000);
     return () => clearTimeout(timer);
   }, [callbackUrl]);
 
@@ -27,6 +27,12 @@ export default function LogoutPage() {
       <Suspense fallback={null}>
         <LogoutContent />
       </Suspense>
+
+      {/* Top Left Logo - matching Classgrid's exact login page design */}
+      <Link href="/" className="absolute top-6 left-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/logo.png" alt="Classgrid Logo" className="w-6 h-6 object-contain" />
+        <span className="font-bold text-lg tracking-wide uppercase">CLASSGRID</span>
+      </Link>
 
       <div className="flex flex-col items-center justify-center p-4 text-center space-y-4">
         <Spinner className="w-8 h-8 text-slate-500 dark:text-[#888888]" />
