@@ -27,12 +27,23 @@ export async function POST(req: NextRequest) {
     await connectMongo();
 
     // Make sure no one else claimed this username in the last 2 seconds
-    const existingUser = await ForumUser.findOne({ 
+    const existingUsername = await ForumUser.findOne({ 
       username: { $regex: new RegExp(`^${username}$`, 'i') } 
     });
 
-    if (existingUser && existingUser.email !== session.user.email) {
-      return NextResponse.json({ error: 'Username is already taken' }, { status: 409 });
+    if (existingUsername && existingUsername.email !== session.user.email) {
+      return NextResponse.json({ error: 'Username is already taken' }, { status: 400 });
+    }
+
+    // SECURITY: Check if the current user ALREADY has a username. 
+    // If they do, they are permanently locked and cannot change it.
+    const currentUser = await ForumUser.findOne({ email: session.user.email });
+    if (!currentUser) {
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+    }
+    
+    if (currentUser.username) {
+      return NextResponse.json({ error: 'Your username is permanently locked and cannot be changed' }, { status: 403 });
     }
 
     // Update the current user
