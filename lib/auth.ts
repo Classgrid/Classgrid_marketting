@@ -136,6 +136,17 @@ export const authOptions: NextAuthOptions = {
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Explicitly allow redirects to the Classgrid Forum
+      if (url.startsWith("https://forum.classgrid.in")) return url;
+      // Allow callback URLs on the same origin
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch (e) {}
+      return baseUrl;
+    },
     async signIn({ user, account, profile }) {
       if (account?.provider === "google" || account?.provider === "github" || account?.provider === "linkedin") {
         console.log(`[NextAuth] ${account.provider} sign-in — email: ${user.email}, name: ${user.name}`);
