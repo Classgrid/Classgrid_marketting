@@ -188,7 +188,7 @@ function OnboardingContent() {
                   <AnimatePresence mode="wait">
                     {isChecking && (
                       <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                        <Spinner className="w-4 h-4 text-slate-400" />
                       </motion.div>
                     )}
                     {!isChecking && isAvailable === true && (
@@ -226,7 +226,7 @@ function OnboardingContent() {
               showGlow={true}
               className="w-full mt-4"
             >
-              {isSaving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</> : "Continue to Forum"}
+              {isSaving ? <><Spinner className="w-4 h-4 mr-2" /> Saving...</> : "Continue to Forum"}
             </Button>
           </form>
         </motion.div>
