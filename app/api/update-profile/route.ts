@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectMongo } from '@/lib/mongodb';
 import ForumUser from '@/lib/models/ForumUser';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid username format' }, { status: 400 });
     }
 
-    await connectToDatabase();
+    await connectMongo();
 
     // Make sure no one else claimed this username in the last 2 seconds
     const existingUser = await ForumUser.findOne({ 

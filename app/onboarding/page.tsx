@@ -155,17 +155,12 @@ function OnboardingContent() {
               </div>
             </div>
 
-            {/* Name Field */}
+            {/* Name Field (Locked) */}
             <div className="space-y-1.5">
-              <label htmlFor="name" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name</label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Your real name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 dark:border-[#2a2a2a] dark:bg-[#161616] dark:text-[#f1f1f1] dark:placeholder:text-[#555] dark:focus:border-[#444] dark:focus:ring-[#444]"
-              />
+              <label className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name</label>
+              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 dark:border-[#2a2a2a] dark:bg-[#161616]/50 dark:text-[#777]">
+                {name || session?.user?.name || "Your Name"}
+              </div>
             </div>
 
             {/* Username Field with Live Checking */}

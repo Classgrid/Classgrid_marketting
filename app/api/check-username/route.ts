@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectMongo } from '@/lib/mongodb';
 import ForumUser from '@/lib/models/ForumUser';
 
 export async function GET(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Connect to MongoDB
-    await connectToDatabase();
+    await connectMongo();
 
     // Check if the username already exists in the database (case-insensitive)
     const existingUser = await ForumUser.findOne({ 
