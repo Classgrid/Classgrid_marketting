@@ -89,7 +89,7 @@ function OnboardingContent() {
     e.preventDefault();
     if (!isAvailable) return;
     if (!name.trim()) {
-      setMessage("Full Name is required.");
+      setMessage("Please enter your Full Name.");
       return;
     }
 
@@ -155,9 +155,9 @@ function OnboardingContent() {
               </div>
             </div>
 
-            {/* Name Field (Required/Prefilled) */}
+            {/* Name Field */}
             <div className="space-y-1.5">
-              <label htmlFor="name" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name *</label>
+              <label htmlFor="name" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name</label>
               <input
                 id="name"
                 type="text"
@@ -170,7 +170,7 @@ function OnboardingContent() {
 
             {/* Username Field with Live Checking */}
             <div className="space-y-1.5">
-              <label htmlFor="username" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Choose a Username *</label>
+              <label htmlFor="username" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Choose a Username</label>
               <div className="relative">
                 <input
                   id="username"
