@@ -176,6 +176,15 @@ function LoginContent() {
       }
 
       if (res.error) {
+        if (res.error === "Account does not exist. Please sign up instead.") {
+          // Gracefully handle new users who tried to "Log In" instead of "Sign Up"
+          setMode("signup");
+          setStep("email");
+          setError("Account not found. Please enter your name to create an account.");
+          setLoading(false);
+          return;
+        }
+
         // Map NextAuth error codes to human-readable messages
         const errorMap: Record<string, string> = {
           "OTP has expired": "Your code has expired. Please resend.",
