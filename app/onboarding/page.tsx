@@ -150,7 +150,7 @@ function OnboardingContent() {
             {/* Email Field (Locked) */}
             <div className="space-y-1.5">
               <label className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Email (Verified)</label>
-              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 dark:border-[#2a2a2a] dark:bg-[#161616]/50 dark:text-[#777]">
+              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 dark:border-[#2a2a2a] dark:bg-[#161616]/50 dark:text-[#f1f1f1]">
                 {session?.user?.email || "email@example.com"}
               </div>
             </div>
@@ -158,7 +158,7 @@ function OnboardingContent() {
             {/* Name Field (Locked) */}
             <div className="space-y-1.5">
               <label className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name</label>
-              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 dark:border-[#2a2a2a] dark:bg-[#161616]/50 dark:text-[#777]">
+              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 dark:border-[#2a2a2a] dark:bg-[#161616]/50 dark:text-[#f1f1f1]">
                 {name || session?.user?.name || "Your Name"}
               </div>
             </div>
@@ -222,7 +222,7 @@ function OnboardingContent() {
             <button
               type="submit"
               disabled={!isAvailable || isSaving}
-              className="mt-4 flex w-full items-center justify-center rounded-md bg-slate-900 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2a2a2a] dark:text-[#f1f1f1] dark:hover:bg-[#333] disabled:dark:bg-[#1a1a1a]"
+              className="mt-4 flex w-full items-center justify-center rounded-md bg-slate-900 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2a2a2a] dark:text-[#f1f1f1] dark:hover:bg-emerald-500 disabled:hover:bg-slate-900 disabled:dark:hover:bg-[#2a2a2a]"
             >
               {isSaving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</> : "Continue to Forum"}
             </button>
