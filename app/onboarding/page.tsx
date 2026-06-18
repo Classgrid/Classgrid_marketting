@@ -67,8 +67,16 @@ function OnboardingContent() {
 
   // The Live Checking Logic (Debouncer)
   useEffect(() => {
-    // If empty or too short, reset state
-    if (username.length < 5) {
+    // If empty, hide the error completely (pristine state)
+    if (username.length === 0) {
+      setIsChecking(false);
+      setIsAvailable(null);
+      setMessage("");
+      return;
+    }
+
+    // If they started typing but it's too short
+    if (username.length > 0 && username.length < 5) {
       setIsChecking(false);
       setIsAvailable(null);
       setMessage("Username must be at least 5 characters.");
