@@ -133,7 +133,7 @@ function LoginContent() {
       const res = await fetch("/api/forum/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, mode }),
       });
 
       const data = await res.json();
@@ -364,7 +364,7 @@ function LoginContent() {
                         const res = await fetch("/api/forum/send-otp", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ email }),
+                          body: JSON.stringify({ email, mode }),
                         });
                         const data = await res.json();
                         if (!res.ok) throw new Error(data.error || "Failed to resend");

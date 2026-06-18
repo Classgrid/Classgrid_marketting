@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectMongo } from "@/lib/mongodb";
 import ForumOTP from "@/lib/models/ForumOTP";
+import ForumUser from "@/lib/models/ForumUser";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getForumOtpEmailHtml } from "@/lib/email-templates";
 import { getNoReplyAddress, getSupportEmail, getSmtpConfig, getSmtpTransporter, sanitizeMailerError } from "@/lib/smtp-mailer";
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
   const startedAt = Date.now();
 
   try {
-    let body: { email?: unknown };
+    let body: { email?: unknown, mode?: string };
     try {
       body = await req.json();
     } catch {
@@ -20,9 +21,19 @@ export async function POST(req: Request) {
     }
 
     normalizedEmail = String(body?.email || "").trim().toLowerCase();
+    const mode = body?.mode;
 
     if (!normalizedEmail || !/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
+    }
+
+    await connectMongo();
+
+    if (mode === "signin") {
+      const userExists = await ForumUser.findOne({ email: normalizedEmail });
+      if (!userExists) {
+        return NextResponse.json({ error: "Account not found. Please sign up instead." }, { status: 400 });
+      }
     }
 
     // Rate limiting: 5 requests per hour per email
@@ -33,7 +44,6 @@ export async function POST(req: Request) {
 
     const smtpConfig = getSmtpConfig();
     const mongoStartedAt = Date.now();
-    await connectMongo();
 
     // Generate a 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
