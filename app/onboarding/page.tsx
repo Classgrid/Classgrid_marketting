@@ -88,6 +88,10 @@ function OnboardingContent() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAvailable) return;
+    if (!name.trim()) {
+      setMessage("Full Name is required.");
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -151,9 +155,9 @@ function OnboardingContent() {
               </div>
             </div>
 
-            {/* Name Field (Optional/Prefilled) */}
+            {/* Name Field (Required/Prefilled) */}
             <div className="space-y-1.5">
-              <label htmlFor="name" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name (Optional)</label>
+              <label htmlFor="name" className="text-[13px] font-medium text-slate-500 dark:text-[#888888]">Full Name *</label>
               <input
                 id="name"
                 type="text"
