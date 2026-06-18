@@ -12,12 +12,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-    // Basic Validation: 3-20 characters, only letters, numbers, and underscores (matches Discourse rules)
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    // Basic Validation: 5-20 characters, only letters, numbers, and underscores (matches Discourse rules)
+    const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/;
     if (!usernameRegex.test(username)) {
       return NextResponse.json({ 
         available: false, 
-        message: 'Username must be 3-20 characters and contain only letters, numbers, and underscores.' 
+        message: 'Username must be 5-20 characters and contain only letters, numbers, and underscores.' 
       }, { status: 200 }); // We return 200 so the UI can easily read the message without throwing a crash error
     }
 

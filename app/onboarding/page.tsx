@@ -68,10 +68,10 @@ function OnboardingContent() {
   // The Live Checking Logic (Debouncer)
   useEffect(() => {
     // If empty or too short, reset state
-    if (username.length < 3) {
+    if (username.length < 5) {
       setIsChecking(false);
       setIsAvailable(null);
-      setMessage("Username must be at least 3 characters.");
+      setMessage("Username must be at least 5 characters.");
       return;
     }
 
@@ -228,7 +228,7 @@ function OnboardingContent() {
                         <CheckCircle2 className="w-5 h-5 text-green-500" />
                       </motion.div>
                     )}
-                    {!isChecking && isAvailable === false && username.length >= 3 && (
+                    {!isChecking && isAvailable === false && username.length >= 5 && (
                       <motion.div key="error" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
                         <XCircle className="w-5 h-5 text-red-500" />
                       </motion.div>
