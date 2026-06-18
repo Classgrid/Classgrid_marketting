@@ -37,7 +37,7 @@ function LoginContent() {
   const sig = searchParams.get("sig");
 
   const ssoReturnTo = (sso && sig)
-    ? `/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
+    ? `/onboarding?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
     : null;
   const explicitNext = searchParams.get("next");
 
