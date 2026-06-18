@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Schema } from 'mongoose';
 export interface IForumUser extends Document {
   email: string;
   name?: string;
+  username?: string;
   avatar?: string;
   provider: string; // 'google' | 'github' | 'linkedin' | 'email'
   isPlatformUser: boolean;
@@ -13,6 +14,7 @@ export interface IForumUser extends Document {
 const ForumUserSchema: Schema<IForumUser> = new Schema({
   email: { type: String, required: true, unique: true },
   name: { type: String },
+  username: { type: String, unique: true, sparse: true },
   avatar: { type: String },
   provider: { type: String, required: true },
   isPlatformUser: { type: Boolean, default: false },
