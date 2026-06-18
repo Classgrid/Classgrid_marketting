@@ -55,15 +55,32 @@ export async function GET(req: Request) {
     forumBaseUrl = forumBaseUrl.replace(/^=/, "").trim();
     const returnUrl = `${forumBaseUrl}/session/sso_login`;
 
+    // Connect to database to get the chosen username and consistent external_id
+    await import('@/lib/mongodb').then(m => m.connectMongo());
+    const ForumUser = (await import('@/lib/models/ForumUser')).default;
+    
+    const dbUser = await ForumUser.findOne({ email: session.user.email });
+    
+    if (!dbUser) {
+       return NextResponse.json({ error: "User profile not found in database" }, { status: 400 });
+    }
+
     // Build return payload
     const user = session.user as any;
     
     const returnParams = new URLSearchParams();
     returnParams.set("nonce", nonce);
-    returnParams.set("email", user.email || "");
-    returnParams.set("external_id", user.id || "");
-    if (user.name) returnParams.set("name", user.name);
-    if (user.image) returnParams.set("avatar_url", user.image);
+    returnParams.set("email", dbUser.email);
+    // Always use the MongoDB ID as the external_id so it stays the same whether they use Google or Email
+    returnParams.set("external_id", dbUser._id.toString());
+    
+    // CRITICAL: Pass the chosen username to Discourse
+    if (dbUser.username) {
+      returnParams.set("username", dbUser.username);
+    }
+    
+    if (dbUser.name) returnParams.set("name", dbUser.name);
+    if (dbUser.avatar || user.image) returnParams.set("avatar_url", dbUser.avatar || user.image);
     
     // If they are a platform user, add them to the platform_users group
     if (user.isPlatformUser) {

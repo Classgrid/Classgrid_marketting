@@ -26,12 +26,44 @@ function OnboardingContent() {
   // Debounce ref
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Prefill the name from the session if it exists
+  // Load profile to check if they already completed onboarding
   useEffect(() => {
-    if (session?.user?.name && !name) {
-      setName(session.user.name);
-    }
-  }, [session]);
+    if (status !== "authenticated") return;
+
+    const checkProfile = async () => {
+      try {
+        const res = await fetch("/api/get-profile");
+        const data = await res.json();
+        
+        // Prefill name if available
+        if (data.name && !name) {
+          setName(data.name);
+        } else if (session?.user?.name && !name) {
+          setName(session.user.name);
+        }
+
+        // If they already have a username, they don't need onboarding!
+        if (data.hasProfile) {
+          const sso = searchParams.get("sso");
+          const sig = searchParams.get("sig");
+          const nextUrl = searchParams.get("next");
+
+          if (sso && sig) {
+            window.location.replace(`/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`);
+          } else if (nextUrl) {
+            window.location.replace(nextUrl);
+          } else {
+            router.replace("/support/inquiry");
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+        if (session?.user?.name && !name) setName(session.user.name);
+      }
+    };
+    
+    checkProfile();
+  }, [status, session]);
 
   // The Live Checking Logic (Debouncer)
   useEffect(() => {
