@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
-export default function LogoutPage() {
+function LogoutContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const [isLoggingOut, setIsLoggingOut] = useState(true);
 
   useEffect(() => {
     // Automatically trigger the logout process the millisecond the page loads
@@ -17,9 +16,17 @@ export default function LogoutPage() {
     signOut({ callbackUrl });
   }, [callbackUrl]);
 
+  return null; // The visual UI is handled by the parent
+}
+
+export default function LogoutPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative font-sans items-center justify-center">
       
+      <Suspense fallback={null}>
+        <LogoutContent />
+      </Suspense>
+
       {/* Top Left Logo - matching Classgrid's exact login page design */}
       <Link href="/" className="absolute top-6 left-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
         <img src="/logo.png" alt="Classgrid Logo" className="w-6 h-6 object-contain" />
