@@ -112,7 +112,8 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) {
           // If they didn't provide a name, it means they used the "Sign In" tab instead of "Sign Up"
-          if (!credentials.name) {
+          // Note: NextAuth serializes undefined to the literal string "undefined"
+          if (!credentials.name || credentials.name === "undefined" || credentials.name.trim() === "") {
             throw new Error("Account does not exist. Please sign up instead.");
           }
           
