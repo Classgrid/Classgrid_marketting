@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 function OnboardingContent() {
   const { data: session, status } = useSession();
@@ -219,13 +220,14 @@ function OnboardingContent() {
               </AnimatePresence>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={!isAvailable || isSaving}
-              className="mt-4 flex w-full items-center justify-center rounded-md bg-slate-900 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2a2a2a] dark:text-[#f1f1f1] dark:hover:bg-emerald-500 disabled:hover:bg-slate-900 disabled:dark:hover:bg-[#2a2a2a]"
+              showGlow={true}
+              className="w-full mt-4"
             >
               {isSaving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</> : "Continue to Forum"}
-            </button>
+            </Button>
           </form>
         </motion.div>
       </div>
