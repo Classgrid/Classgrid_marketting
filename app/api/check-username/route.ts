@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectMongo } from '@/lib/mongodb';
 import ForumUser from '@/lib/models/ForumUser';
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     // If it passes the regex and doesn't exist in the DB, it's available!
     return NextResponse.json({ 
       available: true, 
-      message: 'Username is available!' 
+      message: '✓ Your username is available' 
     }, { status: 200 });
 
   } catch (error) {
