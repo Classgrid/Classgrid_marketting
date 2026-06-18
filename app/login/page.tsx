@@ -45,19 +45,32 @@ function LoginContent() {
   const oauthCallbackUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
   const otpSuccessUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isRedirecting = useRef(false);
+
+  const handleGoogle = () => {
+    signIn("google", { callbackUrl: oauthCallbackUrl });
+  };
+
+  const handleGithub = () => {
+    signIn("github", { callbackUrl: oauthCallbackUrl });
+  };
+
   // ── Redirect already-logged-in users ──
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user) return;
+    if (status !== "authenticated" || !session?.user || isRedirecting.current) return;
 
     const user = session.user as any;
 
     // If there's an explicit "next" param or SSO, honour it
     if (ssoReturnTo) {
-      router.replace(ssoReturnTo);
+      isRedirecting.current = true;
+      window.location.href = ssoReturnTo;
       return;
     }
     if (explicitNext) {
-      router.replace(explicitNext);
+      isRedirecting.current = true;
+      window.location.href = explicitNext;
       return;
     }
 
@@ -87,7 +100,6 @@ function LoginContent() {
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [otpExpired, setOtpExpired] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const startCountdown = () => {
     setCountdown(OTP_TTL_SECONDS);
@@ -104,15 +116,6 @@ function LoginContent() {
       });
     }, 1000);
   };
-
-  const handleGoogle = () => {
-    signIn("google", { callbackUrl: oauthCallbackUrl });
-  };
-
-  const handleGithub = () => {
-    signIn("github", { callbackUrl: oauthCallbackUrl });
-  };
-
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,6 +201,7 @@ function LoginContent() {
       }
 
       // Success — navigate (go to /login so role-based redirect kicks in)
+      isRedirecting.current = true;
       window.location.href = otpSuccessUrl;
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
