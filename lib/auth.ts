@@ -190,38 +190,43 @@ export const authOptions: NextAuthOptions = {
         try {
           await connectMongo();
           const db = mongoose.connection.db;
-          if (db) {
-            const platformUser = await db.collection("users").findOne({ 
-              email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
-            });
-            if (platformUser) {
-              token.isPlatformUser = true;
-              token.platformRole = platformUser.role;
-              
-              if (platformUser.organization_id) {
-                token.orgId = platformUser.organization_id.toString();
-                // Look up org name from organizations collection
-                const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
-                token.orgName = org?.name || null;
+            if (db) {
+              const platformUser = await db.collection("users").findOne({ 
+                email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
+              });
+              if (platformUser) {
+                token.isPlatformUser = true;
+                token.platformRole = platformUser.role;
+                
+                if (platformUser.organization_id) {
+                  token.orgId = platformUser.organization_id.toString();
+                  // Look up org name from organizations collection
+                  const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
+                  token.orgName = org?.name || null;
+                }
+              } else {
+                token.isPlatformUser = false;
               }
-
-              await ForumUser.updateOne(
-                { email: { $regex: new RegExp(`^${user.email}$`, 'i') } },
-                { $set: { isPlatformUser: true } }
-              );
             } else {
               token.isPlatformUser = false;
             }
 
+            // Also update the ForumUser record
+            if (token.isPlatformUser) {
+              await ForumUser.updateOne(
+                { email: { $regex: new RegExp(`^${user.email}$`, 'i') } },
+                { $set: { isPlatformUser: true } }
+              );
+            }
             // Get username + createdAt from ForumUser
             const forumUser = await ForumUser.findOne({ 
               email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
             }).select("username createdAt");
+            
             if (forumUser) {
               token.forumCreatedAt = forumUser.createdAt?.toISOString();
               token.forumUsername = forumUser.username || null;
             }
-          }
         } catch (error) {
           console.error("Error checking platform user status:", error);
           token.isPlatformUser = false;
