@@ -96,6 +96,9 @@ function OnboardingContent() {
     // Clear previous timeout
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    // Abort any in-flight request from a previous keystroke
+    const controller = new AbortController();
+
     setIsChecking(true);
     setIsAvailable(null);
     setMessage("");
@@ -103,13 +106,21 @@ function OnboardingContent() {
     // Set new timeout to wait 400ms after they stop typing
     debounceRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
+        const res = await fetch(
+          `/api/check-username?username=${encodeURIComponent(username)}`,
+          { signal: controller.signal }
+        );
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const data = await res.json();
         
         setIsChecking(false);
-        setIsAvailable(data.available);
+        setIsAvailable(data.available ?? false);
         setMessage(data.message || "");
-      } catch (err) {
+      } catch (err: unknown) {
+        // Don't update state if we intentionally aborted
+        if (err instanceof Error && err.name === "AbortError") return;
         setIsChecking(false);
         setIsAvailable(false);
         setMessage("Could not check username. Please try again.");
@@ -118,6 +129,7 @@ function OnboardingContent() {
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      controller.abort(); // Cancel in-flight request on cleanup
     };
   }, [username]);
 
