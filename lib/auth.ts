@@ -159,7 +159,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         await connectMongo();
-        let forumUser = await ForumUser.findOne({ email: user.email });
+        let forumUser = await ForumUser.findOne({ 
+          email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
+        });
 
         if (!forumUser) {
           forumUser = await ForumUser.create({

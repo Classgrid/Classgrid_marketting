@@ -16,7 +16,9 @@ export async function GET(req: NextRequest) {
 
     await connectMongo();
     
-    const dbUser = await ForumUser.findOne({ email: session.user.email });
+    const dbUser = await ForumUser.findOne({ 
+      email: { $regex: new RegExp(`^${session.user.email}$`, 'i') } 
+    });
     
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

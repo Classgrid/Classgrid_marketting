@@ -32,7 +32,7 @@ function OnboardingContent() {
 
     const checkProfile = async () => {
       try {
-        const res = await fetch("/api/get-profile");
+        const res = await fetch("/api/get-profile", { cache: "no-store" });
         const data = await res.json();
         
         // Prefill name if available
