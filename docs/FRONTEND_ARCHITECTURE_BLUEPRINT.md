@@ -1,8 +1,8 @@
 # 🏗️ ClassGrid Ultimate Frontend Architecture Blueprint
 
-> **Purpose:** This document is the persistent source of truth for the ClassGrid Frontend development. It maps the 41 completed backend modules to exact Frontend Routes, React Components, and API Hooks. 
+> **Executive Summary:** This document represents the final frontend architecture blueprint after completing the ClassGrid enterprise backend, covering 41 production modules, 10 master dashboards across 4 organization types, public marketing systems, CMS, and community ecosystem integrations.
 > 
-> **AI Rule:** Any AI agent (Codex, Cursor, etc.) reading this document must ONLY build the frontend components listed here and wire them to the listed API prefixes. **DO NOT TOUCH THE BACKEND.**
+> The backend foundation is now complete. This blueprint maps every completed backend module to its corresponding frontend route, dashboard layout, React component structure, and API service layer.
 
 ---
 
@@ -19,20 +19,22 @@
 
 ---
 
-## 📊 2. The 8 Master Dashboards (Layouts)
+## 📊 2. The 10 Master Dashboards (across 4 Org Types)
 
-Every dashboard has its own dedicated Layout component to prevent UI leakage between roles.
+Every dashboard has its own dedicated Layout component to prevent UI leakage between roles. The platform dynamically adapts these layouts based on the 4 Organization Types: **Schools, Engineering Colleges, Coaching Institutes, and Junior Colleges**.
 
 | Dashboard | Route Prefix | Layout Component | Primary API Prefix |
 |---|---|---|---|
-| 1. Super Admin Panel | `/superadmin` | `SuperAdminLayout.tsx` | `/api/super-admin` |
-| 2. Org Admin (Principal) | `/org` | `OrgAdminLayout.tsx` | `/api/org-admin` |
-| 3. Student Portal | `/student` | `StudentLayout.tsx` | `/api/student` |
-| 4. Faculty Console | `/faculty` | `FacultyLayout.tsx` | `/api/teacher-planner` |
-| 5. Admission Dept | `/dept/admissions` | `AdmissionLayout.tsx` | `/api/admission` |
-| 6. Fee Dept | `/dept/fees` | `FeesLayout.tsx` | `/api/fees` |
-| 7. Library Dashboard | `/dept/library` | `LibraryLayout.tsx` | `/api/library` |
-| 8. Canteen Dashboard | `/dept/canteen` | `CanteenLayout.tsx` | `/api/canteen` |
+| 1. Org Admin (Principal) | `/org` | `OrgAdminLayout.tsx` | `/api/org-admin` |
+| 2. Student Portal | `/student` | `StudentLayout.tsx` | `/api/student` |
+| 3. Faculty Console | `/faculty` | `FacultyLayout.tsx` | `/api/teacher-planner` |
+| 4. Admission Dept | `/dept/admissions` | `AdmissionLayout.tsx` | `/api/admission` |
+| 5. Fee Dept | `/dept/fees` | `FeesLayout.tsx` | `/api/fees` |
+| 6. Library Dashboard | `/dept/library` | `LibraryLayout.tsx` | `/api/library` |
+| 7. Canteen Dashboard | `/dept/canteen` | `CanteenLayout.tsx` | `/api/canteen` |
+| 8. Parent Portal | `/parent` | `ParentLayout.tsx` | `/api/parent` |
+| 9. HR & Payroll Dept | `/dept/hr` | `HRLayout.tsx` | `/api/hr` |
+| 10. Alumni Portal | `/alumni` | `AlumniLayout.tsx` | `/api/alumni` |
 
 ---
 
@@ -88,20 +90,23 @@ Every dashboard has its own dedicated Layout component to prevent UI leakage bet
 | 31. Events Mgmt | `/org/events` | `EventPostCreator`, `RegistrationList` | `useEvents()` |
 | 32. Feedback System | `/org/feedback` | `AnonymousFeedbackInbox`, `NPS_Gauge` | `useFeedback()` |
 | 33. Institution Web | `/org/cms` | `DragAndDropPageBuilder`, `NewsUploader` | `useOrgWebsite()` |
+### 🌍 Category E: Marketing & Ecosystem (3 Sub-Systems)
+| System | Public URL | Key Technologies | Primary Purpose |
+|---|---|---|---|
+| 34. Marketing Portal | `classgrid.in` | Next.js App Router, Tailwind | Public-facing site, lead generation, and dynamic documentation. |
+| 35. Headless CMS | `studio.classgrid.in` | Sanity Studio | Content management for marketing, help center, and blogs. |
+| 36. Community Forum | `forum.classgrid.in` | Discourse, Ruby on Rails | Peer-to-peer support, announcements, and product updates. |
 
 ---
 
-## 🔒 4. AI Coding Protocol (The "Do Not Destroy" Rule)
+## 🔒 4. Engineering Principles & Security
 
-When feeding instructions to Codex or Cursor to build these frontend components, **you must include this exact block in the prompt**:
+These principles guide our frontend engineering team to ensure stability and security:
 
-```text
-[CLASSGRID SYSTEM PROTOCOL]
-1. YOU ARE RESTRICTED TO THE \`client/\` DIRECTORY ONLY.
-2. DO NOT OPEN, READ, OR MODIFY ANY FILE IN \`server/src/\`.
-3. The backend is an enterprise ERP that is 100% finished. 
-4. If an API request fails, YOU MUST FIX the frontend fetch logic to match the backend expectation. You are strictly forbidden from creating "mock routes" or altering the backend to fit the frontend.
-```
+1. **Strict Separation of Concerns:** The frontend client and the enterprise backend are strictly decoupled to ensure high availability and security.
+2. **Immutable Backend Architecture:** The backend API is a finalized, enterprise-grade ERP. All new UI dashboards must consume the existing, secure API endpoints without requesting backend modifications.
+3. **Data Integrity:** The frontend is strictly forbidden from bypassing API validation rules or relying on mock data for critical academic and financial operations.
+
 # Backend Module Audit
 
 Read-only source audited: `server/src/routes`, `server/src/controllers`, `server/src/models`, and `server/src/services`.
