@@ -82,7 +82,9 @@ export const authOptions: NextAuthOptions = {
 
         await connectMongo();
 
-        const otpRecord = await ForumOTP.findOne({ email });
+        const otpRecord = await ForumOTP.findOne({ 
+          email: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
 
         if (!otpRecord) {
           throw new Error("Invalid or expired OTP");
@@ -108,7 +110,9 @@ export const authOptions: NextAuthOptions = {
         await ForumOTP.deleteOne({ _id: otpRecord._id });
 
         // Find or create ForumUser
-        let user = await ForumUser.findOne({ email });
+        let user = await ForumUser.findOne({ 
+          email: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
 
         if (!user) {
           // If they didn't provide a name, it means they used the "Sign In" tab instead of "Sign Up"
@@ -187,7 +191,9 @@ export const authOptions: NextAuthOptions = {
           await connectMongo();
           const db = mongoose.connection.db;
           if (db) {
-            const platformUser = await db.collection("users").findOne({ email: user.email });
+            const platformUser = await db.collection("users").findOne({ 
+              email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
+            });
             if (platformUser) {
               token.isPlatformUser = true;
               token.platformRole = platformUser.role;
@@ -199,9 +205,8 @@ export const authOptions: NextAuthOptions = {
                 token.orgName = org?.name || null;
               }
 
-              // Also update the ForumUser record
               await ForumUser.updateOne(
-                { email: user.email },
+                { email: { $regex: new RegExp(`^${user.email}$`, 'i') } },
                 { $set: { isPlatformUser: true } }
               );
             } else {
@@ -209,7 +214,9 @@ export const authOptions: NextAuthOptions = {
             }
 
             // Get createdAt from ForumUser
-            const forumUser = await ForumUser.findOne({ email: user.email }).select("createdAt");
+            const forumUser = await ForumUser.findOne({ 
+              email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
+            }).select("createdAt");
             if (forumUser) {
               token.forumCreatedAt = forumUser.createdAt?.toISOString();
             }

@@ -59,7 +59,9 @@ export async function GET(req: Request) {
     await import('@/lib/mongodb').then(m => m.connectMongo());
     const ForumUser = (await import('@/lib/models/ForumUser')).default;
     
-    const dbUser = await ForumUser.findOne({ email: session.user.email });
+    const dbUser = await ForumUser.findOne({ 
+      email: { $regex: new RegExp(`^${session.user.email}$`, 'i') } 
+    });
     
     if (!dbUser) {
        return NextResponse.json({ error: "User profile not found in database" }, { status: 400 });

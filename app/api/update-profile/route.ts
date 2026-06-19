@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
 
     // SECURITY: Check if the current user ALREADY has a username. 
     // If they do, they are permanently locked and cannot change it.
-    const currentUser = await ForumUser.findOne({ email: session.user.email });
+    const currentUser = await ForumUser.findOne({ 
+      email: { $regex: new RegExp(`^${session.user.email}$`, 'i') } 
+    });
     if (!currentUser) {
       return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
@@ -48,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     // Update the current user
     const updatedUser = await ForumUser.findOneAndUpdate(
-      { email: session.user.email },
+      { email: { $regex: new RegExp(`^${session.user.email}$`, 'i') } },
       { 
         $set: { 
           username: username,
