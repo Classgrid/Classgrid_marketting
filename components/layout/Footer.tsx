@@ -141,6 +141,17 @@ export function Footer({
     }
   }
 
+  // Force 'NEW' badge on Community/Forum links since Discourse just launched
+  footerColumns.forEach(col => {
+    if (col.links) {
+      col.links.forEach(l => {
+        if (l.label && (/community/i.test(l.label) || /forum/i.test(l.label))) {
+          l.isNew = true;
+        }
+      });
+    }
+  });
+
   const legalItems = (Array.isArray(legalLinks) ? legalLinks : [])
     .filter((l) => l?.label?.trim() && l?.href?.trim());
 
