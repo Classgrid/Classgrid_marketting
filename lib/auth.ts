@@ -213,12 +213,13 @@ export const authOptions: NextAuthOptions = {
               token.isPlatformUser = false;
             }
 
-            // Get createdAt from ForumUser
+            // Get username + createdAt from ForumUser
             const forumUser = await ForumUser.findOne({ 
               email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
-            }).select("createdAt");
+            }).select("username createdAt");
             if (forumUser) {
               token.forumCreatedAt = forumUser.createdAt?.toISOString();
+              token.forumUsername = forumUser.username || null;
             }
           }
         } catch (error) {
@@ -236,6 +237,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).orgName = token.orgName as string | undefined;
         (session.user as any).orgId = token.orgId as string | undefined;
         (session.user as any).forumCreatedAt = token.forumCreatedAt as string | undefined;
+        (session.user as any).forumUsername = token.forumUsername as string | undefined;
       }
       return session;
     },

@@ -26,10 +26,32 @@ function OnboardingContent() {
   // Debounce ref
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Helper: redirect away from onboarding (user already has a username)
+  const redirectAway = () => {
+    const sso = searchParams.get("sso");
+    const sig = searchParams.get("sig");
+    const nextUrl = searchParams.get("next");
+
+    if (sso && sig) {
+      window.location.replace(`/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`);
+    } else if (nextUrl) {
+      window.location.replace(nextUrl);
+    } else {
+      router.replace("/support/inquiry");
+    }
+  };
+
   // Load profile to check if they already completed onboarding
   useEffect(() => {
     if (status !== "authenticated") return;
 
+    // FAST PATH: If the JWT already has a username, skip instantly (no API call)
+    if ((session?.user as any)?.forumUsername) {
+      redirectAway();
+      return;
+    }
+
+    // SLOW PATH: JWT doesn't have username yet (first-time sign-in or token not refreshed)
     const checkProfile = async () => {
       try {
         const res = await fetch("/api/get-profile", { cache: "no-store" });
@@ -44,17 +66,7 @@ function OnboardingContent() {
 
         // If they already have a username, they don't need onboarding!
         if (data.hasProfile) {
-          const sso = searchParams.get("sso");
-          const sig = searchParams.get("sig");
-          const nextUrl = searchParams.get("next");
-
-          if (sso && sig) {
-            window.location.replace(`/api/sso/discourse?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`);
-          } else if (nextUrl) {
-            window.location.replace(nextUrl);
-          } else {
-            router.replace("/support/inquiry");
-          }
+          redirectAway();
         }
       } catch (err) {
         console.error("Failed to fetch profile", err);
