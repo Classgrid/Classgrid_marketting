@@ -66,6 +66,8 @@ function OnboardingContent() {
   }, [status, session]);
 
   // The Live Checking Logic (Debouncer)
+  const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/;
+
   useEffect(() => {
     // If empty, hide the error completely (pristine state)
     if (username.length === 0) {
@@ -83,6 +85,14 @@ function OnboardingContent() {
       return;
     }
 
+    // Client-side format check — catch bad chars before hitting the API
+    if (!usernameRegex.test(username)) {
+      setIsChecking(false);
+      setIsAvailable(false);
+      setMessage("Only letters, numbers, and underscores allowed (max 20 chars).");
+      return;
+    }
+
     // Clear previous timeout
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -93,7 +103,7 @@ function OnboardingContent() {
     // Set new timeout to wait 400ms after they stop typing
     debounceRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/check-username?username=${username}`);
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
         const data = await res.json();
         
         setIsChecking(false);
@@ -102,7 +112,7 @@ function OnboardingContent() {
       } catch (err) {
         setIsChecking(false);
         setIsAvailable(false);
-        setMessage("Error checking username.");
+        setMessage("Could not check username. Please try again.");
       }
     }, 400);
 
@@ -213,7 +223,7 @@ function OnboardingContent() {
                   type="text"
                   placeholder="e.g. nikhil_dev"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value.trim().toLowerCase())}
                   className={`w-full rounded-md border bg-white px-3 py-2.5 pr-10 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-1 dark:bg-[#161616] dark:text-[#f1f1f1] dark:placeholder:text-[#555] ${
                     isAvailable === true
                       ? "border-green-500 focus:border-green-500 focus:ring-green-500/20"
