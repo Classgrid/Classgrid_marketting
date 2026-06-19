@@ -35,6 +35,32 @@ export async function middleware(request: NextRequest) {
   }
 
 
+  /* ------------------------------------------------------------------ */
+  /*  /onboarding — skip instantly if user already has a username         */
+  /* ------------------------------------------------------------------ */
+  if (pathname === "/onboarding") {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    if (token?.forumUsername) {
+      // User already has a username — no need for onboarding
+      const sso = request.nextUrl.searchParams.get("sso");
+      const sig = request.nextUrl.searchParams.get("sig");
+      const nextUrl = request.nextUrl.searchParams.get("next");
+
+      if (sso && sig) {
+        // Discourse SSO flow — go straight to the SSO handshake
+        const url = new URL("/api/sso/discourse", request.url);
+        url.searchParams.set("sso", sso);
+        url.searchParams.set("sig", sig);
+        return NextResponse.redirect(url);
+      } else if (nextUrl) {
+        return NextResponse.redirect(new URL(nextUrl, request.url));
+      } else {
+        return NextResponse.redirect(new URL("/support/inquiry", request.url));
+      }
+    }
+  }
+
   return NextResponse.next();
 }
 

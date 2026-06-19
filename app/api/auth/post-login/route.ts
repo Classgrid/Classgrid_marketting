@@ -12,6 +12,11 @@ export async function GET() {
 
   const user = session.user as any;
 
+  // If the user hasn't set a username yet, send them to onboarding first
+  if (!user.forumUsername) {
+    return NextResponse.redirect(new URL("/onboarding", base));
+  }
+
   if (user.isPlatformUser) {
     return NextResponse.redirect(new URL("/support/ticket", base));
   }
