@@ -20,15 +20,21 @@ export async function POST(req: Request) {
     formData.append("email", email);
     formData.append("subject", subject);
 
+    // Universal category mapper — the platform API ONLY accepts: technical, billing, general, other
     const VALID_CATEGORIES: Record<string, string> = {
+      // Canonical values
       "technical": "technical", "billing": "billing", "general": "general", "other": "other",
+      // UI dropdown categories
       "login": "technical", "attendance": "technical", "examination": "general", "exam": "general",
-      "result": "general", "fee": "billing", "payment": "billing", "erp": "technical",
-      "bug": "technical", "dashboard": "general", "chat": "general", "ai": "technical",
-      "profile": "general", "admission": "general", "library": "general", "documents": "general",
-      "timetable": "general", "assignments": "general", "live-classes": "technical", "feature": "general",
+      "result": "general", "results": "general", "fee": "billing", "payment": "billing",
+      "erp": "technical", "bug": "technical", "dashboard": "general", "chat": "general",
+      "ai": "technical", "profile": "general", "admission": "general", "library": "general",
+      "documents": "general", "timetable": "general", "assignments": "general",
+      "live-classes": "technical", "feature": "general",
+      // AI-generated variants
+      "account": "general",
     };
-    const mappedCategory = VALID_CATEGORIES[module] || "general";
+    const mappedCategory = VALID_CATEGORIES[(module || "").toLowerCase().trim()] || "other";
 
     formData.append("category", mappedCategory);
     formData.append("priority", priority || "low");

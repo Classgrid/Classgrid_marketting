@@ -191,8 +191,27 @@ export default function InquiryPage() {
       formData.append("name", name.trim());
       formData.append("email", email.trim());
       formData.append("subject", subject.trim());
-      formData.append("message", description.trim());
-      formData.append("category", category || "inquiry");
+      // Universal category mapper — the platform API ONLY accepts: technical, billing, general, other
+      const VALID_CATEGORIES: Record<string, string> = {
+        // Canonical values
+        "technical": "technical", "billing": "billing", "general": "general", "other": "other",
+        // Inquiry-specific dropdown categories
+        "academics": "general", "exams": "general", "communication": "general",
+        "finance": "billing", "getting_started": "general", "account_security": "technical",
+        // Ticket page dropdown categories (in case of cross-usage)
+        "login": "technical", "attendance": "technical", "examination": "general", "exam": "general",
+        "result": "general", "results": "general", "fee": "billing", "payment": "billing",
+        "erp": "technical", "bug": "technical", "dashboard": "general", "chat": "general",
+        "ai": "technical", "profile": "general", "admission": "general", "library": "general",
+        "documents": "general", "timetable": "general", "assignments": "general",
+        "live-classes": "technical", "feature": "general",
+        // AI-generated variants
+        "account": "general",
+      };
+      const mappedCategory = VALID_CATEGORIES[(category || "").toLowerCase().trim()] || "other";
+
+      formData.append("message", `<strong>UI Selected Category: ${category || "general"}</strong><br/><br/>${description.trim()}`);
+      formData.append("category", mappedCategory);
       formData.append("institution", institution.trim());
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
