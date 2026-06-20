@@ -343,15 +343,18 @@ export async function POST(req: Request) {
               answer = "I understand this is frustrating, especially with a deadline approaching. I've flagged this issue to our support team so they can look into it right away! 🙏";
             }
             
-            const email = userEmail || body?.userEmail;
+            // SECURITY: Always prefer server-side session identity over client-provided data.
+            // This prevents identity spoofing (e.g. a logged-in user claiming to be "Lana Rhodes").
+            const trustedEmail = userEmail || body?.userEmail;
+            const trustedName = session?.user?.name || body?.userName || "AI Escalated User";
             let ticketCreated = false;
             let ticketId: string | null = null;
 
-            if (email) {
+            if (trustedEmail) {
               try {
                 const formData = new FormData();
-                formData.append("name", body.userName || "AI Escalated User");
-                formData.append("email", email);
+                formData.append("name", trustedName);
+                formData.append("email", trustedEmail);
                 formData.append("subject", aiSubject);
                 
                 // Format chat history for the ticket
@@ -407,8 +410,8 @@ export async function POST(req: Request) {
                 const deviceLog = req.headers.get("user-agent") || "Unknown Device";
                 await writeClient.create({
                   _type: "aiEscalation",
-                  userEmail: email || "",
-                  userName: body?.userName || "",
+                  userEmail: trustedEmail || "",
+                  userName: trustedName,
                   ipAddress: ip,
                   deviceInfo: deviceLog,
                   status: ticketCreated ? "handled" : "pending",
@@ -428,7 +431,7 @@ export async function POST(req: Request) {
 
             if (ticketCreated) {
               const ticketLink = ticketId
-                ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(email || "")})*`
+                ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(trustedEmail || "")})*`
                 : "\n\n*✅ Support Ticket created! Track your request at [Support Requests](/support/requests).*";
               answer += ticketLink;
               // Mark this session as escalated so we don't create duplicate tickets
@@ -437,7 +440,7 @@ export async function POST(req: Request) {
               }
             } else {
               // If ticket failed, give an appropriate fallback link
-              if (email && email !== "anonymous@classgrid.in") {
+              if (trustedEmail && trustedEmail !== "anonymous@classgrid.in") {
                 answer = "I wanted to escalate this for you automatically, but there was an issue communicating with our ticket database. Could you please visit **[Submit a Ticket](/support/ticket)** to submit this manually? 🙏";
               } else {
                 answer = "I'd love to help escalate this for you, but I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account. 😊";

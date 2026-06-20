@@ -49,6 +49,18 @@ const TOOLS = [
         required: ["query"]
       }
     }
+  },
+  {
+    type: "function",
+    function: {
+      name: "check_status_page",
+      description: "Check the live Classgrid Status Page for operational status and incidents.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: []
+      }
+    }
   }
 ];
 
@@ -172,7 +184,40 @@ async function tryProvider(
       const call = result.toolCalls[0];
       console.log(`[llm:${provider.name}] 🔍 Using Tool: ${call.function.name}`);
       
-      if (call.function.name === 'search_web') {
+      if (call.function.name === 'check_status_page') {
+        console.log(`[llm:${provider.name}] 🌐 Checking Classgrid Status Page...`);
+        onStatus?.("checking status");
+
+        let statusResultText = "Failed to fetch status page.";
+        try {
+          const statusRes = await fetch("https://classgrid1.statuspage.io/api/v2/summary.json");
+          if (statusRes.ok) {
+            const statusData = await statusRes.json();
+            const indicator = statusData.status?.description || "Unknown Status";
+            const components = (statusData.components || [])
+              .map((c: any) => `- ${c.name}: ${c.status}`)
+              .join('\n');
+            const incidents = (statusData.incidents || [])
+              .map((i: any) => `Incident: ${i.name} (Status: ${i.status})`)
+              .join('\n');
+            
+            statusResultText = `Current Classgrid status is: ${indicator}.\n\nComponents:\n${components}\n\nIncidents:\n${incidents || "No active incidents."}`;
+          }
+        } catch (e) {
+          console.error(`[llm:${provider.name}] Status check failed:`, e);
+        }
+
+        onStatus?.("analyzing");
+
+        const nextMessages: GroqMessage[] = [
+          ...messages,
+          { role: "assistant", content: result.content || "", tool_calls: [call] },
+          { role: "tool", tool_call_id: call.id, content: statusResultText }
+        ];
+        
+        clearTimeout(timeout);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+      } else if (call.function.name === 'search_web') {
         const args = JSON.parse(call.function.arguments);
         console.log(`[llm:${provider.name}] 🌐 Searching: "${args.query}"`);
         onStatus?.("searching");

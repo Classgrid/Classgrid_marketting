@@ -5,8 +5,8 @@
   "scripts": {
     "check:types-only": "node -e \"const fs=require('fs');const path=require('path');const roots=['app','components'];const blocked=new Set(['.js','.jsx']);const walk=(d,o)=>{for(const e of fs.readdirSync(d)){const p=path.join(d,e);const s=fs.statSync(p);if(s.isDirectory())walk(p,o);else if(blocked.has(path.extname(p).toLowerCase()))o.push(p);}};const violations=[];for(const r of roots){if(fs.existsSync(r))walk(r,violations);}if(violations.length){console.error('TypeScript-only check failed. Found JavaScript source files:');for(const f of violations)console.error(' - '+path.relative(process.cwd(),f));process.exit(1);}console.log('TypeScript-only check passed for app and components.');\"",
     "predev": "node scripts/dev-tunnel-prep.mjs",
-    "dev:next": "next dev --turbopack -p 3000",
-    "dev": "concurrently -k -n next,ngrok,tg -c cyan,magenta,blue \"next dev --turbopack -p 3000\" \"wait-on tcp:127.0.0.1:3000 && ngrok http http://127.0.0.1:3000\" \"node scripts/setup-telegram-webhook.mjs\"",
+    "dev:next": "next dev -p 3000",
+    "dev": "concurrently -n next,ngrok -c cyan,magenta \"next dev -p 3000\" \"wait-on tcp:127.0.0.1:3000 && ngrok http http://127.0.0.1:3000\"",
     "dev:strict": "npm run check:types-only && next dev --turbopack",
     "build": "npm run check:types-only && next build",
     "start": "npm run check:types-only && next start",
