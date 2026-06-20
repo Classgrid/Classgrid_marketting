@@ -475,22 +475,37 @@ export async function POST(req: Request) {
               answer += ticketLink;
               // Mark this session as escalated so we don't create duplicate tickets
               if (escalationRedis) {
-                await escalationRedis.set(escalationKey, "true", "EX", 3600);
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject }), "EX", 3600);
               }
             } else {
               // If platform API ticket failed (often because the logged-in user isn't linked to an institution/org),
-              // it is still logged in Sanity. Just assure the user it was received.
+              // it is still logged in Sanity. Preserve the AI's original empathetic answer and append a forwarding note.
               if (email && email !== "anonymous@classgrid.in") {
-                answer = "Your request has been securely forwarded to the Classgrid team! They will review it shortly. Is there anything else I can assist you with? 🙏";
+                answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
+                // Still mark as escalated since Sanity has the record
+                if (escalationRedis) {
+                  await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject }), "EX", 3600);
+                }
               } else {
                 answer = "Since you are not logged in, I cannot automatically create a support ticket. For a quick or instant message to our team, please use the **[Contact Page](/contact)**. For a more detailed conversation, please log in and use **[Classgrid Talk](/support/inquiry)**. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
-            // AI tried to escalate again but we already have a ticket — just strip the code silently
+            // AI tried to escalate again but we already have a ticket — strip the [ESCALATE:] tag
+            // but KEEP the rest of the AI's actual response so it can answer naturally
             answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
             if (!answer || answer.length < 15) {
-              answer = "Your issue has already been escalated to our support team! They are reviewing it now. Is there anything else I can help you with? 😊";
+              // Only use fallback if the AI's entire response was just the escalation tag with no other text
+              // Try to include the original escalation summary so the AI gives useful context
+              let escalationContext = "";
+              try {
+                const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+                if (savedEscalation && savedEscalation !== "true") {
+                  const parsed = JSON.parse(savedEscalation);
+                  escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
+                }
+              } catch (_) { }
+              answer = `Your issue has already been escalated to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
             }
           }
 
