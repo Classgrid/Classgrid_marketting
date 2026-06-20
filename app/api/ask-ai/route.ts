@@ -436,11 +436,12 @@ export async function POST(req: Request) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
               }
             } else {
-              // If ticket failed, give an appropriate fallback link
+              // If platform API ticket failed, Sanity still logged it as pending!
+              // So we tell the user it was received successfully.
               if (email && email !== "anonymous@classgrid.in") {
-                answer = "I wanted to escalate this for you automatically, but there was an issue communicating with our ticket database. Could you please visit **[Submit a Ticket](/support/ticket)** to submit this manually? 🙏";
+                answer = "Your request has been securely forwarded to the Classgrid team! They will review it shortly. If you'd like to provide more details or start a direct conversation, please use **[Classgrid Talk](/support/inquiry)**. 🙏";
               } else {
-                answer = "I'd love to help escalate this for you, but I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account. 😊";
+                answer = "Since you are not logged in, I cannot automatically create a support ticket. However, you can use our public **[Contact Page](/contact)** to reach the team, or log in to post on **[Classgrid Talk](/support/inquiry)**. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
