@@ -329,7 +329,29 @@ export async function POST(req: Request) {
           // HARD PROGRAMMATIC FAILSAFE: Prevent AI from auto-escalating prematurely
           if (escalateMatch) {
             const tempSummary = escalateMatch[1].toLowerCase();
-            const isNoContext = tempSummary.includes("did not specify") || tempSummary.includes("unspecified") || (question.trim().length < 15 && (!body?.history || body.history.length === 0));
+            const questionLower = question.toLowerCase();
+
+            // Check 1: AI summary itself indicates no real context
+            const summaryLacksContext = tempSummary.includes("did not specify") || tempSummary.includes("unspecified") || tempSummary.includes("not yet described") || tempSummary.includes("no specific");
+
+            // Check 2: Very short message with no history (original check)
+            const tooShortNoHistory = question.trim().length < 15 && (!body?.history || body.history.length === 0);
+
+            // Check 3: User's message is a generic "contact team" request with no actual problem details
+            // These are vague requests that mention wanting to reach the team but don't describe any specific issue
+            const genericContactPhrases = [
+              /\b(i\s+have\s+a?\s*probl|help\s+me|tell\s+(your|the)\s+team|contact\s+(your|the)\s+team|message\s+(your|the)\s+team|send\s+(a\s+)?message|talk\s+to\s+(your|the)\s+team|reach\s+(your|the)\s+team|escalate|forward\s+(this|my))\b/i,
+            ];
+            const isGenericRequest = genericContactPhrases.some(p => p.test(questionLower));
+            // Check if the message has any SPECIFIC problem indicators (error codes, module names, account details, etc.)
+            const hasSpecificDetails = /(\d{3,}|error|crash|bug|fail|wrong|missing|delete|lost|lock|ban|block|charg|paid|pay|fee|₹|rs\.|rupee|exam|mark|grade|result|attendance|login|password|otp)/i.test(questionLower);
+            const vagueEscalation = isGenericRequest && !hasSpecificDetails;
+
+            // Check 4: AI's own response is asking for more details — contradicts escalating
+            const answerLower = answer.toLowerCase();
+            const aiAskingForDetails = /what\s+(is|are)\s+(the|your)\s+(issue|problem|concern)|elaborate|more\s+details|tell\s+me\s+(more|what)|describe\s+(your|the)\s+(issue|problem)/i.test(answerLower);
+
+            const isNoContext = summaryLacksContext || tooShortNoHistory || vagueEscalation || aiAskingForDetails;
 
             if (isNoContext) {
               // The AI jumped the gun despite prompt instructions. Strip the code, force a question, and cancel escalation.
