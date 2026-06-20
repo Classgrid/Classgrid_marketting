@@ -463,10 +463,10 @@ export async function POST(req: Request) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
               }
             } else {
-              // If platform API ticket failed, Sanity still logged it as pending!
-              // So we tell the user it was received successfully.
+              // If platform API ticket failed (often because the logged-in user isn't linked to an institution/org),
+              // we must be honest. Don't claim a formal ticket was created if it wasn't.
               if (email && email !== "anonymous@classgrid.in") {
-                answer = "Your request has been securely forwarded to the Classgrid team! They will review it shortly. If you'd like to provide more details or start a direct conversation, please use **[Classgrid Talk](/support/inquiry)**. 🙏";
+                answer = "I've logged your request for our team, but since your account doesn't seem to be linked to a specific school or institution yet, I couldn't create a formal support ticket. For general inquiries, feature requests, or to speak with our team directly, please use **[Classgrid Talk](/support/inquiry)**! 🙏";
               } else {
                 answer = "Since you are not logged in, I cannot automatically create a support ticket. However, you can use our public **[Contact Page](/contact)** to reach the team, or log in to post on **[Classgrid Talk](/support/inquiry)**. 😊";
               }
