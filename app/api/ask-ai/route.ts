@@ -396,16 +396,7 @@ export async function POST(req: Request) {
                 formData.append("email", email);
                 formData.append("subject", aiSubject);
 
-                // Format chat history for the ticket
-                let historyHtml = "";
-                if (body?.history && Array.isArray(body.history)) {
-                  // Only take the last 5 messages to avoid huge payloads
-                  const recentHistory = body.history.slice(-5);
-                  historyHtml = "<br/><br/><strong>Recent Chat History:</strong><br/>" +
-                    recentHistory.map(h => `<b>${h.role === 'user' ? 'User' : 'AI'}:</b> ${normalizeText(h.content)}`).join("<br/><br/>");
-                }
-
-                formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}${historyHtml}`);
+                formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}`);
                 formData.append("category", aiCategory);
                 formData.append("priority", aiPriority);
 
