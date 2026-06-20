@@ -343,18 +343,15 @@ export async function POST(req: Request) {
               answer = "I understand this is frustrating, especially with a deadline approaching. I've flagged this issue to our support team so they can look into it right away! 🙏";
             }
             
-            // SECURITY: Always prefer server-side session identity over client-provided data.
-            // This prevents identity spoofing (e.g. a logged-in user claiming to be "Lana Rhodes").
-            const trustedEmail = userEmail || body?.userEmail;
-            const trustedName = session?.user?.name || body?.userName || "AI Escalated User";
+            const email = userEmail || body?.userEmail;
             let ticketCreated = false;
             let ticketId: string | null = null;
 
-            if (trustedEmail) {
+            if (email) {
               try {
                 const formData = new FormData();
-                formData.append("name", trustedName);
-                formData.append("email", trustedEmail);
+                formData.append("name", body.userName || "AI Escalated User");
+                formData.append("email", email);
                 formData.append("subject", aiSubject);
                 
                 // Format chat history for the ticket
@@ -388,13 +385,7 @@ export async function POST(req: Request) {
                 } else {
                   const errorText = await res.text();
                   console.error("Ticket API failed with status", res.status, "body:", errorText);
-                  // Parse actual API error message for user-facing feedback
-                  let apiErrorMsg = "";
-                  try {
-                    const errorJson = JSON.parse(errorText);
-                    apiErrorMsg = errorJson?.message || "";
-                  } catch (_) {}
-                  ticketId = `ERROR: ${res.status} ${apiErrorMsg || errorText.substring(0, 100)}`;
+                  ticketId = `ERROR: ${res.status} ${errorText.substring(0, 100)}`;
                 }
               } catch (e) {
                 console.error("Failed to auto-create ticket:", e);
@@ -416,8 +407,8 @@ export async function POST(req: Request) {
                 const deviceLog = req.headers.get("user-agent") || "Unknown Device";
                 await writeClient.create({
                   _type: "aiEscalation",
-                  userEmail: trustedEmail || "",
-                  userName: trustedName,
+                  userEmail: email || "",
+                  userName: body?.userName || "",
                   ipAddress: ip,
                   deviceInfo: deviceLog,
                   status: ticketCreated ? "handled" : "pending",
@@ -437,7 +428,7 @@ export async function POST(req: Request) {
 
             if (ticketCreated) {
               const ticketLink = ticketId
-                ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(trustedEmail || "")})*`
+                ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(email || "")})*`
                 : "\n\n*✅ Support Ticket created! Track your request at [Support Requests](/support/requests).*";
               answer += ticketLink;
               // Mark this session as escalated so we don't create duplicate tickets
@@ -445,17 +436,11 @@ export async function POST(req: Request) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
               }
             } else {
-              // Ticket creation on platform API failed, BUT the Sanity aiEscalation record
-              // was already created above (for non-guests). So the team CAN see this in Sanity.
-              // Don't tell the user it "failed" — their message DID reach the team via Sanity.
-              if (!isGuest) {
-                answer += `\n\n✅ Your message has been sent to the Classgrid team! For a more detailed conversation or to follow up, you can use **[Classgrid Talk](/support/inquiry)**.`;
-                // Mark as escalated so we don't duplicate
-                if (escalationRedis) {
-                  await escalationRedis.set(escalationKey, "true", "EX", 3600);
-                }
+              // If ticket failed, give an appropriate fallback link
+              if (email && email !== "anonymous@classgrid.in") {
+                answer = "I wanted to escalate this for you automatically, but there was an issue communicating with our ticket database. Could you please visit **[Submit a Ticket](/support/ticket)** to submit this manually? 🙏";
               } else {
-                answer = "Since you're not logged in, I'm unable to send your message to the team automatically. To send a message, please use our **[Contact Page](/contact)**. If you'd like a detailed conversation, you can log in and use **[Classgrid Talk](/support/inquiry)**. 😊";
+                answer = "I'd love to help escalate this for you, but I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
