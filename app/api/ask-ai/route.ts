@@ -205,7 +205,7 @@ export async function POST(req: Request) {
             .append('flaggedMessages', [newFlaggedMessage])
             .commit();
           console.log(`[Safety] Appended violation to existing incident in Sanity for ${identifier}`);
-          
+
           if (userEmail) {
             const strikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
             const flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
             flaggedMessages: [newFlaggedMessage],
           });
           console.log(`[Safety] Created new safety incident in Sanity for ${identifier}`);
-          
+
           if (userEmail) {
             await sendSafetyEmail(userEmail, body?.userName || "", 1, [newFlaggedMessage]);
           }
@@ -308,7 +308,7 @@ export async function POST(req: Request) {
 
           const rawUserName = normalizeText(body?.userName);
           const firstName = rawUserName ? rawUserName.split(" ")[0] : undefined;
-          
+
           const isGuest = !userEmail && (!body?.userEmail || body.userEmail === "anonymous@classgrid.in");
 
           const result = await generateClassgridRagAnswer({
@@ -325,12 +325,12 @@ export async function POST(req: Request) {
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
           let escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/);
-          
+
           // HARD PROGRAMMATIC FAILSAFE: Prevent AI from auto-escalating prematurely
           if (escalateMatch) {
             const tempSummary = escalateMatch[1].toLowerCase();
             const isNoContext = tempSummary.includes("did not specify") || tempSummary.includes("unspecified") || (question.trim().length < 15 && (!body?.history || body.history.length === 0));
-            
+
             if (isNoContext) {
               // The AI jumped the gun despite prompt instructions. Strip the code, force a question, and cancel escalation.
               answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
@@ -377,14 +377,14 @@ export async function POST(req: Request) {
             };
             const aiCategory = VALID_CATEGORIES[rawCategory] || "other";
             const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
-            
+
             answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
               answer = "I understand this is frustrating, especially with a deadline approaching. I've flagged this issue to our support team so they can look into it right away! 🙏";
             }
-            
+
             const email = userEmail || body?.userEmail;
             let ticketCreated = false;
             let ticketId: string | null = null;
@@ -395,16 +395,16 @@ export async function POST(req: Request) {
                 formData.append("name", body.userName || "AI Escalated User");
                 formData.append("email", email);
                 formData.append("subject", aiSubject);
-                
+
                 // Format chat history for the ticket
                 let historyHtml = "";
                 if (body?.history && Array.isArray(body.history)) {
                   // Only take the last 5 messages to avoid huge payloads
                   const recentHistory = body.history.slice(-5);
-                  historyHtml = "<br/><br/><strong>Recent Chat History:</strong><br/>" + 
+                  historyHtml = "<br/><br/><strong>Recent Chat History:</strong><br/>" +
                     recentHistory.map(h => `<b>${h.role === 'user' ? 'User' : 'AI'}:</b> ${normalizeText(h.content)}`).join("<br/><br/>");
                 }
-                
+
                 formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}${historyHtml}`);
                 formData.append("category", aiCategory);
                 formData.append("priority", aiPriority);
@@ -423,7 +423,7 @@ export async function POST(req: Request) {
                       || ticketResponse?.data?._id || ticketResponse?.data?.id
                       || ticketResponse?._id || ticketResponse?.id
                       || null;
-                  } catch (_) {}
+                  } catch (_) { }
                 } else {
                   const errorText = await res.text();
                   console.error("Ticket API failed with status", res.status, "body:", errorText);
