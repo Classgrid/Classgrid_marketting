@@ -324,7 +324,22 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          const escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/);
+          let escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/);
+          
+          // HARD PROGRAMMATIC FAILSAFE: Prevent AI from auto-escalating prematurely
+          if (escalateMatch) {
+            const tempSummary = escalateMatch[1].toLowerCase();
+            const isNoContext = tempSummary.includes("did not specify") || tempSummary.includes("unspecified") || (question.trim().length < 15 && (!body?.history || body.history.length === 0));
+            
+            if (isNoContext) {
+              // The AI jumped the gun despite prompt instructions. Strip the code, force a question, and cancel escalation.
+              answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
+              if (!answer || answer.length < 10) {
+                answer = "Could you please elaborate on the problem you are facing? I need a few more details before I can escalate this to the team. 😊";
+              }
+              escalateMatch = null; // Kill the escalation process completely
+            }
+          }
           // Prevent double escalation: check if this session already created a ticket
           const escalationRedis = getRedisClient();
           const escalationKey = `ai:escalated:${sessionId}`;
