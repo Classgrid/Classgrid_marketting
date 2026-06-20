@@ -354,10 +354,15 @@ export async function POST(req: Request) {
             const isNoContext = summaryLacksContext || tooShortNoHistory || vagueEscalation || aiAskingForDetails;
 
             if (isNoContext) {
-              // The AI jumped the gun despite prompt instructions. Strip the code, force a question, and cancel escalation.
+              // The AI jumped the gun despite prompt instructions. Strip the code and cancel escalation.
               answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
-              if (!answer || answer.length < 10) {
-                answer = "Could you please elaborate on the problem you are facing? I need a few more details before I can escalate this to the team. 😊";
+
+              // Check if the remaining text falsely claims an escalation happened
+              // (e.g., "Let me escalate this", "I'll forward this to the team", "I've sent this to support")
+              const falseEscalationClaim = /\b(let me escalate|i('ll| will) (escalate|forward|send|share|summarize)|i('ve| have) (escalated|forwarded|sent|shared)|escalat(ed|ing) (this|your|it)|support team can prioritize)\b/i.test(answer);
+
+              if (!answer || answer.length < 10 || falseEscalationClaim) {
+                answer = "I completely understand your frustration, and I want to make sure we get this resolved for you. 🙏 Could you please describe the specific problem you are facing? Once I know the details, I'll escalate it to the support team right away.";
               }
               escalateMatch = null; // Kill the escalation process completely
             }
