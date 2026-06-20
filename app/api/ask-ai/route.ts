@@ -333,8 +333,46 @@ export async function POST(req: Request) {
           if (escalateMatch && !alreadyEscalated) {
             const aiSummary = escalateMatch[1].trim();
             const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
-            const aiCategory = escalateMatch[3]?.trim().toLowerCase() || "technical";
-            const aiPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+            const rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
+            const rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+
+            // Map AI-generated categories to valid platform API enum values.
+            // The platform API ONLY accepts these category enums:
+            // 'login', 'dashboard', 'profile', 'attendance', 'fee', 'examination', 'timetable', 
+            // 'assignments', 'live-classes', 'chat', 'admission', 'library', 'documents', 'erp', 
+            // 'ai', 'bug', 'feature', 'other'
+            const VALID_CATEGORIES: Record<string, string> = {
+              "technical": "bug",
+              "billing": "fee",
+              "account": "profile",
+              "feature": "feature",
+              "general": "other",
+              "other": "other",
+              
+              // Fallback mappings in case AI generates variants:
+              "login": "login",
+              "attendance": "attendance",
+              "examination": "examination",
+              "exam": "examination",
+              "result": "examination",
+              "results": "examination",
+              "fee": "fee",
+              "payment": "fee",
+              "erp": "erp",
+              "bug": "bug",
+              "dashboard": "dashboard",
+              "chat": "chat",
+              "ai": "ai",
+            };
+            const VALID_PRIORITIES: Record<string, string> = {
+              "low": "low",
+              "medium": "medium",
+              "high": "high",
+              "urgent": "high",
+              "critical": "high",
+            };
+            const aiCategory = VALID_CATEGORIES[rawCategory] || "other";
+            const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
             
             answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
 
@@ -363,7 +401,7 @@ export async function POST(req: Request) {
                     recentHistory.map(h => `<b>${h.role === 'user' ? 'User' : 'AI'}:</b> ${normalizeText(h.content)}`).join("<br/><br/>");
                 }
                 
-                formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}${historyHtml}`);
+                formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}${historyHtml}`);
                 formData.append("category", aiCategory);
                 formData.append("priority", aiPriority);
 
