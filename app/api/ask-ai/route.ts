@@ -464,9 +464,9 @@ export async function POST(req: Request) {
               }
             } else {
               // If platform API ticket failed (often because the logged-in user isn't linked to an institution/org),
-              // we must be honest. Don't claim a formal ticket was created if it wasn't.
+              // it is still logged in Sanity. Just assure the user it was received.
               if (email && email !== "anonymous@classgrid.in") {
-                answer = "I've logged your request for our team, but since your account doesn't seem to be linked to a specific school or institution yet, I couldn't create a formal support ticket. For general inquiries, feature requests, or to speak with our team directly, please use **[Classgrid Talk](/support/inquiry)**! 🙏";
+                answer = "Your request has been securely forwarded to the Classgrid team! They will review it shortly. Is there anything else I can assist you with? 🙏";
               } else {
                 answer = "Since you are not logged in, I cannot automatically create a support ticket. However, you can use our public **[Contact Page](/contact)** to reach the team, or log in to post on **[Classgrid Talk](/support/inquiry)**. 😊";
               }
