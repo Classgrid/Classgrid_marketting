@@ -388,7 +388,13 @@ export async function POST(req: Request) {
                 } else {
                   const errorText = await res.text();
                   console.error("Ticket API failed with status", res.status, "body:", errorText);
-                  ticketId = `ERROR: ${res.status} ${errorText.substring(0, 100)}`;
+                  // Parse actual API error message for user-facing feedback
+                  let apiErrorMsg = "";
+                  try {
+                    const errorJson = JSON.parse(errorText);
+                    apiErrorMsg = errorJson?.message || "";
+                  } catch (_) {}
+                  ticketId = `ERROR: ${res.status} ${apiErrorMsg || errorText.substring(0, 100)}`;
                 }
               } catch (e) {
                 console.error("Failed to auto-create ticket:", e);
@@ -439,11 +445,17 @@ export async function POST(req: Request) {
                 await escalationRedis.set(escalationKey, "true", "EX", 3600);
               }
             } else {
-              // If ticket failed, give an appropriate fallback link
-              if (trustedEmail && trustedEmail !== "anonymous@classgrid.in") {
-                answer = "I wanted to escalate this for you automatically, but there was an issue communicating with our ticket database. Could you please visit **[Submit a Ticket](/support/ticket)** to submit this manually? 🙏";
+              // Ticket creation on platform API failed, BUT the Sanity aiEscalation record
+              // was already created above (for non-guests). So the team CAN see this in Sanity.
+              // Don't tell the user it "failed" — their message DID reach the team via Sanity.
+              if (!isGuest) {
+                answer += `\n\n✅ Your message has been sent to the Classgrid team! For a more detailed conversation or to follow up, you can use **[Classgrid Talk](/support/inquiry)**.`;
+                // Mark as escalated so we don't duplicate
+                if (escalationRedis) {
+                  await escalationRedis.set(escalationKey, "true", "EX", 3600);
+                }
               } else {
-                answer = "I'd love to help escalate this for you, but I cannot automatically create support tickets for guests. You can either log in to post on **[Classgrid Talk](/support/inquiry)**, or use our public **[Contact Page](/contact)** to reach the team without an account. 😊";
+                answer = "Since you're not logged in, I'm unable to send your message to the team automatically. To send a message, please use our **[Contact Page](/contact)**. If you'd like a detailed conversation, you can log in and use **[Classgrid Talk](/support/inquiry)**. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
