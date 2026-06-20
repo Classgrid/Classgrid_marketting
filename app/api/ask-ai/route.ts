@@ -337,32 +337,31 @@ export async function POST(req: Request) {
             const rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
 
             // Map AI-generated categories to valid platform API enum values.
-            // The platform API ONLY accepts these category enums:
-            // 'login', 'dashboard', 'profile', 'attendance', 'fee', 'examination', 'timetable', 
-            // 'assignments', 'live-classes', 'chat', 'admission', 'library', 'documents', 'erp', 
-            // 'ai', 'bug', 'feature', 'other'
+            // The platform API ONLY accepts these 4 category enums:
+            // 'technical', 'billing', 'general', 'other'
             const VALID_CATEGORIES: Record<string, string> = {
-              "technical": "bug",
-              "billing": "fee",
-              "account": "profile",
-              "feature": "feature",
-              "general": "other",
+              "technical": "technical",
+              "billing": "billing",
+              "account": "general",
+              "feature": "general",
+              "general": "general",
               "other": "other",
               
               // Fallback mappings in case AI generates variants:
-              "login": "login",
-              "attendance": "attendance",
-              "examination": "examination",
-              "exam": "examination",
-              "result": "examination",
-              "results": "examination",
-              "fee": "fee",
-              "payment": "fee",
-              "erp": "erp",
-              "bug": "bug",
-              "dashboard": "dashboard",
-              "chat": "chat",
-              "ai": "ai",
+              "login": "technical",
+              "attendance": "technical",
+              "examination": "general",
+              "exam": "general",
+              "result": "general",
+              "results": "general",
+              "fee": "billing",
+              "payment": "billing",
+              "erp": "technical",
+              "bug": "technical",
+              "dashboard": "general",
+              "chat": "general",
+              "ai": "technical",
+              "profile": "general"
             };
             const VALID_PRIORITIES: Record<string, string> = {
               "low": "low",

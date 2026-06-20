@@ -19,9 +19,20 @@ export async function POST(req: Request) {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("subject", subject);
-    formData.append("category", module || "general");
+
+    const VALID_CATEGORIES: Record<string, string> = {
+      "technical": "technical", "billing": "billing", "general": "general", "other": "other",
+      "login": "technical", "attendance": "technical", "examination": "general", "exam": "general",
+      "result": "general", "fee": "billing", "payment": "billing", "erp": "technical",
+      "bug": "technical", "dashboard": "general", "chat": "general", "ai": "technical",
+      "profile": "general", "admission": "general", "library": "general", "documents": "general",
+      "timetable": "general", "assignments": "general", "live-classes": "technical", "feature": "general",
+    };
+    const mappedCategory = VALID_CATEGORIES[module] || "general";
+
+    formData.append("category", mappedCategory);
     formData.append("priority", priority || "low");
-    formData.append("message", description);
+    formData.append("message", `<strong>UI Selected Module: ${module || "general"}</strong><br/><br/>${description}`);
     formData.append("institution", collegeName || "");
 
     // Forward to the backend Support API
