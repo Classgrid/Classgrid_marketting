@@ -182,25 +182,10 @@ export default function RaiseTicketPage() {
       formData.append("email", email.trim());
       formData.append("subject", subject.trim());
 
-      // Universal category mapper — the platform API ONLY accepts: technical, billing, general, other
-      // We map the rich frontend UI categories to these, and preserve the original in the message.
-      const VALID_CATEGORIES: Record<string, string> = {
-        // Canonical values
-        "technical": "technical", "billing": "billing", "general": "general", "other": "other",
-        // UI dropdown categories
-        "login": "technical", "attendance": "technical", "examination": "general", "exam": "general",
-        "result": "general", "results": "general", "fee": "billing", "payment": "billing",
-        "erp": "technical", "bug": "technical", "dashboard": "general", "chat": "general",
-        "ai": "technical", "profile": "general", "admission": "general", "library": "general",
-        "documents": "general", "timetable": "general", "assignments": "general",
-        "live-classes": "technical", "feature": "general",
-        // AI-generated variants
-        "account": "general",
-      };
-      const mappedCategory = VALID_CATEGORIES[(category || "").toLowerCase().trim()] || "other";
+      const selectedCategory = (category || "general").toLowerCase().trim();
 
-      formData.append("message", `<strong>UI Selected Category: ${category}</strong><br/><br/>${description.trim()}`);
-      formData.append("category", mappedCategory);
+      formData.append("message", description.trim());
+      formData.append("category", selectedCategory);
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
 
