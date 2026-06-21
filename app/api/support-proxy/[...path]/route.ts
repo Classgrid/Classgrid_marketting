@@ -55,16 +55,14 @@ export async function POST(
 
     let res;
     if (contentType.includes("multipart/form-data")) {
-      // Forward the raw stream to preserve multipart boundaries exactly
+      // Parse the form data and let fetch reconstruct it with the correct boundary
+      const formData = await request.formData();
       res = await fetch(url, {
         method: "POST",
-        body: request.body as any,
+        body: formData,
         headers: {
-          "Content-Type": contentType,
           "ngrok-skip-browser-warning": "true",
         },
-        // @ts-ignore
-        duplex: "half",
       });
     } else {
       // Forward JSON body
@@ -82,6 +80,7 @@ export async function POST(
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch (err) {
+    console.error("[Support Proxy Error]:", err);
     return NextResponse.json(
       { success: false, message: "Backend unreachable" },
       { status: 502 }
