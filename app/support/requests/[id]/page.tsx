@@ -518,7 +518,7 @@ function TicketDetailPageInner() {
                           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         </motion.div>
                         <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                          Reply sent successfully
+                          Reply sent
                         </span>
                       </motion.div>
                     )}
@@ -545,21 +545,12 @@ function TicketDetailPageInner() {
                     <button
                       onClick={handleReply}
                       disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending}
-                      className={`inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-300 disabled:opacity-40 ${
-                        replySent && !isSending
-                          ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                          : "bg-primary text-primary-foreground hover:opacity-90"
-                      }`}
+                      className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
                     >
                       {isSending ? (
                         <>
                           <Spinner className="w-4 h-4 text-inherit" />
                           Sending...
-                        </>
-                      ) : replySent ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          Sent
                         </>
                       ) : (
                         <>
