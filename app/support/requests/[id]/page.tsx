@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText, CheckCircle2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -138,6 +138,8 @@ function TicketDetailPageInner() {
   const editorRef = useRef<RichReplyEditorRef>(null);
   const [isSending, setIsSending] = useState(false);
   const [replyError, setReplyError] = useState("");
+  const [replySent, setReplySent] = useState(false);
+  const replySentTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
@@ -279,6 +281,10 @@ function TicketDetailPageInner() {
       } else {
         setReplyText("");
         editorRef.current?.clear();
+        // Show "Reply Sent" toast for 10 seconds
+        setReplySent(true);
+        if (replySentTimerRef.current) clearTimeout(replySentTimerRef.current);
+        replySentTimerRef.current = setTimeout(() => setReplySent(false), 10000);
         // Update with the latest ticket data from response
         if (data.ticket) {
           setTicket(data.ticket);
@@ -494,9 +500,40 @@ function TicketDetailPageInner() {
                 className="mt-8 pt-8 border-t border-border"
               >
                 <div className="space-y-3">
+                  {/* Reply Sent Toast */}
+                  <AnimatePresence>
+                    {replySent && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm"
+                      >
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 15, delay: 0.1 }}
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        </motion.div>
+                        <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                          Reply sent successfully
+                        </span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <RichReplyEditor
                     ref={editorRef}
-                    onChange={setReplyText}
+                    onChange={(text) => {
+                      setReplyText(text);
+                      // Dismiss toast when user starts typing a new message
+                      if (text.trim() && replySent) {
+                        setReplySent(false);
+                        if (replySentTimerRef.current) clearTimeout(replySentTimerRef.current);
+                      }
+                    }}
                     placeholder="Type your reply here..."
                     minHeight={120}
                     onSubmit={handleReply}
@@ -508,12 +545,21 @@ function TicketDetailPageInner() {
                     <button
                       onClick={handleReply}
                       disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending}
-                      className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className={`inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-300 disabled:opacity-40 ${
+                        replySent && !isSending
+                          ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                          : "bg-primary text-primary-foreground hover:opacity-90"
+                      }`}
                     >
                       {isSending ? (
                         <>
                           <Spinner className="w-4 h-4 text-inherit" />
                           Sending...
+                        </>
+                      ) : replySent ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Sent
                         </>
                       ) : (
                         <>
