@@ -493,7 +493,7 @@ export async function POST(req: Request) {
               answer += ticketLink;
               // Mark this session as escalated so we don't create duplicate tickets
               if (escalationRedis) {
-                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject }), "EX", 3600);
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
               }
             } else {
               // If platform API ticket failed (often because the logged-in user isn't linked to an institution/org),
@@ -502,28 +502,72 @@ export async function POST(req: Request) {
                 answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
                 // Still mark as escalated since Sanity has the record
                 if (escalationRedis) {
-                  await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject }), "EX", 3600);
+                  await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
                 }
               } else {
                 answer = "Since you are not logged in, I cannot automatically create a support ticket. For a quick or instant message to our team, please use the **[Contact Page](/contact)**. For a more detailed conversation, please log in and use **[Classgrid Talk](/support/inquiry)**. 😊";
               }
             }
           } else if (escalateMatch && alreadyEscalated) {
-            // AI tried to escalate again but we already have a ticket — strip the [ESCALATE:] tag
-            // but KEEP the rest of the AI's actual response so it can answer naturally
+            // AI tried to escalate again — instead of blocking, ADD the new context to the existing ticket
+            const newContext = escalateMatch[1]?.trim() || question;
             answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
-            if (!answer || answer.length < 15) {
-              // Only use fallback if the AI's entire response was just the escalation tag with no other text
-              // Try to include the original escalation summary so the AI gives useful context
-              let escalationContext = "";
-              try {
-                const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
-                if (savedEscalation && savedEscalation !== "true") {
-                  const parsed = JSON.parse(savedEscalation);
-                  escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
+
+            // Try to add the new context as a reply to the existing ticket
+            let updatedTicket = false;
+            let savedTicketId: string | null = null;
+            try {
+              const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+              if (savedEscalation && savedEscalation !== "true") {
+                const parsed = JSON.parse(savedEscalation);
+                savedTicketId = parsed.ticketId || null;
+              }
+            } catch (_) { }
+
+            if (savedTicketId) {
+              const email = userEmail || body?.userEmail;
+              if (email) {
+                try {
+                  const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+                  const replyFormData = new FormData();
+                  replyFormData.append("email", email);
+                  replyFormData.append("name", body.userName || "User");
+                  replyFormData.append("message", `<strong>Additional Context (via AI Chat):</strong><br/>${newContext}<br/><br/><strong>User's Message:</strong><br/>${question}`);
+
+                  const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
+                    method: "POST",
+                    body: replyFormData,
+                  });
+
+                  if (replyRes.ok) {
+                    updatedTicket = true;
+                  } else {
+                    console.error("[AI Update Ticket] Reply API failed:", replyRes.status, await replyRes.text());
+                  }
+                } catch (e: any) {
+                  console.error("[AI Update Ticket] Failed to update ticket:", e.message);
                 }
-              } catch (_) { }
-              answer = `Your issue has already been escalated to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
+              }
+            }
+
+            if (updatedTicket) {
+              if (!answer || answer.length < 15) {
+                answer = "I've added your additional details to the existing support ticket. The team now has the full context of your issue! 🙏";
+              } else {
+                answer += `\n\n*✅ Your additional details have been added to your existing ticket (#${savedTicketId?.slice(0, 8)}). The support team will see the updated information.*`;
+              }
+            } else {
+              if (!answer || answer.length < 15) {
+                let escalationContext = "";
+                try {
+                  const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+                  if (savedEscalation && savedEscalation !== "true") {
+                    const parsed = JSON.parse(savedEscalation);
+                    escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
+                  }
+                } catch (_) { }
+                answer = `Your issue has already been escalated to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
+              }
             }
           }
 
