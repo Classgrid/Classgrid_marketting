@@ -229,6 +229,7 @@ export default function RaiseTicketPage() {
   // ─── Derive org status from session ───
   const isPlatformUser = (session?.user as any)?.isPlatformUser === true;
   const orgName = (session?.user as any)?.orgName || null;
+  const platformRole = (session?.user as any)?.platformRole || null;
 
   // ─── Auth / Choice Gate ───
   if (!identityReady && status === "loading") {
@@ -295,7 +296,50 @@ export default function RaiseTicketPage() {
     );
   }
 
-  // ── STATE 2: Logged in but NOT a platform user (no org) ──
+  // ── STATE 2: Logged in but is Super Admin ──
+  if (knownEmail && platformRole === "super_admin") {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-3xl md:rounded-[2rem] border border-blue-500/30 bg-card shadow-2xl shadow-black/30">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500" />
+          <div className="flex flex-col md:flex-row min-h-[400px]">
+            <div className="relative flex flex-col justify-center p-6 sm:p-10 md:p-14 md:w-1/2 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-blue-500/5 to-transparent">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8">
+                  <Shield className="w-8 h-8 text-blue-500" />
+                </div>
+                <h2 className="text-3xl font-bold text-foreground mb-4">Super Admin Access</h2>
+                <div className="w-12 h-1.5 rounded-full bg-blue-500 mb-6" />
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  You are logged in as a <span className="font-medium text-foreground">Super Admin</span>. You cannot raise support tickets for yourself. To manage support tickets and interact with users, please use the Super Admin Dashboard.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-14 md:w-1/2 bg-card">
+              <h3 className="text-xl font-semibold text-foreground mb-6 text-center">Platform Management</h3>
+              <a href="https://superadmin.classgrid.in" className="w-full max-w-[320px]">
+                <Button className="h-14 w-full rounded-xl bg-blue-600 font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all text-base">
+                  Go to Dashboard
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </a>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                showGlow={false}
+                className="mt-4 h-12 w-full max-w-[320px] rounded-xl font-medium text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign out
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // ── STATE 3: Logged in but NOT a platform user (no org) ──
   if (knownEmail && !isPlatformUser && !showForm) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-background p-4 md:p-12">
