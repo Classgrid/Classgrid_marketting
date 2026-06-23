@@ -510,7 +510,6 @@ export default function RaiseTicketPage() {
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-primary" />
           </div>
-          <SectionAccentBar />
           <h2 className="text-2xl font-bold text-foreground mb-3">
             Request submitted
           </h2>
