@@ -50,6 +50,8 @@ function statusLabel(status: string) {
       return "Awaiting your reply";
     case "open":
       return "Open";
+    case "reopened":
+      return "Reopened";
     case "closed":
       return "Closed";
     case "resolved":
@@ -273,12 +275,15 @@ export default function MyRequestsPage() {
                 </span>
                 <div className="relative">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="h-10 px-3 rounded-lg border border-border bg-muted text-sm font-medium text-foreground focus:ring-2 focus:ring-emerald-500/40 w-[130px]">
-                      <SelectValue placeholder="Any" />
+                    <SelectTrigger className="h-10 px-3 rounded-lg border border-border bg-muted text-sm font-medium text-foreground focus:ring-2 focus:ring-emerald-500/40 w-fit min-w-[130px]">
+                      <SelectValue placeholder="Any">
+                        {statusFilter === "Any" ? "Any" : statusLabel(statusFilter)}
+                      </SelectValue>
                     </SelectTrigger>
-                    <SelectContent side="bottom" className="min-w-[130px]">
+                    <SelectContent side="bottom" className="w-fit min-w-[130px]">
                       <SelectItem value="Any">Any</SelectItem>
                       <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="reopened">Reopened</SelectItem>
                       <SelectItem value="waiting_on_user">Awaiting your reply</SelectItem>
                       <SelectItem value="in_progress">In progress</SelectItem>
                       <SelectItem value="resolved">Resolved</SelectItem>
@@ -294,6 +299,7 @@ export default function MyRequestsPage() {
                   >
                     <option value="Any">Any</option>
                     <option value="open">Open</option>
+                    <option value="reopened">Reopened</option>
                     <option value="waiting_on_user">Awaiting your reply</option>
                     <option value="in_progress">In progress</option>
                     <option value="resolved">Resolved</option>
@@ -388,6 +394,8 @@ export default function MyRequestsPage() {
                                 className={`w-2 h-2 rounded-full ${
                                   req.status === "resolved" || req.status === "closed"
                                     ? "bg-muted-foreground"
+                                    : req.status === "reopened"
+                                    ? "bg-indigo-500"
                                     : req.status === "open"
                                     ? "bg-emerald-500"
                                     : req.status === "waiting_on_user"
@@ -447,6 +455,8 @@ export default function MyRequestsPage() {
                             className={`w-2 h-2 rounded-full ${
                               req.status === "resolved" || req.status === "closed"
                                 ? "bg-muted-foreground"
+                                : req.status === "reopened"
+                                ? "bg-indigo-500"
                                 : req.status === "open"
                                 ? "bg-emerald-500"
                                 : req.status === "waiting_on_user"
