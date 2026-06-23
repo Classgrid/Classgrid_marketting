@@ -52,6 +52,25 @@ function normalizeSupportEmail(value?: string | null) {
   return next && next !== "undefined" ? next : "";
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  technical: "Technical Support / ERP / AI / API",
+  billing: "Billing & Subscription",
+  academics: "Academics / Attendance / Admissions",
+  exams: "Examination Systems",
+  communication: "Communication & Scheduling",
+  finance: "HR & Payroll / Finance",
+  getting_started: "Getting Started",
+  account_security: "Account & Security",
+  general: "General Inquiry",
+  other: "Other"
+};
+
+const PRIORITY_LABELS: Record<string, string> = {
+  low: "🟢 Low — General question",
+  medium: "🟡 Medium — Need help soon",
+  high: "🔴 High — Urgent / Blocking operations"
+};
+
 export default function InquiryPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -560,7 +579,9 @@ export default function InquiryPage() {
                 <div className="relative">
                   <Select value={category} onValueChange={setCategory}>
                     <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                      <SelectValue placeholder="Select a topic" />
+                      <SelectValue placeholder="Select a topic">
+                        {(val) => val ? CATEGORY_LABELS[val as string] || val : null}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent side="bottom" alignItemWithTrigger={false} className="max-h-[280px] overflow-y-auto">
                       <SelectItem value="technical">Technical Support / ERP / AI / API</SelectItem>
@@ -601,7 +622,9 @@ export default function InquiryPage() {
                 <div className="relative">
                   <Select value={priority} onValueChange={setPriority}>
                     <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
-                      <SelectValue placeholder="Select priority" />
+                      <SelectValue placeholder="Select priority">
+                        {(val) => val ? PRIORITY_LABELS[val as string] || val : null}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent side="bottom" className="max-h-[280px] overflow-y-auto">
                       <SelectItem value="low">🟢 Low — General question</SelectItem>
