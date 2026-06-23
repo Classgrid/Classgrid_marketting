@@ -47,7 +47,7 @@ function statusLabel(status: string) {
     case "in_progress":
       return "In Progress";
     case "waiting_on_user":
-      return "Waiting on User";
+      return "Awaiting your reply";
     case "open":
       return "Open";
     case "closed":
@@ -279,7 +279,7 @@ export default function MyRequestsPage() {
                     <SelectContent side="bottom" className="min-w-[130px]">
                       <SelectItem value="Any">Any</SelectItem>
                       <SelectItem value="open">Open</SelectItem>
-                      <SelectItem value="waiting_on_user">Waiting on User</SelectItem>
+                      <SelectItem value="waiting_on_user">Awaiting your reply</SelectItem>
                       <SelectItem value="in_progress">In progress</SelectItem>
                       <SelectItem value="resolved">Resolved</SelectItem>
                       <SelectItem value="closed">Closed</SelectItem>
@@ -294,7 +294,7 @@ export default function MyRequestsPage() {
                   >
                     <option value="Any">Any</option>
                     <option value="open">Open</option>
-                    <option value="waiting_on_user">Waiting on User</option>
+                    <option value="waiting_on_user">Awaiting your reply</option>
                     <option value="in_progress">In progress</option>
                     <option value="resolved">Resolved</option>
                     <option value="closed">Closed</option>

@@ -97,7 +97,7 @@ function statusLabel(status: string) {
     case "in_progress":
       return "In Progress";
     case "waiting_on_user":
-      return "Waiting on User";
+      return "Awaiting your reply";
     default:
       return status.charAt(0).toUpperCase() + status.slice(1);
   }
