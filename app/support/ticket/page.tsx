@@ -49,6 +49,7 @@ import LinkModal from "@/app/support/components/LinkModal";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { uploadToSupabase } from "@/lib/supabase-storage";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 
 function normalizeSupportEmail(value?: string | null) {
@@ -98,6 +99,7 @@ export default function RaiseTicketPage() {
   const [name, setName] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [category, setCategory] = useState("general");
+  const [customCategory, setCustomCategory] = useState("");
   const [priority, setPriority] = useState("medium");
   const [dragActive, setDragActive] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -209,7 +211,9 @@ export default function RaiseTicketPage() {
       formData.append("email", email.trim());
       formData.append("subject", subject.trim());
 
-      const selectedCategory = (category || "general").toLowerCase().trim();
+      const selectedCategory = category === "other" && customCategory.trim() 
+        ? customCategory.trim() 
+        : (category || "general").toLowerCase().trim();
 
       formData.append("message", description.trim());
       formData.append("category", selectedCategory);

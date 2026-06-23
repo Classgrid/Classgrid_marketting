@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   ArrowRight,
@@ -86,6 +87,7 @@ export default function InquiryPage() {
   const [name, setName] = useState("");
   const [institution, setInstitution] = useState("");
   const [category, setCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
   const [priority, setPriority] = useState("medium");
   const [files, setFiles] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
@@ -210,7 +212,9 @@ export default function InquiryPage() {
       formData.append("name", name.trim());
       formData.append("email", email.trim());
       formData.append("subject", subject.trim());
-      const selectedCategory = (category || "general").toLowerCase().trim();
+      const selectedCategory = category === "other" && customCategory.trim() 
+        ? customCategory.trim() 
+        : (category || "general").toLowerCase().trim();
 
       formData.append("message", description.trim());
       formData.append("category", selectedCategory);
@@ -596,6 +600,24 @@ export default function InquiryPage() {
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                  
+                  {category === "other" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-3"
+                    >
+                      <Input
+                        type="text"
+                        placeholder="Please specify your category..."
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        className="w-full h-11 px-4 rounded-lg border border-input bg-background/50 text-foreground text-sm focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all duration-300"
+                        required={category === "other"}
+                      />
+                    </motion.div>
+                  )}
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
