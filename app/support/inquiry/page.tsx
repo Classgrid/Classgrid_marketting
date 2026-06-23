@@ -613,7 +613,7 @@ export default function InquiryPage() {
                         placeholder="Please specify your category..."
                         value={customCategory}
                         onChange={(e) => setCustomCategory(e.target.value)}
-                        className="w-full h-11 px-4 rounded-lg border border-input bg-background/50 text-foreground text-sm focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all duration-300"
+                        className="w-full h-11 px-4 rounded-lg border border-input bg-background/50 text-foreground text-sm transition-all duration-300 !ring-0 focus-visible:!ring-0 focus-visible:!border-input focus:!border-input"
                         required={category === "other"}
                       />
                     </motion.div>
