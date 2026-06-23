@@ -688,6 +688,24 @@ export default function RaiseTicketPage() {
                     <option value="other">Other</option>
                   </select>
                 </div>
+                
+                {category === "other" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-3"
+                  >
+                    <Input
+                      type="text"
+                      placeholder="Please specify your category..."
+                      value={customCategory}
+                      onChange={(e) => setCustomCategory(e.target.value)}
+                      className="w-full h-11 px-4 rounded-lg border border-input bg-background/50 text-foreground text-sm focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all duration-300"
+                      required={category === "other"}
+                    />
+                  </motion.div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-semibold text-foreground">Priority</Label>
