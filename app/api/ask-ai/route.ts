@@ -381,20 +381,7 @@ export async function POST(req: Request) {
             // Map AI-generated categories to valid platform API enum values.
             // The platform API ONLY accepts these 4 category enums:
             // 'technical', 'billing', 'general', 'other'
-            // Universal category mapper — the platform API ONLY accepts: technical, billing, general, other
-            const VALID_CATEGORIES: Record<string, string> = {
-              // Canonical values
-              "technical": "technical", "billing": "billing", "general": "general", "other": "other",
-              // UI dropdown categories
-              "login": "technical", "attendance": "technical", "examination": "general", "exam": "general",
-              "result": "general", "results": "general", "fee": "billing", "payment": "billing",
-              "erp": "technical", "bug": "technical", "dashboard": "general", "chat": "general",
-              "ai": "technical", "profile": "general", "admission": "general", "library": "general",
-              "documents": "general", "timetable": "general", "assignments": "general",
-              "live-classes": "technical", "feature": "general",
-              // AI-generated variants
-              "account": "general",
-            };
+            const aiCategory = rawCategory;
             const VALID_PRIORITIES: Record<string, string> = {
               "low": "low",
               "medium": "medium",
@@ -402,7 +389,6 @@ export async function POST(req: Request) {
               "urgent": "high",
               "critical": "high",
             };
-            const aiCategory = VALID_CATEGORIES[rawCategory] || "other";
             const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
 
             answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
