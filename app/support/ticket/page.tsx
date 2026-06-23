@@ -1230,11 +1230,11 @@ export default function RaiseTicketPage() {
 
           const label = text || url;
           if (text && savedSelection && !savedSelection.collapsed) {
-             document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+            document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
           } else if (!savedSelection || savedSelection.collapsed) {
-             document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>&nbsp;`);
+            document.execCommand("insertHTML", false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>&nbsp;`);
           } else {
-             document.execCommand("createLink", false, url);
+            document.execCommand("createLink", false, url);
           }
 
           if (editor) setDescription(editor.innerHTML);

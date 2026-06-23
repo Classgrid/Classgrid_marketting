@@ -46,6 +46,8 @@ function statusLabel(status: string) {
   switch (status) {
     case "in_progress":
       return "In Progress";
+    case "waiting_on_user":
+      return "Waiting on User";
     case "open":
       return "Open";
     case "closed":
@@ -277,6 +279,7 @@ export default function MyRequestsPage() {
                     <SelectContent side="bottom" className="min-w-[130px]">
                       <SelectItem value="Any">Any</SelectItem>
                       <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="waiting_on_user">Waiting on User</SelectItem>
                       <SelectItem value="in_progress">In progress</SelectItem>
                       <SelectItem value="resolved">Resolved</SelectItem>
                       <SelectItem value="closed">Closed</SelectItem>
@@ -291,6 +294,7 @@ export default function MyRequestsPage() {
                   >
                     <option value="Any">Any</option>
                     <option value="open">Open</option>
+                    <option value="waiting_on_user">Waiting on User</option>
                     <option value="in_progress">In progress</option>
                     <option value="resolved">Resolved</option>
                     <option value="closed">Closed</option>
@@ -386,6 +390,8 @@ export default function MyRequestsPage() {
                                     ? "bg-muted-foreground"
                                     : req.status === "open"
                                     ? "bg-emerald-500"
+                                    : req.status === "waiting_on_user"
+                                    ? "bg-red-500"
                                     : "bg-amber-500"
                                 }`}
                               />
@@ -443,6 +449,8 @@ export default function MyRequestsPage() {
                                 ? "bg-muted-foreground"
                                 : req.status === "open"
                                 ? "bg-emerald-500"
+                                : req.status === "waiting_on_user"
+                                ? "bg-red-500"
                                 : "bg-amber-500"
                             }`}
                           />

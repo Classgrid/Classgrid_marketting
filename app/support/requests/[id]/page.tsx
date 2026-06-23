@@ -68,6 +68,8 @@ function statusColor(status: string) {
       return "bg-emerald-500";
     case "in_progress":
       return "bg-amber-500";
+    case "waiting_on_user":
+      return "bg-red-500";
     default:
       return "bg-muted-foreground";
   }
@@ -78,13 +80,15 @@ function statusBadgeBg(status: string) {
     case "resolved":
       return "bg-emerald-500";
     case "closed":
-      return "bg-muted0";
+      return "bg-zinc-500";
     case "in_progress":
       return "bg-amber-500";
     case "open":
       return "bg-blue-500";
+    case "waiting_on_user":
+      return "bg-red-500";
     default:
-      return "bg-muted0";
+      return "bg-zinc-500";
   }
 }
 
@@ -92,6 +96,8 @@ function statusLabel(status: string) {
   switch (status) {
     case "in_progress":
       return "In Progress";
+    case "waiting_on_user":
+      return "Waiting on User";
     default:
       return status.charAt(0).toUpperCase() + status.slice(1);
   }
