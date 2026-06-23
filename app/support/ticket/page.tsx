@@ -78,9 +78,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_LABELS: Record<string, string> = {
-  low: "🟢 Low — Minor issue, not urgent",
-  medium: "🟡 Medium — Affecting my work",
-  high: "🔴 High — Blocking critical operations"
+  low: "🟢 Low",
+  medium: "🟡 Medium",
+  high: "🔴 High"
 };
 
 export default function RaiseTicketPage() {

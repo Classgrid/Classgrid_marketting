@@ -66,9 +66,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_LABELS: Record<string, string> = {
-  low: "🟢 Low — General question",
-  medium: "🟡 Medium — Need help soon",
-  high: "🔴 High — Urgent / Blocking operations"
+  low: "🟢 Low",
+  medium: "🟡 Medium",
+  high: "🔴 High"
 };
 
 export default function InquiryPage() {
