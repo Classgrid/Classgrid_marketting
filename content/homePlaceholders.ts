@@ -85,7 +85,7 @@ export const placeholderChromeContent: ChromeContent = {
   brandTagline: "The Operating System for Modern Education",
   siteUrl: siteMeta.domain,
   contactEmail: siteMeta.supportEmail,
-  logoUrl: "/logo.png",
+  logoUrl: "/logo.png?v=2",
   logoAlt: "Classgrid logo",
   navbarMenuItems: [
     {
