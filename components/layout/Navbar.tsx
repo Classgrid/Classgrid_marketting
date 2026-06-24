@@ -268,14 +268,7 @@ export function Navbar({
                   className="h-10 w-auto object-contain"
                 />
               ) : null}
-              {brandName ? (
-                <span className={cn(
-                  "text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-white/90",
-                  docsMode && "hidden sm:inline"
-                )}>
-                  {brandName}
-                </span>
-              ) : null}
+              {/* brandName text hidden — logo-only header */}
             </Link>
           )}
 
