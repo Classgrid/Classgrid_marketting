@@ -88,6 +88,7 @@ export default function InquiryPage() {
   const [institution, setInstitution] = useState("");
   const [category, setCategory] = useState("");
   const [role, setRole] = useState("");
+  const [customRole, setCustomRole] = useState("");
   const [customCategory, setCustomCategory] = useState("");
   const [priority, setPriority] = useState("medium");
   const [files, setFiles] = useState<File[]>([]);
@@ -220,7 +221,10 @@ export default function InquiryPage() {
       formData.append("message", description.trim());
       formData.append("category", selectedCategory);
       formData.append("institution", institution.trim());
-      formData.append("role", role);
+      const selectedRole = role === "other" && customRole.trim() 
+        ? customRole.trim() 
+        : role;
+      formData.append("role", selectedRole);
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
 
@@ -649,6 +653,23 @@ export default function InquiryPage() {
                     <option value="other">Other</option>
                   </select>
                 </div>
+                {role === "other" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="pt-3"
+                  >
+                    <input
+                      type="text"
+                      value={customRole}
+                      onChange={(e) => setCustomRole(e.target.value)}
+                      required
+                      placeholder="Please specify your role..."
+                      className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+                    />
+                  </motion.div>
+                )}
               </div>
             </div>
 
