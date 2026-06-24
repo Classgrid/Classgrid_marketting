@@ -19,7 +19,7 @@ export async function sendSafetyEmail(
   toEmail: string,
   userName: string,
   strikeCount: number,
-  flaggedMessages: { content: string; timestamp: string }[]
+  flaggedMessages: { message: string; timestamp: string }[]
 ) {
   if (!toEmail) return;
 
@@ -41,7 +41,7 @@ export async function sendSafetyEmail(
           timeZone: "Asia/Kolkata",
           dateStyle: "medium",
           timeStyle: "short",
-        })}):</strong> "${m.content}"</li>`
+        })}):</strong> "${m.message}"</li>`
     )
     .join("");
 
