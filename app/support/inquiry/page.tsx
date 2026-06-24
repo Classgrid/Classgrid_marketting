@@ -87,6 +87,7 @@ export default function InquiryPage() {
   const [name, setName] = useState("");
   const [institution, setInstitution] = useState("");
   const [category, setCategory] = useState("");
+  const [role, setRole] = useState("");
   const [customCategory, setCustomCategory] = useState("");
   const [priority, setPriority] = useState("medium");
   const [files, setFiles] = useState<File[]>([]);
@@ -219,6 +220,7 @@ export default function InquiryPage() {
       formData.append("message", description.trim());
       formData.append("category", selectedCategory);
       formData.append("institution", institution.trim());
+      formData.append("role", role);
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
 
@@ -559,19 +561,95 @@ export default function InquiryPage() {
               </div>
             </div>
 
-            {/* Institution */}
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">
-                Institution Name <span className="text-destructive">*</span>
-              </Label>
-              <input
-                type="text"
-                value={institution}
-                onChange={(e) => setInstitution(e.target.value)}
-                required
-                placeholder="e.g. Cambridge High School"
-                className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
-              />
+            {/* Institution + Role */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-foreground">
+                  Institution Name <span className="text-destructive">*</span>
+                </Label>
+                <input
+                  type="text"
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
+                  required
+                  placeholder="e.g. Cambridge High School"
+                  className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-foreground">
+                  Your Role <span className="text-destructive">*</span>
+                </Label>
+                <div className="relative">
+                  <Select value={role} onValueChange={setRole}>
+                    <SelectTrigger className="w-full h-11 px-4 rounded-lg border border-input bg-background text-foreground text-sm">
+                      <SelectValue placeholder="Select your role">
+                        {(val) => {
+                          const roleLabels: Record<string, string> = {
+                            principal: "Principal / Director",
+                            vice_principal: "Vice Principal",
+                            hod: "Head of Department (HOD)",
+                            dean: "Dean",
+                            registrar: "Registrar",
+                            admin_officer: "Admin Officer / Coordinator",
+                            teacher: "Teacher / Faculty",
+                            it_admin: "IT Administrator",
+                            accountant: "Accountant / Finance Officer",
+                            librarian: "Librarian",
+                            parent: "Parent / Guardian",
+                            student: "Student",
+                            trustee: "Trustee / Management",
+                            consultant: "EdTech Consultant",
+                            other: "Other",
+                          };
+                          return val ? roleLabels[val as string] || val : null;
+                        }}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent side="bottom" alignItemWithTrigger={false} className="max-h-[320px] overflow-y-auto">
+                      <SelectItem value="principal">Principal / Director</SelectItem>
+                      <SelectItem value="vice_principal">Vice Principal</SelectItem>
+                      <SelectItem value="hod">Head of Department (HOD)</SelectItem>
+                      <SelectItem value="dean">Dean</SelectItem>
+                      <SelectItem value="registrar">Registrar</SelectItem>
+                      <SelectItem value="admin_officer">Admin Officer / Coordinator</SelectItem>
+                      <SelectItem value="teacher">Teacher / Faculty</SelectItem>
+                      <SelectItem value="it_admin">IT Administrator</SelectItem>
+                      <SelectItem value="accountant">Accountant / Finance Officer</SelectItem>
+                      <SelectItem value="librarian">Librarian</SelectItem>
+                      <SelectItem value="parent">Parent / Guardian</SelectItem>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="trustee">Trustee / Management</SelectItem>
+                      <SelectItem value="consultant">EdTech Consultant</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
+                  >
+                    <option value="" disabled>Select your role</option>
+                    <option value="principal">Principal / Director</option>
+                    <option value="vice_principal">Vice Principal</option>
+                    <option value="hod">Head of Department (HOD)</option>
+                    <option value="dean">Dean</option>
+                    <option value="registrar">Registrar</option>
+                    <option value="admin_officer">Admin Officer / Coordinator</option>
+                    <option value="teacher">Teacher / Faculty</option>
+                    <option value="it_admin">IT Administrator</option>
+                    <option value="accountant">Accountant / Finance Officer</option>
+                    <option value="librarian">Librarian</option>
+                    <option value="parent">Parent / Guardian</option>
+                    <option value="student">Student</option>
+                    <option value="trustee">Trustee / Management</option>
+                    <option value="consultant">EdTech Consultant</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Category + Priority */}
