@@ -7,7 +7,7 @@ import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon } from "lucide
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { supabase } from "@/lib/supabase-storage";
+import { getPresignedUrlForResume } from "@/app/actions/r2-actions";
 import FilePreviewModal from "@/app/support/components/FilePreviewModal";
 import { Spinner } from "@/components/ui/spinner";
 import locationData from "@/data/india-locations.json";
@@ -159,25 +159,33 @@ export function CareersForm({
           return;
         }
         
-        const timestamp = Date.now();
-        const sanitizedName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const filePath = `applications/${timestamp}_${sanitizedName}`;
+        try {
+          const { uploadUrl, publicUrl } = await getPresignedUrlForResume(
+            selectedFile.name,
+            selectedFile.type || 'application/octet-stream'
+          );
 
-        const { data, error } = await supabase.storage
-          .from("resumes")
-          .upload(filePath, selectedFile, { cacheControl: "3600", upsert: false });
+          const r2Response = await fetch(uploadUrl, {
+            method: "PUT",
+            body: selectedFile,
+            headers: {
+              "Content-Type": selectedFile.type || 'application/octet-stream',
+            },
+          });
 
-        if (error) {
-          console.error("Supabase upload error:", error.message);
+          if (!r2Response.ok) {
+            throw new Error(`R2 upload failed: ${r2Response.statusText}`);
+          }
+
+          resumeUrl = publicUrl;
+          setUploadProgress(100);
+        } catch (error: any) {
+          console.error("Cloudflare R2 upload error:", error.message || error);
           setErrorMsg("Failed to upload resume. Please try again.");
           setIsSubmitting(false);
           clearInterval(progressInterval!);
           return;
         }
-
-        const { data: urlData } = supabase.storage.from("resumes").getPublicUrl(data.path);
-        resumeUrl = urlData.publicUrl;
-        setUploadProgress(100);
       }
 
       const payload = {

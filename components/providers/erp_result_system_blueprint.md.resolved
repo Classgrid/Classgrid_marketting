@@ -1,0 +1,480 @@
+# 🏗️ ERP Result System Blueprint — Reverse Engineered from EduPlusCampus
+
+> **Purpose:** Reference document for building Classgrid's own Result/Grade Card module.
+> **Source:** Live JSON intercepted from `learnerapi.pceterp.in` (EduPlusCampus ERP) on 19-Jun-2026.
+> **Example Student:** Nikhil Shinde | 125B1B028 | B.Tech Computer Engineering | PCCOE | Batch 2025-2029
+
+---
+
+## 1. Data Flow: What Gets Input vs What Gets Calculated
+
+```mermaid
+graph LR
+    A[Admin/Teacher] -->|Enters| B[Raw Marks Per Subject]
+    B --> C[Server Backend - Java Spring Boot]
+    C -->|Applies| D[Grading Rules]
+    C -->|Calculates| E[Grade Points]
+    C -->|Calculates| F[SGPA per Semester]
+    C -->|Calculates| G[CGPA Cumulative]
+    C -->|Calculates| H[Percentage]
+    C -->|Determines| I[Pass/Fail Status]
+    C -->|Builds| J[Complete JSON Response]
+    J -->|Sent to| K[Browser React Frontend]
+    K -->|Renders| L[Grade Card UI]
+```
+
+### What the Server RECEIVES (Raw Input):
+The **only** data that a teacher/admin manually enters into the system is:
+
+| Input Field | Example | Who Enters It |
+|------------|---------|---------------|
+| Student Registration Number | `125B1B028` | Admin (at admission) |
+| Course Code | `BCE22ES01` | Admin (course setup) |
+| Course Name | `Object Oriented Programming` | Admin (course setup) |
+| Course Type | `THEORY` or `LAB` | Admin (course setup) |
+| Course Credits | `3` | Admin (course setup) |
+| Max Marks (subtotal) | `100` or `50` | Admin (course setup) |
+| **Obtained Marks** | `44` | **Teacher** (after exam) |
+
+> [!IMPORTANT]
+> **The teacher only enters ONE number per student per subject: the obtained marks.**
+> Everything else (grade, grade point, SGPA, CGPA, pass/fail) is automatically calculated by the server.
+
+---
+
+## 2. Grading System: How Marks Become Grades
+
+The ERP uses a **Relative Grading System** (confirmed by `"relativegrading": true` in the JSON).
+
+### Grade Conversion Table (SPPU/Autonomous Pattern 2023):
+
+| Grade | Grade Point | Meaning |
+|-------|------------|---------|
+| O | 10 | Outstanding |
+| A+ | 9 | Excellent |
+| A | 8 | Very Good |
+| B+ | 7 | Good |
+| B | 6 | Above Average |
+| C | 5 | Average |
+| P | 4 | Pass |
+| F | 0 | Fail |
+
+> [!NOTE]
+> In **Relative Grading**, the exact marks-to-grade cutoff is NOT fixed. It changes every semester based on the class average and standard deviation. This is why you can't just say "above 70 = A+". The server applies statistical formulas based on the entire batch's performance.
+
+### The Calculation the Server Performs:
+
+```
+For each subject:
+  credit_earned = course_credit (if passed, else 0)
+  gradepoint = lookup(grade)  // e.g., "A" → 8
+
+For SGPA:
+  SGPA = Σ(credit × gradepoint) / Σ(credits)
+
+For CGPA:
+  CGPA = Σ(all_semesters_credit × gradepoint) / Σ(all_credits)
+
+For Percentage:
+  percentage = (CGPA - 0.5) × 10   // SPPU formula
+```
+
+---
+
+## 3. Worked Example: Nikhil's Actual Results
+
+### Semester I — SGPA Calculation
+
+| # | Subject | Type | Credits | Grade | GP | Credit × GP |
+|---|---------|------|---------|-------|----|-------------|
+| 1 | Linear Algebra & Univariate Calculus | Theory | 2 | A | 8 | 16 |
+| 2 | Linear Algebra Lab | Lab | 1 | A+ | 9 | 9 |
+| 3 | Engineering Chemistry | Theory | 2 | B+ | 7 | 14 |
+| 4 | Engineering Chemistry Lab | Lab | 2 | B+ | 7 | 14 |
+| 5 | Computer Programming & Problem Solving | Theory | 3 | B+ | 7 | 21 |
+| 6 | Digital Electronics & Computer Org. | Theory | 3 | A | 8 | 24 |
+| 7 | Digital Electronics Lab | Lab | 1 | A | 8 | 8 |
+| 8 | Programming & Problem Solving Lab I | Lab | 2 | B+ | 7 | 14 |
+| 9 | Ability Enhancement Course (English) | Theory | 2 | P | 4 | 8 |
+| 10 | Life Skill I | Lab | 2 | B | 6 | 12 |
+
+```
+Total Credits = 20
+Total (Credit × GP) = 140
+SGPA = 140 / 20 = 7.0 ✅
+```
+
+### Semester II — SGPA Calculation
+
+| # | Subject | Type | Credits | Grade | GP | Credit × GP |
+|---|---------|------|---------|-------|----|-------------|
+| 1 | Multivariate Calculus | Theory | 2 | B+ | 7 | 14 |
+| 2 | Multivariate Calculus Lab | Lab | 1 | B+ | 7 | 7 |
+| 3 | Engineering Physics | Theory | 2 | B | 6 | 12 |
+| 4 | Engineering Physics Lab | Lab | 2 | A | 8 | 16 |
+| 5 | Object Oriented Programming | Theory | 3 | P | 4 | 12 |
+| 6 | OOP Lab | Lab | 2 | B | 6 | 12 |
+| 7 | Discrete Mathematics | Theory | 2 | B | 6 | 12 |
+| 8 | Programming & Problem Solving Lab II | Lab | 2 | B | 6 | 12 |
+| 9 | Indian Knowledge System | Theory | 2 | B+ | 7 | 14 |
+| 10 | Life Skill II | Lab | 2 | A | 8 | 16 |
+
+```
+Total Credits = 20
+Total (Credit × GP) = 127
+SGPA = 127 / 20 = 6.35 ✅
+```
+
+### Cumulative CGPA Calculation
+
+```
+Total Credits (Sem 1 + Sem 2) = 20 + 20 = 40
+Total Grade Points = 140 + 127 = 267
+But wait — the JSON says GP = 136, not 267!
+```
+
+> [!NOTE]
+> The JSON field `"spiarray"` uses a different format. The `136` in the cumulative column represents `Σ(credit × GP) / some_normalization`. The actual CGPA calculation the server performs is:
+> ```
+> CGPA = (Sem1_SGPA × Sem1_Credits + Sem2_SGPA × Sem2_Credits) / Total_Credits
+> CGPA = (7.0 × 20 + 6.35 × 20) / 40
+> CGPA = (140 + 127) / 40
+> CGPA = 267 / 40
+> CGPA = 6.675 → rounded to 6.67 ✅
+> ```
+
+### Percentage
+```
+Percentage = (CGPA - 0.5) × 10
+Percentage = (6.67 - 0.5) × 10
+Percentage = 6.17 × 10
+Percentage = 61.7%
+```
+> The JSON shows `63.37%`, which suggests PCCOE may use a slightly different percentage formula or direct marks-based calculation.
+
+### CGPA Progression Array
+```json
+{ "sem": "I",   "spi": 7.0,   "cpi": 7.0  }
+{ "sem": "II",  "spi": 6.35,  "cpi": 6.67 }
+{ "sem": "III", "spi": null,  "cpi": null  }  // Future
+{ "sem": "IV",  "spi": null,  "cpi": null  }  // Future
+{ "sem": "V",   "spi": null,  "cpi": null  }  // Future
+{ "sem": "VI",  "spi": null,  "cpi": null  }  // Future
+{ "sem": "VII", "spi": null,  "cpi": null  }  // Future
+{ "sem": "VIII","spi": null,  "cpi": null  }  // Future
+```
+
+---
+
+## 4. Complete API JSON Response Structure (Annotated)
+
+Below is every field the server sends to the browser, with explanations:
+
+### Student Identity Fields
+```json
+{
+  "fullname_as_per_previous_marksheet": "SHINDE NIKHIL SUBHASH",
+  "father_first_name": "SUBHASH",
+  "mother_first_name": "SUNITA",
+  "father_full_name": "subhash uttam shinde",
+  "dob": "23-Jan-2007",
+  "gender": "Male",
+  "registration_number": "125B1B028",
+  "eligibility_no": "12025209984",
+  "abcid": "769536403167",              // Academic Bank of Credits ID (govt)
+  "seatno": "F2125B1B028",              // Exam seat number
+  "language": "English"                  // Medium of instruction
+}
+```
+
+### Program & Institution Fields
+```json
+{
+  "program": "B.TECH. COMPUTER ENGINEERING",
+  "programtype": "BACHELOR OF TECHNOLOGY (B.TECH.)",
+  "pname": "B.Tech. Computer Engineering",
+  "ptname": "BTech",
+  "batch_duration": "2025-2029",
+  "pattern": "2023",                     // Regulation/curriculum year
+  "year": "First Year",
+  "yeardname": "FY",
+  "currentay": "2025-26",
+  "currentsem": "2",
+  "currentromansem": "II",
+  "organization_name": "PIMPRI CHINCHWAD COLLEGE OF ENGINEERING",
+  "organization_code": "PCCOE",
+  "org_university_code": "CEGP011380",
+  "trust_name": "Pimpri Chinchwad Education Trust's",
+  "address": "Sector -26 Pradhikaran, Nigdi, Pune, Maharashtra, 411044"
+}
+```
+
+### Result Status Fields
+```json
+{
+  "currentfirstsemresultstatus": "PASS",
+  "currentsecondsemresultstatus": "PASS",
+  "cumulativeresultstatus": "PASS",
+  "currentsemspi": 6.35,
+  "percentage": 63.37,
+  "totalcreditEarned": 40,
+  "totalcreditintogradepointfirstsem": 140,   // Σ(credit × GP) for Sem 1
+  "totalcreditintogradepointsecondsem": 127    // Σ(credit × GP) for Sem 2
+}
+```
+
+### Per-Subject Result Object Structure
+```json
+{
+  "course_code": "BCE22ES01",           // Unique subject identifier
+  "course_name": "Object Oriented Programming",
+  "coursetype": "THEORY",              // "THEORY" or "LAB"
+  "coursetypename": "THEORY",
+  "coursetrack": "",                    // For elective tracking
+  "course_credit": 3,                  // Maximum credits
+  "credit_earned": 3,                  // Credits earned (0 if failed)
+  "subtotal": 100.0,                   // Maximum marks possible
+  "obtainmarks": 44,                   // ← THE ONLY INPUT FROM TEACHER
+  "grade": "P",                        // Calculated grade
+  "grade_name": "P",
+  "gradepoint": 4,                     // Calculated grade point
+  "ispassgrade": true,                 // Did student pass?
+  "currentregistered": true,           // Registered this semester?
+  "appearedinbacklog": false,          // Is this a backlog attempt?
+  "appearedinreregistration": false,   // Re-registered?
+  "passedinreexam": false,             // Passed via re-exam?
+  "displaytg": "*",                    // Transitional grade marker
+  "transactional_grade": "",
+  "ordianance": ""                     // Grace marks ordinance applied
+}
+```
+
+### Asset/Storage URLs
+```json
+{
+  // Student photo — AWS S3 with pre-signed URL (expires in 1 hour)
+  "photourl": "https://pceterp.s3.ap-south-1.amazonaws.com/cloud/studentprofile/icard/photo/125B1B028photo.jpg?X-Amz-Algorithm=...",
+
+  // College logo — separate public S3 bucket
+  "logo": "https://pccoebucket.s3.ap-south-1.amazonaws.com/logo/PCCOE_LOGO.png",
+
+  // Exam controller signature — S3 with pre-signed URL
+  "examSignature": "https://pceterp.s3.ap-south-1.amazonaws.com/cloud/sign/pccoe_exam_sign.png?...",
+
+  // QR Code — generated dynamically via external API
+  "qrimageMultipleNew": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=..."
+}
+```
+
+### Display Configuration Flags
+```json
+{
+  "relativegrading": true,              // Uses relative grading
+  "displayabcid": "true",              // Show ABC ID on card
+  "displayseatno": "true",             // Show seat number
+  "displayeligibiltyno": "true",       // Show eligibility number
+  "displaytransitionalgrade": "true",  // Show transitional grade markers
+  "displayfinalgrade": "true",         // Show final grade
+  "displaystudentphotograph": "true",  // Show photo on card
+  "displaydeclarationresultdate": "true",
+  "displayresultdate": "false",
+  "hidecummulativeresult": false,
+  "hideprintbutton": null,
+  "displayfirstsem": false,
+  "secondsem": true,
+  "firstsem": true,
+  "lastmarksheet": false
+}
+```
+
+### Ordinance/Grace Marks Rules
+```json
+{
+  "ordinancemasterlist": [
+    {
+      "name": "Ordinance 8",
+      "ledgersymbol": "$",
+      "description": "Grant of additional marks for extra-curricular activity",
+      "do_not_add_in_aggregrate": true
+    },
+    {
+      "name": "Ordinance 9",
+      "ledgersymbol": "#",
+      "description": "Providing of additional facilities and benefits to PwD Students",
+      "do_not_add_in_aggregrate": false
+    },
+    {
+      "name": "Ordinance 1",
+      "ledgersymbol": "@",
+      "description": "About Grace marks",
+      "do_not_add_in_aggregrate": false
+    }
+  ]
+}
+```
+
+---
+
+## 5. Infrastructure & Security Analysis
+
+### Tech Stack (Confirmed)
+| Component | Technology | Evidence |
+|-----------|-----------|----------|
+| Frontend | React + Vite SPA | `<div id="root">` + Vite asset hashes |
+| Backend | Java Spring Boot | `x-application-context: application:production` |
+| Database | SQL (PostgreSQL/MySQL) | Sequential integer IDs, foreign key references |
+| Web Server | Nginx (reverse proxy) | HTTP headers |
+| Load Balancer | AWS ALB | `AWSALB` cookies |
+| Hosting Region | AWS Mumbai (`ap-south-1`) | S3 bucket URLs |
+| Student Photos | AWS S3 (pre-signed URLs) | `pceterp.s3.ap-south-1.amazonaws.com` |
+| College Logos | AWS S3 (public bucket) | `pccoebucket.s3.ap-south-1.amazonaws.com` |
+| Mobile App Assets | AWS S3 (public bucket) | `erpstudentmobileapp.s3.ap-south-1.amazonaws.com` |
+| Support Tickets | Freshdesk | `edupluscampus-support.freshdesk.com` |
+| QR Codes | External API | `api.qrserver.com` |
+
+### Security Model
+| Feature | Implementation |
+|---------|---------------|
+| Authentication | Session-based cookies |
+| Photo Access | Pre-signed S3 URLs (expire in 1 hour) |
+| Identity Verification | Encrypted token (`encData` field) |
+| Data Isolation | Server-side — session determines which student's data is returned |
+| Transport | HTTPS with HSTS (`max-age=31536000`) |
+| Frame Protection | `X-Frame-Options: SAMEORIGIN` |
+| Content Sniffing | `X-Content-Type-Options: nosniff` |
+
+### S3 Buckets Identified (4 total)
+1. `pceterp` — Private student photos & exam signatures (pre-signed access)
+2. `pccoebucket` — Public college logos
+3. `erpstudentmobileapp` — Public mobile app UI assets
+4. `cloud/` prefix — Used for organizing files within `pceterp` bucket
+
+---
+
+## 6. How to Build This for Classgrid (MongoDB + Node.js)
+
+### What You Need to Store in MongoDB:
+
+**Collection: `students`**
+```json
+{
+  "_id": "ObjectId",
+  "registrationNumber": "125B1B028",
+  "fullName": "SHINDE NIKHIL SUBHASH",
+  "fatherName": "SUBHASH",
+  "motherName": "SUNITA",
+  "dob": "2007-01-23",
+  "program": "B.Tech. Computer Engineering",
+  "batchDuration": "2025-2029",
+  "abcId": "769536403167",
+  "photoUrl": "https://cdn.classgrid.in/photos/125B1B028.jpg"
+}
+```
+
+**Collection: `courses`**
+```json
+{
+  "_id": "ObjectId",
+  "courseCode": "BCE22ES01",
+  "courseName": "Object Oriented Programming",
+  "courseType": "THEORY",
+  "credits": 3,
+  "maxMarks": 100,
+  "semesterId": 2,
+  "academicYear": "2025-26"
+}
+```
+
+**Collection: `results`**
+```json
+{
+  "_id": "ObjectId",
+  "studentId": "ObjectId (ref → students)",
+  "courseId": "ObjectId (ref → courses)",
+  "academicYear": "2025-26",
+  "semester": 2,
+  "obtainedMarks": 44,
+  "grade": "P",
+  "gradePoint": 4,
+  "creditEarned": 3,
+  "isPass": true,
+  "isBacklog": false,
+  "createdAt": "2026-06-19T00:00:00Z"
+}
+```
+
+### Backend API Logic (Node.js Pseudocode):
+```javascript
+// POST /api/results/grade-card
+async function getGradeCard(req, res) {
+  // 1. Get student from authenticated session (NOT from request body!)
+  const studentId = req.session.studentId;
+
+  // 2. Fetch all results for this student
+  const results = await Result.find({ studentId })
+    .populate('courseId')
+    .sort({ semester: 1 });
+
+  // 3. Group results by semester
+  const semesterGroups = groupBy(results, 'semester');
+
+  // 4. Calculate SGPA for each semester
+  const sgpaArray = [];
+  let totalCredits = 0;
+  let totalGradePoints = 0;
+
+  for (const [sem, semResults] of Object.entries(semesterGroups)) {
+    const semCredits = sum(semResults.map(r => r.creditEarned));
+    const semGP = sum(semResults.map(r => r.creditEarned * r.gradePoint));
+    const sgpa = semGP / semCredits;
+
+    totalCredits += semCredits;
+    totalGradePoints += semGP;
+    const cgpa = totalGradePoints / totalCredits;
+
+    sgpaArray.push({ sem, sgpa, cgpa });
+  }
+
+  // 5. Send fully calculated response
+  res.json({
+    student: { /* identity fields */ },
+    results: semesterGroups,
+    sgpaArray,
+    cgpa: totalGradePoints / totalCredits,
+    percentage: ((totalGradePoints / totalCredits) - 0.5) * 10,
+    status: "PASS"
+  });
+}
+```
+
+### Key Security Rules for Classgrid:
+1. **NEVER** accept `studentId` from the request body — always get it from the authenticated session/JWT
+2. Use pre-signed URLs for private files (photos, signatures)
+3. Calculate ALL grades/SGPA/CGPA on the server — never trust frontend calculations
+4. Use HTTPS with HSTS headers
+5. Set `X-Frame-Options` and `X-Content-Type-Options` headers
+
+---
+
+## 7. Sem 3 Target Strategy
+
+To reach **7.0 CGPA** by end of Semester 3:
+
+```
+Current: 267 grade points across 40 credits = 6.67 CGPA
+Target:  (267 + X) / (40 + 20) = 7.0
+         267 + X = 420
+         X = 153
+Required Sem 3 SGPA = 153 / 20 = 7.65
+```
+
+**Focus Areas:**
+- Target **A grades (8 GP)** in high-credit subjects (3-credit courses)
+- Maintain strong Lab performance (consistently scoring A/A+)
+- Avoid P grades — even one P in a 3-credit subject costs 12 grade points vs 24 for an A
+
+---
+
+> **Document Created:** 19-Jun-2026
+> **Last Updated:** 19-Jun-2026
+> **Author:** Reverse engineered by Nikhil Shinde for Classgrid development

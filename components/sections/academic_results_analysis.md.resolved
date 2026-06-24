@@ -1,0 +1,148 @@
+# ðŸ“Š Academic Results Analysis â€” Nikhil Shinde
+
+> **College:** Pimpri Chinchwad College of Engineering (PCCoE), Pune  
+> **Program:** B.Tech Computer Engineering  
+> **Regulation:** 2023  
+> **PRN:** 125B1B028  
+> **Year:** First Year | June 2026  
+> **Cumulative Result Status:** âœ… PASS (Zero Backlogs)
+
+---
+
+## ðŸ”¢ How the Grading System Works
+
+### Grade â†’ Points Mapping (SPPU 10-Point Scale)
+
+| Grade | Points | Meaning |
+|-------|--------|---------|
+| O | 10 | Outstanding |
+| A+ | 9 | Excellent |
+| A | 8 | Very Good |
+| B+ | 7 | Good |
+| B | 6 | Above Average |
+| C | 5 | Average |
+| P | 4 | Pass |
+| F | 0 | Fail |
+
+### Key Formulas
+
+```
+GP (Grade Points)  = Credits Ã— Grade Point Value
+SGPA               = Total GP of Semester Ã· Total Credits Earned in Semester
+CGPA               = Total GP of All Semesters Ã· Total Credits Earned Across All Semesters
+```
+
+> [!IMPORTANT]
+> High-credit subjects (3 credits) have a **disproportionate impact** on SGPA/CGPA.  
+> A P(4) in a 3-credit subject = 12 GP. A B+(7) would've been 21 GP. That's **9 GP lost** from one subject.
+
+---
+
+## ðŸ“‹ Semester I â€” SGPA: 7.00
+
+| # | Code | Subject | Type | Credits | Grade | GP (Cr Ã— Grade) |
+|---|------|---------|------|---------|-------|------------------|
+| 1 | BSH21BS01 | Linear Algebra & Univariate Calculus | Theory | 2 | A (8) | 16 |
+| 2 | BSH21BS02 | Linear Algebra & Univariate Calculus Lab | Lab | 1 | A+ (9) | 9 |
+| 3 | BSH21BS05 | Engineering Chemistry | Theory | 2 | B+ (7) | 14 |
+| 4 | BSH21BS06 | Engineering Chemistry Lab | Lab | 2 | B+ (7) | 14 |
+| 5 | BCE21ES01 | Computer Programming & Problem Solving | Theory | 3 | B+ (7) | 21 |
+| 6 | BCE21ES02 | Digital Electronics & Computer Org | Theory | 3 | A (8) | 24 |
+| 7 | BCE21ES03 | Digital Electronics Lab | Lab | 1 | A (8) | 8 |
+| 8 | BCE21VS01 | CPP Solving Lab I | Lab | 2 | B+ (7) | 14 |
+| 9 | BSH21TA01 | Ability Enhancement Course (ENG) | Theory | 2 | **P (4)** âš ï¸ | 8 |
+| 10 | BSH21CC01 | Life Skill I | Lab | 2 | B (6) | 12 |
+
+| CR | EC | Total GP | SGPA |
+|----|-----|----------|------|
+| 20 | 20 | **140** | **7.00** |
+
+---
+
+## ðŸ“‹ Semester II â€” SGPA: 6.35
+
+| # | Code | Subject | Type | Credits | Grade | GP (Cr Ã— Grade) |
+|---|------|---------|------|---------|-------|------------------|
+| 1 | BSH22BS07 | Multivariate Calculus | Theory | 2 | B+ (7) | 14 |
+| 2 | BSH22BS08 | Multivariate Calculus Lab | Lab | 1 | B+ (7) | 7 |
+| 3 | BSH22BS03 | Engineering Physics | Theory | 2 | B (6) | 12 |
+| 4 | BSH22BS04 | Engineering Physics Lab | Lab | 2 | A (8) | 16 |
+| 5 | BCE22ES01 | Object Oriented Programming | Theory | 3 | **P (4)** âš ï¸ | 12 |
+| 6 | BCE22ES02 | OOP Lab | Lab | 2 | B (6) | 12 |
+| 7 | BCE22PC01 | Discrete Mathematics | Theory | 2 | B (6) | 12 |
+| 8 | BCE22VS02 | CPP Solving Lab II | Lab | 2 | B (6) | 12 |
+| 9 | BSH22IK01 | Indian Knowledge System | Theory | 2 | B+ (7) | 14 |
+| 10 | BSH22CC02 | Life Skill II | Lab | 2 | A (8) | 16 |
+
+| CR | EC | Total GP | SGPA |
+|----|-----|----------|------|
+| 20 | 20 | **127** | **6.35** |
+
+---
+
+## ðŸ“Š Cumulative Record â€” CGPA: 6.67
+
+| | CR | EC | GP | GPA |
+|---|---|---|---|---|
+| Semester I | 20 | 20 | 140 | 7.00 |
+| Semester II | 20 | 20 | 127 | 6.35 |
+| **Cumulative** | **40** | **40** | **267** | **6.67** |
+
+---
+
+## âš ï¸ Impact Analysis â€” What Hurt the CGPA
+
+Two P-grade subjects caused the most damage:
+
+| Subject | Sem | Credits | Got | GP Earned | If B+ (7) | GP Lost |
+|---------|-----|---------|-----|-----------|-----------|---------|
+| Ability Enhancement (ENG) | 1 | 2 | P (4) | 8 | 14 | **-6** |
+| OOP Theory | 2 | **3** | P (4) | 12 | 21 | **-9** |
+| | | | | | **Total Lost** | **-15** |
+
+### What-If Scenario: If Both Were B+
+
+```
+Actual CGPA:    267 / 40 = 6.67
+What-if CGPA:   282 / 40 = 7.05   (+0.38)
+```
+
+> [!NOTE]
+> The OOP P-grade is especially ironic â€” Nikhil builds production-grade OOP code daily 
+> (TypeScript classes, interfaces, design patterns) in the Classgrid platform.
+> The exam format didn't capture practical knowledge.
+
+---
+
+## ðŸŽ¯ Semester 3 Strategy
+
+To reach **7.0+ CGPA** by end of Sem 3:
+
+```
+Current: 267 GP / 40 EC = 6.67 CGPA
+
+Target CGPA 7.0:
+  Need total GP â‰¥ 7.0 Ã— 60 = 420 (assuming 20 credits in Sem 3)
+  Sem 3 GP needed: 420 - 267 = 153
+  Sem 3 SGPA needed: 153 / 20 = 7.65
+
+Target CGPA 7.5:
+  Need total GP â‰¥ 7.5 Ã— 60 = 450
+  Sem 3 GP needed: 450 - 267 = 183
+  Sem 3 SGPA needed: 183 / 20 = 9.15 (very hard)
+```
+
+> [!TIP]
+> **Realistic Target: Sem 3 SGPA of 7.65+ â†’ CGPA crosses 7.0**  
+> Focus on 3-credit subjects â€” they're the biggest levers.  
+> Balance: Weekdays = College, Weekends = Classgrid.
+
+---
+
+## ðŸ“ Notes for Future Reference
+
+- Result Declaration Date: **19-Jun-2026**
+- Grading System: **Relative grading (SPPU)**
+- This analysis was created on **19-Jun-2026** after Sem 1 & 2 results
+- When Sem 3 results arrive, compare against the targets above
+- CGPA formula: `(Sem1 GP + Sem2 GP + Sem3 GP) / (Total Credits Earned)`
