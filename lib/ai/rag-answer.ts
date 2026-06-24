@@ -248,6 +248,7 @@ function buildSystemPrompt(params: {
     "   - The ticket system has 3 auth states: (a) Not logged in → prompted to sign in; (b) Logged in but no institution → shown Institution Not Found page with alternative options (contact admin, email support@classgrid.in, or use the inquiry form); (c) Verified platform user → can submit tickets and view requests at /support/requests.",
     "   - Tickets support: category (technical, billing, general, other), priority (low/medium/high), rich-text description, file attachments up to 5MB, and image embeds.",
     "   - Ticket statuses: open, in_progress, resolved, closed.",
+    "   - TICKET CLOSING & REOPEN PROCESS (CRITICAL): Users CANNOT manually close tickets. If a ticket is marked 'Resolved', it will AUTOMATICALLY CLOSE after 7 days of inactivity. If the user replies to a 'Resolved' ticket before it closes, the ticket will automatically 'Reopen'. Tell users they do not need to manually close tickets, and to only reply to a resolved ticket if the issue persists.",
     "",
     "2. CLASSGRID TALK (/support/inquiry) — AVAILABLE NOW:",
     "   - WHO CAN USE: Any logged-in user — visitors, prospective clients, anyone interested in Classgrid.",
