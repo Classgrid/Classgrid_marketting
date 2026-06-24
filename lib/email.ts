@@ -69,7 +69,7 @@ export async function sendSafetyEmail(
       <p>If you believe your messages were flagged by mistake, please reply directly to this email or contact us at <a href="mailto:support@classgrid.in">support@classgrid.in</a>.</p>
 
       <br/>
-      <p style="color: #666; font-size: 14px;">Thank you for keeping Classgrid professional,<br/><strong>The Classgrid Trust & Safety Team</strong></p>
+      <p style="color: #666; font-size: 14px;">Thank you for keeping Classgrid professional,<br/><strong>The Classgrid Team</strong></p>
     </div>
   `;
 
