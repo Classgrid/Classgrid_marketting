@@ -54,12 +54,12 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     icons: {
       icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon.ico?v=2", sizes: "any" },
+        { url: "/favicon-32x32.png?v=2", sizes: "32x32", type: "image/png" },
+        { url: "/favicon-16x16.png?v=2", sizes: "16x16", type: "image/png" },
       ],
       apple: [
-        { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+        { url: "/android-chrome-512x512.png?v=2", sizes: "512x512", type: "image/png" },
       ],
     },
     openGraph: siteName || description || siteUrl
