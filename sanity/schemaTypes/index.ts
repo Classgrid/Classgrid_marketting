@@ -20,8 +20,7 @@ import { changelogEntryType } from './changelogEntryType'
 import { changelogSettingsType } from './changelogSettingsType'
 import { compareHubPageType } from './compareHubPageType'
 import { comparisonPageType } from './comparisonPageType'
-import { contactPageType } from './contactPageType'
-import { demoPageType } from './demoPageType'
+
 import { faqItemType } from './faqItemType'
 
 import {
@@ -56,23 +55,16 @@ import { homeStatsType } from './homeStatsType'
 
 import { postType } from './postType'
 import { pricingPageType, pricingPlanType } from './pricingPageType'
-import {
-  salesContactFormType,
-  salesContactMetricType,
-  salesContactPageType,
-  salesContactRoleType,
-  salesContactSocialProofType,
-} from './salesContactPageType'
 
-import { supportPageType } from './supportPageType'
+
+
 import { helpCategoryType } from './helpCategoryType'
 import { helpArticleType } from './helpArticleType'
 import { testimonialType } from './testimonialType'
 import { classgridTalkType } from './classgridTalkType'
 import testimonialVideoType from './testimonialVideoType'
 
-import { useCasePageType } from './useCasePageType'
-import { useCasesLandingLinkType, useCasesLandingPageType } from './useCasesLandingPageType'
+
 import { solutionPageType } from './solutionPageType'
 import { solutionModuleType } from './solutionModuleType'
 import { richBodyType } from './richBodyType'
@@ -128,8 +120,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     homeIntegrationLogoType,
     homeProductVideoType,
     homePageType,
-    useCasesLandingLinkType,
-    useCasesLandingPageType,
+
     homeStatsType,
 
 
@@ -143,20 +134,14 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     aboutTeamMemberType,
     aboutLogoItemType,
     aboutPageType,
-    demoPageType,
-    supportPageType,
+
     helpCategoryType,
     helpArticleType,
-    contactPageType,
-    salesContactMetricType,
-    salesContactRoleType,
-    salesContactFormType,
-    salesContactSocialProofType,
-    salesContactPageType,
+
     compareHubPageType,
     comparisonPageType,
 
-    useCasePageType,
+
     solutionPageType,
     solutionModuleType,
     postType,
