@@ -64,6 +64,8 @@ function statusColor(status: string) {
     case "resolved":
     case "closed":
       return "bg-muted-foreground";
+    case "reopened":
+      return "bg-indigo-500";
     case "open":
       return "bg-emerald-500";
     case "in_progress":
@@ -81,6 +83,8 @@ function statusBadgeBg(status: string) {
       return "bg-emerald-500";
     case "closed":
       return "bg-zinc-500";
+    case "reopened":
+      return "bg-indigo-500";
     case "in_progress":
       return "bg-amber-500";
     case "open":
