@@ -215,8 +215,8 @@ export default function MyRequestsPage() {
               <div className="mt-6 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex gap-3 text-sm text-blue-800 dark:text-blue-300">
                 <Info className="h-5 w-5 shrink-0 text-blue-500" />
                 <p>
-                  <strong>Note on Replies:</strong> When you send a reply, we do not spam your inbox with an automated email. 
-                  Please check back on this dashboard from time to time to see when the Classgrid Support Team has responded to your issue.
+                  <strong>Note on Replies:</strong> You will receive an automated email notification whenever the Classgrid Support Team replies to your ticket. 
+                  You can also reply directly via email or check back on this dashboard at any time.
                 </p>
               </div>
 
