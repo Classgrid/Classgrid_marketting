@@ -114,6 +114,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* JSON-LD Structured Data for Google Rich Results */}
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",

@@ -325,9 +325,6 @@ export function Footer({
       ══════════════════════════════════════ */}
       <div className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-4 md:px-10">
-          <div className="mb-6 text-[11px] leading-relaxed text-slate-500/80 dark:text-zinc-500/80 max-w-4xl">
-            <strong>Application Purpose:</strong> Classgrid is a comprehensive educational ERP and learning management platform designed to help schools, colleges, and educational institutions digitize their operations. Users (including administrators, teachers, and students) log into Classgrid to securely access their institutional dashboards, track attendance, manage academic assignments, and communicate within their verified educational networks.
-          </div>
           <div className="flex flex-col items-start justify-between gap-3 text-[12px] text-slate-500 dark:text-zinc-400 sm:flex-row sm:items-center">
 
             {/* LEFT — copyright */}
