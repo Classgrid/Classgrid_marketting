@@ -1,5 +1,5 @@
 const FRONTEND_URL = process.env.NEXTAUTH_URL ?? "https://classgrid.in";
-const PLATFORM_LOGO_URL = "https://classgrid.in/Classgrid.png";
+const PLATFORM_LOGO_URL = "https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png";
 
 const providerConfig: Record<string, { name: string }> = {
   manual: { name: "Email & Password" },

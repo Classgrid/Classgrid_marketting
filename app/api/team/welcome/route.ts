@@ -72,7 +72,7 @@ export async function POST(req: Request) {
                 <!-- HEADER (LOGO) -->
                 <tr>
                   <td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-                    <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto;border-radius:6px;">
+                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto;border-radius:6px;">
                   </td>
                 </tr>
                 

@@ -330,7 +330,7 @@ export async function POST(req: Request) {
 <table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
 <tr>
 <td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-<img src="https://classgrid.in/Classgrid.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
+<img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
 <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">You're Subscribed!</h1>
 <p style="color:#9ca3af;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">Thanks for joining us.</p>
 </td>

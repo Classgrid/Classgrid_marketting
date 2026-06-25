@@ -4,7 +4,7 @@ import Marquee from "react-fast-marquee";
 
 // Provide local filenames (place them in `public/logos/`) or set NEXT_PUBLIC_LOGO_BASE_URL
 const LOGOS = [
-  { name: "Classgrid", file: "classgrid.png", src: "https://www.classgrid.in/Classgrid.png" },
+  { name: "Classgrid", file: "classgrid.png", src: "https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" },
   { name: "Google Meet", file: "google-meet.svg", src: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Google_Meet_icon_%282020%29.svg" },
   { name: "Zoom", file: "zoom.svg", src: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Zoom_Communications_Logo.svg" },
   { name: "Razorpay", file: "razorpay.svg", src: "https://razorpay.com/assets/razorpay_logo.svg" },

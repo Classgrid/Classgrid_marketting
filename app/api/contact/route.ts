@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
 <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
   <div style="text-align:center;margin-bottom:32px;">
-    <img src="https://classgrid.in/Classgrid.png" alt="Classgrid" style="height:40px;" />
+    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" style="height:40px;" />
   </div>
   <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:32px;">
     <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">New Contact Form Submission</h2>
