@@ -96,8 +96,8 @@ export function resolveFooterCopyrightText(
 }
 export async function fetchLiveStatus(pageId: string): Promise<{ state: FooterStatusState; label: string } | null> {
   try {
-    // Proxy request through backend to avoid CORS
-    const response = await fetch(`/api/status?pageId=${pageId}`);
+    // We use summary.json to get both the overall status and any active maintenances
+    const response = await fetch(`https://${pageId}.statuspage.io/api/v2/summary.json`);
     if (!response.ok) return null;
     const data = await response.json();
 
