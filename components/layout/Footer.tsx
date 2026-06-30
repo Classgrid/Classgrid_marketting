@@ -54,7 +54,6 @@ function rewriteHref(href: string): string {
 }
 
 function resolveHref(label: string, href: string): string {
-  if (/community/i.test(label) || /forum/i.test(label)) return "/community";
   return /book\s+a?\s*demo/i.test(label) ? "/#demo" : rewriteHref(href);
 }
 
@@ -94,8 +93,7 @@ export function Footer({
     { label: 'Our Team', href: '/team' },
     { label: 'Acknowledgements', href: '/acknowledgement' },
     { label: 'Compare', href: '/compare' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'System', href: '/system.md', isNew: true }
+    { label: 'Careers', href: '/careers' }
   ];
 
   // Try to find a "Company" or "About" column, or just use the first column
