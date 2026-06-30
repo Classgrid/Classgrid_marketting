@@ -1,4 +1,14 @@
+"use client";
+
+import { useState } from "react";
+import { DangerConfirmDialog } from "@/components/ui/danger-confirm-dialog";
+import { CopySnippetCard } from "@/components/ui/copy-snippet-card";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
 export default function RoughPage() {
+  const [showDialog, setShowDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   return (
     <div className="min-h-screen w-full bg-[#111111] flex items-center justify-center">
       <section className="relative h-[800px] w-full max-w-[600px] overflow-hidden bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl">
@@ -81,9 +91,55 @@ export default function RoughPage() {
         />
 
         {/* YOUR CONTENT */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-center p-8 text-center">
-          <h1 className="text-2xl font-bold text-white mb-2">Rough Page Active</h1>
-          <p className="text-sm text-gray-400">The background dot design is active!</p>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center p-8 text-center gap-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-2">Vercel-style Components Sandbox</h1>
+            <p className="text-sm text-gray-400">Testing the CopySnippetCard and DangerConfirmDialog.</p>
+          </div>
+          
+          <div className="w-full max-w-md mt-4 text-left">
+            <CopySnippetCard
+              title="Project ID"
+              description="Used when interacting with the Vercel API."
+              value="prj_gmxRcyWKqUel6PAFb48yKz7KC3ll"
+              footerText="Learn more about Project ID"
+              footerLink="https://vercel.com/docs"
+            />
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-8 w-full">
+            <Button 
+              variant="destructive"
+              onClick={() => setShowDialog(true)}
+            >
+              Test Delete Project Dialog
+            </Button>
+          </div>
+
+          <DangerConfirmDialog
+            open={showDialog}
+            onOpenChange={setShowDialog}
+            title="Delete Organization"
+            description={<>This will permanently delete your project and all of its deployments. This action cannot be undone.</>}
+            warningMessage="Warning: This action is irreversible."
+            actionLabel="Delete Project"
+            variant="danger"
+            isLoading={isDeleting}
+            confirmationSteps={[
+              { label: "To confirm, type", value: "Classgrid University" },
+              { label: "To confirm, type", value: "bill.classgrid.in" },
+              { label: "To confirm, type", value: "delete my organization" }
+            ]}
+            onConfirm={async () => {
+              setIsDeleting(true);
+              // Simulate network request
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              setIsDeleting(false);
+              
+              toast.success("Organization successfully deleted!");
+              setShowDialog(false);
+            }}
+          />
         </div>
       </section>
     </div>
