@@ -140,7 +140,7 @@ export const placeholderChromeContent: ChromeContent = {
       links: [
         { label: "Contact Us", href: "/contact" },
         { label: "Integrations", href: "/integrations" },
-        { label: "Community Forum", href: "/community" },
+        { label: "Community Forum", href: "https://forum.classgrid.in" },
         { label: "Security", href: "/security" },
       ],
     },
