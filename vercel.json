@@ -1,4 +1,4 @@
-p{
+{
   "functions": {
     "app/api/ask-ai/route.ts": {
       "maxDuration": 10
