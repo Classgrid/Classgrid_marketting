@@ -5,6 +5,7 @@ import type { LegalIntroContent, LegalSection } from "@/components/legal/types";
 import { buildPageMetadata } from "@/lib/metadata";
 import { cookiePolicy, disclaimerPolicy, pageMeta, privacyPolicy, securityPolicy, termsOfService } from "@/content/siteContent";
 import { getLegalPageBySlug, getPolicyPage } from "@/sanity/lib/marketing";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const LEGAL_DESCRIPTIONS: Record<string, string> = {
   privacy: "How Classgrid collects, processes, and protects user and student data.",
@@ -265,15 +266,28 @@ export default async function LegalSlugPage({
   const updated = formatUpdatedDate(sourceUpdatedDate);
   const effectiveDate = formatEffectiveDate(sourceEffectiveDate);
 
+  const jsonLdData = {
+    "@type": "WebPage",
+    "@id": `https://classgrid.in/${normalizedSlug}/#webpage`,
+    "name": title,
+    "url": `https://classgrid.in/${normalizedSlug}`,
+    "about": {
+      "@id": "https://classgrid.in/#software"
+    }
+  };
+
   return (
-    <LegalLayout
-      title={title}
-      updated={updated}
-      effectiveDate={effectiveDate}
-      description={LEGAL_DESCRIPTIONS[normalizedSlug] || LEGAL_DESCRIPTIONS.privacy}
-      pageLabel={pageLabel}
-      intro={intro}
-      sections={sections}
-    />
+    <>
+      <JsonLd data={jsonLdData} />
+      <LegalLayout
+        title={title}
+        updated={updated}
+        effectiveDate={effectiveDate}
+        description={LEGAL_DESCRIPTIONS[normalizedSlug] || LEGAL_DESCRIPTIONS.privacy}
+        pageLabel={pageLabel}
+        intro={intro}
+        sections={sections}
+      />
+    </>
   );
 }

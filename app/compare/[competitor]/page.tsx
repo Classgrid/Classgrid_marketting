@@ -7,6 +7,7 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { getComparisonBySlug, getComparisonPages } from "@/sanity/lib/marketing";
 import { urlFor } from "@/sanity/lib/image";
 import { CmsFallback } from "@/components/ui/CmsErrorBoundary";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 type ComparePageProps = {
 	params: Promise<{ competitor: string }>;
@@ -131,6 +132,32 @@ export default async function Page({ params }: ComparePageProps) {
 				migrationTestimonial: fallback.migrationTestimonial,
 				faqs: fallback.faqs,
 		  };
+	const displayTitle = comparison.competitorName ? `Classgrid vs ${comparison.competitorName}` : "Classgrid Comparison";
 
-	return <ComparisonDetailClient comparison={comparison} />;
+	const jsonLdData = [
+		{
+			"@type": "WebPage",
+			"@id": `https://classgrid.in/compare/${competitor}/#webpage`,
+			"name": displayTitle,
+			"url": `https://classgrid.in/compare/${competitor}`,
+			"about": {
+				"@id": "https://classgrid.in/#software"
+			}
+		},
+		{
+			"@type": "BreadcrumbList",
+			"itemListElement": [
+				{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+				{ "@type": "ListItem", "position": 2, "name": "Compare", "item": "https://classgrid.in/compare" },
+				{ "@type": "ListItem", "position": 3, "name": displayTitle, "item": `https://classgrid.in/compare/${competitor}` }
+			]
+		}
+	];
+
+	return (
+		<>
+			<JsonLd data={jsonLdData} />
+			<ComparisonDetailClient comparison={comparison} />
+		</>
+	);
 }

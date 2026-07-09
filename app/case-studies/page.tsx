@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { getCaseStudies, getCaseStudySettings } from "@/sanity/lib/marketing";
 import { CaseStudiesClient, CaseStudy } from "@/components/case-studies/CaseStudiesClient";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
   title: "Case Studies | Classgrid",
@@ -33,10 +34,21 @@ export default async function CaseStudiesPage() {
     }))
     .filter((doc: any) => typeof doc.title === "string" && doc.title.trim() !== "");
 
+  const jsonLdData = {
+    "@type": "CollectionPage",
+    "@id": "https://classgrid.in/case-studies/#webpage",
+    "name": "Classgrid Case Studies",
+    "url": "https://classgrid.in/case-studies",
+    "about": { "@id": "https://classgrid.in/#software" }
+  };
+
   return (
-    <CaseStudiesClient
-      caseStudies={caseStudies}
-      heroSubtitle={settings?.heroSubtitle ?? null}
-    />
+    <>
+      <JsonLd data={jsonLdData} />
+      <CaseStudiesClient
+        caseStudies={caseStudies}
+        heroSubtitle={settings?.heroSubtitle ?? null}
+      />
+    </>
   );
 }

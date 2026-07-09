@@ -4,6 +4,7 @@ import { client } from "@/sanity/lib/client";
 import { caseStudyBySlugQuery } from "@/sanity/lib/queries";
 import { CaseStudyDetailClient } from "@/components/case-studies/CaseStudyDetailClient";
 import { buildPageMetadata } from "@/lib/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 60; // ISR revalidation
 
@@ -33,15 +34,27 @@ export default async function CaseStudyDetailPage({ params }: Props) {
     slug,
   });
 
-  if (!caseStudy && slug === "pccoe-fee-recovery") {
-    return <CaseStudyDetailClient data={MOCK_DETAIL_DATA as any} />;
-  }
+  const data = caseStudy || (slug === "pccoe-fee-recovery" ? MOCK_DETAIL_DATA : null);
 
-  if (!caseStudy) {
+  if (!data) {
     notFound();
   }
 
-  return <CaseStudyDetailClient data={caseStudy} />;
+  const jsonLdData = {
+    "@type": "Article",
+    "@id": `https://classgrid.in/case-studies/${slug}/#article`,
+    "headline": data.title,
+    "description": data.summary || data.title,
+    "image": data.heroImageUrl,
+    "publisher": { "@id": "https://classgrid.in/#organization" }
+  };
+
+  return (
+    <>
+      <JsonLd data={jsonLdData} />
+      <CaseStudyDetailClient data={data as any} />
+    </>
+  );
 }
 
 const MOCK_DETAIL_DATA = {

@@ -7,6 +7,7 @@ import { buildLangHref, extractLocaleString, parseLang } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/metadata";
 import { getChangelogEntries, getChangelogSettings } from "@/sanity/lib/marketing";
 import { urlFor } from "@/sanity/lib/image";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 300;
 
@@ -101,11 +102,12 @@ export default async function ChangelogPage({ searchParams }: ChangelogPageProps
         }));
 
   const changelogListJsonLd = {
-    "@context": "https://schema.org",
     "@type": "CollectionPage",
+    "@id": `${siteMeta.domain}${buildLangHref("/changelog", lang)}/#webpage`,
     name: settings.heroHeadline,
     description: settings.heroSubheadline,
     url: `${siteMeta.domain}${buildLangHref("/changelog", lang)}`,
+    about: { "@id": "https://classgrid.in/#software" },
     hasPart: entries.map((entry) => ({
       "@type": "SoftwareUpdate",
       name: entry.title,
@@ -116,10 +118,7 @@ export default async function ChangelogPage({ searchParams }: ChangelogPageProps
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(changelogListJsonLd) }}
-      />
+      <JsonLd data={changelogListJsonLd} />
       <ChangelogPageClient settings={settings} entries={entries} siteUrl={siteMeta.domain} lang={lang} />
     </>
   );

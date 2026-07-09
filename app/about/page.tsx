@@ -3,6 +3,7 @@ import { pageMeta } from "@/content/pageMeta";
 import { aboutPageFallback } from "@/content/about";
 import { getAboutPage } from "@/sanity/lib/marketing";
 import AboutPageClient from "./AboutPageClient";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 type AboutPageCms = {
   seoTitle?: string;
@@ -50,20 +51,40 @@ export async function generateMetadata() {
 export default async function AboutPage() {
   const cms = (await getAboutPage()) as AboutPageCms | null;
 
+  const jsonLdData = [
+    {
+      "@type": "AboutPage",
+      "@id": "https://classgrid.in/about/#webpage",
+      "name": "About Classgrid",
+      "url": "https://classgrid.in/about",
+      "about": { "@id": "https://classgrid.in/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+        { "@type": "ListItem", "position": 2, "name": "About", "item": "https://classgrid.in/about" }
+      ]
+    }
+  ];
+
   return (
-    <AboutPageClient
-      storyTitle={cleanString(cms?.storyTitle) ?? aboutPageFallback.storyTitle}
-      originQuote={cleanString(cms?.originQuote) ?? aboutPageFallback.originQuote}
-      storyParagraphs={cleanStoryParagraphs(cms?.originStory) ?? aboutPageFallback.originStory}
-      missionTitle={cleanString(cms?.missionTitle)}
-      missionBody={cleanString(cms?.missionBody)}
-      visionTitle={cleanString(cms?.visionTitle)}
-      visionBody={cleanString(cms?.visionBody)}
-      whatIsClassgrid={cms?.whatIsClassgrid}
-      whatWeDo={cms?.whatWeDo}
-      whyChooseClassgrid={cms?.whyChooseClassgrid}
-      values={cms?.values}
-      timeline={[...(cms?.timeline || []), cms?.futureTimelineItem].filter(Boolean)}
-    />
+    <>
+      <JsonLd data={jsonLdData} />
+      <AboutPageClient
+        storyTitle={cleanString(cms?.storyTitle) ?? aboutPageFallback.storyTitle}
+        originQuote={cleanString(cms?.originQuote) ?? aboutPageFallback.originQuote}
+        storyParagraphs={cleanStoryParagraphs(cms?.originStory) ?? aboutPageFallback.originStory}
+        missionTitle={cleanString(cms?.missionTitle)}
+        missionBody={cleanString(cms?.missionBody)}
+        visionTitle={cleanString(cms?.visionTitle)}
+        visionBody={cleanString(cms?.visionBody)}
+        whatIsClassgrid={cms?.whatIsClassgrid}
+        whatWeDo={cms?.whatWeDo}
+        whyChooseClassgrid={cms?.whyChooseClassgrid}
+        values={cms?.values}
+        timeline={[...(cms?.timeline || []), cms?.futureTimelineItem].filter(Boolean)}
+      />
+    </>
   );
 }

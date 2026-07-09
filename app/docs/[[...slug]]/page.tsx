@@ -8,6 +8,7 @@ import { CodeBlock } from '@/components/docs/code-block';
 import { Callout } from '@/components/docs/callout';
 import { DocsImage } from '@/components/docs/docs-image';
 import { DocsNavigation } from '@/components/docs/docs-navigation';
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 0; // disabled caching for development
 
@@ -36,8 +37,30 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
   const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   const dateLabel = isEdited ? `Last updated ${formatter.format(updatedAt)}` : formatter.format(createdAt);
 
+  const jsonLdData = [
+    {
+      "@type": "TechArticle",
+      "@id": `https://classgrid.in/docs/${slugPath}/#article`,
+      "headline": doc.title,
+      "datePublished": createdAt.toISOString(),
+      "dateModified": updatedAt.toISOString(),
+      "publisher": { "@id": "https://classgrid.in/#organization" },
+      "about": { "@id": "https://classgrid.in/#software" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+        { "@type": "ListItem", "position": 2, "name": "Docs", "item": "https://classgrid.in/docs" },
+        { "@type": "ListItem", "position": 3, "name": doc.title, "item": `https://classgrid.in/docs/${slugPath}` }
+      ]
+    }
+  ];
+
   return (
-    <article className="min-w-0 flex-1 pb-24">
+    <>
+      <JsonLd data={jsonLdData} />
+      <article className="min-w-0 flex-1 pb-24">
       <header className="mb-10 border-b border-white/10 pb-6">
         <h1 className="text-4xl font-bold tracking-tight text-white mb-3">
           {doc.title}
@@ -105,5 +128,6 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
       </div>
       <DocsNavigation />
     </article>
+    </>
   );
 }
