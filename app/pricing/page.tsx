@@ -11,7 +11,9 @@ import {
 } from "lucide-react";
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const MotionSpan = motion.span as any;
 const MotionTr = motion.tr as any;
@@ -120,7 +122,26 @@ export default function PricingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <>
+      <JsonLd data={[
+        {
+          "@type": "WebPage",
+          "@id": "https://classgrid.in/pricing/#webpage",
+          "name": "Classgrid Pricing",
+          "url": "https://classgrid.in/pricing",
+          "about": {
+            "@id": "https://classgrid.in/#software"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+            { "@type": "ListItem", "position": 2, "name": "Pricing", "item": "https://classgrid.in/pricing" }
+          ]
+        }
+      ]} />
+      <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
@@ -438,5 +459,6 @@ export default function PricingPage() {
         </section>
 
       </main>
+    </>
   );
 }

@@ -114,13 +114,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* JSON-LD Structured Data for Google Rich Results */}
         <script
           type="application/ld+json"
-          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@graph": [
                 {
                   "@type": "Organization",
+                  "@id": "https://classgrid.in/#organization",
                   "name": "Classgrid",
                   "url": "https://classgrid.in",
                   "logo": "https://classgrid.in/android-chrome-512x512.png",
@@ -147,12 +147,24 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 },
                 {
                   "@type": "WebSite",
+                  "@id": "https://classgrid.in/#website",
                   "name": "Classgrid",
                   "url": "https://classgrid.in",
                   "potentialAction": {
                     "@type": "SearchAction",
                     "target": "https://classgrid.in/modules?q={search_term_string}",
                     "query-input": "required name=search_term_string"
+                  }
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://classgrid.in/#software",
+                  "name": "Classgrid",
+                  "applicationCategory": "EducationalApplication",
+                  "operatingSystem": "Web",
+                  "url": "https://classgrid.in/product",
+                  "publisher": {
+                    "@id": "https://classgrid.in/#organization"
                   }
                 }
               ]

@@ -2,7 +2,7 @@ import { getModuleBySlug } from "@/sanity/lib/marketing";
 import { buildPageMetadata } from "@/lib/metadata";
 import { StructuredContentPage } from "@/components/templates/StructuredContentPage";
 import { allPlatformModules } from "@/content/homepage";
-
+import { JsonLd } from "@/components/seo/JsonLd";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -51,30 +51,53 @@ export default async function ProductModuleDetailPage({ params }: PageProps) {
     category: m.category,
   }));
 
+  const jsonLdData = [
+    {
+      "@type": "WebPage",
+      "@id": `https://classgrid.in/product/modules/${slug}/#webpage`,
+      "name": mod?.seo?.metaTitle || mod?.headline || mod?.title || slugToTitle(slug),
+      "url": `https://classgrid.in/product/modules/${slug}`,
+      "about": {
+        "@id": "https://classgrid.in/#software"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+        { "@type": "ListItem", "position": 2, "name": "Modules", "item": "https://classgrid.in/solutions" },
+        { "@type": "ListItem", "position": 3, "name": mod?.headline || mod?.title || slugToTitle(slug), "item": `https://classgrid.in/product/modules/${slug}` }
+      ]
+    }
+  ];
+
   // If full detail exists in Sanity — render it
   if (mod) {
     const heroImageUrl = mod?.heroImage?.asset?.url ?? null;
     return (
-      <StructuredContentPage
-        mode="module"
-        eyebrow={mod?.label || mod?.category || "Product Module"}
-        title={mod?.headline || mod?.title || slugToTitle(slug)}
-        subtitle={mod?.subtitle}
-        heroImageUrl={heroImageUrl}
-        heroImageAlt={mod?.headline}
-        body={mod?.body}
-        structuredSections={Array.isArray(mod?.structuredSections) ? mod.structuredSections : []}
-        updatedAt={mod?.lastUpdatedAt || mod?._updatedAt}
-        capabilities={Array.isArray(mod?.capabilities) ? mod.capabilities : []}
-        roleExperiences={Array.isArray(mod?.roleExperiences) ? mod.roleExperiences : []}
-        faqs={Array.isArray(mod?.faqs) ? mod.faqs : []}
-        relatedHelpArticles={Array.isArray(mod?.relatedHelpArticles) ? mod.relatedHelpArticles : []}
-        relatedChangelogs={Array.isArray(mod?.relatedChangelogs) ? mod.relatedChangelogs : []}
-        primaryCtaLabel="View Platform"
-        primaryCtaHref="/view-platform"
-        allModules={allModules}
-        currentSlug={slug}
-      />
+      <>
+        <JsonLd data={jsonLdData} />
+        <StructuredContentPage
+          mode="module"
+          eyebrow={mod?.label || mod?.category || "Product Module"}
+          title={mod?.headline || mod?.title || slugToTitle(slug)}
+          subtitle={mod?.subtitle}
+          heroImageUrl={heroImageUrl}
+          heroImageAlt={mod?.headline}
+          body={mod?.body}
+          structuredSections={Array.isArray(mod?.structuredSections) ? mod.structuredSections : []}
+          updatedAt={mod?.lastUpdatedAt || mod?._updatedAt}
+          capabilities={Array.isArray(mod?.capabilities) ? mod.capabilities : []}
+          roleExperiences={Array.isArray(mod?.roleExperiences) ? mod.roleExperiences : []}
+          faqs={Array.isArray(mod?.faqs) ? mod.faqs : []}
+          relatedHelpArticles={Array.isArray(mod?.relatedHelpArticles) ? mod.relatedHelpArticles : []}
+          relatedChangelogs={Array.isArray(mod?.relatedChangelogs) ? mod.relatedChangelogs : []}
+          primaryCtaLabel="View Platform"
+          primaryCtaHref="/view-platform"
+          allModules={allModules}
+          currentSlug={slug}
+        />
+      </>
     );
   }
 
@@ -85,20 +108,23 @@ export default async function ProductModuleDetailPage({ params }: PageProps) {
 
   // Render layout with empty-state body
   return (
-    <StructuredContentPage
-      mode="module"
-      eyebrow={displayCategory}
-      title={displayTitle}
-      subtitle="Detailed documentation for this module is being prepared. Check back soon."
-      body={null}
-      capabilities={[]}
-      roleExperiences={[]}
-      faqs={[]}
-      primaryCtaLabel="Book a Demo"
-      primaryCtaHref="/#demo"
-      allModules={allModules}
-      currentSlug={slug}
-      isEmptyState
-    />
+    <>
+      <JsonLd data={jsonLdData} />
+      <StructuredContentPage
+        mode="module"
+        eyebrow={displayCategory}
+        title={displayTitle}
+        subtitle="Detailed documentation for this module is being prepared. Check back soon."
+        body={null}
+        capabilities={[]}
+        roleExperiences={[]}
+        faqs={[]}
+        primaryCtaLabel="Book a Demo"
+        primaryCtaHref="/#demo"
+        allModules={allModules}
+        currentSlug={slug}
+        isEmptyState
+      />
+    </>
   );
 }

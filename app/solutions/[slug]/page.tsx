@@ -10,6 +10,7 @@ import {
   solutionTrustBadges,
 } from "@/lib/solution-content";
 import { getSolutionPage } from "@/sanity/lib/marketing";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -97,37 +98,62 @@ export default async function SolutionPage({ params }: PageProps) {
       }))
     : [];
 
+  const displayTitle = page?.headline?.en || page?.headline || "Solution";
+
+  const jsonLdData = [
+    {
+      "@type": "WebPage",
+      "@id": `https://classgrid.in/solutions/${slug}/#webpage`,
+      "name": displayTitle,
+      "url": `https://classgrid.in/solutions/${slug}`,
+      "about": {
+        "@id": "https://classgrid.in/#software"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://classgrid.in/" },
+        { "@type": "ListItem", "position": 2, "name": "Solutions", "item": "https://classgrid.in/solutions" },
+        { "@type": "ListItem", "position": 3, "name": displayTitle, "item": `https://classgrid.in/solutions/${slug}` }
+      ]
+    }
+  ];
+
   return (
-    <StructuredContentPage
-      mode="solution"
-      eyebrow={
-        page?.label?.en || page?.label || "Solution"
-      }
-      title={page?.headline?.en || page?.headline || "Solution"}
-      subtitle={page?.subtitle?.en || page?.subtitle}
-      heroImageUrl={heroImageUrl}
-      heroImageAlt={page?.headline?.en || page?.headline}
-      body={page?.body}
-      markdownBody={page?.markdownBody}
-      markdownSections={Array.isArray(page?.markdownSections) ? page.markdownSections : []}
-      structuredSections={Array.isArray(page?.structuredSections) ? page.structuredSections : []}
-      updatedAt={page?.lastUpdatedAt || page?._updatedAt}
-      capabilities={capabilities}
-      roleExperiences={
-        Array.isArray(page?.roleExperiences) ? page.roleExperiences : []
-      }
-      faqs={Array.isArray(page?.faqs) ? page.faqs : []}
-      primaryCtaLabel="View Platform"
-      primaryCtaHref="/view-platform"
-      trustBadges={solutionTrustBadges}
-      clientLogos={solutionClientLogos}
-      impactMetrics={solutionImpactMetrics}
-      testimonials={solutionTestimonialsBySlug[slug] ?? []}
-      problemSolution={
-        isIndustry
-          ? (industryProblemSolution[slug] ?? [])
-          : (roleProblemSolution[slug] ?? [])
-      }
-    />
+    <>
+      <JsonLd data={jsonLdData} />
+      <StructuredContentPage
+        mode="solution"
+        eyebrow={
+          page?.label?.en || page?.label || "Solution"
+        }
+        title={displayTitle}
+        subtitle={page?.subtitle?.en || page?.subtitle}
+        heroImageUrl={heroImageUrl}
+        heroImageAlt={page?.headline?.en || page?.headline}
+        body={page?.body}
+        markdownBody={page?.markdownBody}
+        markdownSections={Array.isArray(page?.markdownSections) ? page.markdownSections : []}
+        structuredSections={Array.isArray(page?.structuredSections) ? page.structuredSections : []}
+        updatedAt={page?.lastUpdatedAt || page?._updatedAt}
+        capabilities={capabilities}
+        roleExperiences={
+          Array.isArray(page?.roleExperiences) ? page.roleExperiences : []
+        }
+        faqs={Array.isArray(page?.faqs) ? page.faqs : []}
+        primaryCtaLabel="View Platform"
+        primaryCtaHref="/view-platform"
+        trustBadges={solutionTrustBadges}
+        clientLogos={solutionClientLogos}
+        impactMetrics={solutionImpactMetrics}
+        testimonials={solutionTestimonialsBySlug[slug] ?? []}
+        problemSolution={
+          isIndustry
+            ? (industryProblemSolution[slug] ?? [])
+            : (roleProblemSolution[slug] ?? [])
+        }
+      />
+    </>
   );
 }
