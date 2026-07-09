@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { JsonLd } from "@/components/seo/JsonLd";
 
