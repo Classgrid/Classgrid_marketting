@@ -198,6 +198,11 @@ export const authOptions: NextAuthOptions = {
                 token.isPlatformUser = true;
                 token.platformRole = platformUser.role;
                 
+                // Override the token name with the platform user's full name
+                if (platformUser.name) {
+                  token.name = platformUser.name;
+                }
+                
                 if (platformUser.organization_id) {
                   token.orgId = platformUser.organization_id.toString();
                   // Look up org name from organizations collection
