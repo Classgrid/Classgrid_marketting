@@ -23,6 +23,9 @@ type TicketMessage = {
   date: string;
   footer?: string;
   attachments?: any[];
+  orgName?: string;
+  orgLogo?: string;
+  authorRole?: string;
 };
 
 type TicketData = {
@@ -417,20 +420,18 @@ function TicketDetailPageInner() {
                   {idx > 0 && (
                     <hr className="border-border my-0" />
                   )}
-                  <div className="flex gap-4 py-8">
+                    <div className="flex gap-4 py-8">
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.role === "admin"
-                          ? "bg-emerald-100 dark:bg-emerald-900/40"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${msg.avatar
+                          ? ""
                           : `${getAvatarColor(msg.author)} text-white font-bold text-sm`
                           }`}
                       >
                         {msg.avatar ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={msg.avatar} alt={msg.author} className="w-full h-full object-cover" />
-                        ) : msg.role === "admin" ? (
-                          <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         ) : (
                           <span>{getInitials(msg.author)}</span>
                         )}
@@ -439,13 +440,22 @@ function TicketDetailPageInner() {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="mb-3 flex items-center">
+                      <div className="mb-3 flex items-center flex-wrap gap-y-1">
                         <span className="font-bold text-sm text-foreground">
                           {msg.author}
                         </span>
-                        {msg.role === "admin" && (
-                          <span className="ml-1.5 inline-flex items-center" title="Verified Admin">
+                        {msg.authorRole === "super_admin" && (
+                          <span className="ml-1.5 inline-flex items-center" title="Verified Classgrid Team">
                             <BadgeCheck className="w-4 h-4 text-white fill-[#1DA1F2] dark:text-[#0f0f0f]" />
+                          </span>
+                        )}
+                        {msg.orgName && (
+                          <span className="ml-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted/60 border border-border text-[10px] font-medium text-muted-foreground">
+                            {msg.orgLogo && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={msg.orgLogo} alt="" className="w-3.5 h-3.5 rounded-sm object-contain" />
+                            )}
+                            {msg.orgName}
                           </span>
                         )}
                         <p className="text-xs text-muted-foreground ml-3">
