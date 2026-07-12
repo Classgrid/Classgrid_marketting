@@ -43,13 +43,13 @@ export async function GET(req: Request) {
     }
 
     // Soft-delete: set is_active to false (don't remove the row)
-    const { error } = await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from("blog_subscribers")
-      .update({ is_active: false })
+      .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq("email", email);
 
-    if (error) {
-      console.error("Unsubscribe DB Error:", error);
+    if (updateError) {
+      console.error("Unsubscribe DB Error:", updateError);
       return NextResponse.json(
         { error: "Failed to unsubscribe. Please try again." },
         { status: 500 }

@@ -190,7 +190,7 @@ export async function POST(req: Request) {
         // User exists but is unsubscribed. Resubscribe them!
         const { error: updateError } = await supabaseAdmin
           .from("blog_subscribers")
-          .update({ is_active: true, name: firstName })
+          .update({ is_active: true, name: firstName, updated_at: null })
           .eq("email", email);
           
         if (updateError) throw updateError;
