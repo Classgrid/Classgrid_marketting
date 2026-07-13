@@ -3,7 +3,7 @@ import { getSmtpTransporter, getNoReplyAddress, sanitizeMailerError } from "@/li
 
 /**
  * POST /api/contact — Handle Contact Us form submissions.
- * Sends form data directly to support@classgrid.in via Brevo SMTP.
+ * Sends form data directly to team@classgrid.in via Brevo SMTP.
  * No third-party (Formspree) dependency.
  */
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail({
       from: getNoReplyAddress(),
-      to: "support@classgrid.in",
+      to: "Classgrid Team <team@classgrid.in>",
       replyTo: sanitizedEmail,
       subject: `📬 New Contact Form Submission from ${sanitizedName}`,
       text: `New Contact Form:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPhone: +91 ${sanitizedPhone}\nMessage:\n${(message || "").trim()}`,
