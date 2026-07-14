@@ -91,8 +91,8 @@ function renderRecentBlogs(
   if (blogs.length === 0) return "";
 
   return `
-<div style="margin-top:40px;padding-top:30px;border-top:1px solid #2a2a2a;">
-  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">Latest from Our Blog</h3>
+<div style="margin-top:40px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">Latest from Our Blog</h3>
   ${blogs
     .map((blog) => {
       const blogUrl = `${siteUrl}/blog/${blog.slug}`;
@@ -103,10 +103,10 @@ function renderRecentBlogs(
       return `
   <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
     <tr>
-      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
         ${imageHtml}
-        <a href="${escapeHtml(blogUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;">${escapeHtml(blog.resolvedTitle)}</a>
-        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(blog.resolvedExcerpt)}</p>
+        <a href="${escapeHtml(blogUrl)}" style="color:#111111;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;">${escapeHtml(blog.resolvedTitle)}</a>
+        <p style="color:#6b7280;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(blog.resolvedExcerpt)}</p>
       </td>
     </tr>
   </table>`;
@@ -128,8 +128,8 @@ function renderRecentChangelogs(
   if (changelogs.length === 0) return "";
 
   return `
-<div style="margin-top:30px;padding-top:30px;border-top:1px solid #2a2a2a;">
-  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
+<div style="margin-top:30px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
   ${changelogs
     .map((entry) => {
       const changelogUrl = `${siteUrl}/changelog/${entry.slug}`;
@@ -140,13 +140,13 @@ function renderRecentChangelogs(
       return `
   <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
     <tr>
-      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
         ${imageHtml}
         <div style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;background:#34d399;color:#000;">
           ${escapeHtml(formatUpdateType(entry.updateType))}
         </div>
-        <a href="${escapeHtml(changelogUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;display:block;margin-top:6px;">${escapeHtml(entry.resolvedTitle)}</a>
-        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(entry.resolvedSummary)}</p>
+        <a href="${escapeHtml(changelogUrl)}" style="color:#111111;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;display:block;margin-top:6px;">${escapeHtml(entry.resolvedTitle)}</a>
+        <p style="color:#6b7280;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(entry.resolvedSummary)}</p>
       </td>
     </tr>
   </table>`;
@@ -300,19 +300,19 @@ export async function POST(req: Request) {
     body, html {
       margin: 0; padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #0f0f0f;
+      background-color: #f5f5f5;
       -webkit-font-smoothing: antialiased;
     }
-    h1 { color: #ffffff; margin-top: 0; margin-bottom: 16px; font-size: 20px;}
-    p { margin: 0 0 20px; color: #cccccc; font-size: 14px; line-height: 1.7; }
-    ul { margin: 0 0 20px 20px; color: #cccccc; font-size: 14px; padding: 0; line-height: 1.7; }
+    h1 { color: #111111; margin-top: 0; margin-bottom: 16px; font-size: 20px;}
+    p { margin: 0 0 20px; color: #374151; font-size: 14px; line-height: 1.7; }
+    ul { margin: 0 0 20px 20px; color: #374151; font-size: 14px; padding: 0; line-height: 1.7; }
     li { margin-bottom: 8px; }
-    strong { color: #ffffff; }
-    a { color: #ffffff; text-decoration: underline; }
+    strong { color: #111111; }
+    a { color: #111111; text-decoration: underline; }
     .btn {
       display: inline-block;
       background-color: #34d399;
-      color: #000000 !important;
+      color: #ffffff !important;
       text-decoration: none;
       padding: 12px 28px;
       border-radius: 6px;
@@ -323,34 +323,34 @@ export async function POST(req: Request) {
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0f0f0f;">
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#0f0f0f;width:100%;">
+<body style="margin:0;padding:0;background:#f5f5f5;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#f5f5f5;width:100%;">
 <tr>
 <td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #eaeaea;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
 <tr>
-<td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-<img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
-<h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">You're Subscribed!</h1>
-<p style="color:#9ca3af;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">Thanks for joining us.</p>
+<td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
+<img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">You're Subscribed!</h1>
+<p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">Thanks for joining us.</p>
 </td>
 </tr>
 <tr>
-<td style="padding:32px 30px;color:#cccccc;font-size:14px;line-height:1.8;">
-<p style="color:#ffffff;font-size:16px;font-weight:600;margin:0 0 20px;">${firstName ? `Hi ${escapeHtml(firstName)},` : `Hi there,`}</p>
-<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 16px;">You are now subscribed to receive the latest updates from the <strong style="color:#ffffff;">Classgrid Blog</strong> and <strong style="color:#ffffff;">Changelog</strong>.</p>
-<p style="color:#cccccc;font-size:14px;line-height:1.8;margin:0 0 20px;">We'll keep you in the loop whenever we publish new product features, platform improvements, or practical insights on modern campus administration.</p>
+<td style="padding:32px 30px;color:#374151;font-size:14px;line-height:1.8;">
+<p style="color:#111111;font-size:16px;font-weight:600;margin:0 0 20px;">${firstName ? `Hi ${escapeHtml(firstName)},` : `Hi there,`}</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">You are now subscribed to receive the latest updates from the <strong style="color:#111111;">Classgrid Blog</strong> and <strong style="color:#111111;">Changelog</strong>.</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 20px;">We'll keep you in the loop whenever we publish new product features, platform improvements, or practical insights on modern campus administration.</p>
 
 ${renderRecentBlogs(blogsWithImages, siteUrl)}
 ${renderRecentChangelogs(changelogsWithImages, siteUrl)}
 
 ${!hasContent ? `
-<div style="margin-top:30px;padding-top:20px;border-top:1px solid #2a2a2a;background:#1a1a1a;border-radius:10px;padding:24px;text-align:center;">
+<div style="margin-top:30px;padding-top:20px;border-top:1px solid #eaeaea;background:#f9f9f9;border-radius:10px;padding:24px;text-align:center;">
   <p style="color:#34d399;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Stay Tuned</p>
-  <p style="color:#cccccc;font-size:14px;margin:0 0 20px;line-height:1.7;">We are actively building new content and product updates. Check our blog and changelog regularly — we will keep updating!</p>
+  <p style="color:#374151;font-size:14px;margin:0 0 20px;line-height:1.7;">We are actively building new content and product updates. Check our blog and changelog regularly — we will keep updating!</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
     <a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">Visit Our Blog</a>
-    <a href="${siteUrl}/changelog" style="background:#ffffff;color:#000;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">View Changelog</a>
+    <a href="${siteUrl}/changelog" style="background:#000000;color:#ffffff;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">View Changelog</a>
   </div>
 </div>` : `
 <div style="text-align:center;margin:30px 0;">
@@ -358,29 +358,29 @@ ${!hasContent ? `
 </div>`}
 
 
-<div style="margin-top:40px;padding-top:30px;border-top:1px solid #2a2a2a;">
-  <p style="color:#cccccc;font-size:14px;margin:0 0 8px;">Build smarter academic workflows</p>
-  <a href="${siteUrl}" style="color:#9ca3af;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
+<div style="margin-top:40px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <p style="color:#374151;font-size:14px;margin:0 0 8px;">Build smarter academic workflows</p>
+  <a href="${siteUrl}" style="color:#6b7280;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
 
   <div style="margin-bottom:24px;">
-    <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+    <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;border:1px solid #eaeaea;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
-    <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+    <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;border:1px solid #eaeaea;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
-    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;border:1px solid #2a2a2a;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
+    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;border:1px solid #eaeaea;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="16" height="16" style="display:block;opacity:0.8;">
     </a>
   </div>
 
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
-      <td style="color:#7a7a7a;font-size:12px;text-align:left;">
+      <td style="color:#9ca3af;font-size:12px;text-align:left;">
         &copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
       </td>
-      <td style="color:#7a7a7a;font-size:12px;text-align:right;">
-        <a href="${unsubscribeUrl}" style="color:#7a7a7a;text-decoration:none;">Unsubscribe</a>
+      <td style="color:#9ca3af;font-size:12px;text-align:right;">
+        <a href="${unsubscribeUrl}" style="color:#9ca3af;text-decoration:none;">Unsubscribe</a>
       </td>
     </tr>
   </table>

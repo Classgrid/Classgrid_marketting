@@ -37,35 +37,35 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
     body, html {
       margin: 0; padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #0f0f0f;
+      background-color: #f5f5f5;
       -webkit-font-smoothing: antialiased;
     }
     h1, h2, h3 { 
-      color: #ffffff; 
+      color: #111111; 
       margin-top: 0; 
       margin-bottom: 16px;
     }
     p { 
       margin: 0 0 20px; 
-      color: #cccccc; 
+      color: #374151; 
       font-size: 14px; 
       line-height: 1.7; 
     }
     ul { 
       margin: 0 0 20px 20px; 
-      color: #cccccc; 
+      color: #374151; 
       font-size: 14px; 
       padding: 0; 
       line-height: 1.7; 
     }
     li { margin-bottom: 8px; }
-    strong { color: #ffffff; }
-    a { color: #ffffff; text-decoration: underline; }
+    strong { color: #111111; }
+    a { color: #111111; text-decoration: underline; }
     
     .btn {
       display: inline-block;
-      background-color: #ffffff;
-      color: #000000 !important;
+      background-color: #000000;
+      color: #ffffff !important;
       text-decoration: none;
       padding: 12px 28px;
       border-radius: 6px;
@@ -79,17 +79,17 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
       color: #ffffff !important;
     }
     .box {
-      background-color: #161616;
-      border: 1px solid #2a2a2a;
+      background-color: #f9f9f9;
+      border: 1px solid #eaeaea;
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 24px;
     }
-    .box p { margin-bottom: 8px; color: #cccccc; }
+    .box p { margin-bottom: 8px; color: #374151; }
     .box p:last-child { margin-bottom: 0; }
     .box .meta {
       font-size: 12px;
-      color: #9ca3af;
+      color: #6b7280;
       margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -98,7 +98,7 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
     .box .code {
       font-family: monospace;
       font-size: 24px;
-      color: #ffffff;
+      color: #111111;
       letter-spacing: 4px;
       font-weight: bold;
       display: block;
@@ -106,30 +106,30 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0f0f0f;">
+<body style="margin:0;padding:0;background:#f5f5f5;">
 
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#0f0f0f;width:100%;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#f5f5f5;width:100%;">
 <tr>
 <td align="center">
 
-<table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #eaeaea;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
 
 <tr>
-<td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-<img src="${PLATFORM_LOGO_URL}" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
-<h1 style="color:#ffffff;margin:0;font-size:20px;">${title}</h1>
+<td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
+<img src="${PLATFORM_LOGO_URL}" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+<h1 style="color:#111111;margin:0;font-size:20px;">${title}</h1>
 </td>
 </tr>
 
 <tr>
-<td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;">
+<td style="padding:30px;color:#374151;font-size:14px;line-height:1.7;">
 
 ${content}
 
 ${hideSupportLink ? '' : `
 <div style="margin-top:30px;">
-<p style="color:#9ca3af;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
+<p style="color:#6b7280;font-size:13px;margin:0;">
+Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
 </p>
 </div>
 `}
@@ -138,8 +138,8 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;te
 </tr>
 
 <tr>
-<td style="padding:20px;text-align:center;border-top:1px solid #2a2a2a;color:#7a7a7a;font-size:12px;">
-${ignoreText ? `<p style="margin-bottom:12px;color:#7a7a7a;font-size:12px;">${ignoreText}</p>` : ''}
+<td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#6b7280;font-size:12px;background:#f9f9f9;">
+${ignoreText ? `<p style="margin-bottom:12px;color:#9ca3af;font-size:12px;">${ignoreText}</p>` : ''}
 © ${new Date().getFullYear()} Classgrid. All rights reserved.
 </td>
 </tr>
@@ -160,7 +160,7 @@ export function getForumPasswordResetEmailHtml(resetLink: string): string {
     <h1>Reset your password</h1>
     <p>We received a request to reset the password for your Classgrid account. This link expires in <strong>5 minutes</strong>.</p>
     <a href="${resetLink}" class="btn">Reset Password</a>
-    <p style="margin-top:20px;font-size:13px;color:#9ca3af;">If you did not request this password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+    <p style="margin-top:20px;font-size:13px;color:#6b7280;">If you did not request this password reset, you can safely ignore this email. Your password will remain unchanged.</p>
   `;
   return baseTemplate({
     content,
@@ -173,32 +173,32 @@ export function getForumPasswordResetEmailHtml(resetLink: string): string {
 export function getForumWelcomeEmailHtml(userName: string, dashboardUrl: string): string {
   return `<!DOCTYPE html>
 <html>
-<body style="margin:0;padding:0;background:#0f0f0f;font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;">
 
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#0f0f0f;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#f5f5f5;">
 <tr>
 <td align="center">
 
-<table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #eaeaea;border-radius:12px;overflow:hidden;">
 
 <tr>
-<td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-<img src="${PLATFORM_LOGO_URL}" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;">
-<h1 style="color:#ffffff;margin:0;font-size:22px;">Welcome to the Classgrid Community</h1>
-<p style="color:#9ca3af;margin-top:8px;font-size:13px;">
+<td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
+<img src="${PLATFORM_LOGO_URL}" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+<h1 style="color:#111111;margin:0;font-size:22px;">Welcome to the Classgrid Community</h1>
+<p style="color:#6b7280;margin-top:8px;font-size:13px;">
 Ready to start your academic journey
 </p>
 </td>
 </tr>
 
 <tr>
-<td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;">
+<td style="padding:30px;color:#374151;font-size:14px;line-height:1.7;">
 
 <p>Hi <strong>${userName}</strong>,</p>
 
 <p>Your account has been successfully created. You're now ready to join the Classgrid Community.</p>
 
-<h3 style="color:#ffffff;">What You Can Do</h3>
+<h3 style="color:#111111;">What You Can Do</h3>
 <ul style="padding-left:20px;">
 <li style="margin-bottom:6px;">Join academic discussions with educators and students globally</li>
 <li style="margin-bottom:6px;">Ask questions and get real answers from the community</li>
@@ -207,20 +207,20 @@ Ready to start your academic journey
 </ul>
 
 <div style="text-align:center;margin:30px 0;">
-<a href="${dashboardUrl}" style="background:#ffffff;color:#000;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+<a href="${dashboardUrl}" style="background:#000000;color:#111111;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
 Join Discussions
 </a>
 </div>
 
-<p style="color:#9ca3af;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
+<p style="color:#6b7280;font-size:13px;margin:0;">
+Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
 </p>
 
 </td>
 </tr>
 
 <tr>
-<td style="padding:20px;text-align:center;border-top:1px solid #2a2a2a;color:#7a7a7a;font-size:12px;">
+<td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#6b7280;font-size:12px;background:#f9f9f9;">
 © ${new Date().getFullYear()} Classgrid. All rights reserved.
 </td>
 </tr>
@@ -335,7 +335,7 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
       <div style="margin-bottom: 12px;">
         <span style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Premium Support</span>
       </div>
-      <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #ffffff;">Introducing Classgrid Talk</p>
+      <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #111111;">Introducing Classgrid Talk</p>
       <p style="margin: 0 0 20px 0; font-size: 14px; color: #a1a1aa; line-height: 1.6;">Have questions before our meeting? <strong>Classgrid Talk</strong> is our dedicated direct-messaging portal. Connect with your personal product specialist today to get answers tailored specifically to your institution's unique needs.</p>
       <a href="https://classgrid.in/support/inquiry" style="display: inline-block; background-color: transparent; color: #10b981 !important; border: 1px solid #10b981; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; text-decoration: none;">Start a Chat &rarr;</a>
     </div>
@@ -377,7 +377,7 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
     ${lead.message ? `
     <div style="margin-top: 24px;">
       <h3 style="color: #10b981; font-size: 16px; margin-bottom: 8px;"><strong><u style="text-decoration-color: #10b981;">Message from Lead:</u></strong></h3>
-      <p style="padding: 16px; background-color: #2a2a2a; border-left: 4px solid #10b981; border-radius: 4px; font-style: italic; color: #ffffff;">
+      <p style="padding: 16px; background-color: #2a2a2a; border-left: 4px solid #10b981; border-radius: 4px; font-style: italic; color: #111111;">
         ${lead.message}
       </p>
     </div>

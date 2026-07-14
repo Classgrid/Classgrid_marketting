@@ -94,8 +94,8 @@ function renderRecentBlogs(
 ) {
   if (blogs.length === 0) return "";
   return `
-<div style="margin-top:40px;padding-top:30px;border-top:1px solid #2a2a2a;">
-  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">Recent from the Blog</h3>
+<div style="margin-top:40px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">Recent from the Blog</h3>
   ${blogs.map((blog) => {
     const postUrl = `${siteUrl}/blog/${blog.slug}`;
     const imageHtml = blog.imageUrl
@@ -104,10 +104,10 @@ function renderRecentBlogs(
     return `
   <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
     <tr>
-      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
         ${imageHtml}
-        <a href="${escapeHtml(postUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;">${escapeHtml(blog.resolvedTitle)}</a>
-        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(blog.resolvedExcerpt)}</p>
+        <a href="${escapeHtml(postUrl)}" style="color:#111111;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;">${escapeHtml(blog.resolvedTitle)}</a>
+        <p style="color:#6b7280;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(blog.resolvedExcerpt)}</p>
       </td>
     </tr>
   </table>`;
@@ -127,8 +127,8 @@ function renderRecentChangelogs(
 ) {
   if (changelogs.length === 0) return "";
   return `
-<div style="margin-top:30px;padding-top:30px;border-top:1px solid #2a2a2a;">
-  <h3 style="color:#ffffff;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
+<div style="margin-top:30px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
   ${changelogs.map((entry) => {
     const changelogUrl = `${siteUrl}/changelog/${entry.slug}`;
     const imageHtml = entry.imageUrl
@@ -137,13 +137,13 @@ function renderRecentChangelogs(
     return `
   <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
     <tr>
-      <td style="padding:16px;background:#1a1a1a;border-radius:10px;border:1px solid #2a2a2a;">
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
         ${imageHtml}
         <div style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;background:#34d399;color:#000;">
           ${escapeHtml(formatUpdateType(entry.updateType))}
         </div>
-        <a href="${escapeHtml(changelogUrl)}" style="color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;display:block;margin-top:6px;">${escapeHtml(entry.resolvedTitle)}</a>
-        <p style="color:#9ca3af;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(entry.resolvedSummary)}</p>
+        <a href="${escapeHtml(changelogUrl)}" style="color:#111111;font-size:15px;font-weight:600;text-decoration:none;line-height:1.3;display:block;margin-top:6px;">${escapeHtml(entry.resolvedTitle)}</a>
+        <p style="color:#6b7280;font-size:13px;margin:6px 0 0;line-height:1.5;">${escapeHtml(entry.resolvedSummary)}</p>
       </td>
     </tr>
   </table>`;
@@ -193,29 +193,29 @@ function buildNotificationEmailHtml(
     body, html {
       margin: 0; padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #0f0f0f;
+      background-color: #f5f5f5;
       -webkit-font-smoothing: antialiased;
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0f0f0f;">
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#0f0f0f;width:100%;">
+<body style="margin:0;padding:0;background:#f5f5f5;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;background:#f5f5f5;width:100%;">
 <tr>
 <td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #eaeaea;border-radius:12px;overflow:hidden;margin:0 auto;max-width:600px;width:100%;">
 <tr>
-<td style="padding:30px;border-bottom:1px solid #2a2a2a;text-align:center;">
-<img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:6px;">
-<h1 style="color:#ffffff;margin:0;font-size:22px;">New from Classgrid</h1>
-<p style="color:#9ca3af;margin-top:8px;font-size:13px;">${escapeHtml(eyebrow)}</p>
+<td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
+<img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" width="48" height="48" style="display:block;margin:0 auto 16px;border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);"border-radius:10px;background:linear-gradient(#0f0f0f,#0f0f0f);padding:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+<h1 style="color:#111111;margin:0;font-size:22px;">New from Classgrid</h1>
+<p style="color:#6b7280;margin-top:8px;font-size:13px;">${escapeHtml(eyebrow)}</p>
 </td>
 </tr>
 <tr>
-<td style="padding:30px;color:#cccccc;font-size:14px;line-height:1.7;">
+<td style="padding:30px;color:#374151;font-size:14px;line-height:1.7;">
 ${coverImageHtml}
-<h2 style="color:#ffffff;font-size:20px;margin:0 0 8px;line-height:1.3;">${escapeHtml(post.resolvedTitle)}</h2>
-${metaLine ? `<p style="color:#9ca3af;font-size:12px;margin:0 0 20px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">${escapeHtml(metaLine)}</p>` : ""}
-<p style="color:#cccccc;font-size:14px;line-height:1.7;margin:0 0 25px;">${escapeHtml(summary)}</p>
+<h2 style="color:#111111;font-size:20px;margin:0 0 8px;line-height:1.3;">${escapeHtml(post.resolvedTitle)}</h2>
+${metaLine ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">${escapeHtml(metaLine)}</p>` : ""}
+<p style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 25px;">${escapeHtml(summary)}</p>
 <div style="text-align:center;margin:30px 0;">
 <a href="${escapeHtml(itemUrl)}" style="background:#34d399;color:#000;padding:14px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;">${escapeHtml(ctaLabel)}</a>
 </div>
@@ -223,8 +223,8 @@ ${metaLine ? `<p style="color:#9ca3af;font-size:12px;margin:0 0 20px;text-transf
 ${renderRecentBlogs(recentBlogs, siteUrl)}
 ${renderRecentChangelogs(recentChangelogs, siteUrl)}
 
-<div style="margin-top:40px;padding-top:20px;border-top:1px solid #2a2a2a;text-align:center;">
-  <p style="color:#ffffff;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
+<div style="margin-top:40px;padding-top:20px;border-top:1px solid #eaeaea;text-align:center;">
+  <p style="color:#111111;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
   <div style="display:inline-block;">
     <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="24" height="24" style="opacity:0.8;">
@@ -239,16 +239,16 @@ ${renderRecentChangelogs(recentChangelogs, siteUrl)}
 </div>
 
 <div style="margin-top:30px;text-align:center;">
-<p style="color:#9ca3af;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a>
+<p style="color:#6b7280;font-size:13px;margin:0;">
+Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
 </p>
 </div>
 </td>
 </tr>
 <tr>
-<td style="padding:20px;text-align:center;border-top:1px solid #2a2a2a;color:#7a7a7a;font-size:12px;">
-<p style="margin-bottom:8px;color:#7a7a7a;font-size:12px;">You received this because you subscribed to Classgrid Updates.</p>
-<p style="margin-bottom:12px;"><a href="${escapeHtml(unsubscribeUrl)}" style="color:#9ca3af;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
+<td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#9ca3af;font-size:12px;">
+<p style="margin-bottom:8px;color:#9ca3af;font-size:12px;">You received this because you subscribed to Classgrid Updates.</p>
+<p style="margin-bottom:12px;"><a href="${escapeHtml(unsubscribeUrl)}" style="color:#6b7280;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
 &copy; ${currentYear} Classgrid. All rights reserved.
 </td>
 </tr>

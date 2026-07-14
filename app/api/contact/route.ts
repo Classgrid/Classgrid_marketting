@@ -56,28 +56,28 @@ export async function POST(request: NextRequest) {
       text: `New Contact Form:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPhone: +91 ${sanitizedPhone}\nMessage:\n${(message || "").trim()}`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;">
+<body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
 <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
   <div style="text-align:center;margin-bottom:32px;">
     <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" style="height:40px;" />
   </div>
-  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:32px;">
-    <h2 style="color:#ffffff;margin:0 0 24px;font-size:20px;">New Contact Form Submission</h2>
+  <div style="background:#f9f9f9;border:1px solid #eaeaea;border-radius:16px;padding:32px;">
+    <h2 style="color:#111111;margin:0 0 24px;font-size:20px;">New Contact Form Submission</h2>
     <table style="width:100%;border-collapse:collapse;">
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;width:100px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;font-weight:600;">${sanitizedName}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;width:100px;vertical-align:top;">Name</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Email</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;"><a href="mailto:${sanitizedEmail}" style="color:#10b981;text-decoration:none;">${sanitizedEmail}</a></td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:${sanitizedEmail}" style="color:#10b981;text-decoration:none;">${sanitizedEmail}</a></td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #2a2a2a;vertical-align:top;">Phone</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #2a2a2a;">+91 ${sanitizedPhone}</td>
+        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Phone</td>
+        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">+91 ${sanitizedPhone}</td>
       </tr>
     </table>
-    <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #2a2a2a;border-radius:12px;">
+    <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
       <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Message</p>
       <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${formattedMessage}</div>
     </div>
