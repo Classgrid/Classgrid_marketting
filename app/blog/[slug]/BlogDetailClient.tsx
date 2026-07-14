@@ -501,27 +501,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             );
           })()}
 
-          {/* ---------------- PREV / NEXT NAVIGATION ---------------- */}
-          {(post.prevPost || post.nextPost) && (
-            <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-border pt-8 pb-4">
-              <div className="w-full sm:w-1/2 flex justify-start">
-                {post.prevPost && (
-                  <Link href={buildLangHref(`/blog/${getSlug(post.prevPost.slug)}`, lang)} className="group flex flex-col items-start text-left">
-                    <span className="text-xs text-muted-foreground mb-1 uppercase font-semibold tracking-wider flex items-center"><ChevronLeft className="w-3 h-3 mr-1 transition-transform group-hover:-translate-x-1" /> Previous Post</span>
-                    <span className="text-base font-semibold text-foreground group-hover:text-emerald-500 transition-colors line-clamp-2">{extractLocaleString(post.prevPost.title, lang) || "Previous"}</span>
-                  </Link>
-                )}
-              </div>
-              <div className="w-full sm:w-1/2 flex justify-end text-right">
-                {post.nextPost && (
-                  <Link href={buildLangHref(`/blog/${getSlug(post.nextPost.slug)}`, lang)} className="group flex flex-col items-end text-right">
-                    <span className="text-xs text-muted-foreground mb-1 uppercase font-semibold tracking-wider flex items-center">Next Post <ChevronRight className="w-3 h-3 ml-1 transition-transform group-hover:translate-x-1" /></span>
-                    <span className="text-base font-semibold text-foreground group-hover:text-emerald-500 transition-colors line-clamp-2">{extractLocaleString(post.nextPost.title, lang) || "Next"}</span>
-                  </Link>
-                )}
-              </div>
-            </MotionDiv>
-          )}
+          {/* ---------------- PREV / NEXT NAVIGATION (Removed) ---------------- */}
         </article>
       </div>
 
