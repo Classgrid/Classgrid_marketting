@@ -331,12 +331,12 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
     <p>A Classgrid team member will connect with you and show a personalized demo.</p>
     <p><strong>Please don't forget to join!</strong> You will also receive a phone call shortly before the meeting begins.</p>
     
-    <div style="margin-top: 32px; padding: 24px; background-color: #111111; border-left: 4px solid #10b981; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <div style="margin-top: 32px; padding: 24px; background-color: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
       <div style="margin-bottom: 12px;">
         <span style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Premium Support</span>
       </div>
-      <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #f9fafb;">Introducing Classgrid Talk</p>
-      <p style="margin: 0 0 20px 0; font-size: 14px; color: #a1a1aa; line-height: 1.6;">Have questions before our meeting? <strong style="color: #f9fafb;">Classgrid Talk</strong> is our dedicated direct-messaging portal. Connect with your personal product specialist today to get answers tailored specifically to your institution's unique needs.</p>
+      <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #111111;">Introducing Classgrid Talk</p>
+      <p style="margin: 0 0 20px 0; font-size: 14px; color: #374151; line-height: 1.6;">Have questions before our meeting? <strong style="color: #111111;">Classgrid Talk</strong> is our dedicated direct-messaging portal. Connect with your personal product specialist today to get answers tailored specifically to your institution's unique needs.</p>
       <a href="https://classgrid.in/support/inquiry" style="display: inline-block; background-color: transparent; color: #10b981 !important; border: 1px solid #10b981; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; text-decoration: none;">Start a Chat &rarr;</a>
     </div>
     
