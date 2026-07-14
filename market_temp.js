@@ -1,31 +1,55 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var email_templates_exports = {};
+__export(email_templates_exports, {
+  baseTemplate: () => baseTemplate,
+  getAdminDemoNotificationHtml: () => getAdminDemoNotificationHtml,
+  getDemoConfirmationEmailHtml: () => getDemoConfirmationEmailHtml,
+  getDemoOtpEmailHtml: () => getDemoOtpEmailHtml,
+  getForumLoginNotificationHtml: () => getForumLoginNotificationHtml,
+  getForumOtpEmailHtml: () => getForumOtpEmailHtml,
+  getForumPasswordResetEmailHtml: () => getForumPasswordResetEmailHtml,
+  getForumVerificationEmailHtml: () => getForumVerificationEmailHtml,
+  getForumWelcomeEmailHtml: () => getForumWelcomeEmailHtml
+});
+module.exports = __toCommonJS(email_templates_exports);
 const FRONTEND_URL = process.env.NEXTAUTH_URL ?? "https://classgrid.in";
 const PLATFORM_LOGO_URL = "https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png";
-
-const providerConfig: Record<string, { name: string }> = {
+const providerConfig = {
   manual: { name: "Email & Password" },
   google: { name: "Google" },
   github: { name: "GitHub" },
   linkedin: { name: "LinkedIn" },
   facebook: { name: "Facebook" }
 };
-
-const formatDate = (date?: Date | string | null): string => {
-  const d = date ? new Date(date) : new Date();
+const formatDate = (date) => {
+  const d = date ? new Date(date) : /* @__PURE__ */ new Date();
   return d.toLocaleString("en-IN", {
-    year: "numeric", month: "long", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
-    timeZone: "Asia/Kolkata", timeZoneName: "short",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short"
   });
 };
-
-interface BaseTemplateProps {
-  content: string;
-  title?: string;
-  ignoreText?: string | null;
-  hideSupportLink?: boolean;
-}
-
-export function baseTemplate({ content, title = "Notification", ignoreText = null, hideSupportLink = false }: BaseTemplateProps): string {
+function baseTemplate({ content, title = "Notification", ignoreText = null, hideSupportLink = false }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +150,7 @@ export function baseTemplate({ content, title = "Notification", ignoreText = nul
 
 ${content}
 
-${hideSupportLink ? '' : `
+${hideSupportLink ? "" : `
 <div style="margin-top:30px;">
 <p style="color:#6b7280;font-size:13px;margin:0;">
 Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
@@ -139,8 +163,8 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;te
 
 <tr>
 <td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#6b7280;font-size:12px;background:#f9f9f9;">
-${ignoreText ? `<p style="margin-bottom:12px;color:#9ca3af;font-size:12px;">${ignoreText}</p>` : ''}
-© ${new Date().getFullYear()} Classgrid. All rights reserved.
+${ignoreText ? `<p style="margin-bottom:12px;color:#9ca3af;font-size:12px;">${ignoreText}</p>` : ""}
+\xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} Classgrid. All rights reserved.
 </td>
 </tr>
 
@@ -153,9 +177,7 @@ ${ignoreText ? `<p style="margin-bottom:12px;color:#9ca3af;font-size:12px;">${ig
 </body>
 </html>`;
 }
-
-// ------------- PASSWORD RESET -------------
-export function getForumPasswordResetEmailHtml(resetLink: string): string {
+function getForumPasswordResetEmailHtml(resetLink) {
   const content = `
     <h1>Reset your password</h1>
     <p>We received a request to reset the password for your Classgrid account. This link expires in <strong>5 minutes</strong>.</p>
@@ -168,9 +190,7 @@ export function getForumPasswordResetEmailHtml(resetLink: string): string {
     ignoreText: "If you did not request this, please ignore this email. Your password will remain unchanged."
   });
 }
-
-// ------------- WELCOME EMAIL -------------
-export function getForumWelcomeEmailHtml(userName: string, dashboardUrl: string): string {
+function getForumWelcomeEmailHtml(userName, dashboardUrl) {
   return `<!DOCTYPE html>
 <html>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;">
@@ -221,7 +241,7 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;te
 
 <tr>
 <td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#6b7280;font-size:12px;background:#f9f9f9;">
-© ${new Date().getFullYear()} Classgrid. All rights reserved.
+\xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} Classgrid. All rights reserved.
 </td>
 </tr>
 
@@ -234,9 +254,7 @@ Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;te
 </body>
 </html>`;
 }
-
-// ------------- LOGIN NOTIFICATION -------------
-export function getForumLoginNotificationHtml(user: { name: string; email: string }, provider: string = "manual"): string {
+function getForumLoginNotificationHtml(user, provider = "manual") {
   const config = providerConfig[provider] || providerConfig.manual;
   const content = `
     <h1>New login to your account</h1>
@@ -250,9 +268,7 @@ export function getForumLoginNotificationHtml(user: { name: string; email: strin
     ignoreText: "If this was you, you can safely ignore this email."
   });
 }
-
-// ------------- VERIFICATION EMAIL -------------
-export function getForumVerificationEmailHtml(name: string, verifyLink: string): string {
+function getForumVerificationEmailHtml(name, verifyLink) {
   const content = `
     <h1>Verify your email</h1>
     <p>Hi ${name},</p>
@@ -265,9 +281,7 @@ export function getForumVerificationEmailHtml(name: string, verifyLink: string):
     ignoreText: "If you did not sign up for Classgrid, please ignore this email."
   });
 }
-
-// ------------- OTP EMAIL -------------
-export function getForumOtpEmailHtml(otp: string): string {
+function getForumOtpEmailHtml(otp) {
   const content = `
     <h1>Your Classgrid Login Code</h1>
     <p>Use the following code to sign in to your Classgrid Community account. This code expires in <strong>60 seconds</strong>.</p>
@@ -285,9 +299,7 @@ export function getForumOtpEmailHtml(otp: string): string {
     ignoreText: "If you did not request this, you can safely ignore this email."
   });
 }
-
-// ------------- DEMO OTP EMAIL -------------
-export function getDemoOtpEmailHtml(name: string, otp: string): string {
+function getDemoOtpEmailHtml(name, otp) {
   const content = `
     <h1>Verify your email</h1>
     <p>Hi ${name},</p>
@@ -306,9 +318,7 @@ export function getDemoOtpEmailHtml(name: string, otp: string): string {
     ignoreText: "If you did not request a demo, you can safely ignore this email."
   });
 }
-
-// ------------- DEMO CONFIRMATION EMAIL -------------
-export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meetUrl: string): string {
+function getDemoConfirmationEmailHtml(name, dateStr, meetUrl) {
   const content = `
     <h1>Your Demo is Confirmed!</h1>
     <p>Hi ${name},</p>
@@ -348,9 +358,7 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
     ignoreText: "You are receiving this because you booked a demo with Classgrid."
   });
 }
-
-// ------------- ADMIN DEMO NOTIFICATION -------------
-export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl: string): string {
+function getAdminDemoNotificationHtml(lead, dateStr, meetUrl) {
   const content = `
     <h1>New Demo Scheduled!</h1>
     <p>A new demo has been booked and confirmed by <strong>${lead.adminName}</strong>.</p>
@@ -371,7 +379,7 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
       <p><strong>District:</strong> ${lead.district || "N/A"}</p>
       <p><strong>Taluka:</strong> ${lead.taluka || "N/A"}</p>
       <p><strong>City/Village:</strong> ${lead.cityVillage || "N/A"}</p>
-      <p><strong>Website:</strong> ${lead.website ? `<a href="${lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}" style="color: #10b981;">${lead.website}</a>` : "N/A"}</p>
+      <p><strong>Website:</strong> ${lead.website ? `<a href="${lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}" style="color: #10b981;">${lead.website}</a>` : "N/A"}</p>
     </div>
 
     ${lead.message ? `
@@ -381,7 +389,7 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
         ${lead.message}
       </p>
     </div>
-    ` : ''}
+    ` : ""}
     
     <p>These meeting details have been successfully synced to the dashboard. Please ensure a team member is prepared for the meeting!</p>
   `;
