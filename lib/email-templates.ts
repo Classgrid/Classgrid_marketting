@@ -129,7 +129,7 @@ ${content}
 ${hideSupportLink ? '' : `
 <div style="margin-top:30px;">
 <p style="color:#6b7280;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
+
 </p>
 </div>
 `}
@@ -213,7 +213,7 @@ Join Discussions
 </div>
 
 <p style="color:#6b7280;font-size:13px;margin:0;">
-Need help? Contact <a href="mailto:support@classgrid.in" style="color:#111111;text-decoration:none;">support@classgrid.in</a>
+
 </p>
 
 </td>
