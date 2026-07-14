@@ -377,7 +377,7 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
     ${lead.message ? `
     <div style="margin-top: 24px;">
       <h3 style="color: #10b981; font-size: 16px; margin-bottom: 8px;"><strong><u style="text-decoration-color: #10b981;">Message from Lead:</u></strong></h3>
-      <p style="padding: 16px; background-color: #2a2a2a; border-left: 4px solid #10b981; border-radius: 4px; font-style: italic; color: #f9fafb;">
+      <p style="padding: 16px; background-color: #f9f9f9; border: 1px solid #eaeaea; border-left: 4px solid #10b981; border-radius: 4px; font-style: italic; color: #374151;">
         ${lead.message}
       </p>
     </div>
