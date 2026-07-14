@@ -75,12 +75,10 @@ const welcomeHtml = `<!DOCTYPE html>
   <div>
     <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="24" height="24" style="opacity:0.8;"></a>
     <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="24" height="24" style="opacity:0.8;"></a>
-    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;"></a>
+    <a href="https://www.youtube.com/@classgrid-y7f" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;"></a>
   </div>
 </div>
-<div style="margin-top:30px;text-align:center;">
-<p style="color:#9ca3af;font-size:13px;margin:0;">Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a></p>
-</div>
+
 </td>
 </tr>
 <tr>
@@ -133,12 +131,10 @@ const newBlogHtml = `<!DOCTYPE html>
   <div>
     <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" width="24" height="24" style="opacity:0.8;"></a>
     <a href="https://www.facebook.com/profile.php?id=61588646851017" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" width="24" height="24" style="opacity:0.8;"></a>
-    <a href="https://www.youtube.com/channel/UC3ayKBJSpgxEhQQD1Ux6SaA" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;"></a>
+    <a href="https://www.youtube.com/@classgrid-y7f" target="_blank" style="display:inline-block;margin:0 10px;text-decoration:none;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" width="24" height="24" style="opacity:0.8;"></a>
   </div>
 </div>
-<div style="margin-top:30px;text-align:center;">
-<p style="color:#9ca3af;font-size:13px;margin:0;">Need help? Contact <a href="mailto:support@classgrid.in" style="color:#ffffff;text-decoration:none;">support@classgrid.in</a></p>
-</div>
+
 </td>
 </tr>
 <tr>
