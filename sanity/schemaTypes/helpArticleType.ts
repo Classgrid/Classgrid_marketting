@@ -96,4 +96,17 @@ export const helpArticleType = defineType({
       initialValue: true,
     }),
   ],
+  preview: {
+    select: {
+      titleObj: 'title',
+      subtitle: 'subCategory',
+    },
+    prepare({ titleObj, subtitle }) {
+      const title = typeof titleObj === 'string' ? titleObj : (titleObj?.en || 'Untitled');
+      return {
+        title,
+        subtitle: subtitle ? `Sub-category: ${subtitle}` : 'No sub-category',
+      }
+    }
+  },
 })
