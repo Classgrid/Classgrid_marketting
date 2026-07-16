@@ -99,13 +99,15 @@ export const helpArticleType = defineType({
   preview: {
     select: {
       titleObj: 'title',
-      subtitle: 'subCategory',
+      subCategory: 'subCategory',
+      categoryTitle: 'category.title',
     },
-    prepare({ titleObj, subtitle }) {
+    prepare({ titleObj, subCategory, categoryTitle }) {
       const title = typeof titleObj === 'string' ? titleObj : (titleObj?.en || 'Untitled');
+      const subtitle = [categoryTitle, subCategory].filter(Boolean).join(' > ') || 'Uncategorized';
       return {
         title,
-        subtitle: subtitle ? `Sub-category: ${subtitle}` : 'No sub-category',
+        subtitle,
       }
     }
   },

@@ -331,20 +331,19 @@ export default function ArticlePageClient({
               <Clock className="w-4 h-4 text-emerald-500" />
               <span>3 min read</span>
             </div>
-            {article.showDates !== false && article.publishedAt && (
-              <div className="flex items-center gap-1.5">
-                <span suppressHydrationWarning>
-                  {new Date(article.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </span>
-              </div>
-            )}
-            {article.showDates !== false && article.lastUpdatedAt && (
+            {article.showDates !== false && article.lastUpdatedAt ? (
               <div className="flex items-center gap-1.5">
                 <span className="text-zinc-400" suppressHydrationWarning>
                   Updated {new Date(article.lastUpdatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </span>
               </div>
-            )}
+            ) : article.showDates !== false && article.publishedAt ? (
+              <div className="flex items-center gap-1.5">
+                <span suppressHydrationWarning>
+                  {new Date(article.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                </span>
+              </div>
+            ) : null}
           </div>
 
           {article.summary && (

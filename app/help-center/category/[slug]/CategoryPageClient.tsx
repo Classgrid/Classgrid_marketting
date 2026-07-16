@@ -116,7 +116,7 @@ export default function CategoryPageClient({ slug, lang, initialData }: { slug: 
                       href={buildLangHref(`/help-center/article/${article.slug}`, lang)}
                       className="group flex items-center justify-between p-4 md:p-5 border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
                     >
-                      <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 truncate">
+                      <h3 className="text-[15px] font-medium text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors pr-4 line-clamp-1 leading-relaxed">
                         {extractLocaleString(article.title, lang)}
                       </h3>
                       <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald-500 transition-colors shrink-0" />

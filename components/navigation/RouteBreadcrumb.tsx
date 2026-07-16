@@ -19,6 +19,7 @@ const segmentLabelMap: Record<string, string> = {
   ai: "AI",
   erp: "ERP",
   lms: "LMS",
+  "help-center": "Articles",
 };
 
 function capitalizeWord(word: string): string {
@@ -84,8 +85,14 @@ export function RouteBreadcrumb() {
       hrefAccumulator += `/${segment}`;
       if (skipSegments.has(segment)) return; // skip routing-only folders
       const isLast = index === segments.length - 1;
+      let label = formatSegmentLabel(segment);
+      // Hardcoded edge case: rename the specific getting-started article breadcrumb
+      if (segment === "getting-started" && segments.includes("article") && isLast) {
+        label = "Book a Demo";
+      }
+
       entries.push({
-        label: formatSegmentLabel(segment),
+        label,
         href: isLast ? undefined : hrefAccumulator,
       });
     });
