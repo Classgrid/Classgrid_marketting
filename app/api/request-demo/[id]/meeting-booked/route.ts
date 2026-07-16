@@ -35,57 +35,104 @@ export async function POST(
     }
 
     let meetingUrl = "";
+    const platform = body.platform || "google_meet";
 
-    // If Admin Google Tokens are present, generate the Meet link!
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.ADMIN_GOOGLE_REFRESH_TOKEN) {
-      const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET
-      );
-
-      oauth2Client.setCredentials({ refresh_token: process.env.ADMIN_GOOGLE_REFRESH_TOKEN });
-      const calendar = google.calendar({ version: "v3", auth: oauth2Client });
-
-      const startDate = new Date(body.scheduledAt);
-      const endDate = new Date(startDate.getTime() + 30 * 60000); // 30 min duration
-
-      const event = {
-        summary: `Classgrid Demo: ${lead.institutionName} (${lead.adminName})`,
-        description: `Demo request from ${lead.adminName} (${lead.orgType})\n\nDetails: ${lead.message || "No additional message."}`,
-        start: { dateTime: startDate.toISOString(), timeZone: "Asia/Kolkata" },
-        end: { dateTime: endDate.toISOString(), timeZone: "Asia/Kolkata" },
-        attendees: [{ email: lead.adminEmail }],
-        conferenceData: {
-          createRequest: {
-            requestId: `cg-demo-${lead._id}-${Date.now()}`,
-            conferenceSolutionKey: { type: "hangoutsMeet" }
-          }
-        },
-        guestsCanModify: false,
-        guestsCanInviteOthers: false,
-      };
-
+    if (platform === "zoom") {
       try {
-        const response = await calendar.events.insert({
-          calendarId: "primary",
-          requestBody: event,
-          conferenceDataVersion: 1,
-          sendUpdates: "none"
+        if (!process.env.ZOOM_ACCOUNT_ID || !process.env.ZOOM_CLIENT_ID || !process.env.ZOOM_CLIENT_SECRET) {
+          throw new Error("Zoom credentials missing in .env.local");
+        }
+        
+        // 1. Get Zoom Access Token
+        const tokenRes = await fetch(`https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Basic ${Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`).toString("base64")}`,
+          },
         });
+        const tokenData = await tokenRes.json();
+        if (!tokenData.access_token) throw new Error("Failed to get Zoom access token");
 
-        meetingUrl = response.data.hangoutLink || "";
-        console.log(`[meeting-booked] Google Meet generated: ${meetingUrl}`);
-      } catch (calErr: any) {
-        console.error("[meeting-booked] Google Calendar API Error:", calErr.message);
-        // Continue even if Google API fails, so we don't completely break the flow if token expires
+        // 2. Create Meeting
+        const startDate = new Date(body.scheduledAt);
+        const meetingRes = await fetch("https://api.zoom.us/v2/users/me/meetings", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${tokenData.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            topic: `Classgrid Demo: ${lead.institutionName} (${lead.adminName})`,
+            type: 2, // Scheduled meeting
+            start_time: startDate.toISOString(),
+            duration: 30,
+            timezone: "Asia/Kolkata",
+            settings: {
+              host_video: true,
+              participant_video: true,
+              join_before_host: true,
+            },
+          }),
+        });
+        const meetingData = await meetingRes.json();
+        
+        meetingUrl = meetingData.join_url || "";
+        console.log(`[meeting-booked] Zoom meeting generated: ${meetingUrl}`);
+      } catch (zoomErr: any) {
+        console.error("[meeting-booked] Zoom API Error:", zoomErr.message);
       }
     } else {
-      console.warn("[meeting-booked] Google credentials missing in .env. Skipping Meet generation.");
+      // If Admin Google Tokens are present, generate the Meet link!
+      if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.ADMIN_GOOGLE_REFRESH_TOKEN) {
+        const oauth2Client = new google.auth.OAuth2(
+          process.env.GOOGLE_CLIENT_ID,
+          process.env.GOOGLE_CLIENT_SECRET
+        );
+
+        oauth2Client.setCredentials({ refresh_token: process.env.ADMIN_GOOGLE_REFRESH_TOKEN });
+        const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+
+        const startDate = new Date(body.scheduledAt);
+        const endDate = new Date(startDate.getTime() + 30 * 60000); // 30 min duration
+
+        const event = {
+          summary: `Classgrid Demo: ${lead.institutionName} (${lead.adminName})`,
+          description: `Demo request from ${lead.adminName} (${lead.orgType})\n\nDetails: ${lead.message || "No additional message."}`,
+          start: { dateTime: startDate.toISOString(), timeZone: "Asia/Kolkata" },
+          end: { dateTime: endDate.toISOString(), timeZone: "Asia/Kolkata" },
+          attendees: [{ email: lead.adminEmail }],
+          conferenceData: {
+            createRequest: {
+              requestId: `cg-demo-${lead._id}-${Date.now()}`,
+              conferenceSolutionKey: { type: "hangoutsMeet" }
+            }
+          },
+          guestsCanModify: false,
+          guestsCanInviteOthers: false,
+        };
+
+        try {
+          const response = await calendar.events.insert({
+            calendarId: "primary",
+            requestBody: event,
+            conferenceDataVersion: 1,
+            sendUpdates: "none"
+          });
+
+          meetingUrl = response.data.hangoutLink || "";
+          console.log(`[meeting-booked] Google Meet generated: ${meetingUrl}`);
+        } catch (calErr: any) {
+          console.error("[meeting-booked] Google Calendar API Error:", calErr.message);
+          // Continue even if Google API fails, so we don't completely break the flow if token expires
+        }
+      } else {
+        console.warn("[meeting-booked] Google credentials missing in .env. Skipping Meet generation.");
+      }
     }
 
     // Save to Database
     lead.status = "demo_scheduled";
-    lead.provider = "google_meet";
+    lead.provider = platform;
     lead.scheduledAt = body.scheduledAt;
     lead.meetingUrl = meetingUrl;
     lead.timezone = "Asia/Kolkata";

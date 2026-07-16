@@ -44,6 +44,7 @@ function DemoSuccessPageInner() {
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   // Calendar State
+  const [platform, setPlatform] = useState<"google_meet" | "zoom">("google_meet");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
@@ -202,6 +203,7 @@ function DemoSuccessPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           scheduledAt: new Date(isoString).toISOString(),
+          platform: platform,
         }),
       });
       const data = await res.json();
@@ -487,6 +489,51 @@ function DemoSuccessPageInner() {
 
               <h1 className="text-2xl font-bold text-foreground mb-6">30 Min Meeting</h1>
 
+              {/* Platform Toggle */}
+              <div className="mb-8 w-full">
+                <div className="flex items-center p-1 bg-zinc-900 rounded-xl w-full relative">
+                  <button
+                    onClick={() => setPlatform("google_meet")}
+                    className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
+                      platform === "google_meet" ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {platform === "google_meet" && (
+                      <motion.div
+                        layoutId="ios-active"
+                        className="absolute inset-0 bg-[#27272a] rounded-lg shadow-sm border border-white/5"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                      />
+                    )}
+                    <span className="relative z-20 flex items-center justify-center">
+                      <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/Google_Meet_icon_(2026).svg" alt="Meet" className="w-5 h-5" />
+                    </span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setPlatform("zoom")}
+                    className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
+                      platform === "zoom" ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {platform === "zoom" && (
+                      <motion.div
+                        layoutId="ios-active"
+                        className="absolute inset-0 bg-[#27272a] rounded-lg shadow-sm border border-white/5"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                      />
+                    )}
+                    <span className="relative z-20 flex items-center justify-center">
+                      <img 
+                        src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-icon.svg" 
+                        alt="Zoom" 
+                        className="w-5 h-5" 
+                      />
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-4 text-sm text-muted-foreground font-medium">
                 <div className="flex items-center gap-3">
                   <User className="w-5 h-5" />
@@ -496,9 +543,15 @@ function DemoSuccessPageInner() {
                   <Clock className="w-5 h-5" />
                   <span>30m</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/svgviewer-output%20(2).svg" alt="Google Meet" className="w-5 h-5" />
-                  <span>Google Meet</span>
+                <div className="flex items-center gap-3 h-6">
+                  {platform === "google_meet" ? (
+                    <>
+                      <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/Google_Meet_icon_(2026).svg" alt="Google Meet" className="w-5 h-5" />
+                      <span>Google Meet</span>
+                    </>
+                  ) : (
+                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-ar21.svg" alt="Zoom" className="h-10 w-auto object-left object-contain -ml-1" />
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <Globe className="w-5 h-5" />
