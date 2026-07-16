@@ -36,7 +36,7 @@ export const headerNav = {
     { label: "Blog", href: "/blog" },
     { label: "Support", href: "/support" },
     { label: "Changelog", href: "/changelog" },
-    { label: "Status", href: "https://classgrid1.statuspage.io" },
+    { label: "Status", href: "https://status.classgrid.in" },
     { label: "About", href: "/about" },
   ],
   mobileLinks: [
@@ -44,7 +44,7 @@ export const headerNav = {
     { label: "Institutions", href: "/institutions/college" },
     { label: "Platform", href: "/pricing" },
     { label: "Demo", href: "/#demo" },
-    { label: "Status", href: "https://classgrid1.statuspage.io" },
+    { label: "Status", href: "https://status.classgrid.in" },
     { label: "Support", href: "/support" },
   ],
 };
@@ -848,7 +848,7 @@ export const footerLinkGroups = [
       { label: "Pricing", href: "/pricing" },
       { label: "Demo", href: "/#demo" },
       { label: "Integrations", href: "/integrations" },
-      { label: "Status", href: "https://classgrid1.statuspage.io" },
+      { label: "Status", href: "https://status.classgrid.in" },
     ],
   },
   {

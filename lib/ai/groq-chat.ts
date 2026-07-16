@@ -190,7 +190,7 @@ async function tryProvider(
 
         let statusResultText = "Failed to fetch status page.";
         try {
-          const statusRes = await fetch("https://classgrid1.statuspage.io/api/v2/summary.json");
+          const statusRes = await fetch("https://status.classgrid.in/api/v2/summary.json");
           if (statusRes.ok) {
             const statusData = await statusRes.json();
             const indicator = statusData.status?.description || "Unknown Status";

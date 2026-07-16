@@ -157,7 +157,7 @@ export const PLATFORM_RESOURCES: PlatformResource[] = [
   },
   {
     label: "Status",
-    href: "https://classgrid1.statuspage.io",
+    href: "https://status.classgrid.in",
     description: "Public Classgrid service status.",
     category: "operations",
     keywords: ["status", "uptime", "incident"],

@@ -153,7 +153,7 @@ export const pageMeta: Record<string, PageMeta> = {
   status: {
     title: "Status",
     description: "Classgrid platform status and operational confidence indicators.",
-    path: "https://classgrid1.statuspage.io",
+    path: "https://status.classgrid.in",
   },
   support: {
     title: "Support",

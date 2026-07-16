@@ -170,7 +170,7 @@ WEBSITE PAGES AND RESOURCES:
 - Classgrid Talk: /community — Community discussion portal (NOT the same as a traditional forum — see support system rules below)
 - Team: /team — Classgrid team page
 - Product Modules: /product/modules — Full module directory
-- Status: https://classgrid1.statuspage.io — Platform status
+- Status: https://status.classgrid.in — Platform status
 
 SUPPORT SYSTEM (CRITICAL — UNDERSTAND THESE DIFFERENCES):
 

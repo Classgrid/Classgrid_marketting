@@ -79,8 +79,8 @@ export function Footer({
 
   useEffect(() => {
     setMounted(true);
-    // Fetch live status from Atlassian Statuspage (ID from your documentation)
-    fetchLiveStatus("hkhhnlgjq7z6").then((res) => {
+    // Fetch live status from custom domain (Incident.io / Statuspage compatible)
+    fetchLiveStatus("status.classgrid.in").then((res) => {
       if (res) setLiveStatus(res);
     });
   }, []);

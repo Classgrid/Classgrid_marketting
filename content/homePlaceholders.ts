@@ -180,7 +180,7 @@ export const placeholderChromeContent: ChromeContent = {
   footerCopyrightText: `© ${new Date().getFullYear()} Classgrid. All rights reserved.`,
   footerStatusLabel: "All systems normal",
   footerStatusState: DEFAULT_FOOTER_STATUS_STATE,
-  footerStatusHref: "https://classgrid1.statuspage.io",
+  footerStatusHref: "https://status.classgrid.in",
   seo: {
     metaTitle: "Classgrid | The Operating System for Modern Education",
     metaDescription: "Manage admissions, academics, operations, communication, and analytics in one unified education platform.",
