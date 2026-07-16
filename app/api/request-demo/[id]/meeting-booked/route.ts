@@ -162,7 +162,7 @@ export async function POST(
           replyTo: getSupportEmail(),
           to: lead.adminEmail,
           subject: "Classgrid Demo Confirmed - Meeting Details Inside",
-          html: getDemoConfirmationEmailHtml(lead.adminName, dateStr, meetingUrl),
+          html: getDemoConfirmationEmailHtml(lead.adminName, dateStr, meetingUrl, platform),
         });
         console.log(`[meeting-booked] Sent confirmation email to customer ${lead.adminEmail}`);
 

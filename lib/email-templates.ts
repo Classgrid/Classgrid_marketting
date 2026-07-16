@@ -308,7 +308,8 @@ export function getDemoOtpEmailHtml(name: string, otp: string): string {
 }
 
 // ------------- DEMO CONFIRMATION EMAIL -------------
-export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meetUrl: string): string {
+export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meetUrl: string, provider: string = "google_meet"): string {
+  const platformName = provider === "zoom" ? "Zoom" : "Google Meet";
   const content = `
     <h1>Your Demo is Confirmed!</h1>
     <p>Hi ${name},</p>
@@ -318,13 +319,13 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
       <div class="meta">Date & Time</div>
       <div style="font-size: 16px; font-weight: bold; color: #10b981; margin-bottom: 12px;">${dateStr}</div>
       
-      <div class="meta">Google Meet Link</div>
+      <div class="meta">${platformName} Link</div>
       <div style="font-size: 14px; margin-bottom: 16px;">
         <a href="${meetUrl}" style="color: #10b981;">${meetUrl}</a>
       </div>
       
       <div style="margin-top: 10px;">
-        <a href="${meetUrl}" class="btn">Join Google Meet</a>
+        <a href="${meetUrl}" class="btn">Join ${platformName}</a>
       </div>
     </div>
     
