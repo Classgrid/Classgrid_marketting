@@ -543,14 +543,14 @@ function DemoSuccessPageInner() {
                   <Clock className="w-5 h-5" />
                   <span>30m</span>
                 </div>
-                <div className="flex items-center gap-3 h-6">
+                <div className="flex items-center gap-3 h-8">
                   {platform === "google_meet" ? (
                     <>
                       <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/Google_Meet_icon_(2026).svg" alt="Google Meet" className="w-5 h-5" />
                       <span>Google Meet</span>
                     </>
                   ) : (
-                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-ar21.svg" alt="Zoom" className="h-10 w-auto object-left object-contain -ml-1" />
+                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-ar21.svg" alt="Zoom" className="h-7 w-auto object-left object-contain -ml-1" />
                   )}
                 </div>
                 <div className="flex items-center gap-3">
@@ -673,7 +673,7 @@ function DemoSuccessPageInner() {
                     </div>
                     <h3 className="text-xl font-bold text-foreground mb-2">Meeting Scheduled!</h3>
                     <p className="text-sm text-muted-foreground mb-6">
-                      Your meeting is confirmed. A Classgrid team member will join you on Google Meet at the selected time.
+                      Your meeting is confirmed. A Classgrid team member will join you on {lead.provider === "zoom" ? "Zoom" : "Google Meet"} at the selected time.
                     </p>
 
                     <div className="bg-background border rounded-lg p-4 space-y-4">
@@ -690,7 +690,9 @@ function DemoSuccessPageInner() {
 
                       {lead.meetingUrl && (
                         <div>
-                          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Google Meet Link</p>
+                          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">
+                            {lead.provider === "zoom" ? "Zoom" : "Google Meet"} Link
+                          </p>
                           <div className="flex items-center gap-2 mt-1">
                             <Input readOnly value={lead.meetingUrl} className="h-9 text-xs bg-muted/50 border-border" />
                             <Button
