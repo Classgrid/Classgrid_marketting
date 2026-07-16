@@ -550,7 +550,7 @@ function DemoSuccessPageInner() {
                       <span>Google Meet</span>
                     </>
                   ) : (
-                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-ar21.svg" alt="Zoom" className="h-7 w-auto object-left object-contain -ml-1" />
+                    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/zoomus-ar21.svg" alt="Zoom" className="h-10 w-auto object-left object-contain -ml-1 scale-[1.15] origin-left" />
                   )}
                 </div>
                 <div className="flex items-center gap-3">
