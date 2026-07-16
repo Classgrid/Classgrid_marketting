@@ -211,7 +211,7 @@ function DemoSuccessPageInner() {
       if (data.ok) {
         toast.success(`Booking Confirmed for ${format(date, "PPP")} at ${selectedTime}!`);
         // We could redirect to a final thank you page, or just clear the screen
-        setLead({ ...lead, status: "demo_scheduled", meetingUrl: data.meetingUrl, scheduledAt: new Date(isoString).toISOString() } as any);
+        setLead({ ...lead, status: "demo_scheduled", meetingUrl: data.meetingUrl, scheduledAt: new Date(isoString).toISOString(), provider: platform } as any);
         setTimeout(() => {
           setShowTalkPopup(true);
         }, 2000);
