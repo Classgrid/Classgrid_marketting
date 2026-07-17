@@ -3685,7 +3685,7 @@ export const securityPolicy = {
 };
 
 
-const legacyCookiePolicy = {
+export const cookiePolicy = {
   "title": "Cookie Policy",
   "updated": "Last Updated: July 17, 2026",
   "sections": [
