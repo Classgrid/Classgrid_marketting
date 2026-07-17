@@ -26,15 +26,8 @@ async function getFirstDocSlug() {
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const resolvedParams = await params;
   
-  // If no slug, dynamically fetch the first available doc
-  let slugPath = resolvedParams.slug ? resolvedParams.slug.join('/') : null;
-  
-  if (!slugPath) {
-    slugPath = await getFirstDocSlug();
-    if (!slugPath) {
-      notFound();
-    }
-  }
+  // If no slug, always open the Introduction page
+  const slugPath = resolvedParams.slug ? resolvedParams.slug.join('/') : 'introduction';
   
   const doc = await getDocFromSanity(slugPath!);
 

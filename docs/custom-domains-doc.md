@@ -1,6 +1,3 @@
-# Custom Domains and Subdomains
-
-> **Last updated:** July 17, 2026
 
 This guide explains how institution IT administrators can use Classgrid's default subdomain, ERP login domain, and public website domain.
 
