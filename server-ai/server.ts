@@ -19,6 +19,15 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK", service: "classgrid-ai-backend" });
 });
 
+app.get("/", (req, res) => {
+  res.json({
+    name: "classgrid Ai",
+    version: "3.0.0",
+    status: "online",
+    env: "production"
+  });
+});
+
 type AskAiRequestBody = {
   question?: string;
   userName?: string;
