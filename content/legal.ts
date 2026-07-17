@@ -3,7 +3,7 @@
 
 export const privacyPolicy = {
   "title": "Privacy Policy",
-  "updated": "Last Updated: 20-04-2026",
+  "updated": "Last Updated: July 17, 2026",
   "sections": [
     {
       "heading": "Introduction",
@@ -66,7 +66,7 @@ export const privacyPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**Classgrid ERP** — The school/college management system including dashboards for Super Admins, Org Admins, Faculty, Students, and Parents",
+              "text": "**Classgrid ERP** — The school/college management system including dashboards for Org Admins, Faculty, Students, and Parents",
               "marks": []
             }
           ]
@@ -189,18 +189,6 @@ export const privacyPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**\"Super Admin\"** — An employee or authorized agent of the Company who manages the Platform at the highest level.",
-              "marks": []
-            }
-          ]
-        },
-        {
-          "_type": "block",
-          "style": "normal",
-          "listItem": "bullet",
-          "children": [
-            {
-              "_type": "span",
               "text": "**\"Tenant Organization\"** — An educational institution (school, junior college, coaching institute) that has subscribed to and uses the Platform.",
               "marks": []
             }
@@ -237,7 +225,7 @@ export const privacyPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**\"Data Fiduciary\"** — The entity that determines the purpose and means of processing personal data. In the context of institutional data, the Tenant Organization is the Data Fiduciary. For Platform-level data, the Company is the Data Fiduciary.",
+              "text": "**\"Data Fiduciary\"** — The entity that determines the purpose and means of processing personal data. In the context of institutional data, the Tenant Organization is the Data Fiduciary. For service-operation data, the Company is the Data Fiduciary where applicable.",
               "marks": []
             }
           ]
@@ -1546,7 +1534,7 @@ export const privacyPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "10.1 Data Fiduciary Relationships\r\n- **For Institutional/Student Data:** The Tenant Organization is the \"Data Fiduciary\" and the Company is the \"Data Processor.\" The institution determines what data is collected and how it is used within the Platform.\r\n- **For Platform Usage Data:** The Company is the \"Data Fiduciary\" and processes usage data for Platform improvement purposes.\r\n\r\n### 10.2 Tenant Website Data\r\n- Tenant Organizations manage their own websites through the Classgrid CMS\r\n- Content published on tenant websites (notices, faculty profiles, gallery, events, blog posts, testimonials, mandatory disclosures, committee details, infrastructure information) is controlled entirely by the Tenant Organization\r\n- The Company does not edit, moderate, or take responsibility for content published by Tenant Organizations\r\n- Publicly accessible content on tenant websites may be indexed by search engines\r\n\r\n### 10.3 Data Isolation\r\n- Each Tenant Organization's data is logically isolated from other Tenant Organizations\r\n- No institution can access another institution's data\r\n- Super Admins (Company employees) can access institutional data only for Platform support, maintenance, and troubleshooting purposes, subject to strict access controls and audit logging\r\n\r\n### 10.4 Institutional Data Export\r\n- Tenant Organizations may request export of their institutional data in standard formats (CSV, PDF, JSON)\r\n- Data export requests can be made through the Org Admin dashboard or by contacting Our support team\r\n- We will fulfill data export requests within 30 days of receiving the request\r\n\r\n---",
+              "text": "10.1 Data Fiduciary Relationships\r\n- **For Institutional/Student Data:** The Tenant Organization is the \"Data Fiduciary\" and the Company is the \"Data Processor.\" The institution determines what data is collected and how it is used within the Platform.\r\n- **For Service-Operation Data:** The Company is the \"Data Fiduciary\" where applicable and processes limited usage data to provide, secure, and improve the Platform.\r\n\r\n### 10.2 Tenant Website Data\r\n- Tenant Organizations manage their own websites through the Classgrid CMS\r\n- Content published on tenant websites (notices, faculty profiles, gallery, events, blog posts, testimonials, mandatory disclosures, committee details, infrastructure information) is controlled entirely by the Tenant Organization\r\n- The Company does not edit, moderate, or take responsibility for content published by Tenant Organizations\r\n- Publicly accessible content on tenant websites may be indexed by search engines\r\n\r\n### 10.3 Data Isolation\r\n- Each Tenant Organization's data is logically isolated from other Tenant Organizations\r\n- No institution can access another institution's data\r\n- Access to institutional data is limited to authorized support and service personnel when needed to provide, maintain, or troubleshoot the Platform, subject to strict access controls and audit logging\r\n\r\n### 10.4 Institutional Data Export\r\n- Tenant Organizations may request export of their institutional data in standard formats (CSV, PDF, JSON)\r\n- Data export requests can be made through the Org Admin dashboard or by contacting Our support team\r\n- We will fulfill data export requests within 30 days of receiving the request\r\n\r\n---",
               "marks": []
             }
           ]
@@ -2280,7 +2268,7 @@ export const privacyPolicy = {
 
 export const termsOfService = {
   "title": "Terms of Service",
-  "updated": "Last Updated: 20-04-2026",
+  "updated": "Last Updated: July 17, 2026",
   "sections": [
     {
       "heading": "Introduction",
@@ -2368,7 +2356,7 @@ export const termsOfService = {
           "children": [
             {
               "_type": "span",
-              "text": "**\"Super Admin\"** — An authorized employee or agent of the Company.",
+              "text": "**\"Company\"** — Classgrid Technologies.",
               "marks": []
             }
           ]
@@ -2472,7 +2460,7 @@ export const termsOfService = {
           "children": [
             {
               "_type": "span",
-              "text": "3.1 Account Creation\r\n- Institutional accounts are created upon successful subscription via the Platform or through the Company's sales team.\r\n- Individual User accounts (Student, Parent, Faculty) are created by the Tenant Organization's Org Admin or through invitation links generated by the Platform.\r\n- You agree to provide accurate, current, and complete information during registration.\r\n\r\n### 3.2 Account Security\r\n- You are responsible for maintaining the confidentiality of Your account credentials (email, password, access tokens).\r\n- You agree to immediately notify Us at support@classgrid.in if You become aware of any unauthorized use of Your account.\r\n- We are not liable for any loss or damage arising from Your failure to maintain the security of Your account credentials.\r\n- We recommend using strong, unique passwords and enabling all available security features.\r\n\r\n### 3.3 One Account Per User\r\n- Each individual should have only one User account within a Tenant Organization.\r\n- Sharing of account credentials between individuals is strictly prohibited.\r\n- The Company reserves the right to suspend or terminate duplicate or shared accounts.\r\n\r\n### 3.4 Account Types and Roles\r\nThe Platform enforces role-based access control (RBAC). The following roles exist:\r\n\r\n| Role | Created By | Access Level |\r\n|---|---|---|\r\n| **Super Admin** | Company | Full platform-level access |\r\n| **Org Admin** | Company / Super Admin | Full institutional management |\r\n| **Faculty** | Org Admin | Department-level access, academic tools |\r\n| **Student** | Org Admin | Personal academic data, submissions, communication |\r\n| **Parent/Guardian** | Org Admin | Ward's academic data, communication with institution |\r\n\r\n---",
+              "text": "3.1 Account Creation\r\n- Institutional accounts are created upon successful subscription via the Platform or through the Company's sales team.\r\n- Individual User accounts (Student, Parent, Faculty) are created by the Tenant Organization's Org Admin or through invitation links generated by the Platform.\r\n- You agree to provide accurate, current, and complete information during registration.\r\n\r\n### 3.2 Account Security\r\n- You are responsible for maintaining the confidentiality of Your account credentials (email, password, access tokens).\r\n- You agree to immediately notify Us at support@classgrid.in if You become aware of any unauthorized use of Your account.\r\n- We are not liable for any loss or damage arising from Your failure to maintain the security of Your account credentials.\r\n- We recommend using strong, unique passwords and enabling all available security features.\r\n\r\n### 3.3 One Account Per User\r\n- Each individual should have only one User account within a Tenant Organization.\r\n- Sharing of account credentials between individuals is strictly prohibited.\r\n- The Company reserves the right to suspend or terminate duplicate or shared accounts.\r\n\r\n### 3.4 Account Types and Roles\r\nThe Platform enforces role-based access control (RBAC) for users within each Tenant Organization:\r\n\r\n| Role | Created By | Access Level |\r\n|---|---|---|\r\n| **Org Admin** | Company or Tenant Organization | Full institutional management |\r\n| **Faculty** | Org Admin | Department-level access, academic tools |\r\n| **Student** | Org Admin | Personal academic data, submissions, communication |\r\n| **Parent/Guardian** | Org Admin | Ward's academic data, communication with institution |\r\n\r\n---",
               "marks": []
             }
           ]
@@ -3174,7 +3162,7 @@ export const securityPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "5.1 Authentication Methods\r\n- **Email + Password** — Standard authentication with bcrypt-hashed passwords\r\n- **Google Sign-In** — OAuth 2.0 based authentication via Google Identity\r\n- **JWT Tokens** — Stateless authentication tokens with configurable expiration\r\n\r\n### 5.2 Token Security\r\n- **Access Tokens (JWT):** Short-lived (1 hour default), signed with a secure secret\r\n- **Refresh Tokens:** Longer-lived (30 days), stored as HTTP-only cookies, rotated on use\r\n- Tokens contain only the minimum claims necessary (user ID, role, organization ID)\r\n- Token secrets are rotated periodically\r\n- Revoked tokens are blacklisted\r\n\r\n### 5.3 Role-Based Access Control (RBAC)\r\nThe Platform enforces strict RBAC at both the API and UI levels:\r\n\r\n| Action | Super Admin | Org Admin | Faculty | Student | Parent |\r\n|---|---|---|---|---|---|\r\n| Manage all organizations | ✅ | ❌ | ❌ | ❌ | ❌ |\r\n| Manage own organization | ❌ | ✅ | ❌ | ❌ | ❌ |\r\n| Create/delete user accounts | ✅ | ✅ (own org) | ❌ | ❌ | ❌ |\r\n| Enter grades/attendance | ❌ | ✅ | ✅ (own classes) | ❌ | ❌ |\r\n| View own academic data | ❌ | ❌ | ❌ | ✅ | ✅ (ward only) |\r\n| Manage tenant website | ❌ | ✅ | ❌ | ❌ | ❌ |\r\n| Access super admin dashboard | ✅ | ❌ | ❌ | ❌ | ❌ |\r\n\r\n- All API endpoints validate the requesting User's role before executing\r\n- Role escalation is not possible through the API\r\n- Org Admins can only access data within their own organization\r\n\r\n### 5.4 Brute Force Protection\r\n- Login attempts are rate-limited (maximum 5 failed attempts per 15-minute window)\r\n- After exceeding the limit, the account is temporarily locked for 15 minutes\r\n- Repeated lockouts trigger security notifications via email\r\n- CAPTCHA may be presented after multiple failed login attempts\r\n\r\n### 5.5 Session Management\r\n- Sessions are invalidated upon password change\r\n- Users can view and revoke active sessions\r\n- Inactive sessions expire automatically\r\n- Logout clears all tokens and session data from the client\r\n\r\n---",
+              "text": "5.1 Authentication Methods\r\n- **Email + Password** — Standard authentication with bcrypt-hashed passwords\r\n- **Google Sign-In** — OAuth 2.0 based authentication via Google Identity\r\n- **JWT Tokens** — Stateless authentication tokens with configurable expiration\r\n\r\n### 5.2 Token Security\r\n- **Access Tokens (JWT):** Short-lived (1 hour default), signed with a secure secret\r\n- **Authentication Cookies:** HttpOnly, Secure in production, SameSite-protected, and scoped to the required path/domain\r\n- Tokens contain only the minimum claims necessary (user ID, role, organization ID)\r\n- Token secrets are rotated periodically\r\n- Revoked tokens are cleared on logout\r\n\r\n### 5.3 Role-Based Access Control (RBAC)\r\nThe Platform enforces strict RBAC at both the API and UI levels within each Tenant Organization:\r\n\r\n| Action | Org Admin | Faculty | Student | Parent |\r\n|---|---|---|---|---|\r\n| Manage own organization | ✅ | ❌ | ❌ | ❌ |\r\n| Create/delete user accounts | ✅ (own org) | ❌ | ❌ | ❌ |\r\n| Enter grades/attendance | ✅ | ✅ (own classes) | ❌ | ❌ |\r\n| View own academic data | ❌ | ❌ | ✅ | ✅ (ward only) |\r\n| Manage tenant website | ✅ | ❌ | ❌ | ❌ |\r\n\r\n- All API endpoints validate the requesting User's role before executing\r\n- Role escalation is not possible through the API\r\n- Org Admins can only access data within their own organization\r\n\r\n### 5.4 Brute Force Protection\r\n- Login attempts are rate-limited (maximum 5 failed attempts per 15-minute window)\r\n- After exceeding the limit, the account is temporarily locked for 15 minutes\r\n- Repeated lockouts trigger security notifications via email\r\n- CAPTCHA may be presented after multiple failed login attempts\r\n\r\n### 5.5 Session Management\r\n- Sessions are invalidated upon password change\r\n- Users can view and revoke active sessions\r\n- Inactive sessions expire automatically\r\n- Logout clears all tokens and session data from the client\r\n\r\n---",
               "marks": []
             }
           ]
@@ -3350,7 +3338,7 @@ export const securityPolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "16.1 Logical Isolation\r\n- Each Tenant Organization's data is logically isolated using Organization IDs in all database queries\r\n- API endpoints enforce organization-level access control — a User from Organization A cannot access Organization B's data\r\n- Tenant website content is isolated by `org_slug` in the database\r\n\r\n### 16.2 Access Boundaries\r\n- Faculty can only access data for classes/sections they are assigned to\r\n- Students can only access their own academic records\r\n- Parents can only access their ward's data\r\n- Org Admins can only manage data within their own organization\r\n- Super Admins have cross-organization access but all actions are logged\r\n\r\n### 16.3 Testing\r\n- Data isolation is tested as part of the development process\r\n- Access control tests verify that cross-tenant data access is not possible through any API endpoint\r\n\r\n---",
+              "text": "16.1 Logical Isolation\r\n- Each Tenant Organization's data is logically isolated using Organization IDs in all database queries\r\n- API endpoints enforce organization-level access control — a User from Organization A cannot access Organization B's data\r\n- Tenant website content is isolated by `org_slug` in the database\r\n\r\n### 16.2 Access Boundaries\r\n- Faculty can only access data for classes/sections they are assigned to\r\n- Students can only access their own academic records\r\n- Parents can only access their ward's data\r\n- Org Admins can only manage data within their own organization\r\n\r\n### 16.3 Testing\r\n- Data isolation is tested as part of the development process\r\n- Access control tests verify that cross-tenant data access is not possible through any API endpoint\r\n\r\n---",
               "marks": []
             }
           ]
@@ -3699,7 +3687,7 @@ export const securityPolicy = {
 
 export const cookiePolicy = {
   "title": "Cookie Policy",
-  "updated": "Last Updated: 20-04-2026",
+  "updated": "Last Updated: July 17, 2026",
   "sections": [
     {
       "heading": "Introduction",
@@ -3758,7 +3746,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**JWT Tokens** — Encrypted authentication tokens stored in browser memory or local storage",
+              "text": "**JWT Tokens** — Signed authentication tokens stored in an HttpOnly server cookie and, in some browser flows, a Local Storage fallback",
               "marks": []
             }
           ]
@@ -3774,7 +3762,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "We use cookies and similar technologies for the following purposes:  ### 2.1 Strictly Necessary (Essential) These are required for the Platform to function. Without these, You cannot log in, navigate, or use core features. **These cannot be disabled.**  | Cookie/Technology | Purpose | Duration | Type | |---|---|---|---| | `auth_token` (JWT) | Stores Your encrypted authentication session so You remain logged in | 1 Year (Mobile App default) | Local Storage | | `refresh_token` | Used to silently refresh expired authentication tokens | 30 days | HTTP-Only Cookie | | `csrf_token` | Protects against Cross-Site Request Forgery attacks | Session | Cookie | | `session_id` | Maintains server-side session state | Session | Cookie | | `tenant_slug` | Identifies which tenant website is being accessed | Session | Session Storage | | `user_role` | Stores Your assigned role (student/faculty/admin) for RBAC enforcement | Session | Local Storage | | `theme_preference` | Stores Your chosen theme (light/dark mode) | Persistent (1 year) | Local Storage |  ### 2.2 Functional These enhance Your experience by remembering preferences and settings. **You may disable these, but some features may not work optimally.**  | Cookie/Technology | Purpose | Duration | Type | |---|---|---|---| | `language_pref` | Remembers Your preferred language | 1 year | Local Storage | | `sidebar_state` | Remembers if the dashboard sidebar is collapsed or expanded | Persistent | Local Storage | | `notification_dismissed` | Tracks which notification banners You have dismissed | Session | Session Storage | | `last_visited_page` | Remembers the last page You visited for navigation continuity | Session | Session Storage | | `font_size_pref` | Stores Your preferred font size setting (accessibility feature) | Persistent | Local Storage |  ### 2.3 Performance and Analytics These help Us understand how Users interact with the Platform, identify errors, and improve performance. **No personally identifiable information is collected through these technologies.**  | Cookie/Technology | Purpose | Duration | Type | |---|---|---|---| | `_ga` / `_gid` (if enabled) | Google Analytics — anonymized page view tracking, session duration, device type | 2 years / 24 hours | Cookie | | `error_log_session` | Captures frontend error logs for debugging | Session | Session Storage | | `perf_metrics` | Stores page load performance data for monitoring | Session | Local Storage |  **Important:** We currently do **not** use Google Analytics or any third-party analytics cookies. If We decide to implement analytics in the future, this Policy will be updated, and You will be notified.  ### 2.4 What We Do NOT Use We want to be completely transparent: ",
+              "text": "We use cookies and similar technologies only to provide authentication, security, tenant experience, and user-interface functionality.  ### 2.1 Strictly Necessary  - `token` — The server authentication cookie is HttpOnly, Secure in production, and SameSite-protected. Its default lifetime is 24 hours on desktop, 7 days when Remember Me is selected, and up to 365 days for mobile-app requests. The browser client may also store a signed token under the `token` key in Local Storage as a fallback for API requests.  - `client_device_fp` — An HttpOnly security cookie used for trusted-device verification after device verification. The implementation sets a one-year lifetime.  - `sidebar_state` — A first-party cookie that remembers whether the dashboard sidebar is open or collapsed. The implementation sets a seven-day lifetime.  ### 2.2 Functional  - Organization branding preferences (`org_title` and `org_favicon`) may be stored in Local Storage.  - The selected theme is stored in browser storage.  - `push_banner_dismissed` remembers whether a notification prompt was dismissed.  - Chat drafts use Local Storage until the message is sent, removed, or cleared.  - Portal and password-reset flows may use short-lived Local Storage entries for the relevant workflow.  ### 2.3 Performance and Analytics  The platform runtime reviewed for this Policy does not set Google Analytics, advertising pixels, or third-party analytics cookies. Server-side operational logs and analytics are not browser cookies.  ### 2.4 What We Do NOT Use  - No advertising cookies or behavioral retargeting cookies.  - No social-media tracking pixels were found in the reviewed platform runtime.  - No cross-site advertising or browsing-history tracking.  - Classgrid does use a limited trusted-device security cookie for authentication protection; therefore this Policy does not claim that no device-security metadata is ever used.  ",
               "marks": []
             }
           ]
@@ -3834,7 +3822,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "❌ **No fingerprinting** — We do not use browser or device fingerprinting techniques",
+              "text": "Security cookie only — A limited trusted-device cookie may be used for authentication protection; no advertising or cross-site fingerprinting is used",
               "marks": []
             }
           ]
@@ -3873,7 +3861,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "Tenant websites (e.g., collegename.classgrid.in) use a minimal set of cookies:\r\n\r\n| Cookie/Technology | Purpose | Duration |\r\n||||\r\n| `tenant_theme` | Stores the tenant's custom primary color for consistent rendering | Session |\r\n| `visitor_session` | Anonymous session tracking for visitor count analytics (no PII) | Session |\r\n\r\nTenant websites do not place any third-party tracking, advertising, or analytics cookies unless the Tenant Organization has explicitly integrated external services (e.g., Google Analytics through custom code, which is not provided by Classgrid by default).\r\n\r\nNote: If a tenant website embeds YouTube videos or Google Maps, those third-party services may set their own cookies. Please refer to [Google's Privacy Policy](https://policies.google.com/privacy) for details on their cookie practices.",
+              "text": "Tenant websites may use first-party cookies or browser storage required by the deployed website template, such as session handling, branding, accessibility, or basic preferences. The exact storage keys can vary by tenant configuration and deployment.  The reviewed platform repository does not implement the previously listed fixed `tenant_theme` or `visitor_session` keys, so they are not described as universal Classgrid cookies in this Policy.  A Tenant Organization may independently add an external service or embed. Those third-party services may set their own cookies, and their privacy and cookie policies apply to that activity.",
               "marks": []
             }
           ]
@@ -3889,7 +3877,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "The Classgrid mobile application (Android/iOS) does **not** use traditional browser cookies. Instead, it uses: ",
+              "text": "A native mobile application does not use browser cookies in the same way as a web browser. Where a native client is used, authentication and preferences are managed by that application's storage implementation. This browser Cookie Policy does not replace the mobile application's own privacy disclosures.",
               "marks": []
             }
           ]
@@ -3901,7 +3889,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**Secure Token Storage** — Authentication tokens (JWT) are stored in the device's secure storage (Android Keystore / iOS Keychain)",
+              "text": "Native-app storage details depend on the mobile application and are outside this browser policy.",
               "marks": []
             }
           ]
@@ -3913,7 +3901,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "**App Preferences** — User preferences (theme, notification settings) are stored using the device's native preferences system (SharedPreferences on Android / UserDefaults on iOS)",
+              "text": "Native-app preferences are governed by that application's own privacy disclosures.",
               "marks": []
             }
           ]
@@ -3924,7 +3912,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": " These are functionally equivalent to cookies but are managed entirely within the mobile app's sandboxed environment and are not accessible by other apps or websites.  ---",
+              "text": "---",
               "marks": []
             }
           ]
@@ -3940,7 +3928,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "5.1 Browser Settings\r\nYou can control and manage cookies through Your browser settings. Most browsers allow You to:\r\n- View what cookies are stored on Your device\r\n- Delete individual cookies or all cookies\r\n- Block all cookies or only third-party cookies\r\n- Set preferences for specific websites\r\n\r\n**Instructions for popular browsers:**\r\n- **Google Chrome:** Settings → Privacy and Security → Cookies and other site data\r\n- **Mozilla Firefox:** Settings → Privacy & Security → Cookies and Site Data\r\n- **Safari:** Preferences → Privacy → Manage Website Data\r\n- **Microsoft Edge:** Settings → Cookies and site permissions → Cookies and site data\r\n\r\n### 5.2 Impact of Disabling Cookies\r\nIf You disable essential cookies:\r\n- You will not be able to log in to the Platform\r\n- The ERP dashboard will not function\r\n- Tenant websites will load but without personalization\r\n\r\nIf You disable functional cookies:\r\n- Your preferences (theme, sidebar state) will not be remembered\r\n- You may need to reconfigure settings each time You visit\r\n\r\n### 5.3 Local Storage and Session Storage\r\nUnlike traditional cookies, Local Storage and Session Storage cannot be managed through standard browser cookie settings. To clear these:\r\n- Open browser Developer Tools (F12)\r\n- Navigate to Application → Local Storage / Session Storage\r\n- Delete specific entries or clear all\r\n\r\n---",
+              "text": "5.1 Browser Settings\r\nYou can view, delete, or block first-party cookies through Your browser settings. Blocking the authentication cookie may prevent You from signing in or using protected features.\r\n\r\n### 5.2 Impact of Disabling Storage\r\n- You may be unable to log in or remain authenticated\r\n- The dashboard may not remember the selected theme, branding, sidebar state, or dismissed prompts\r\n- Unsaved chat drafts may be lost when browser storage is cleared\r\n\r\n### 5.3 Local Storage and Session Storage\r\nTo clear Local Storage or Session Storage, open browser Developer Tools, select Application or Storage, choose the relevant origin, and delete the stored entries. Clearing Local Storage may sign You out and remove saved preferences or drafts.\r\n\r\n---",
               "marks": []
             }
           ]
@@ -3956,7 +3944,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "6.1 What We Collect\r\nThrough essential and functional cookies, We may process:\r\n- Your authentication status (logged in / logged out)\r\n- Your user role (student, faculty, admin)\r\n- Your UI preferences (theme, sidebar state, font size)\r\n- The tenant website being accessed\r\n\r\n### 6.2 What We Do NOT Collect\r\n- No personal information (name, email, phone) is stored in cookies\r\n- No browsing history beyond the Platform is tracked\r\n- No cookies are used for profiling, advertising, or selling data\r\n\r\n---",
+              "text": "6.1 What We Collect\r\nDepending on the feature and authentication flow, browser storage may process:\r\n- Authentication status and signed authentication-token data\r\n- User, role, or organization identifiers needed to authorize a request\r\n- Trusted-device verification metadata\r\n- Theme, sidebar, branding, notification, and draft preferences\r\n\r\n### 6.2 How We Use It\r\nThe reviewed platform runtime does not use this browser storage for advertising, sale of personal information, or cross-site behavioral profiling.\r\n\r\n---",
               "marks": []
             }
           ]
@@ -4025,7 +4013,7 @@ export const cookiePolicy = {
           "children": [
             {
               "_type": "span",
-              "text": "8.1 Current Third-Party Cookies\r\nAs of the date of this Policy, the Platform does **not** actively place any third-party cookies.\r\n\r\n### 8.2 Embedded Content\r\nThird-party cookies may be set by embedded content on tenant websites:\r\n- **YouTube embeds** — YouTube (Google) may set cookies when a video is embedded. We use YouTube's privacy-enhanced mode (`youtube-nocookie.com`) where possible to minimize cookie usage.\r\n- **Google Maps embeds** — Google Maps may set cookies when a map is embedded on the contact page.\r\n\r\nWe do not control these third-party cookies. Please refer to the respective third party's cookie policy for details.\r\n\r\n---",
+              "text": "8.1 Current Third-Party Cookies\r\nThe core platform runtime reviewed for this Policy does not actively set third-party advertising or analytics cookies.\r\n\r\n### 8.2 Embedded Content\r\nThird-party cookies may be set by content embedded or independently configured on a tenant website, such as a video player, map, analytics tool, or other external service. Classgrid does not control those third-party cookies. Please refer to the applicable third party's policy for details.\r\n\r\n---",
               "marks": []
             }
           ]
