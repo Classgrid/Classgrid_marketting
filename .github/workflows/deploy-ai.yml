@@ -1,0 +1,45 @@
+name: Deploy AI Server to AWS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server-ai/**'
+      - 'lib/ai/**'
+      - '.github/workflows/deploy-ai.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.AWS_SSH_KEY }}
+
+      - name: Add AWS Server to known_hosts
+        run: |
+          ssh-keyscan -H 16.192.13.132 >> ~/.ssh/known_hosts
+
+      - name: Deploy Code via SSH and restart PM2
+        run: |
+          ssh ubuntu@16.192.13.132 << 'EOF'
+            mkdir -p /var/www/classgrid_ai
+          EOF
+          
+          # Copy the required directories to the AWS server
+          scp -r server-ai lib ubuntu@16.192.13.132:/var/www/classgrid_ai/
+          
+          # Install dependencies and restart PM2
+          ssh ubuntu@16.192.13.132 << 'EOF'
+            cd /var/www/classgrid_ai/server-ai
+            npm install
+            
+            # Use PM2 to run the typescript file using tsx
+            pm2 start npm --name "classgrid-ai" -- run start --watch || pm2 restart classgrid-ai
+          EOF

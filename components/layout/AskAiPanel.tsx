@@ -1039,7 +1039,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     abortControllerRef.current = controller;
 
     try {
-      const response = await fetch("/api/ask-ai", {
+      const endpoint = process.env.NEXT_PUBLIC_AI_ENDPOINT || "/api/ask-ai";
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
