@@ -1104,6 +1104,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
               if (event.type === "status") {
                 setThinkingLabel(
                   event.label === "searching" ? "Searching the web" :
+                  event.label === "reading page" ? "Reading webpage" :
                   event.label === "analyzing" ? "Analyzing results" :
                   "Thinking"
                 );
@@ -1373,9 +1374,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                     >
                       <div className={cn(
                         "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-emerald-500",
-                        thinkingLabel === "Searching the web" && "border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+                        (thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") && "border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
                       )}>
-                        {thinkingLabel === "Searching the web" ? (
+                        {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
                           <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
                         ) : thinkingLabel === "Analyzing results" ? (
                           <Sparkles className="h-3.5 w-3.5" />
@@ -1385,11 +1386,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                       </div>
                       <div className={cn(
                         "max-w-[75%] rounded-2xl border border-border bg-card px-4 py-3 text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] dark:bg-zinc-800 dark:text-white",
-                        thinkingLabel === "Searching the web" && "border-emerald-500/30 shadow-[0_0_14px_rgba(16,185,129,0.22)]"
+                        (thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") && "border-emerald-500/30 shadow-[0_0_14px_rgba(16,185,129,0.22)]"
                       )}>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span>{thinkingLabel}</span>
-                          {thinkingLabel === "Searching the web" ? (
+                          {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
                             <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
                           ) : (
                             <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
