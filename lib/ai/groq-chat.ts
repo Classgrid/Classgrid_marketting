@@ -6,6 +6,7 @@
  * If the primary provider is rate-limited or fails, the next one is tried automatically.
  */
 import google from 'googlethis';
+import * as cheerio from 'cheerio';
 
 // ── Types (backward-compatible) ──────────────────────────────────────────────
 
@@ -59,6 +60,20 @@ const TOOLS = [
         type: "object",
         properties: {},
         required: []
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "read_url",
+      description: "Fetch and read the readable text content of any given webpage URL.",
+      parameters: {
+        type: "object",
+        properties: {
+          url: { type: "string", description: "The full URL to fetch (e.g. 'https://classgrid.in/docs/introduction')" }
+        },
+        required: ["url"]
       }
     }
   }
@@ -213,6 +228,38 @@ async function tryProvider(
           ...messages,
           { role: "assistant", content: result.content || "", tool_calls: [call] },
           { role: "tool", tool_call_id: call.id, content: statusResultText }
+        ];
+        
+        clearTimeout(timeout);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+      } else if (call.function.name === 'read_url') {
+        const args = JSON.parse(call.function.arguments);
+        console.log(`[llm:${provider.name}] 🌐 Reading URL: "${args.url}"`);
+        onStatus?.("reading page");
+        
+        let scrapeResultText = "Failed to fetch or parse the URL.";
+        try {
+          const res = await fetch(args.url);
+          if (res.ok) {
+            const html = await res.text();
+            const $ = cheerio.load(html);
+            $('script, style, noscript, iframe, img, svg').remove();
+            scrapeResultText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 4000);
+            if (!scrapeResultText) scrapeResultText = "Page was empty or unreadable.";
+          } else {
+            scrapeResultText = `Failed to fetch URL. HTTP Status: ${res.status}`;
+          }
+        } catch (e) {
+          console.error(`[llm:${provider.name}] Read URL failed:`, e);
+          scrapeResultText = `Failed to fetch URL: ${e instanceof Error ? e.message : String(e)}`;
+        }
+
+        onStatus?.("analyzing");
+        
+        const nextMessages: GroqMessage[] = [
+          ...messages,
+          { role: "assistant", content: result.content || "", tool_calls: [call] },
+          { role: "tool", tool_call_id: call.id, content: scrapeResultText }
         ];
         
         clearTimeout(timeout);

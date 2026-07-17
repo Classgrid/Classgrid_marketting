@@ -163,6 +163,7 @@ function buildSystemPrompt(params: {
     "- The knowledge base includes CMS content, docs, modules, and static pages.",
     "- If relevant knowledge exists, do not answer from generic model knowledge.",
     "- CRITICAL TOOL RULE: If a user asks about a competitor (e.g. 'Classgrid vs Eduplus' or 'Teachmint'), or asks for external facts NOT found in the knowledge base, YOU MUST call the 'search_web' tool to research the competitor first! Do NOT immediately say you don't have information.",
+    "- URL READING RULE: If a user pastes a specific URL or link and asks you to 'read', 'summarize', or 'check' it, YOU MUST use the 'read_url' tool to fetch the text content of that exact URL. Do NOT use search_web for exact URLs, use read_url.",
     "- If the answer is not in the knowledge base AND you cannot find it using the search_web tool, then you may say you do not have that exact detail and recommend the closest Classgrid resource.",
     "- If you mention Help Center, Classgrid Talk, Terms, Privacy, Pricing, Support, Blog, Changelog, modules, docs, forms, or Contact Support, attach a direct link from context or the resource directory.",
     "- Prefer the current page context first, then broader site-wide and platform-wide RAG context.",
