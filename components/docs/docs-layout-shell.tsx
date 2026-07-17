@@ -9,13 +9,7 @@ import { DocsSidebar, SIDEBAR_SECTIONS } from '@/components/docs/docs-sidebar';
 import { DocsToc } from '@/components/docs/docs-toc';
 import { FeedbackWidget } from '@/components/shared/FeedbackWidget';
 
-// Map slugs to breadcrumb info — keep in sync with docs-sidebar.tsx
-const SLUG_TO_BREADCRUMB: Record<string, { category: string; title: string }> = {
-  'introduction': { category: 'Getting Started', title: 'Introduction' },
-  'quickstart': { category: 'Getting Started', title: 'Quickstart' },
-  'api/authentication': { category: 'API Reference', title: 'Authentication' },
-  'api/users': { category: 'API Reference', title: 'Users' },
-};
+// Removed hardcoded SLUG_TO_BREADCRUMB
 
 interface TocItem {
   id: string;
@@ -23,7 +17,7 @@ interface TocItem {
   level: number;
 }
 
-export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
+export function DocsLayoutShell({ children, sidebarSections = [] }: { children: React.ReactNode, sidebarSections?: any[] }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
@@ -32,7 +26,16 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
 
   // Extract breadcrumb from current path
   const currentSlug = pathname?.replace(/^\/docs\/?/, '') || 'introduction';
-  const breadcrumb = SLUG_TO_BREADCRUMB[currentSlug];
+  let breadcrumb = null;
+  if (sidebarSections.length > 0) {
+    for (const section of sidebarSections) {
+      const found = section.items.find((item: any) => item.href === `/docs/${currentSlug}`);
+      if (found) {
+        breadcrumb = { category: section.title, title: found.label };
+        break;
+      }
+    }
+  }
 
   useEffect(() => {
     // Close mobile menus on route change
@@ -118,7 +121,7 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
                   }
                 }}
               >
-                <DocsSidebar className="w-full" />
+                <DocsSidebar className="w-full" sections={sidebarSections} />
               </div>
             </motion.div>
           )}
@@ -189,7 +192,7 @@ export function DocsLayoutShell({ children }: { children: React.ReactNode }) {
               className="overflow-hidden shrink-0 hidden lg:block sticky top-16 h-[calc(100vh-4rem)]"
               style={{ minWidth: 0 }}
             >
-              <DocsSidebar />
+              <DocsSidebar sections={sidebarSections} />
             </motion.div>
           )}
         </AnimatePresence>

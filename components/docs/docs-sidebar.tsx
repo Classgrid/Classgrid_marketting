@@ -6,64 +6,15 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type SidebarItem = {
+export type SidebarItem = {
   href: string;
   label: string;
 };
 
-type SidebarSection = {
+export type SidebarSection = {
   title: string;
   items: SidebarItem[];
 };
-
-export const SIDEBAR_SECTIONS: SidebarSection[] = [
-  {
-    title: 'Getting Started',
-    items: [
-      { href: '/docs/introduction', label: 'Introduction' },
-      { href: '/docs/quickstart', label: 'Quickstart' },
-    ],
-  },
-  {
-    title: 'API Reference',
-    items: [
-      { href: '/docs/api/authentication', label: 'Authentication' },
-      { href: '/docs/api/users', label: 'Users' },
-    ],
-  },
-  {
-    title: 'Advanced Guides',
-    items: [
-      { href: '#', label: 'Data Migration' },
-      { href: '#', label: 'Webhooks' },
-      { href: '#', label: 'Custom Domains' },
-    ],
-  },
-  {
-    title: 'Integrations',
-    items: [
-      { href: '#', label: 'Slack App' },
-      { href: '#', label: 'Google Workspace' },
-      { href: '#', label: 'Microsoft Teams' },
-    ],
-  },
-  {
-    title: 'Security',
-    items: [
-      { href: '#', label: 'Compliance' },
-      { href: '#', label: 'SSO Setup' },
-      { href: '#', label: 'Audit Logs' },
-    ],
-  },
-  {
-    title: 'Billing',
-    items: [
-      { href: '#', label: 'Invoices' },
-      { href: '#', label: 'Usage Metrics' },
-      { href: '#', label: 'Upgrading' },
-    ],
-  },
-];
 
 function SidebarLink({ href, children }: { href: string; children: React.ReactNode }) {
   const pathname = usePathname();
@@ -132,11 +83,11 @@ function CollapsibleSection({ section }: { section: SidebarSection }) {
   );
 }
 
-export function DocsSidebar({ className }: { className?: string }) {
+export function DocsSidebar({ className, sections }: { className?: string, sections: SidebarSection[] }) {
   return (
     <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-auto border-r border-white/10 pr-2 custom-scrollbar"}>
       <div className="flex flex-col divide-y divide-white/[0.06] pt-2">
-        {SIDEBAR_SECTIONS.map((section) => (
+        {sections.map((section) => (
           <CollapsibleSection key={section.title} section={section} />
         ))}
       </div>
