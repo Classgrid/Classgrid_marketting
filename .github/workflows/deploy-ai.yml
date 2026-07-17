@@ -29,7 +29,8 @@ jobs:
       - name: Deploy Code via SSH and restart PM2
         run: |
           ssh ubuntu@16.192.13.132 << 'EOF'
-            mkdir -p /var/www/classgrid_ai
+            sudo mkdir -p /var/www/classgrid_ai
+            sudo chown -R ubuntu:ubuntu /var/www/classgrid_ai
           EOF
           
           # Copy the required directories to the AWS server
