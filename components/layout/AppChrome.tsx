@@ -250,7 +250,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             onDocsSearchClick={() => setDocsSearchOpen(true)}
           />
         </Suspense>
-        {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}
+        {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && pathname !== "/brand" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}
         <SmoothScrollHandler />
         <main className={`flex-1 ${isDocsRoute ? '' : 'overflow-x-clip'}`}>{children}</main>
         <Suspense fallback={null}>

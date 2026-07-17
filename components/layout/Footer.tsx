@@ -93,7 +93,8 @@ export function Footer({
     { label: 'Our Team', href: '/team' },
     { label: 'Acknowledgements', href: '/acknowledgement' },
     { label: 'Compare', href: '/compare' },
-    { label: 'Careers', href: '/careers' }
+    { label: 'Careers', href: '/careers' },
+    { label: 'Brand Assets', href: '/brand', isNew: true }
   ];
 
   // Try to find a "Company" or "About" column, or just use the first column
