@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - 'server-ai/**'
-      - 'lib/ai/**'
+      - 'lib/**'
+      - 'tsconfig.json'
       - '.github/workflows/deploy-ai.yml'
 
 jobs:
@@ -33,14 +34,19 @@ jobs:
             sudo chown -R ubuntu:ubuntu /var/www/classgrid_ai
           EOF
           
-          # Copy the required directories to the AWS server
+          # Copy ALL required files to the AWS server
           scp -r server-ai lib ubuntu@16.192.13.132:/var/www/classgrid_ai/
+          scp server-ai/tsconfig.server.json ubuntu@16.192.13.132:/var/www/classgrid_ai/tsconfig.json
           
           # Install dependencies and restart PM2
           ssh ubuntu@16.192.13.132 << 'EOF'
+            cd /var/www/classgrid_ai
+            ln -sf server-ai/node_modules node_modules
+            
             cd /var/www/classgrid_ai/server-ai
-            npm install
+            npm install --legacy-peer-deps
             
             # Use PM2 to run the typescript file using tsx
-            pm2 start npm --name "classgrid-ai" -- run start --watch || pm2 restart classgrid-ai
+            pm2 restart classgrid-ai 2>/dev/null || pm2 start npm --name "classgrid-ai" --cwd /var/www/classgrid_ai/server-ai -- run start
+            pm2 save
           EOF
