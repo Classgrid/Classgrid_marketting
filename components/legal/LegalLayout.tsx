@@ -272,7 +272,6 @@ export function LegalLayout({
                     id={section.id}
                     number={String(index + 1).padStart(2, "0")}
                     title={section.title.replace(/^\s*\d+[\.\)]\s*/, "")}
-                    meta={[updated]}
                   >
                     {contactVariant ? <LegalContactCard /> : null}
                     {content ? <PortableText value={content} components={portableTextComponents} /> : null}
