@@ -17,13 +17,26 @@ async function getDocFromSanity(slug: string) {
   return await client.fetch(query, { slug });
 }
 
+async function getFirstDocSlug() {
+  const query = `*[_type == "apiDoc"] | order(title asc) [0] { "slug": slug.current }`;
+  const first = await client.fetch(query);
+  return first?.slug || null;
+}
+
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const resolvedParams = await params;
   
-  // If no slug, default to 'introduction' or whatever you name your first page
-  const slugPath = resolvedParams.slug ? resolvedParams.slug.join('/') : 'introduction';
+  // If no slug, dynamically fetch the first available doc
+  let slugPath = resolvedParams.slug ? resolvedParams.slug.join('/') : null;
   
-  const doc = await getDocFromSanity(slugPath);
+  if (!slugPath) {
+    slugPath = await getFirstDocSlug();
+    if (!slugPath) {
+      notFound();
+    }
+  }
+  
+  const doc = await getDocFromSanity(slugPath!);
 
   if (!doc) {
     notFound();
