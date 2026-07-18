@@ -161,7 +161,7 @@ export default function ArticlePageClient({
       .catch(console.error);
 
     const viewKey = `help_viewed_${slug}`;
-    if (!sessionStorage.getItem(viewKey)) {
+    if (!localStorage.getItem(viewKey)) {
       fetch("/api/help/views", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,7 +170,7 @@ export default function ArticlePageClient({
         .then((response) => response.json())
         .then((payload) => {
           if (typeof payload.count === "number") setViewCount(payload.count);
-          sessionStorage.setItem(viewKey, "true");
+          localStorage.setItem(viewKey, "true");
         })
         .catch(console.error);
     }

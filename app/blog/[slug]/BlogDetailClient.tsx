@@ -125,7 +125,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
       .catch(console.error);
 
     const viewKey = `viewed_${slugId}`;
-    if (!sessionStorage.getItem(viewKey)) {
+    if (!localStorage.getItem(viewKey)) {
       fetch("/api/blog/views", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -134,7 +134,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         .then((res) => res.json())
         .then((data) => {
           if (typeof data.count === "number") setViewCount(data.count);
-          sessionStorage.setItem(viewKey, "true");
+          localStorage.setItem(viewKey, "true");
         })
         .catch(console.error);
     };
