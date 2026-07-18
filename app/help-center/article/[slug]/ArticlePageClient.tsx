@@ -325,7 +325,7 @@ export default function ArticlePageClient({
           <div className="flex flex-wrap items-center gap-6 mb-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Eye className="w-4 h-4 text-emerald-500" />
-              <span>{viewCount.toLocaleString()} views</span>
+              <span>{Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(viewCount)} views</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-emerald-500" />

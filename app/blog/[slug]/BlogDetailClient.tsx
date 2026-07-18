@@ -239,7 +239,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-5 gap-y-2 text-xs md:text-sm">
                   <div className="flex items-center" title="Approximate Views">
                     <Eye className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
-                    <span>{viewCount.toLocaleString()} views</span>
+                    <span>{Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(viewCount)} views</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
