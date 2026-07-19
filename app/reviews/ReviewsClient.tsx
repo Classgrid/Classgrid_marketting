@@ -440,8 +440,8 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                           {rev.moduleName && rev.moduleName !== 'Overall' && (
                             <span className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase">{rev.moduleName}</span>
                           )}
-                          {rev.positives?.map((p, i) => (
-                            <span key={i} className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-muted-foreground text-[10px] font-bold tracking-wider uppercase">{p}</span>
+                          {rev.positives?.filter(p => p && p.trim() !== '').map((p, i) => (
+                            <span key={i} className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-[10px] font-bold tracking-wider uppercase">{p}</span>
                           ))}
                         </div>
                       )}
