@@ -9,6 +9,8 @@ import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
 import { Resend } from "resend";
 import { getNoAccountSignInAttemptHtml } from "./email-templates";
+import { headers } from "next/headers";
+import { SignJWT, jwtVerify } from "jose";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -195,7 +197,7 @@ export const authOptions: NextAuthOptions = {
         // If not a platform user, send "no account" email asynchronously
         if (!isPlatformUser && user.email) {
           // Parse user agent for device info
-          const reqHeaders = headers();
+          const reqHeaders = await headers();
           const userAgent = reqHeaders.get("user-agent") || "";
           let device = "Unknown device";
           if (userAgent.includes("Windows")) device = "Windows PC";
@@ -305,4 +307,45 @@ export const authOptions: NextAuthOptions = {
     signOut: "/logout",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  jwt: {
+    secret: process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET,
+    encode: async ({ secret, token, maxAge }) => {
+      if (!token) return "";
+      const payload = {
+        ...token,
+        // Ensure Platform backend requirements are met
+        id: token.id || token.sub,
+        role: token.platformRole || "student",
+        organizationId: token.orgId || null,
+      };
+      const encodedSecret = new TextEncoder().encode(secret as string);
+      return await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime(Math.floor(Date.now() / 1000) + (maxAge || 30 * 24 * 60 * 60))
+        .sign(encodedSecret);
+    },
+    decode: async ({ secret, token }) => {
+      if (!token) return null;
+      try {
+        const encodedSecret = new TextEncoder().encode(secret as string);
+        const { payload } = await jwtVerify(token, encodedSecret);
+        return payload as any;
+      } catch (err) {
+        return null;
+      }
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: "token",
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain: process.env.NODE_ENV === "production" ? ".classgrid.in" : undefined,
+      },
+    },
+  },
 };
