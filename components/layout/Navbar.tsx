@@ -445,7 +445,6 @@ export function Navbar({
                 )}
                 onClick={onAskAiClick}
               >
-                <Bot className="mr-2 h-4 w-4 text-white/60" />
                 {dict.askAi}
                 {showAskAiPrompt ? (
                   <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
