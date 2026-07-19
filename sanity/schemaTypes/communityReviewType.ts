@@ -105,14 +105,14 @@ export const communityReviewType = defineType({
     defineField({
       name: 'positives',
       title: 'What They Liked',
-      description: 'Key positive points mentioned.',
+      description: '(Internal Admin Use) Briefly summarize the key positive points mentioned in the public review above into bullet points for quick reference.',
       type: 'array',
       of: [{ type: 'string' }],
     }),
     defineField({
       name: 'negatives',
       title: 'Issues / Critical Points',
-      description: 'Problems or areas of concern.',
+      description: '(Internal Admin Use) Briefly summarize any problems or areas of concern mentioned in the public review above.',
       type: 'array',
       of: [{ type: 'string' }],
     }),
