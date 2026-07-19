@@ -259,6 +259,9 @@ export const authOptions: NextAuthOptions = {
                   token.orgSubdomain = org?.subdomain || null;
                   token.orgCustomDomain = org?.customDomain || null;
                   token.isCustomDomainEnabled = !!(org?.customDomain && org?.isCustomDomainEnabled);
+                } else if (platformUser.role === "super_admin" || platformUser.role === "co_super_admin") {
+                  // Super Admins don't have an org, but they can upload a platformLogo
+                  token.orgLogo = platformUser.platformLogo || null;
                 }
               } else {
                 token.isPlatformUser = false;
