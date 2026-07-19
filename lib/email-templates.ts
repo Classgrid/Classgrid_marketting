@@ -404,7 +404,6 @@ interface NoAccountLocation {
 
 export function getNoAccountSignInAttemptHtml(email: string, location: NoAccountLocation = {}): string {
   const device = location.device || "Unknown device";
-  const city = location.city || "Unknown location";
   const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
   const orgNameText = location.orgSlug
     ? `<strong>${location.orgSlug.toUpperCase()}</strong> (${orgUrl})`
@@ -416,7 +415,6 @@ export function getNoAccountSignInAttemptHtml(email: string, location: NoAccount
     <div class="box">
       <div class="meta">Attempt Details</div>
       <p><strong>Device:</strong> ${device}</p>
-      <p><strong>Location:</strong> ${city}</p>
       <p><strong>Time:</strong> ${formatDate(new Date())}</p>
     </div>
 
@@ -439,7 +437,6 @@ export function getNoAccountSignInAttemptHtml(email: string, location: NoAccount
 
 export function getNoAccountSignInAttemptPlainText(email: string, location: NoAccountLocation = {}): string {
   const device = location.device || "Unknown device";
-  const city = location.city || "Unknown location";
   const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
   const orgNameText = location.orgSlug ? `${location.orgSlug.toUpperCase()} (${orgUrl})` : "any Classgrid registered organization";
 
@@ -448,7 +445,6 @@ export function getNoAccountSignInAttemptPlainText(email: string, location: NoAc
 We received a login attempt for ${email}, but no account was found for this email in ${orgNameText}. If this was you, please ensure you are using the correct email address provided by your institution.
 
 Device: ${device}
-Location: ${city}
 Time: ${formatDate(new Date())}
 
 Why did this happen?
