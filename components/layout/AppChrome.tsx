@@ -256,6 +256,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             docsUserLoggedIn={status === "authenticated"}
             isPlatformUser={!!(session?.user as any)?.isPlatformUser}
             onDocsSearchClick={() => setDocsSearchOpen(true)}
+            sessionStatus={status}
           />
         </Suspense>
         {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && pathname !== "/brand" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}

@@ -65,6 +65,8 @@ type NavbarProps = {
   onDocsSearchClick?: () => void;
   /** When true in docsMode, hides Ask AI button (user is logged in) */
   docsUserLoggedIn?: boolean;
+  /** Session loading status from NextAuth */
+  sessionStatus?: "loading" | "authenticated" | "unauthenticated";
 };
 
 function isExternalHref(href: string) {
@@ -156,6 +158,7 @@ export function Navbar({
   docsUserLoggedIn,
   isPlatformUser,
   onDocsSearchClick,
+  sessionStatus,
 }: NavbarProps) {
   const [showNewBadge, setShowNewBadge] = React.useState(false);
   const [menuValue, setMenuValue] = React.useState("");
@@ -433,6 +436,11 @@ export function Navbar({
 
         <div className="flex items-center gap-2 md:gap-4">
 
+          {/* Hide all right-side buttons while session is loading to prevent flash */}
+          {sessionStatus === "loading" ? (
+            <div className="h-9 w-[120px]" /> /* invisible placeholder to prevent layout shift */
+          ) : (
+            <>
           {/* Ask AI button — hidden in docsMode when user is logged in */}
           {typeof onAskAiClick === "function" && !(docsMode && docsUserLoggedIn) ? (
             <div className="relative inline-flex">
@@ -502,6 +510,8 @@ export function Navbar({
 
           {/* Always show the user button if they are a platform user (on any page) OR if they are viewing the docs (where it acts as the Sign Up / Login button) */}
           {(isPlatformUser || docsMode) && <DocsUserButton />}
+            </>
+          )}
 
 
 
