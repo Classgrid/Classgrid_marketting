@@ -126,9 +126,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                   "logo": "https://classgrid.in/android-chrome-512x512.png",
                   "description": "The Operating System for Modern Education. Manage admissions, academics, operations, communication, and analytics in one unified education platform.",
                   "sameAs": [
-                    "https://instagram.com/classgrid",
-                    "https://youtube.com/@classgrid",
-                    "https://facebook.com/classgrid"
+                    "https://linkedin.com/company/classgrid",
+                    "https://www.instagram.com/classgridedu/",
+                    "https://www.youtube.com/@classgrid-y7f",
+                    "https://www.facebook.com/profile.php?id=61588646851017"
                   ],
                   "contactPoint": {
                     "@type": "ContactPoint",
