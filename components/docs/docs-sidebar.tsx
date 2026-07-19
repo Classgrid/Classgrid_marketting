@@ -85,7 +85,7 @@ function CollapsibleSection({ section }: { section: SidebarSection }) {
 
 export function DocsSidebar({ className, sections }: { className?: string, sections: SidebarSection[] }) {
   return (
-    <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-auto pr-2 custom-scrollbar"}>
+    <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-scroll pr-2 custom-scrollbar"}>
       <div className="flex flex-col divide-y divide-white/[0.06] pt-2">
         {sections.map((section) => (
           <CollapsibleSection key={section.title} section={section} />
