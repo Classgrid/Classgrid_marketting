@@ -19,7 +19,7 @@ interface ScrollSpyTOCProps {
  */
 export function ScrollSpyTOC({ tocItems, activeSection }: ScrollSpyTOCProps) {
   return (
-    <div className="hidden xl:block absolute right-8 top-24 bottom-24 w-40 z-50 pointer-events-none">
+    <div className="hidden xl:block absolute right-8 top-24 bottom-24 w-40 z-40 pointer-events-none">
       <div className="sticky top-1/2 -translate-y-1/2 pointer-events-auto flex flex-col items-end w-full">
 
         {/* "On this page" dropdown label */}
