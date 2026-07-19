@@ -9,7 +9,7 @@ import { client } from '@/sanity/lib/client'; // Adjust path if needed
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, institution, reviewText, rating, suggestion, moduleName } = body;
+    const { name, email, institution, reviewText, rating, suggestion, moduleName } = body;
 
     // Basic Validation
     if (!name || !institution || !reviewText || !rating) {
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     const reviewDoc = {
       _type: 'communityReview',
       name,
+      email,
       institution,
       reviewText,
       rating: Number(rating),
