@@ -255,6 +255,7 @@ export const authOptions: NextAuthOptions = {
                   // Look up org details from organizations collection
                   const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
                   token.orgName = org?.name || null;
+                  token.orgLogo = org?.logo_url || null;
                   token.orgSubdomain = org?.subdomain || null;
                   token.orgCustomDomain = org?.customDomain || null;
                   token.isCustomDomainEnabled = !!(org?.customDomain && org?.isCustomDomainEnabled);
@@ -295,6 +296,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).isPlatformUser = token.isPlatformUser as boolean;
         (session.user as any).platformRole = token.platformRole as string | undefined;
         (session.user as any).orgName = token.orgName as string | undefined;
+        (session.user as any).orgLogo = token.orgLogo as string | undefined;
         (session.user as any).orgId = token.orgId as string | undefined;
         (session.user as any).forumCreatedAt = token.forumCreatedAt as string | undefined;
         (session.user as any).forumUsername = token.forumUsername as string | undefined;

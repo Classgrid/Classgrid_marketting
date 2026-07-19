@@ -141,13 +141,13 @@ export function DocsUserButton() {
         <button
           type="button"
           onClick={() => setDropdownOpen((prev) => !prev)}
-          className="rounded-full focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer"
+          className="flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white/20 cursor-pointer"
           aria-label="Open user menu"
         >
           <img
             src={profilePhoto}
             alt={userName}
-            className="h-9 w-9 rounded-full object-cover border border-white/[0.12] ml-1 transition-opacity hover:opacity-80"
+            className="block h-9 w-9 rounded-full object-cover border border-white/[0.12] transition-opacity hover:opacity-80"
             referrerPolicy="no-referrer"
           />
         </button>
@@ -160,6 +160,34 @@ export function DocsUserButton() {
               <p className="text-sm font-semibold text-white truncate">{userName}</p>
               <p className="text-xs text-white/50 truncate mt-0.5">{userEmail}</p>
             </div>
+
+            {/* Organization & Role */}
+            {isPlatformUser && (
+              <div className="px-4 py-2.5 border-b border-white/[0.06] flex items-center gap-2.5">
+                {user?.orgLogo ? (
+                  <img
+                    src={user.orgLogo}
+                    alt={user?.orgName || "Organization"}
+                    className="h-7 w-7 rounded-md object-contain bg-white/[0.06] p-0.5 flex-shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="h-7 w-7 rounded-md bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                    <span className="text-[10px] font-bold text-white/40">
+                      {(user?.orgName || "CG").slice(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-white/80 truncate">
+                    {user?.orgName || "Classgrid"}
+                  </p>
+                  <p className="text-[10px] text-white/40 truncate">
+                    {getRoleLabel(user?.platformRole)}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Settings */}
             {isPlatformUser && (() => {
