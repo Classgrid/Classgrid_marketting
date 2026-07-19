@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star, CheckCircle2, BadgeCheck, MessageSquareQuote,
-  Send, Sparkles, ArrowRight, Users
+  Send, Sparkles, ArrowRight, Users, Box
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Marquee from "react-fast-marquee";
@@ -13,6 +13,7 @@ import { fetchReviewsData } from "./actions";
 import { Button } from "@/components/ui/button";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const MotionDiv = motion.div as any;
 
@@ -438,7 +439,19 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                       {(rev.positives?.length || rev.moduleName) && (
                         <div className="flex flex-wrap gap-2 pt-4">
                           {rev.moduleName && rev.moduleName !== 'Overall' && (
-                            <span title="This module was selected by the user when they submitted this review" className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase cursor-help">Module: {rev.moduleName}</span>
+                            <TooltipProvider delayDuration={0}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase cursor-help hover:bg-emerald-500/20 transition-all hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                                    <Box className="w-3 h-3 opacity-80" />
+                                    Module: {rev.moduleName}
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="bg-emerald-950 border-emerald-900 text-emerald-100 font-medium">
+                                  This user reviewed our {rev.moduleName} module.
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           )}
                           {rev.positives?.filter(p => p && p.trim() !== '').map((p, i) => (
                             <span key={i} className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-[10px] font-bold tracking-wider uppercase">{p}</span>
