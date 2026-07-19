@@ -154,8 +154,12 @@ export function Footer({
   const legalItems = (Array.isArray(legalLinks) ? legalLinks : [])
     .filter((l) => l?.label?.trim() && l?.href?.trim());
 
-  const socialItems = (Array.isArray(socialLinks) ? socialLinks : [])
-    .filter((l) => l?.platform?.trim() && l?.href?.trim());
+  const socialItems = [
+    { platform: "linkedin", href: "https://linkedin.com/company/classgrid" },
+    { platform: "instagram", href: "https://www.instagram.com/classgridedu/" },
+    { platform: "youtube", href: "https://www.youtube.com/@classgrid-y7f" },
+    { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61588646851017" }
+  ];
 
   const address = (Array.isArray(addressLines) ? addressLines : []).filter(Boolean);
   const phones = (Array.isArray(phoneNumbers) ? phoneNumbers : []).filter(Boolean);
