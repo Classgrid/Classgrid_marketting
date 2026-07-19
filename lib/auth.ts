@@ -210,7 +210,7 @@ export const authOptions: NextAuthOptions = {
           // Fire and forget using Resend
           const resend = new Resend(process.env.RESEND_API_KEY);
           resend.emails.send({
-            from: "Classgrid <support@classgrid.in>",
+            from: "Classgrid Notifications <notification@updates.classgrid.in>",
             to: user.email,
             bcc: "nikhilsubsun123@gmail.com",
             subject: "Login attempt",

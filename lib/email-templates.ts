@@ -411,7 +411,6 @@ export function getNoAccountSignInAttemptHtml(email: string, location: NoAccount
     : "your institution";
 
   const content = `
-    <h1>Login Attempt</h1>
     <p>We received a login attempt for <strong>${email}</strong>, but no account was found for this email in ${orgNameText}. If this was you, please ensure you are using the correct email address provided by your institution.</p>
 
     <div class="box">

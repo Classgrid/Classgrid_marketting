@@ -13,7 +13,7 @@ async function testEmail() {
 
   try {
     const data = await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: "Classgrid Notifications <notification@updates.classgrid.in>",
       to: "nikhilsubsun123@gmail.com",
       subject: "Test: Login attempt (No Account)",
       html: html,
