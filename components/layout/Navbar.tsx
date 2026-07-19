@@ -439,25 +439,11 @@ export function Navbar({
               <Button
                 type="button"
                 variant="outline"
-                className={cn(
-                  "relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer",
-                  showAskAiPrompt ? "border-white/[0.2] shadow-[0_0_14px_rgba(255,255,255,0.06)]" : ""
-                )}
+                className="relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer"
                 onClick={onAskAiClick}
               >
                 {dict.askAi}
-                {showAskAiPrompt ? (
-                  <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden="true">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/50 opacity-60" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white/80 ring-2 ring-black" />
-                  </span>
-                ) : null}
               </Button>
-              {showAskAiPrompt && askAiPrompt ? (
-                <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden max-w-[190px] -translate-y-1/2 whitespace-nowrap rounded-md border border-white/[0.08] bg-black/90 px-2.5 py-1.5 text-[11px] font-medium text-white/85 shadow-lg backdrop-blur-xl lg:inline-flex">
-                  {askAiPrompt}
-                </span>
-              ) : null}
             </div>
           ) : null}
 
