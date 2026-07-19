@@ -3,7 +3,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { LogIn, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import { LogIn, LayoutDashboard, LogOut, Settings, LifeBuoy } from "lucide-react";
 import { getDashboardUrl, getRoleLabel, getSettingsUrl } from "@/lib/platform-dashboard";
 
 const DEFAULT_AVATAR_URL =
@@ -184,6 +184,20 @@ export function DocsUserButton() {
                 </div>
               ) : null;
             })()}
+
+            {/* Support */}
+            <div className="p-1.5 border-b border-white/[0.06]">
+              <a
+                href="https://classgrid.in/support/ticket"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setDropdownOpen(false)}
+                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+              >
+                <LifeBuoy className="h-4 w-4" />
+                Support
+              </a>
+            </div>
 
             {/* Logout */}
             <div className="p-1.5">
