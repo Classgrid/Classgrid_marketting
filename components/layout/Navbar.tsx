@@ -266,7 +266,7 @@ export function Navbar({
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (
-            <Link href="/" prefetch={false} className="flex items-center gap-3 group">
+            <Link href="/" prefetch={false} className="flex items-center gap-1.5 group">
               {logoUrl ? (
                 <Image
                   src={logoUrl}
