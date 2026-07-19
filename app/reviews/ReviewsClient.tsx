@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Star, CheckCircle2, BadgeCheck, MessageSquareQuote, 
-  Send, Sparkles, ArrowRight, Users 
+import {
+  Star, CheckCircle2, BadgeCheck, MessageSquareQuote,
+  Send, Sparkles, ArrowRight, Users
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Marquee from "react-fast-marquee";
@@ -72,11 +72,11 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
 
   const stats = useMemo(() => {
     const total = reviews.length;
-    const avg = total > 0 
-      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / total).toFixed(1) 
+    const avg = total > 0
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / total).toFixed(1)
       : "0.0";
-    
-    const verifiedPercent = total > 0 
+
+    const verifiedPercent = total > 0
       ? Math.round((reviews.filter(r => r.isVerified).length / total) * 100)
       : 0;
 
@@ -127,7 +127,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
 
   return (
     <main className="relative min-h-screen bg-background text-foreground pt-24 pb-24 overflow-hidden selection:bg-emerald-500/30 transition-colors duration-300">
-      
+
       {/* ── LAYER 1: MARQUEE STRIP (TOP) ── */}
       <MotionDiv
         initial={{ opacity: 0, y: -20 }}
@@ -140,27 +140,27 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
             const palette = ['bg-emerald-500', 'bg-teal-500', 'bg-emerald-600', 'bg-teal-600', 'bg-emerald-400'];
             const colorClass = palette[rev.name.charCodeAt(0) % palette.length];
             return (
-            <div key={rev._id} className="flex items-center gap-6 px-12 border-r border-white/[0.05]">
-              {rev.photoUrl ? (
-                <img src={rev.photoUrl} alt={rev.name} className="w-8 h-8 rounded-full object-cover shrink-0 border border-border" />
-              ) : (
-                <div className={`w-8 h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
-                  {rev.name.charAt(0).toUpperCase()}
+              <div key={rev._id} className="flex items-center gap-6 px-12 border-r border-white/[0.05]">
+                {rev.photoUrl ? (
+                  <img src={rev.photoUrl} alt={rev.name} className="w-8 h-8 rounded-full object-cover shrink-0 border border-border" />
+                ) : (
+                  <div className={`w-8 h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                    {rev.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-3 h-3 ${i < rev.rating ? "fill-emerald-400 text-emerald-400" : "text-neutral-800"}`} />
+                  ))}
                 </div>
-              )}
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-3 h-3 ${i < rev.rating ? "fill-emerald-400 text-emerald-400" : "text-neutral-800"}`} />
-                ))}
+                <p className="text-xs font-medium text-muted-foreground italic max-w-xs truncate">
+                  "{rev.reviewText}"
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-foreground">{rev.name}</span>
+                  <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-tighter">{rev.institution}</span>
+                </div>
               </div>
-              <p className="text-xs font-medium text-muted-foreground italic max-w-xs truncate">
-                "{rev.reviewText}"
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-foreground">{rev.name}</span>
-                <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-tighter">{rev.institution}</span>
-              </div>
-            </div>
             );
           })}
         </Marquee>
@@ -197,7 +197,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
 
       {/* ── LAYER 3: SHARE YOUR STORY (UPSIDE SECTION) ── */}
       <section className="max-w-7xl mx-auto px-6 mb-32">
-        <MotionDiv 
+        <MotionDiv
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -205,11 +205,11 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
         >
           {/* Decorative background glow */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[100px] -z-10 rounded-full" />
-          
+
           <div className="space-y-8">
 
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] text-foreground">
-              Share Your <br /> 
+              Share Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-400 dark:to-teal-500">Classgrid Story</span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
@@ -257,7 +257,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                 value={formData.moduleName}
                 onValueChange={(val) => setFormData({ ...formData, moduleName: val })}
               >
-                <SelectTrigger 
+                <SelectTrigger
                   className={`bg-background border border-border text-sm font-normal shadow-none focus:border-emerald-500/50 transition-all outline-none flex items-center justify-between gap-3 text-left ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}
                   style={{ width: '100%', height: '56px', borderRadius: '0.75rem', paddingLeft: '1.25rem', paddingRight: '1.25rem' }}
                 >
@@ -327,9 +327,9 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
               className="w-full bg-background border border-border rounded-xl px-5 py-4 text-sm min-h-[100px] resize-none focus:border-emerald-500/50 transition-all outline-none text-foreground placeholder:text-muted-foreground"
             />
 
-            <Button 
-              type="submit" 
-              disabled={submitting} 
+            <Button
+              type="submit"
+              disabled={submitting}
               className="w-full h-14 font-bold relative text-base"
             >
               {submitting ? <><Spinner className="w-5 h-5 text-inherit mr-2" /> Submitting...</> : <>Submit Feedback <ArrowRight className="w-5 h-5 ml-2" /></>}
@@ -396,7 +396,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.5, delay: index * 0.07 }}
                 >
-                <MotionDiv 
+                  <MotionDiv
                     whileHover={{ y: -6, scale: 1.01 }}
                     className="group p-8 rounded-[2rem] bg-card dark:bg-[#171717] border border-border dark:border-white/[0.05] hover:border-emerald-500/40 transition-all shadow-xl dark:shadow-2xl relative overflow-hidden"
                   >
@@ -433,7 +433,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                     {/* Content Body */}
                     <div className="space-y-6">
                       <p className="text-[15px] text-muted-foreground text-muted-foreground leading-relaxed font-medium">"{rev.reviewText}"</p>
-                      
+
                       {/* Tags (System Colors) */}
                       {(rev.positives?.length || rev.moduleName) && (
                         <div className="flex flex-wrap gap-2 pt-4">
