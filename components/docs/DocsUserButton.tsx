@@ -110,7 +110,7 @@ export function DocsUserButton() {
           href={dashboardUrl || "#"}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-semibold tracking-tight text-white transition-all duration-200 hover:bg-emerald-400 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(52,211,153,0.5)]"
+          className="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-semibold tracking-tight text-white transition-all duration-200 hover:bg-emerald-400 cursor-pointer"
         >
           <LayoutDashboard className="h-4 w-4" />
           <span>Dashboard</span>
