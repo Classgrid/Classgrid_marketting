@@ -47,6 +47,12 @@ export const apiDocType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'publishedAt',
+      title: 'Published Date',
+      description: 'Manually set the published date shown on the website. If left blank, the original creation date will be shown. This prevents the date from changing every time the document is edited.',
+      type: 'datetime',
+    }),
+    defineField({
       name: 'helpfulCount',
       title: 'Helpful Votes (Thumbs Up)',
       type: 'number',

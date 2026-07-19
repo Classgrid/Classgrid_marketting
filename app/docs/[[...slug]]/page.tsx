@@ -35,20 +35,18 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
     notFound();
   }
 
-  const createdAt = new Date(doc._createdAt);
+  const displayDate = new Date(doc.publishedAt || doc._createdAt);
   const updatedAt = new Date(doc._updatedAt);
-  // Consider it edited if the update time is more than 5 minutes after creation
-  const isEdited = updatedAt.getTime() - createdAt.getTime() > 5 * 60 * 1000;
   
   const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  const dateLabel = isEdited ? `Last updated ${formatter.format(updatedAt)}` : formatter.format(createdAt);
+  const dateLabel = `Last updated ${formatter.format(displayDate)}`;
 
   const jsonLdData = [
     {
       "@type": "TechArticle",
       "@id": `https://classgrid.in/docs/${slugPath}/#article`,
       "headline": doc.title,
-      "datePublished": createdAt.toISOString(),
+      "datePublished": displayDate.toISOString(),
       "dateModified": updatedAt.toISOString(),
       "publisher": { "@id": "https://classgrid.in/#organization" },
       "about": { "@id": "https://classgrid.in/#software" }
