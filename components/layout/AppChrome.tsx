@@ -254,6 +254,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             showAskAiPrompt={showPromptBubble && !askAiOpen}
             docsMode={isDocsRoute}
             docsUserLoggedIn={status === "authenticated"}
+            isPlatformUser={!!(session?.user as any)?.isPlatformUser}
             onDocsSearchClick={() => setDocsSearchOpen(true)}
           />
         </Suspense>

@@ -153,8 +153,9 @@ export function Navbar({
   askAiPrompt,
   showAskAiPrompt,
   docsMode,
-  onDocsSearchClick,
   docsUserLoggedIn,
+  isPlatformUser,
+  onDocsSearchClick,
 }: NavbarProps) {
   const [showNewBadge, setShowNewBadge] = React.useState(false);
   const [menuValue, setMenuValue] = React.useState("");
@@ -461,8 +462,11 @@ export function Navbar({
             </div>
           ) : null}
 
-          {/* Docs mode: Login / Profile / Dashboard button */}
-          {docsMode && <DocsUserButton />}
+          {/* If they are a platform user, ALWAYS show their dashboard/profile button here instead of CTAs */}
+          {isPlatformUser && <DocsUserButton />}
+
+          {/* Docs mode: show search button instead of CTAs (if not platform user, DocsUserButton is also rendered inside this docsMode block if docsUserLoggedIn, wait no, let's keep docsUserLoggedIn logic for guests if needed) */}
+          {docsMode && !isPlatformUser && docsUserLoggedIn && <DocsUserButton />}
 
           {/* Docs mode: show search button instead of CTAs */}
           {docsMode ? (
@@ -481,7 +485,7 @@ export function Navbar({
             </Button>
           ) : (
             <>
-              {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
+              {!isPlatformUser && secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
                 <Button asChild variant="outline" className="hidden h-9 rounded-lg border-white/[0.12] bg-white/[0.04] px-4 text-[13px] font-medium tracking-tight text-white/90 shadow-sm transition-all duration-200 hover:border-white/[0.2] hover:bg-white/[0.08] hover:text-white lg:inline-flex">
                   <Link
                     href={secondaryLinkHref}
@@ -494,7 +498,7 @@ export function Navbar({
                 </Button>
               ) : null}
 
-              {primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
+              {!isPlatformUser && primaryCtaLabel?.trim() && primaryCtaHref?.trim() ? (
                 <Button asChild className="hidden h-9 rounded-lg px-4 text-xs font-semibold tracking-tight shadow-[0_8px_22px_rgba(16,185,129,0.18)] transition-all duration-200 hover:brightness-110 md:inline-flex">
                   <Link
                     href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
