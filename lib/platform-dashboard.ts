@@ -94,8 +94,8 @@ export function getDashboardUrl({
     return `https://${orgSubdomain}.classgrid.in${dashboardPath}`;
   }
 
-  // Fallback to testing subdomain if organization subdomain is missing
-  return `https://nikhil.classgrid.in${dashboardPath}`;
+  // Fallback if user has no organization assigned
+  return `https://classgrid.in/login`;
 }
 
 /**
