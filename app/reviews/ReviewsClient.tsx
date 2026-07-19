@@ -418,9 +418,9 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-base text-foreground truncate">{rev.name}</h4>
-                            {rev.isVerified && <BadgeCheck title="Verified Classgrid User" className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5" />}
+                            {rev.isVerified && <BadgeCheck title="Verified Classgrid User" className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5 cursor-default" />}
                           </div>
-                          <p title="User's Organization or Institution" className="text-[11px] text-muted-foreground font-bold truncate tracking-tight w-fit">{rev.institution}</p>
+                          <p title="User's Organization or Institution" className="text-[11px] text-muted-foreground font-bold truncate tracking-tight w-fit cursor-default">{rev.institution}</p>
                         </div>
                       </div>
                       <div className="flex bg-muted/30 dark:bg-black/40 px-3 py-1.5 rounded-full border border-border dark:border-white/[0.03] gap-1 shrink-0 shadow-inner">
@@ -438,10 +438,10 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                       {(rev.positives?.length || rev.moduleName) && (
                         <div className="flex flex-wrap gap-2 pt-4">
                           {rev.moduleName && rev.moduleName !== 'Overall' && (
-                            <span title={`This user specifically reviewed our ${rev.moduleName} module.`} className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase">Module: {rev.moduleName}</span>
+                            <span title={`This user specifically reviewed our ${rev.moduleName} module.`} className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase cursor-default">Module: {rev.moduleName}</span>
                           )}
                           {rev.positives?.filter(p => p && p.trim() !== '').map((p, i) => (
-                            <span key={i} title="A key positive point mentioned by the user" className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-[10px] font-bold tracking-wider uppercase">{p}</span>
+                            <span key={i} title="A key positive point mentioned by the user" className="px-3 py-1 rounded-lg bg-muted/30 dark:bg-white/[0.03] border border-border dark:border-white/5 text-muted-foreground text-[10px] font-bold tracking-wider uppercase cursor-default">{p}</span>
                           ))}
                         </div>
                       )}
