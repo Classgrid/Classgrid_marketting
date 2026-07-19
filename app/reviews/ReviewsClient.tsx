@@ -74,11 +74,16 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
     const total = reviews.length;
     const avg = total > 0 
       ? (reviews.reduce((acc, r) => acc + r.rating, 0) / total).toFixed(1) 
-      : "4.9";
+      : "0.0";
+    
+    const verifiedPercent = total > 0 
+      ? Math.round((reviews.filter(r => r.isVerified).length / total) * 100)
+      : 0;
+
     return {
       total: total,
       average: avg,
-      verified: reviews.filter(r => r.isVerified).length > 0 ? "100%" : "0%"
+      verified: `${verifiedPercent}%`
     };
   }, [reviews]);
 
