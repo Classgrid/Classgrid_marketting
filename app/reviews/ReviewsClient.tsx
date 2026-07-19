@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Star, CheckCircle2, MessageSquareQuote, 
+  Star, CheckCircle2, BadgeCheck, MessageSquareQuote, 
   Send, Sparkles, ArrowRight, Users 
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
@@ -418,7 +418,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-base text-foreground truncate">{rev.name}</h4>
-                            {rev.isVerified && <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />}
+                            {rev.isVerified && <BadgeCheck className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5" />}
                           </div>
                           <p className="text-[11px] text-muted-foreground font-bold truncate tracking-tight">{rev.institution}</p>
                         </div>
