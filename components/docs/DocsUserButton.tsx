@@ -3,8 +3,8 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { LogIn, LayoutDashboard, LogOut } from "lucide-react";
-import { getDashboardUrl, getRoleLabel } from "@/lib/platform-dashboard";
+import { LogIn, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import { getDashboardUrl, getRoleLabel, getSettingsUrl } from "@/lib/platform-dashboard";
 
 const DEFAULT_AVATAR_URL =
   "https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/Nikhil/ChatGPT_Image_Jul_2__2026__11_11_47_AM-removebg-preview.png";
@@ -160,6 +160,30 @@ export function DocsUserButton() {
               <p className="text-sm font-semibold text-white truncate">{userName}</p>
               <p className="text-xs text-white/50 truncate mt-0.5">{userEmail}</p>
             </div>
+
+            {/* Settings */}
+            {isPlatformUser && (() => {
+              const settingsUrl = getSettingsUrl({
+                role: user?.platformRole,
+                orgSubdomain: user?.orgSubdomain,
+                orgCustomDomain: user?.orgCustomDomain,
+                isCustomDomainEnabled: user?.isCustomDomainEnabled,
+              });
+              return settingsUrl ? (
+                <div className="p-1.5 border-b border-white/[0.06]">
+                  <a
+                    href={settingsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </a>
+                </div>
+              ) : null;
+            })()}
 
             {/* Logout */}
             <div className="p-1.5">

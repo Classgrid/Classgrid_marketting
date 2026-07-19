@@ -105,3 +105,62 @@ export function getRoleLabel(role?: string | null): string {
   if (!role) return "User";
   return ROLE_LABELS[role] || role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+/**
+ * Settings paths per role. Only roles with access to settings are included.
+ */
+const SETTINGS_TARGETS: Record<string, string> = {
+  student: "/settings",
+  teacher: "/settings",
+  faculty: "/settings",
+  org_admin: "/org/settings",
+  principal: "/org/settings",
+  vice_principal: "/org/settings",
+  hod: "/org/settings",
+  super_admin: "/settings",
+  fee_manager: "/dept/fees/settings",
+  exam_controller: "/dept/exams/settings",
+  admission_head: "/dept/admissions/settings",
+  admission_verifier: "/dept/admissions/settings",
+  admission_counselor: "/dept/admissions/settings",
+  admission_clerk: "/dept/admissions/settings",
+  library_manager: "/dept/library/settings",
+  transport_manager: "/dept/transport/settings",
+  hr_dept: "/dept/hr/settings",
+  hostel_dept: "/dept/hostel/settings",
+  tpo_officer: "/org/settings",
+  coordinator: "/org/settings",
+  counselor: "/org/settings",
+};
+
+/**
+ * Builds the full settings URL for a platform user, or null if the role has no settings page.
+ */
+export function getSettingsUrl({
+  role,
+  orgSubdomain,
+  orgCustomDomain,
+  isCustomDomainEnabled,
+}: DashboardUrlParams): string | null {
+  if (!role) return null;
+
+  const settingsPath = SETTINGS_TARGETS[role];
+  if (!settingsPath) return null;
+
+  // Super admin
+  if (role === "super_admin" || role === "co_super_admin") {
+    return `https://superadmin.classgrid.in${settingsPath}`;
+  }
+
+  // Custom domain
+  if (orgCustomDomain && isCustomDomainEnabled) {
+    return `https://${orgCustomDomain}${settingsPath}`;
+  }
+
+  // Classgrid subdomain
+  if (orgSubdomain) {
+    return `https://${orgSubdomain}.classgrid.in${settingsPath}`;
+  }
+
+  return null;
+}
