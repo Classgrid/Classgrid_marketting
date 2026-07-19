@@ -55,18 +55,7 @@ export function HeroSection({
         }}
         className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-8"
       >
-        {String(badge ?? "").trim() ? (
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: -20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-            }}
-            className="inline-flex max-w-[90vw] items-center rounded-full border border-foreground/10 bg-foreground/5 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground backdrop-blur-md"
-          >
-            <span className="mr-2 flex h-2 w-2 shrink-0 rounded-full bg-[#00dfd8] animate-pulse" />
-            <span className="truncate">{badge}</span>
-          </motion.div>
-        ) : null}
+
 
         <motion.h1
           className="text-[2.2rem] font-extrabold tracking-tight text-slate-900 drop-shadow-sm dark:text-slate-50 sm:text-5xl md:text-6xl lg:text-7xl overflow-wrap-anywhere break-words"
