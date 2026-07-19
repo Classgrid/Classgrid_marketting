@@ -209,15 +209,19 @@ export const authOptions: NextAuthOptions = {
 
           const html = getNoAccountSignInAttemptHtml(user.email, { device });
           
-          // Fire and forget using Resend
-          const resend = new Resend(process.env.RESEND_API_KEY);
-          resend.emails.send({
-            from: "Classgrid Notifications <notification@updates.classgrid.in>",
-            to: user.email,
-            bcc: "nikhilsubsun123@gmail.com",
-            subject: "Login attempt",
-            html,
-          }).catch(err => console.error("[NextAuth] Failed to send no-account email via Resend:", err));
+          // Fire and forget using Resend (only if API key is provided)
+          if (process.env.RESEND_API_KEY) {
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            resend.emails.send({
+              from: "Classgrid Notifications <notification@updates.classgrid.in>",
+              to: user.email,
+              bcc: "nikhilsubsun123@gmail.com",
+              subject: "Login attempt",
+              html,
+            }).catch(err => console.error("[NextAuth] Failed to send no-account email via Resend:", err));
+          } else {
+            console.warn("[NextAuth] RESEND_API_KEY is missing. Skipping no-account email for:", user.email);
+          }
         }
       }
       return true;
