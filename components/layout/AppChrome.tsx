@@ -111,7 +111,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
   const [showPromptBubble, setShowPromptBubble] = useState(false);
   const [promptStorageKey, setPromptStorageKey] = useState("");
   const [currentHash, setCurrentHash] = useState("");
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   // Global Ctrl+K / Cmd+K shortcut for docs search (capture phase to beat browser defaults)
   useEffect(() => {
