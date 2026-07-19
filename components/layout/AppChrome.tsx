@@ -261,26 +261,28 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && pathname !== "/brand" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}
         <SmoothScrollHandler />
         <main className={`flex-1 ${isDocsRoute ? '' : 'overflow-x-clip'}`}>{children}</main>
-        <Suspense fallback={null}>
-          <Footer
-            brandName={chromeContent?.brandName}
-            brandTagline={chromeContent?.brandTagline}
-            logoUrl={chromeContent?.logoUrl}
-            logoAlt={chromeContent?.logoAlt}
-            columns={chromeContent?.footerColumns}
-            contactHeading={chromeContent?.footerContactHeading}
-            addressLines={chromeContent?.footerAddressLines}
-            mapHref={chromeContent?.footerMapHref}
-            phoneNumbers={chromeContent?.footerPhoneNumbers}
-            emailAddresses={chromeContent?.footerEmailAddresses}
-            legalLinks={chromeContent?.footerLegalLinks}
-            socialLinks={chromeContent?.footerSocialLinks}
-            copyrightText={chromeContent?.footerCopyrightText}
-            statusLabel={chromeContent?.footerStatusLabel}
-            statusState={chromeContent?.footerStatusState}
-            statusHref={chromeContent?.footerStatusHref}
-          />
-        </Suspense>
+        {!isDocsRoute && (
+          <Suspense fallback={null}>
+            <Footer
+              brandName={chromeContent?.brandName}
+              brandTagline={chromeContent?.brandTagline}
+              logoUrl={chromeContent?.logoUrl}
+              logoAlt={chromeContent?.logoAlt}
+              columns={chromeContent?.footerColumns}
+              contactHeading={chromeContent?.footerContactHeading}
+              addressLines={chromeContent?.footerAddressLines}
+              mapHref={chromeContent?.footerMapHref}
+              phoneNumbers={chromeContent?.footerPhoneNumbers}
+              emailAddresses={chromeContent?.footerEmailAddresses}
+              legalLinks={chromeContent?.footerLegalLinks}
+              socialLinks={chromeContent?.footerSocialLinks}
+              copyrightText={chromeContent?.footerCopyrightText}
+              statusLabel={chromeContent?.footerStatusLabel}
+              statusState={chromeContent?.footerStatusState}
+              statusHref={chromeContent?.footerStatusHref}
+            />
+          </Suspense>
+        )}
         <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
         {isDocsRoute && (
           <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
