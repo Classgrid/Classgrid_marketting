@@ -121,16 +121,6 @@ export function DocsUserButton() {
         </span>
       )}
 
-      {/* Simple Sign Out button */}
-      <button
-        type="button"
-        onClick={() => signOut({ callbackUrl: pathname })}
-        className="hidden md:inline-flex h-9 items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-red-400 cursor-pointer"
-      >
-        <LogOut className="h-4 w-4" />
-        <span className="sr-only xl:not-sr-only">Sign Out</span>
-      </button>
-
       {/* Simple, non-clickable profile photo */}
       <img
         src={profilePhoto}
