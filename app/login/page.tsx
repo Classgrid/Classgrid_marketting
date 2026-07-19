@@ -39,7 +39,7 @@ function LoginContent() {
   const ssoReturnTo = (sso && sig)
     ? `/onboarding?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
     : null;
-  const explicitNext = searchParams.get("next");
+  const explicitNext = searchParams.get("next") || searchParams.get("callbackUrl");
 
   // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
   const oauthCallbackUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
