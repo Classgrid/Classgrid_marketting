@@ -173,8 +173,9 @@ export const placeholderChromeContent: ChromeContent = {
     { label: "Sitemap", href: "/sitemap.xml" },
   ],
   footerSocialLinks: [
+    { platform: "linkedin", href: "https://linkedin.com/company/classgrid" },
     { platform: "instagram", href: "https://instagram.com/classgrid" },
-    { platform: "youtube", href: "https://youtube.com/@classgrid" },
+    { platform: "youtube", href: "https://www.youtube.com/@classgrid-y7f" },
     { platform: "facebook", href: "https://facebook.com/classgrid" },
   ],
   footerCopyrightText: `© ${new Date().getFullYear()} Classgrid. All rights reserved.`,

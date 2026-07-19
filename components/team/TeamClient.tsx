@@ -43,7 +43,7 @@ const SocialIcon = ({ platform, url }: { platform: string, url: string }) => {
       href={url} 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`w-10 h-10 rounded-full flex items-center justify-center border border-border bg-background transition-colors duration-200 hover:bg-muted hover:border-border ${data.color}`}
+      className={`w-10 h-10 rounded-full flex items-center justify-center border border-border bg-background transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:shadow-sm hover:border-emerald-500/30 ${data.color}`}
     >
       {data.icon}
     </a>
