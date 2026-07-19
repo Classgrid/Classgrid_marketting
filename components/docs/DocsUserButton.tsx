@@ -171,6 +171,12 @@ export function DocsUserButton() {
                     className="h-7 w-7 rounded-md object-contain bg-white/[0.06] p-0.5 flex-shrink-0"
                     referrerPolicy="no-referrer"
                   />
+                ) : user?.platformRole === "super_admin" || user?.platformRole === "co_super_admin" ? (
+                  <img
+                    src="/logo.png"
+                    alt="Classgrid"
+                    className="h-7 w-7 rounded-md object-contain p-0.5 flex-shrink-0 bg-white/[0.02]"
+                  />
                 ) : (
                   <div className="h-7 w-7 rounded-md bg-white/[0.06] flex items-center justify-center flex-shrink-0">
                     <span className="text-[10px] font-bold text-white/40">
