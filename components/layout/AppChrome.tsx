@@ -141,13 +141,17 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
     // The 600ms wait ensures the page has fully painted before the glow appears.
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      if (sessionStorage.getItem(nextPromptStorageKey) !== "true") {
+      if (isDocsRoute) {
+        setShowPromptBubble(false);
+      } else if (sessionStorage.getItem(nextPromptStorageKey) !== "true") {
         timer = setTimeout(() => setShowPromptBubble(true), 600);
       } else {
         setShowPromptBubble(false);
       }
     } catch {
-      timer = setTimeout(() => setShowPromptBubble(true), 600);
+      if (!isDocsRoute) {
+        timer = setTimeout(() => setShowPromptBubble(true), 600);
+      }
     }
 
     return () => { if (timer) clearTimeout(timer); };
