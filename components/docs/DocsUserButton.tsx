@@ -101,6 +101,22 @@ export function DocsUserButton() {
     : user.image || DEFAULT_AVATAR_URL;
 
   const userName = user.name || user.email?.split("@")[0] || "User";
+  const userEmail = user.email || "";
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownOpen]);
 
   return (
     <div className="hidden md:flex items-center gap-2">
@@ -120,13 +136,48 @@ export function DocsUserButton() {
         </span>
       )}
 
-      {/* Simple, non-clickable profile photo */}
-      <img
-        src={profilePhoto}
-        alt={userName}
-        className="h-9 w-9 rounded-full object-cover border border-white/[0.12] ml-1"
-        referrerPolicy="no-referrer"
-      />
+      {/* Profile photo with dropdown */}
+      <div className="relative" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setDropdownOpen((prev) => !prev)}
+          className="rounded-full focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer"
+          aria-label="Open user menu"
+        >
+          <img
+            src={profilePhoto}
+            alt={userName}
+            className="h-9 w-9 rounded-full object-cover border border-white/[0.12] ml-1 transition-opacity hover:opacity-80"
+            referrerPolicy="no-referrer"
+          />
+        </button>
+
+        {/* Dropdown menu */}
+        {dropdownOpen && (
+          <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-white/[0.08] bg-[#111] shadow-2xl shadow-black/60 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+            {/* Name & Email */}
+            <div className="px-4 py-3 border-b border-white/[0.06]">
+              <p className="text-sm font-semibold text-white truncate">{userName}</p>
+              <p className="text-xs text-white/50 truncate mt-0.5">{userEmail}</p>
+            </div>
+
+            {/* Logout */}
+            <div className="p-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  signOut({ callbackUrl: "/" });
+                }}
+                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
