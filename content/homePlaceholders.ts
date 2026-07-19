@@ -174,9 +174,9 @@ export const placeholderChromeContent: ChromeContent = {
   ],
   footerSocialLinks: [
     { platform: "linkedin", href: "https://linkedin.com/company/classgrid" },
-    { platform: "instagram", href: "https://instagram.com/classgrid" },
+    { platform: "instagram", href: "https://www.instagram.com/classgridedu/" },
     { platform: "youtube", href: "https://www.youtube.com/@classgrid-y7f" },
-    { platform: "facebook", href: "https://facebook.com/classgrid" },
+    { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61588646851017" },
   ],
   footerCopyrightText: `© ${new Date().getFullYear()} Classgrid. All rights reserved.`,
   footerStatusLabel: "All systems normal",
