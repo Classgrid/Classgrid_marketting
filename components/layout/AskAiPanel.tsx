@@ -1203,7 +1203,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             type="button"
             aria-label="Close Ask AI panel"
             onClick={() => onOpenChange(false)}
-            className="fixed inset-0 z-[79] bg-background/70 backdrop-blur-sm sm:hidden"
+            className="fixed inset-0 z-[110] bg-background/70 backdrop-blur-sm sm:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1215,7 +1215,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       <motion.aside
         aria-hidden={!open}
         className={cn(
-          "fixed z-[80] flex flex-col border-border bg-background shadow-2xl",
+          "fixed z-[120] flex flex-col border-border bg-background shadow-2xl",
           // Mobile: full-screen bottom sheet
           "inset-x-0 bottom-0 h-[100dvh] w-full border-t sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:h-full sm:w-[400px] sm:border-l sm:border-t-0",
           open ? "pointer-events-auto" : "pointer-events-none"
