@@ -158,7 +158,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-bold text-foreground">{rev.name}</span>
-                  <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-tighter">{rev.institution}</span>
+                  <span title="User's Organization or Institution" className="text-[9px] font-medium text-muted-foreground uppercase tracking-tighter cursor-default">{rev.institution}</span>
                 </div>
               </div>
             );
@@ -418,7 +418,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-base text-foreground truncate">{rev.name}</h4>
-                            {rev.isVerified && <BadgeCheck title="Verified Classgrid User" className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5 cursor-default" />}
+                            {rev.isVerified && <span title="Verified Classgrid User" className="cursor-default"><BadgeCheck className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5" /></span>}
                           </div>
                           <p title="User's Organization or Institution" className="text-[11px] text-muted-foreground font-bold truncate tracking-tight w-fit cursor-default">{rev.institution}</p>
                         </div>
