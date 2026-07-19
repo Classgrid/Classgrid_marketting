@@ -12,6 +12,7 @@ import {
   ShieldCheck, Sun, Moon, Laptop,
   type LucideIcon
 } from "lucide-react";
+import { DocsUserButton } from "@/components/docs/DocsUserButton";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -62,6 +63,8 @@ type NavbarProps = {
   /** When true, hides CTAs and shows "Search Documentation" button */
   docsMode?: boolean;
   onDocsSearchClick?: () => void;
+  /** When true in docsMode, hides Ask AI button (user is logged in) */
+  docsUserLoggedIn?: boolean;
 };
 
 function isExternalHref(href: string) {
@@ -151,6 +154,7 @@ export function Navbar({
   showAskAiPrompt,
   docsMode,
   onDocsSearchClick,
+  docsUserLoggedIn,
 }: NavbarProps) {
   const [showNewBadge, setShowNewBadge] = React.useState(false);
   const [menuValue, setMenuValue] = React.useState("");
@@ -428,7 +432,8 @@ export function Navbar({
 
         <div className="flex items-center gap-2 md:gap-4">
 
-          {typeof onAskAiClick === "function" ? (
+          {/* Ask AI button — hidden in docsMode when user is logged in */}
+          {typeof onAskAiClick === "function" && !(docsMode && docsUserLoggedIn) ? (
             <div className="relative inline-flex">
               <Button
                 type="button"
@@ -455,6 +460,9 @@ export function Navbar({
               ) : null}
             </div>
           ) : null}
+
+          {/* Docs mode: Login / Profile / Dashboard button */}
+          {docsMode && <DocsUserButton />}
 
           {/* Docs mode: show search button instead of CTAs */}
           {docsMode ? (

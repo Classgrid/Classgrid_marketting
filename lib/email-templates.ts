@@ -394,3 +394,70 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
     hideSupportLink: true
   });
 }
+
+// ------------- NO ACCOUNT SIGN-IN ATTEMPT (ported from platform) -------------
+interface NoAccountLocation {
+  device?: string;
+  city?: string;
+  orgSlug?: string;
+}
+
+export function getNoAccountSignInAttemptHtml(email: string, location: NoAccountLocation = {}): string {
+  const device = location.device || "Unknown device";
+  const city = location.city || "Unknown location";
+  const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
+  const orgNameText = location.orgSlug
+    ? `<strong>${location.orgSlug.toUpperCase()}</strong> (${orgUrl})`
+    : "your institution";
+
+  const content = `
+    <h1>Login Attempt</h1>
+    <p>We received a login attempt for <strong>${email}</strong>, but no account was found for this email in ${orgNameText}. If this was you, please ensure you are using the correct email address provided by your institution.</p>
+
+    <div class="box">
+      <div class="meta">Attempt Details</div>
+      <p><strong>Device:</strong> ${device}</p>
+      <p><strong>Location:</strong> ${city}</p>
+      <p><strong>Time:</strong> ${formatDate(new Date())}</p>
+    </div>
+
+    <h3 style="color:#111111; margin-top:24px;">Why did this happen?</h3>
+    <ul style="color:#374151; padding-left:20px; line-height:1.6; margin-bottom:24px;">
+      <li>You may have used a personal email instead of your official institution email.</li>
+      <li>Your institution administrator may not have created your account yet.</li>
+    </ul>
+
+    <h3 style="color:#111111;">Next Steps</h3>
+    <p>If you believe you should have access, please reach out to your institution administrator directly.</p>
+  `;
+
+  return baseTemplate({
+    content,
+    title: "Login attempt",
+    ignoreText: "If this was not you, no action is required.",
+  });
+}
+
+export function getNoAccountSignInAttemptPlainText(email: string, location: NoAccountLocation = {}): string {
+  const device = location.device || "Unknown device";
+  const city = location.city || "Unknown location";
+  const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
+  const orgNameText = location.orgSlug ? `${location.orgSlug.toUpperCase()} (${orgUrl})` : "your institution";
+
+  return `Login attempt
+
+We received a login attempt for ${email}, but no account was found for this email in ${orgNameText}. If this was you, please ensure you are using the correct email address provided by your institution.
+
+Device: ${device}
+Location: ${city}
+Time: ${formatDate(new Date())}
+
+Why did this happen?
+• You may have used a personal email instead of your official institution email.
+• Your institution administrator may not have created your account yet.
+
+Next Steps
+If you believe you should have access, please reach out to your institution administrator directly.
+
+© ${new Date().getFullYear()} Classgrid. All rights reserved.`;
+}

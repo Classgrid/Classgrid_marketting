@@ -7,6 +7,8 @@ import ForumUser from "@/lib/models/ForumUser";
 import ForumOTP from "@/lib/models/ForumOTP";
 import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
+import { Resend } from "resend";
+import { getNoAccountSignInAttemptHtml } from "./email-templates";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -179,6 +181,42 @@ export const authOptions: NextAuthOptions = {
           forumUser.avatar = user.image;
           await forumUser.save();
         }
+
+        // Check if platform user
+        const db = mongoose.connection.db;
+        let isPlatformUser = false;
+        if (db) {
+          const platformUser = await db.collection("users").findOne({
+            email: { $regex: new RegExp(`^${user.email}$`, 'i') }
+          });
+          isPlatformUser = !!platformUser;
+        }
+
+        // If not a platform user, send "no account" email asynchronously
+        if (!isPlatformUser && user.email) {
+          // Parse user agent for device info
+          const reqHeaders = headers();
+          const userAgent = reqHeaders.get("user-agent") || "";
+          let device = "Unknown device";
+          if (userAgent.includes("Windows")) device = "Windows PC";
+          else if (userAgent.includes("Mac OS")) device = "Mac";
+          else if (userAgent.includes("iPhone") || userAgent.includes("iPad")) device = "iOS Device";
+          else if (userAgent.includes("Android")) device = "Android Device";
+          else if (userAgent.includes("Linux")) device = "Linux PC";
+          else device = "Web Browser";
+
+          const html = getNoAccountSignInAttemptHtml(user.email, { device });
+          
+          // Fire and forget using Resend
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          resend.emails.send({
+            from: "Classgrid <support@classgrid.in>",
+            to: user.email,
+            bcc: "nikhilsubsun123@gmail.com",
+            subject: "Login attempt",
+            html,
+          }).catch(err => console.error("[NextAuth] Failed to send no-account email via Resend:", err));
+        }
       }
       return true;
     },
@@ -202,12 +240,18 @@ export const authOptions: NextAuthOptions = {
                 if (platformUser.name) {
                   token.name = platformUser.name;
                 }
+
+                // Grab platform profile picture (uploaded by user, not from OAuth)
+                token.platformPhoto = platformUser.profilePicture || platformUser.photoURL || null;
                 
                 if (platformUser.organization_id) {
                   token.orgId = platformUser.organization_id.toString();
-                  // Look up org name from organizations collection
+                  // Look up org details from organizations collection
                   const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
                   token.orgName = org?.name || null;
+                  token.orgSubdomain = org?.subdomain || null;
+                  token.orgCustomDomain = org?.customDomain || null;
+                  token.isCustomDomainEnabled = !!(org?.customDomain && org?.isCustomDomainEnabled);
                 }
               } else {
                 token.isPlatformUser = false;
@@ -248,6 +292,10 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).orgId = token.orgId as string | undefined;
         (session.user as any).forumCreatedAt = token.forumCreatedAt as string | undefined;
         (session.user as any).forumUsername = token.forumUsername as string | undefined;
+        (session.user as any).platformPhoto = token.platformPhoto as string | undefined;
+        (session.user as any).orgSubdomain = token.orgSubdomain as string | undefined;
+        (session.user as any).orgCustomDomain = token.orgCustomDomain as string | undefined;
+        (session.user as any).isCustomDomainEnabled = token.isCustomDomainEnabled as boolean | undefined;
       }
       return session;
     },

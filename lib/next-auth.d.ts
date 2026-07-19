@@ -11,6 +11,12 @@ declare module "next-auth" {
       isPlatformUser?: boolean;
       platformRole?: string | null;
       forumEmailVerified?: boolean;
+      platformPhoto?: string | null;
+      orgSubdomain?: string | null;
+      orgCustomDomain?: string | null;
+      isCustomDomainEnabled?: boolean;
+      orgName?: string | null;
+      orgId?: string | null;
     };
   }
 }
@@ -22,5 +28,12 @@ declare module "next-auth/jwt" {
     isPlatformUser?: boolean;
     platformRole?: string | null;
     forumEmailVerified?: boolean;
+    platformPhoto?: string | null;
+    orgSubdomain?: string | null;
+    orgCustomDomain?: string | null;
+    isCustomDomainEnabled?: boolean;
+    orgName?: string | null;
+    orgId?: string | null;
   }
 }
+

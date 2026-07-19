@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import { AskAiPanel } from "@/components/layout/AskAiPanel";
 import { Footer } from "@/components/layout/Footer";
@@ -110,6 +111,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
   const [showPromptBubble, setShowPromptBubble] = useState(false);
   const [promptStorageKey, setPromptStorageKey] = useState("");
   const [currentHash, setCurrentHash] = useState("");
+  const { status } = useSession();
 
   // Global Ctrl+K / Cmd+K shortcut for docs search (capture phase to beat browser defaults)
   useEffect(() => {
@@ -247,6 +249,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             askAiPrompt={pagePrompt}
             showAskAiPrompt={showPromptBubble && !askAiOpen}
             docsMode={isDocsRoute}
+            docsUserLoggedIn={status === "authenticated"}
             onDocsSearchClick={() => setDocsSearchOpen(true)}
           />
         </Suspense>
