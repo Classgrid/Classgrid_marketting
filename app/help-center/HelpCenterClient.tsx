@@ -195,7 +195,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
             Search for answers or browse by <span className="text-emerald-500 dark:text-emerald-400">topic</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg md:text-xl">
-            Everything you need — guides, API docs, and support articles.
+            Everything you need — guides and support articles.
           </p>
         </motion.div>
       </section>
