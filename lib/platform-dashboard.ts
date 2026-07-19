@@ -76,9 +76,9 @@ export function getDashboardUrl({
 
   const dashboardPath = DASHBOARD_TARGETS[role] || "/classrooms";
 
-  // Super admin → main domain
-  if (role === "super_admin") {
-    return `https://classgrid.in${dashboardPath}`;
+  // Super admin → dedicated superadmin subdomain
+  if (role === "super_admin" || role === "co_super_admin") {
+    return `https://superadmin.classgrid.in/`;
   }
 
   // Custom domain org → redirect to custom domain login (no SSO possible)
