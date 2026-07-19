@@ -515,11 +515,8 @@ export function Navbar({
             </>
           )}
 
-          {/* If they are a platform user, ALWAYS show their dashboard/profile button here instead of CTAs */}
-          {isPlatformUser && <DocsUserButton />}
-
-          {/* Docs mode: show search button instead of CTAs (if not platform user, DocsUserButton is also rendered inside this docsMode block if docsUserLoggedIn, wait no, let's keep docsUserLoggedIn logic for guests if needed) */}
-          {docsMode && !isPlatformUser && docsUserLoggedIn && <DocsUserButton />}
+          {/* Always show the user button if they are a platform user (on any page) OR if they are viewing the docs (where it acts as the Sign Up / Login button) */}
+          {(isPlatformUser || docsMode) && <DocsUserButton />}
 
 
 
