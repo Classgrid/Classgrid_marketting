@@ -257,7 +257,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                 value={formData.moduleName}
                 onValueChange={(val) => setFormData({ ...formData, moduleName: val })}
               >
-                <SelectTrigger className={`w-full h-14 bg-background border border-border rounded-xl px-5 text-sm font-normal shadow-none focus:border-emerald-500/50 transition-all outline-none flex items-center justify-between gap-3 [&>span]:line-clamp-none [&>span]:whitespace-normal text-left ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}>
+                <SelectTrigger className={`!w-full !h-14 bg-background border border-border !rounded-xl !px-5 text-sm font-normal shadow-none focus:border-emerald-500/50 transition-all outline-none flex items-center justify-between gap-3 [&>span]:!line-clamp-none [&>span]:!whitespace-normal text-left ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}>
                   <SelectValue placeholder="Which module did you like most?" />
                 </SelectTrigger>
                 <SelectContent>
