@@ -168,11 +168,11 @@ export function DocsUserButton() {
                   <img
                     src={user.orgLogo}
                     alt={user?.orgName || "Organization"}
-                    className="h-7 w-7 rounded-md object-contain bg-white/[0.06] p-0.5 flex-shrink-0"
+                    className="h-8 w-8 rounded-md object-contain bg-white p-1 flex-shrink-0"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="h-7 w-7 rounded-md bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                  <div className="h-8 w-8 rounded-md bg-white/[0.06] flex items-center justify-center flex-shrink-0">
                     <span className="text-[10px] font-bold text-white/40">
                       {(user?.orgName || "CG").slice(0, 2).toUpperCase()}
                     </span>
