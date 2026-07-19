@@ -12,6 +12,7 @@ import Masonry from "react-masonry-css";
 import { fetchReviewsData } from "./actions";
 import { Button } from "@/components/ui/button";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 
 const MotionDiv = motion.div as any;
 
@@ -247,54 +248,61 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                 </div>
               </div>
 
-              <select
-                  value={formData.moduleName}
-                  onChange={(e) => setFormData({ ...formData, moduleName: e.target.value })}
-                  className={`w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none appearance-none ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}
-                >
-                  <option value="" disabled hidden>Which module did you like most?</option>
-                  <optgroup label="Academic">
-                    <option value="Attendance">Attendance System</option>
-                    <option value="Digital Classroom">Digital Classroom</option>
-                    <option value="Timetable">Automated Timetable</option>
-                    <option value="Academic Planning">Academic Planning Tools</option>
-                    <option value="Homework">Homework & Assignments</option>
-                    <option value="Notes Sharing">Student Notes Sharing</option>
-                    <option value="Teacher Planner">Teacher Planner</option>
-                    <option value="Subject Management">Subject Management</option>
-                    <option value="Course Management">Course Management</option>
-                  </optgroup>
-                  <optgroup label="Assessment">
-                    <option value="Online Exams">Online Exam Platform</option>
-                    <option value="Exam Management">Examination Management</option>
-                    <option value="Quiz Systems">Interactive Quiz Systems</option>
-                    <option value="Results & Grades">Grade Entry & Results</option>
-                    <option value="Internal Assessment">Internal Assessment Tools</option>
-                    <option value="CET/JEE/NEET">CET/JEE/NEET Exam Conduction</option>
-                    <option value="Mock Tests">Past Paper & Mock Tests</option>
-                    <option value="AI Viva">AI-Powered Viva</option>
-                    <option value="Test Series">Test Series Management</option>
-                  </optgroup>
-                  <optgroup label="Management">
-                    <option value="Admissions">Admission Management</option>
-                    <option value="Fees">Fee Collection System</option>
-                    <option value="Leave & Payroll">Staff Leave & Payroll</option>
-                    <option value="Canteen">Canteen Management</option>
-                    <option value="Library">Digital Library</option>
-                    <option value="Alumni">Alumni Network</option>
-                  </optgroup>
-                  <optgroup label="Advanced">
-                    <option value="AI Assistant">AI Assistant</option>
-                    <option value="Analytics">Advanced Analytics</option>
-                    <option value="Compliance">Compliance & Audit Trails</option>
-                    <option value="Certificates">Digital Certificates</option>
-                    <option value="Holidays">Holiday Management</option>
-                    <option value="ID Cards">Digital ID Cards</option>
-                    <option value="Events">Events Management</option>
-                    <option value="Feedback">Feedback System</option>
-                    <option value="Website Builder">Institution Website</option>
-                  </optgroup>
-                </select>
+              <Select
+                value={formData.moduleName}
+                onValueChange={(val) => setFormData({ ...formData, moduleName: val })}
+              >
+                <SelectTrigger className={`w-full h-14 bg-background border border-border rounded-xl px-5 text-sm focus:border-emerald-500/50 transition-all outline-none ${!formData.moduleName ? 'text-muted-foreground' : 'text-foreground'}`}>
+                  <SelectValue placeholder="Which module did you like most?" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Academic</SelectLabel>
+                    <SelectItem value="Attendance">Attendance System</SelectItem>
+                    <SelectItem value="Digital Classroom">Digital Classroom</SelectItem>
+                    <SelectItem value="Timetable">Automated Timetable</SelectItem>
+                    <SelectItem value="Academic Planning">Academic Planning Tools</SelectItem>
+                    <SelectItem value="Homework">Homework & Assignments</SelectItem>
+                    <SelectItem value="Notes Sharing">Student Notes Sharing</SelectItem>
+                    <SelectItem value="Teacher Planner">Teacher Planner</SelectItem>
+                    <SelectItem value="Subject Management">Subject Management</SelectItem>
+                    <SelectItem value="Course Management">Course Management</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Assessment</SelectLabel>
+                    <SelectItem value="Online Exams">Online Exam Platform</SelectItem>
+                    <SelectItem value="Exam Management">Examination Management</SelectItem>
+                    <SelectItem value="Quiz Systems">Interactive Quiz Systems</SelectItem>
+                    <SelectItem value="Results & Grades">Grade Entry & Results</SelectItem>
+                    <SelectItem value="Internal Assessment">Internal Assessment Tools</SelectItem>
+                    <SelectItem value="CET/JEE/NEET">CET/JEE/NEET Exam Conduction</SelectItem>
+                    <SelectItem value="Mock Tests">Past Paper & Mock Tests</SelectItem>
+                    <SelectItem value="AI Viva">AI-Powered Viva</SelectItem>
+                    <SelectItem value="Test Series">Test Series Management</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Management</SelectLabel>
+                    <SelectItem value="Admissions">Admission Management</SelectItem>
+                    <SelectItem value="Fees">Fee Collection System</SelectItem>
+                    <SelectItem value="Leave & Payroll">Staff Leave & Payroll</SelectItem>
+                    <SelectItem value="Canteen">Canteen Management</SelectItem>
+                    <SelectItem value="Library">Digital Library</SelectItem>
+                    <SelectItem value="Alumni">Alumni Network</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Advanced</SelectLabel>
+                    <SelectItem value="AI Assistant">AI Assistant</SelectItem>
+                    <SelectItem value="Analytics">Advanced Analytics</SelectItem>
+                    <SelectItem value="Compliance">Compliance & Audit Trails</SelectItem>
+                    <SelectItem value="Certificates">Digital Certificates</SelectItem>
+                    <SelectItem value="Holidays">Holiday Management</SelectItem>
+                    <SelectItem value="ID Cards">Digital ID Cards</SelectItem>
+                    <SelectItem value="Events">Events Management</SelectItem>
+                    <SelectItem value="Feedback">Feedback System</SelectItem>
+                    <SelectItem value="Website Builder">Institution Website</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
 
             <textarea
