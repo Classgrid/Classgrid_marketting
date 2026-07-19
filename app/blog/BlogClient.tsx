@@ -294,11 +294,8 @@ export function BlogClient({
       {/* <GoogleOneTap /> */}
       
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
-        <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm tracking-wide text-emerald-500">
-          Blog
-        </Badge>
 
-        <SectionAccentBar />
+
         <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
           {title || "Welcome to Our Blog"}
         </h1>

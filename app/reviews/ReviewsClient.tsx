@@ -201,10 +201,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[100px] -z-10 rounded-full" />
           
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3" /> Join the community
-            </div>
-            <SectionAccentBar align="left" className="mb-0" />
+
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] text-foreground">
               Share Your <br /> 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-400 dark:to-teal-500">Classgrid Story</span>

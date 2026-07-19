@@ -82,10 +82,8 @@ export default function ModulesPageClient({ modules }: { modules: Module[] }) {
         <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]" />
 
         <div className="relative mx-auto max-w-4xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-emerald-400 uppercase">
-            <Zap className="h-3 w-3" /> Platform Modules
-          </div>
-          <SectionAccentBar />
+
+
           <h1 className="text-5xl font-black tracking-tight text-foreground md:text-7xl">
             {modules.length} Modules.{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">

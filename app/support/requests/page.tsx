@@ -166,10 +166,7 @@ export default function MyRequestsPage() {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
                   <div className="mb-4 flex flex-wrap items-center gap-2">
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-emerald-600 dark:text-emerald-300">
-                      <Activity className="h-3 w-3" />
-                      Support workspace
-                    </div>
+
                     {isPlatformUser ? (
                       <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase text-indigo-600 dark:text-indigo-400">
                         <Shield className="h-3 w-3" />

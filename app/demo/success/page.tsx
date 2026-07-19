@@ -885,14 +885,7 @@ function DemoSuccessPageInner() {
                       <MessageCircle className="w-5 h-5 text-emerald-400" />
                     </div>
                   </div>
-                  <motion.span
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.18 }}
-                    className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full"
-                  >
-                    Inquiry Portal
-                  </motion.span>
+
                 </motion.div>
 
                 {/* Heading */}
