@@ -408,7 +408,7 @@ export function getNoAccountSignInAttemptHtml(email: string, location: NoAccount
   const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
   const orgNameText = location.orgSlug
     ? `<strong>${location.orgSlug.toUpperCase()}</strong> (${orgUrl})`
-    : "your institution";
+    : "any Classgrid registered organization";
 
   const content = `
     <p>We received a login attempt for <strong>${email}</strong>, but no account was found for this email in ${orgNameText}. If this was you, please ensure you are using the correct email address provided by your institution.</p>
@@ -441,7 +441,7 @@ export function getNoAccountSignInAttemptPlainText(email: string, location: NoAc
   const device = location.device || "Unknown device";
   const city = location.city || "Unknown location";
   const orgUrl = location.orgSlug ? `${location.orgSlug}.classgrid.in` : "Classgrid";
-  const orgNameText = location.orgSlug ? `${location.orgSlug.toUpperCase()} (${orgUrl})` : "your institution";
+  const orgNameText = location.orgSlug ? `${location.orgSlug.toUpperCase()} (${orgUrl})` : "any Classgrid registered organization";
 
   return `Login attempt
 
