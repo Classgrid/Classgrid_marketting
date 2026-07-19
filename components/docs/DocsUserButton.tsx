@@ -112,7 +112,6 @@ export function DocsUserButton() {
           rel="noopener noreferrer"
           className="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-semibold tracking-tight text-white transition-all duration-200 hover:bg-emerald-400 cursor-pointer"
         >
-          <LayoutDashboard className="h-4 w-4" />
           <span>Dashboard</span>
         </a>
       ) : (
