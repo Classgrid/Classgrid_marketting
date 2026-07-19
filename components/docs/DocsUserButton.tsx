@@ -98,7 +98,7 @@ export function DocsUserButton() {
       <button
         type="button"
         onClick={() => signIn(undefined, { callbackUrl: pathname })}
-        className="hidden md:inline-flex h-8 items-center rounded-md bg-[#10b981] px-3.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#059669] cursor-pointer"
+        className="hidden md:inline-flex h-9 items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer"
       >
         Sign up
       </button>
