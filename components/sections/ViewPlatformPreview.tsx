@@ -337,6 +337,274 @@ export function ViewPlatformPreview() {
           </div>
         </div>
       </section>
+
+      {/* ─── CDS Organization Details ─── */}
+      <section className="relative py-16 md:py-20">
+        <div className="marketing-divider absolute inset-x-0 top-0" />
+        <div className="marketing-grid absolute inset-0 opacity-20" />
+        <div className="marketing-noise absolute inset-0 opacity-30" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 space-y-16">
+
+          {/* Section Header */}
+          <div className="text-center">
+            <Badge className="rounded-full border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-100">
+              Demo Organization
+            </Badge>
+            <SectionAccentBar className="mt-6" />
+            <h2 className="mt-6 text-3xl font-black tracking-tight text-white md:text-4xl">
+              Classgrid Demo School (CDS)
+            </h2>
+            <p className="mt-4 mx-auto max-w-2xl text-base text-white/55 leading-7">
+              A fully configured demo organization pre-loaded with sample data.
+              Explore every module using the credentials below.
+            </p>
+          </div>
+
+          {/* ── Organization Identity ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-400">
+                <Monitor className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Organization Identity &amp; Configuration</h3>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Setting</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Value</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {[
+                    ["Institution Name", "Classgrid Demo School"],
+                    ["Official Address", "Demo Campus, Virtual City"],
+                    ["Principal / Owner", "School Principal"],
+                    ["Owner Email", "admin@cds.classgrid.in"],
+                    ["Contact Number", "+91 9999999999"],
+                    ["Website URL", "https://cds.classgrid.in"],
+                    ["Designation", "Principal"],
+                    ["University / Board", "Classgrid Demo Board"],
+                    ["Subdomain", "cds → cds.classgrid.in"],
+                    ["Org Type", "School"],
+                    ["Structure Type", "School with Divisions"],
+                  ].map(([setting, value]) => (
+                    <tr key={setting} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3 font-medium text-white/80">{setting}</td>
+                      <td className="px-5 py-3 font-mono text-white/60 text-xs">{value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── Academic Hierarchy ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400/10 text-cyan-400">
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Academic Hierarchy</h3>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Level</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Example</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  <tr className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3 font-medium text-white/80">Standard</td>
+                    <td className="px-5 py-3 text-white/60">Class 1 through Class 10</td>
+                  </tr>
+                  <tr className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3 font-medium text-white/80">Division (Section)</td>
+                    <td className="px-5 py-3 text-white/60">Section A / Section B</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-white/40 italic">Note: Schools do not use Departments, Semesters, or Sub Batches.</p>
+          </div>
+
+          {/* ── Platform Terminology ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-400/10 text-violet-400">
+                <Monitor className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Platform Terminology (School Mode)</h3>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Concept</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">UI Label</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {[
+                    ["Org Label", "School"],
+                    ["Top Level", "Standard"],
+                    ["Course", "Class"],
+                    ["Year", "Class"],
+                    ["Period", "Term"],
+                    ["Division", "Section"],
+                    ["Sub Batch", "Not applicable"],
+                    ["Student ID", "Roll No"],
+                    ["Teacher", "Teacher"],
+                    ["Assignment", "Homework"],
+                    ["Exam", "Test"],
+                  ].map(([concept, label]) => (
+                    <tr key={concept} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3 font-medium text-white/80">{concept}</td>
+                      <td className="px-5 py-3 text-white/60">{label}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── Branding & Theme ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-400/10 text-rose-400">
+                <Monitor className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Branding &amp; Theme</h3>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Setting</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Value</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {[
+                    ["Primary Color", "#6366f1 (Indigo)"],
+                    ["Secondary Color", "#4f46e5 (Dark Indigo)"],
+                    ["Accent Color", "#f43f5e (Rose)"],
+                    ["Font Preference", "Inter"],
+                    ["Tagline", "Empowering Education"],
+                  ].map(([setting, value]) => (
+                    <tr key={setting} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3 font-medium text-white/80">{setting}</td>
+                      <td className="px-5 py-3 text-white/60 flex items-center gap-2">
+                        {setting === "Primary Color" && <span className="inline-block h-3 w-3 rounded-full bg-indigo-500" />}
+                        {setting === "Secondary Color" && <span className="inline-block h-3 w-3 rounded-full bg-indigo-600" />}
+                        {setting === "Accent Color" && <span className="inline-block h-3 w-3 rounded-full bg-rose-500" />}
+                        {value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── Role Login URLs ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400">
+                <LogIn className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Role Login URLs</h3>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Role</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Login URL</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Device</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {[
+                    ["Org Admin", "cds.classgrid.in/org/login", "Desktop"],
+                    ["Admission Dept", "cds.classgrid.in/dept/admissions/login", "Desktop"],
+                    ["Fees Dept", "cds.classgrid.in/dept/fees/login", "Desktop"],
+                    ["Exam Dept", "cds.classgrid.in/dept/exams/login", "Desktop"],
+                    ["Library Dept", "cds.classgrid.in/dept/library/login", "Desktop"],
+                    ["Attendance Dept", "cds.classgrid.in/dept/attendance/login", "Desktop"],
+                    ["HR & Payroll", "cds.classgrid.in/dept/hr/login", "Desktop"],
+                    ["Hostel & Transport", "cds.classgrid.in/dept/hostel/login", "Desktop"],
+                    ["Faculty / Teachers", "cds.classgrid.in/faculty/login", "Desktop & Mobile"],
+                    ["Students", "cds.classgrid.in/student/login", "Desktop & Mobile"],
+                  ].map(([role, url, device]) => (
+                    <tr key={role} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3 font-medium text-white/80">{role}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-emerald-400/80">{url}</td>
+                      <td className="px-5 py-3 text-white/50 text-xs">{device}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── Demo Accounts & Credentials ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-400">
+                <LogIn className="h-4 w-4" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Demo Accounts &amp; Credentials</h3>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3">
+              <span className="text-xs text-white/50">Shared Password for all accounts:</span>
+              <code className="rounded-md border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 font-mono text-sm font-bold text-emerald-300">cdspass@123</code>
+              <CopyButton text="cdspass@123" />
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-white/8 bg-white/[0.04]">
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Role</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Email</th>
+                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Access Scope</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {[
+                    ["Org Admin", "admin@cds.classgrid.in", "Full access to CDS configuration, modules, and user management."],
+                    ["Admission Head", "admission@cds.classgrid.in", "Admission portal, fee tracking for new admits, and application review."],
+                    ["Fee Manager", "fees@cds.classgrid.in", "Fee collection, ledgers, invoice generation, and refunds."],
+                    ["Exam Controller", "exam@cds.classgrid.in", "Exam scheduling, marksheets, and result generation."],
+                    ["Library Manager", "library@cds.classgrid.in", "Book inventory, issuance, and fines."],
+                    ["Attendance Manager", "attendance@cds.classgrid.in", "Organization-wide attendance tracking and reports."],
+                    ["HR & Payroll", "hr@cds.classgrid.in", "Faculty/staff payroll, biometric logs, and leave approvals."],
+                    ["Hostel & Transport", "hostel@cds.classgrid.in", "Room allocation, bus routes, and related fees."],
+                    ["Faculty (Teacher)", "faculty@cds.classgrid.in", "Teacher dashboard, student grading, attendance marking, and course content."],
+                    ["Student", "student@cds.classgrid.in", "Student dashboard, fee payment, homework, tests, and attendance view."],
+                  ].map(([role, email, scope]) => (
+                    <tr key={role} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3 font-medium text-white/80 whitespace-nowrap">{role}</td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-cyan-300/80">{email}</span>
+                          <CopyButton text={email as string} />
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-white/50 text-xs max-w-xs">{scope}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
     </main>
   );
 }

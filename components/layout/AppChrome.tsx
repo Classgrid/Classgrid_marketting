@@ -262,7 +262,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         {pathname !== "/blog/unsubscribed" && pathname !== "/careers" && pathname !== "/brand" && pathname !== "/reviews" && !pathname.startsWith("/view-platform") && <RouteBreadcrumb />}
         <SmoothScrollHandler />
         <main className={`flex-1 ${isDocsRoute ? '' : 'overflow-x-clip'}`}>{children}</main>
-        {!pathname.startsWith("/view-platform") && (
+        {(
         <Suspense fallback={null}>
           <Footer
             brandName={chromeContent?.brandName}
