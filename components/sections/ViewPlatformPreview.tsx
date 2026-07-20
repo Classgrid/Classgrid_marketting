@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 /* ── CDN base URL for the CDS demo org ── */
 const BASE = "https://cds.classgrid.in";
@@ -244,6 +245,7 @@ export function ViewPlatformPreview() {
             {/* Controls */}
             <div className="flex flex-col gap-6 w-full items-start lg:items-end lg:w-auto">
               <div className="flex items-center gap-4">
+                <ThemeSwitcher />
                 <Button
                   type="button"
                   variant="outline"
