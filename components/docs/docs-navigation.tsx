@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const DOCS_NAV_ORDER = [
   { slug: "introduction", title: "Introduction", category: "Getting Started" },
   { slug: "quickstart", title: "Quickstart", category: "Getting Started" },
+  { slug: "rbac-login", title: "Login System & RBAC", category: "Platform Guides" },
+  { slug: "organization-types", title: "Organization Types", category: "Admin Setup" },
   { slug: "api/authentication", title: "Authentication", category: "API Reference" },
   { slug: "api/users", title: "Users", category: "API Reference" },
 ];
