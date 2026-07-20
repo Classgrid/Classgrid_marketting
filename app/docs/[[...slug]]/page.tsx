@@ -8,6 +8,7 @@ import { CodeBlock } from '@/components/docs/code-block';
 import { Callout } from '@/components/docs/callout';
 import { DocsImage } from '@/components/docs/docs-image';
 import { DocsNavigation } from '@/components/docs/docs-navigation';
+import { DocsFAQItem, DocsFAQSummary } from '@/components/docs/docs-faq';
 import { JsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 0; // disabled caching for development
@@ -121,6 +122,12 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                 <div className="overflow-x-auto w-full my-8 pb-4 custom-scrollbar">
                   <table {...props} className="w-full text-left border-collapse min-w-[600px]">{children}</table>
                 </div>
+              ),
+              details: ({ children, ...props }: any) => (
+                <DocsFAQItem open={props.open}>{children}</DocsFAQItem>
+              ),
+              summary: ({ children }: any) => (
+                <DocsFAQSummary>{children}</DocsFAQSummary>
               ),
             }}
           >
