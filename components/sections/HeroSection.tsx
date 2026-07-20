@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "./HeroBackground";
 import { cn } from "@/lib/utils";
@@ -26,10 +27,18 @@ export function HeroSection({
   heroSecondaryHref,
   heroSecondaryLabel,
 }: HeroSectionProps) {
+  const { data: session } = useSession();
+  const isPlatformUser = !!(session?.user as any)?.isPlatformUser;
+
+  const isDemoCta = (label: string) =>
+    /contact\s+sales|book\s+a?\s*demo|get\s+a?\s*demo/i.test(label || "");
+
   const heroCtas = [
     { href: heroPrimaryHref, label: heroPrimaryLabel },
     { href: heroSecondaryHref, label: heroSecondaryLabel },
-  ].filter((cta) => cta.label?.trim() && cta.href?.trim());
+  ]
+    .filter((cta) => cta.label?.trim() && cta.href?.trim())
+    .filter((cta) => !(isPlatformUser && isDemoCta(cta.label)));
 
   const hasHeroContent =
     Boolean(String(headline ?? "").trim()) ||

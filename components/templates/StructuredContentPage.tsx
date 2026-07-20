@@ -4,6 +4,7 @@ import DOMPurify from "isomorphic-dompurify";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Suspense } from "react";
 import { extractLocaleString } from "@/lib/locale";
 import Link from "next/link";
@@ -256,6 +257,8 @@ function StructuredContentPageInner({
   relatedHelpArticles = [],
   relatedChangelogs = [],
 }: StructuredContentPageProps) {
+  const { data: session } = useSession();
+  const isPlatUser = !!(session?.user as any)?.isPlatformUser;
   const [sidebarSearch, setSidebarSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
@@ -706,9 +709,9 @@ function StructuredContentPageInner({
                 <h2 className="mb-2 text-lg font-semibold text-foreground">Content Coming Soon</h2>
                 <p className="text-sm text-muted-foreground">
                   Detailed documentation for <span className="font-medium text-foreground">{title}</span> is being
-                  prepared by the Classgrid team. Check back soon, or{" "}
+                  prepared by the Classgrid team. Check back soon{isPlatUser ? "." : (<>, or{" "}
                   <Link href="/#demo" className="text-emerald-500 hover:underline">book a demo</Link>{" "}
-                  to see it live.
+                  to see it live.</>)}
                 </p>
               </div>
             )}

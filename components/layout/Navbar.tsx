@@ -551,7 +551,7 @@ export function Navbar({
                 <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
                   {/* Top Action Buttons (Vercel style) */}
                   <div className="mb-8 flex flex-col gap-3">
-                    {primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
+                    {!isPlatformUser && primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
                       <Link
                         href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
                         onClick={closeMobileMenu}
@@ -560,7 +560,7 @@ export function Navbar({
                         {primaryCtaLabel}
                       </Link>
                     )}
-                    {secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() && (
+                    {!isPlatformUser && secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() && (
                       <Link
                         href={secondaryLinkHref}
                         target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}

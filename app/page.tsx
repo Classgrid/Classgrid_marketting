@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 import { DemoRequestForm } from "@/components/sections/DemoRequestForm";
+import { PlatformUserGate } from "@/components/shared/PlatformUserGate";
 import { HomeDevScrollReset } from "@/components/layout/HomeDevScrollReset";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { MobileStatsBridge } from "@/components/sections/MobileStatsBridge";
@@ -1315,30 +1316,32 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       ) : null}
 
       {showDemoForm ? (
-        <Reveal>
-          <section
-            id="demo"
-            className="border-t border-black/5 bg-muted/50 px-6 py-24 dark:border-white/10 md:px-12 md:py-32 lg:px-16"
-          >
-            <div className="mx-auto max-w-7xl">
-              <DemoRequestForm
-                label={demoSectionLabel}
-                title={demoSectionHeading}
-                subtitle={demoSectionSubtext}
-                ctaLine={demoSectionCtaLine}
-                formTitle={ctaFormTitle}
-                formSubtitle={ctaFormSubtitle}
-                submitLabel={ctaFormSubmitLabel}
-                detailsSectionTitle={ctaFormDetailsHeading}
-                instituteSectionTitle={ctaFormInstituteHeading}
-                messageSectionTitle={ctaFormMessageHeading}
-                successTitle={ctaFormSuccessTitle}
-                successBody={ctaFormSuccessBody}
-                copy={ctaFormCopy}
-              />
-            </div>
-          </section>
-        </Reveal>
+        <PlatformUserGate>
+          <Reveal>
+            <section
+              id="demo"
+              className="border-t border-black/5 bg-muted/50 px-6 py-24 dark:border-white/10 md:px-12 md:py-32 lg:px-16"
+            >
+              <div className="mx-auto max-w-7xl">
+                <DemoRequestForm
+                  label={demoSectionLabel}
+                  title={demoSectionHeading}
+                  subtitle={demoSectionSubtext}
+                  ctaLine={demoSectionCtaLine}
+                  formTitle={ctaFormTitle}
+                  formSubtitle={ctaFormSubtitle}
+                  submitLabel={ctaFormSubmitLabel}
+                  detailsSectionTitle={ctaFormDetailsHeading}
+                  instituteSectionTitle={ctaFormInstituteHeading}
+                  messageSectionTitle={ctaFormMessageHeading}
+                  successTitle={ctaFormSuccessTitle}
+                  successBody={ctaFormSuccessBody}
+                  copy={ctaFormCopy}
+                />
+              </div>
+            </section>
+          </Reveal>
+        </PlatformUserGate>
       ) : null}
     </div>
   );

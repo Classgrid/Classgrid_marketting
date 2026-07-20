@@ -39,6 +39,8 @@ type FooterProps = {
   statusLabel?: string;
   statusState?: FooterStatusState;
   statusHref?: string;
+  /** When true, hides demo/sales links (e.g. "Book a Demo") */
+  isPlatformUser?: boolean;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -73,6 +75,7 @@ export function Footer({
   statusLabel,
   statusState,
   statusHref,
+  isPlatformUser,
 }: FooterProps) {
   const [mounted, setMounted] = useState(false);
   const [liveStatus, setLiveStatus] = useState<{ state: FooterStatusState; label: string } | null>(null);
@@ -204,7 +207,13 @@ export function Footer({
           {/* CMS columns (Quick Links, Resources…) */}
           {footerColumns.map((column) => {
             const links = (Array.isArray(column.links) ? column.links : [])
-              .filter((l) => l?.label?.trim() && l?.href?.trim());
+              .filter((l) => l?.label?.trim() && l?.href?.trim())
+              .filter((l) => {
+                if (!isPlatformUser) return true;
+                const resolved = resolveHref(l.label!, l.href!);
+                const isDemoLink = resolved === "/#demo" || /book\s+a?\s*demo/i.test(l.label!);
+                return !isDemoLink;
+              });
             if (!column.heading?.trim() && !links.length) return null;
             return (
               <div key={column.heading || links.map((l) => l.label).join("-")}>

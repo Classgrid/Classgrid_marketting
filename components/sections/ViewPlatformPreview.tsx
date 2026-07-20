@@ -22,22 +22,25 @@ import { IPhone15Pro } from "@/components/ui/iphone-15-pro";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const platformUrl = "https://www.youtube.com/@classgrid";
+/* ── CDN base URL for the CDS demo org ── */
+const BASE = "https://cds.classgrid.in";
 
+/* ── Desktop admin roles — each role has its own login portal ── */
 const adminRoles = [
-  { id: "org_admin", label: "Org Admin", email: "admin@classgrid.in", pass: "demo123" },
-  { id: "admission", label: "Admission", email: "admission@classgrid.in", pass: "demo123" },
-  { id: "fees", label: "Fees", email: "fees@classgrid.in", pass: "demo123" },
-  { id: "examination", label: "Examination", email: "exam@classgrid.in", pass: "demo123" },
-  { id: "library", label: "Library", email: "library@classgrid.in", pass: "demo123" },
-  { id: "attendance", label: "Attendance", email: "attendance@classgrid.in", pass: "demo123" },
-  { id: "hr", label: "HR & Leave", email: "hr@classgrid.in", pass: "demo123" },
-  { id: "hostel", label: "Hostel & Transport", email: "hostel@classgrid.in", pass: "demo123" },
+  { id: "org_admin",   label: "Org Admin",          email: "admin@cds.classgrid.in",      pass: "demo123", loginUrl: `${BASE}/org/login` },
+  { id: "admission",   label: "Admissions",         email: "admission@cds.classgrid.in",  pass: "demo123", loginUrl: `${BASE}/dept/admissions/login` },
+  { id: "fees",        label: "Fees",               email: "fees@cds.classgrid.in",       pass: "demo123", loginUrl: `${BASE}/dept/fees/login` },
+  { id: "examination", label: "Examination",        email: "exam@cds.classgrid.in",       pass: "demo123", loginUrl: `${BASE}/dept/exams/login` },
+  { id: "library",     label: "Library",            email: "library@cds.classgrid.in",    pass: "demo123", loginUrl: `${BASE}/dept/library/login` },
+  { id: "attendance",  label: "Attendance",         email: "attendance@cds.classgrid.in", pass: "demo123", loginUrl: `${BASE}/dept/attendance/login` },
+  { id: "hr",          label: "HR & Payroll",       email: "hr@cds.classgrid.in",         pass: "demo123", loginUrl: `${BASE}/dept/hr/login` },
+  { id: "hostel",      label: "Hostel & Transport", email: "hostel@cds.classgrid.in",     pass: "demo123", loginUrl: `${BASE}/dept/hostel/login` },
 ] as const;
 
+/* ── Mobile apps — Student and Faculty ── */
 const mobileApps = [
-  { id: "student", label: "Student App", email: "student@classgrid.in", pass: "demo123", url: "https://www.youtube.com/@classgrid" },
-  { id: "faculty", label: "Faculty App", email: "faculty@classgrid.in", pass: "demo123", url: "https://www.youtube.com/@classgrid" },
+  { id: "student", label: "Student App", email: "student@cds.classgrid.in", pass: "demo123", url: `${BASE}/student/login` },
+  { id: "faculty", label: "Faculty App", email: "faculty@cds.classgrid.in", pass: "demo123", url: `${BASE}/faculty/login` },
 ] as const;
 
 /* ── Reusable live iframe ── */
@@ -83,7 +86,7 @@ function LiveIframe({
   };
 
   return (
-    <div 
+    <div
       className={cn("relative w-full h-full overflow-hidden rounded-[inherit] bg-[#fafafa] overscroll-contain", className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -199,7 +202,7 @@ export function ViewPlatformPreview() {
           </h1>
 
           <p className="mt-5 mx-auto max-w-2xl text-base leading-7 text-white/55 md:text-lg md:leading-8">
-            Select a role below to view its specific dashboard and credentials. 
+            Select a role below to view its specific dashboard and credentials.
             Log in directly through the preview to explore real workflows.
           </p>
         </div>
@@ -214,10 +217,10 @@ export function ViewPlatformPreview() {
 
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <Tabs value={deviceView} onValueChange={(v) => setDeviceView(v as "desktop" | "mobile")}>
-            
+
             {/* Header: Selectors & Device Toggles */}
             <div className={cn("flex flex-col gap-6 lg:flex-row lg:items-start", deviceView === "desktop" ? "lg:justify-between mb-8" : "lg:justify-center mb-6")}>
-              
+
               {/* Dynamic Credentials (Only for Desktop view roles) */}
               {deviceView === "desktop" && (
                 <div className="w-full lg:max-w-sm shrink-0">
@@ -354,23 +357,23 @@ export function ViewPlatformPreview() {
                         <div className="h-2.5 w-2.5 rounded-full bg-[#27C93F]" />
                       </div>
                       <div className="flex flex-1 items-center gap-2 rounded-md border border-white/8 bg-white/5 px-3 py-1 text-[11px] text-white/50">
-                        <span className="truncate">learner.pceterp.in</span>
+                        <span className="truncate">{activeAdminRoleData.loginUrl.replace('https://', '')}</span>
                       </div>
                     </div>
                     {/* Iframe */}
                     <div className={cn("w-full transition-all relative", isFullscreen ? "flex-1 min-h-0" : "aspect-video")}>
                       <LiveIframe
-                        src={platformUrl}
+                        src={activeAdminRoleData.loginUrl}
                         title={`Classgrid ${activeAdminRoleData.label} — Live Platform`}
                         className="absolute inset-0 h-full w-full"
                       />
                     </div>
                   </div>
-                  
+
                   {isFullscreen && (
-                    <Button 
-                      variant="outline" 
-                      onClick={handleFullscreen} 
+                    <Button
+                      variant="outline"
+                      onClick={handleFullscreen}
                       className="absolute bottom-6 right-6 z-50 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border-white/10 shadow-xl"
                     >
                       <Shrink className="mr-2 w-4 h-4" />
@@ -383,7 +386,7 @@ export function ViewPlatformPreview() {
 
             {/* Mobile View */}
             <TabsContent value="mobile" className="mt-2 outline-none">
-              <div 
+              <div
                 ref={mobileRef}
                 className={cn(
                   "flex flex-col items-center gap-24 bg-[#030712] transition-all relative",
@@ -403,82 +406,82 @@ export function ViewPlatformPreview() {
                 {mobileApps
                   .filter((app) => activeMobileView === "both" || activeMobileView === app.id)
                   .map((app, index) => (
-                  <motion.div 
-                    key={app.id} 
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.15 }}
-                    className={cn("w-full pb-16 md:pb-20 z-10")}
-                  >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 max-w-6xl mx-auto px-6">
-                      
-                      {/* Phone Mockup (Left) */}
-                      <div className="relative flex justify-center order-2 lg:order-1">
-                        <div className="absolute w-[300px] h-[300px] bg-emerald-400/20 blur-3xl rounded-full" />
-                        
-                        <div className={cn(
-                          "relative transition-transform duration-500",
-                          isFullscreen ? "scale-110 max-h-[85vh]" : "scale-100 max-h-[70vh]"
-                        )}>
-                          <IPhone15Pro className="h-auto w-full shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                            <div className="flex h-full flex-col bg-[#fafafa] pt-12">
-                              <LiveIframe
-                                src={app.url || platformUrl}
-                                title={`Classgrid ${app.label} — Live Platform`}
-                                className="min-h-0 flex-1"
-                                hideScrollbar={true}
-                              />
-                            </div>
-                          </IPhone15Pro>
-                        </div>
-                      </div>
+                    <motion.div
+                      key={app.id}
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.15 }}
+                      className={cn("w-full pb-16 md:pb-20 z-10")}
+                    >
+                      <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 max-w-6xl mx-auto px-6">
 
-                      {/* Info & Credentials (Right) */}
-                      <div className="flex flex-col justify-center items-center lg:items-start order-1 lg:order-2 text-center lg:text-left relative">
-                        
-                        <div className="mb-2">
-                           <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Try the {app.label}</h3>
-                        </div>
+                        {/* Phone Mockup (Left) */}
+                        <div className="relative flex justify-center order-2 lg:order-1">
+                          <div className="absolute w-[300px] h-[300px] bg-emerald-400/20 blur-3xl rounded-full" />
 
-                        {/* Animated Interaction Cue */}
-                        <p className="text-sm text-white/60 mt-2 mb-6">
-                          👉 Enter these credentials inside the preview to log in
-                        </p>
-
-                        <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-2xl transition-transform hover:-translate-y-1">
-                          <div className="mb-5 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <LogIn className="h-4 w-4 text-cyan-400" />
-                              <span className="text-xs font-semibold uppercase tracking-[0.1em] text-white/70">
-                                {app.label} Credentials
-                              </span>
-                            </div>
-                            <Badge variant="outline" className="text-[10px] uppercase border-cyan-400/20 text-cyan-200 bg-cyan-400/10">
-                              Demo
-                            </Badge>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => navigator.clipboard.writeText(app.email)}>
-                              <div>
-                                <p className="font-mono text-sm text-white/90">{app.email}</p>
+                          <div className={cn(
+                            "relative transition-transform duration-500",
+                            isFullscreen ? "scale-110 max-h-[85vh]" : "scale-100 max-h-[70vh]"
+                          )}>
+                            <IPhone15Pro className="h-auto w-full shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                              <div className="flex h-full flex-col bg-[#fafafa] pt-12">
+                                <LiveIframe
+                                  src={app.url}
+                                  title={`Classgrid ${app.label} — Live Platform`}
+                                  className="min-h-0 flex-1"
+                                  hideScrollbar={true}
+                                />
                               </div>
-                              <CopyButton text={app.email} />
-                            </div>
-                            <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => navigator.clipboard.writeText(app.pass)}>
-                              <div>
-                                <p className="font-mono text-sm text-white/90">{app.pass}</p>
-                              </div>
-                              <CopyButton text={app.pass} />
-                            </div>
+                            </IPhone15Pro>
                           </div>
                         </div>
 
-                      </div>
+                        {/* Info & Credentials (Right) */}
+                        <div className="flex flex-col justify-center items-center lg:items-start order-1 lg:order-2 text-center lg:text-left relative">
 
-                    </div>
-                  </motion.div>
-                ))}
-                
+                          <div className="mb-2">
+                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Try the {app.label}</h3>
+                          </div>
+
+                          {/* Animated Interaction Cue */}
+                          <p className="text-sm text-white/60 mt-2 mb-6">
+                            👉 Enter these credentials inside the preview to log in
+                          </p>
+
+                          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-2xl transition-transform hover:-translate-y-1">
+                            <div className="mb-5 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <LogIn className="h-4 w-4 text-cyan-400" />
+                                <span className="text-xs font-semibold uppercase tracking-[0.1em] text-white/70">
+                                  {app.label} Credentials
+                                </span>
+                              </div>
+                              <Badge variant="outline" className="text-[10px] uppercase border-cyan-400/20 text-cyan-200 bg-cyan-400/10">
+                                Demo
+                              </Badge>
+                            </div>
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => navigator.clipboard.writeText(app.email)}>
+                                <div>
+                                  <p className="font-mono text-sm text-white/90">{app.email}</p>
+                                </div>
+                                <CopyButton text={app.email} />
+                              </div>
+                              <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => navigator.clipboard.writeText(app.pass)}>
+                                <div>
+                                  <p className="font-mono text-sm text-white/90">{app.pass}</p>
+                                </div>
+                                <CopyButton text={app.pass} />
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </motion.div>
+                  ))}
+
                 {isFullscreen && (
                   <>
                     <div className="fixed top-6 left-6 z-50 animate-in fade-in hidden lg:block">
@@ -490,9 +493,9 @@ export function ViewPlatformPreview() {
                         Live Preview
                       </Badge>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={handleFullscreen} 
+                    <Button
+                      variant="outline"
+                      onClick={handleFullscreen}
                       className="fixed bottom-6 right-6 z-50 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border-white/10 shadow-xl"
                     >
                       <Shrink className="mr-2 w-4 h-4" />
@@ -504,11 +507,6 @@ export function ViewPlatformPreview() {
             </TabsContent>
 
           </Tabs>
-
-          {/* Coming Soon note */}
-          <p className="mt-8 text-center text-sm text-white/40">
-            🚀 Dashboard &amp; Live Preview — <span className="text-emerald-400 font-medium">Coming Soon</span>
-          </p>
         </div>
       </section>
     </main>

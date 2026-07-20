@@ -280,6 +280,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             statusLabel={chromeContent?.footerStatusLabel}
             statusState={chromeContent?.footerStatusState}
             statusHref={chromeContent?.footerStatusHref}
+            isPlatformUser={!!(session?.user as any)?.isPlatformUser}
           />
         </Suspense>
         <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
