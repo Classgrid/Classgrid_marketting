@@ -150,7 +150,7 @@
   text-align: left;
   font-size: 15px;
   margin: 2em 0;
-  margin-left: -2px; /* Optical alignment with paragraph text */
+  margin-left: 0;
 }
 
 .docs-content table th {
@@ -168,7 +168,7 @@
 
 .docs-content table th:first-child,
 .docs-content table td:first-child {
-  padding-left: 0;
+  padding-left: 4px;
 }
 
 .docs-content table th:last-child,
