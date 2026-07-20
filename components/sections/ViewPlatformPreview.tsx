@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -51,11 +52,19 @@ function LiveIframe({
 }) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [minTimePassed, setMinTimePassed] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => setMinTimePassed(true), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (iframeLoaded && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: "theme-sync", theme: resolvedTheme }, "*");
+    }
+  }, [resolvedTheme, iframeLoaded]);
 
   const isReady = iframeLoaded && minTimePassed;
 
@@ -99,6 +108,7 @@ function LiveIframe({
       )}
 
       <iframe
+        ref={iframeRef}
         src={src}
         title={title}
         loading="lazy"
