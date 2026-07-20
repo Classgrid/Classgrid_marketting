@@ -27,20 +27,20 @@ const BASE = "https://cds.classgrid.in";
 
 /* ── Desktop admin roles — each role has its own login portal ── */
 const adminRoles = [
-  { id: "org_admin",   label: "Org Admin",          email: "admin@cds.classgrid.in",      pass: "demo123", loginUrl: `${BASE}/org/login` },
-  { id: "admission",   label: "Admissions",         email: "admission@cds.classgrid.in",  pass: "demo123", loginUrl: `${BASE}/dept/admissions/login` },
-  { id: "fees",        label: "Fees",               email: "fees@cds.classgrid.in",       pass: "demo123", loginUrl: `${BASE}/dept/fees/login` },
-  { id: "examination", label: "Examination",        email: "exam@cds.classgrid.in",       pass: "demo123", loginUrl: `${BASE}/dept/exams/login` },
-  { id: "library",     label: "Library",            email: "library@cds.classgrid.in",    pass: "demo123", loginUrl: `${BASE}/dept/library/login` },
-  { id: "attendance",  label: "Attendance",         email: "attendance@cds.classgrid.in", pass: "demo123", loginUrl: `${BASE}/dept/attendance/login` },
-  { id: "hr",          label: "HR & Payroll",       email: "hr@cds.classgrid.in",         pass: "demo123", loginUrl: `${BASE}/dept/hr/login` },
-  { id: "hostel",      label: "Hostel & Transport", email: "hostel@cds.classgrid.in",     pass: "demo123", loginUrl: `${BASE}/dept/hostel/login` },
+  { id: "org_admin",   label: "Org Admin",          email: "admin@cds.classgrid.in",      pass: "cdspass@123", loginUrl: `${BASE}/org/login` },
+  { id: "admission",   label: "Admissions",         email: "admission@cds.classgrid.in",  pass: "cdspass@123", loginUrl: `${BASE}/dept/admissions/login` },
+  { id: "fees",        label: "Fees",               email: "fees@cds.classgrid.in",       pass: "cdspass@123", loginUrl: `${BASE}/dept/fees/login` },
+  { id: "examination", label: "Examination",        email: "exam@cds.classgrid.in",       pass: "cdspass@123", loginUrl: `${BASE}/dept/exams/login` },
+  { id: "library",     label: "Library",            email: "library@cds.classgrid.in",    pass: "cdspass@123", loginUrl: `${BASE}/dept/library/login` },
+  { id: "attendance",  label: "Attendance",         email: "attendance@cds.classgrid.in", pass: "cdspass@123", loginUrl: `${BASE}/dept/attendance/login` },
+  { id: "hr",          label: "HR & Payroll",       email: "hr@cds.classgrid.in",         pass: "cdspass@123", loginUrl: `${BASE}/dept/hr/login` },
+  { id: "hostel",      label: "Hostel & Transport", email: "hostel@cds.classgrid.in",     pass: "cdspass@123", loginUrl: `${BASE}/dept/hostel/login` },
 ] as const;
 
 /* ── Mobile apps — Student and Faculty ── */
 const mobileApps = [
-  { id: "student", label: "Student App", email: "student@cds.classgrid.in", pass: "demo123", url: `${BASE}/student/login` },
-  { id: "faculty", label: "Faculty App", email: "faculty@cds.classgrid.in", pass: "demo123", url: `${BASE}/faculty/login` },
+  { id: "student", label: "Student App", email: "student@cds.classgrid.in", pass: "cdspass@123", url: `${BASE}/student/login` },
+  { id: "faculty", label: "Faculty App", email: "faculty@cds.classgrid.in", pass: "cdspass@123", url: `${BASE}/faculty/login` },
 ] as const;
 
 /* ── Reusable live iframe ── */
