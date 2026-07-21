@@ -39,7 +39,13 @@ export function StatsStrip({ stats }: { stats: Stat[] }) {
       viewport={{ once: true, margin: "-80px" }}
       className="mx-auto mt-6 mb-14 max-w-[1200px] overflow-visible rounded-2xl bg-emerald-50 px-4 py-12 shadow-2xl dark:bg-[#022c22]"
     >
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+      <div className={`grid gap-3 md:gap-5 ${
+        stats.length <= 2
+          ? "grid-cols-1 sm:grid-cols-2 max-w-[700px] mx-auto"
+          : stats.length === 3
+          ? "grid-cols-2 md:grid-cols-3"
+          : "grid-cols-2 md:grid-cols-4"
+      }`}>
         {stats.map((stat, i) => (
           <motion.div
             key={i}

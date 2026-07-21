@@ -583,12 +583,13 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     return { value: parsed, suffix };
   }
 
-  const stats = [
-    { label: "Students Managed", ...processStat(cmsHomeStats?.students, 100000, "+") },
-    { label: "Institutions", ...processStat(cmsHomeStats?.institutions, 50, "+") },
-    { label: "Modules", ...processStat(cmsHomeStats?.modules, 25, "+") },
-    { label: "Uptime", ...processStat(cmsHomeStats?.uptime, 99.9, "%") }
+  const allStats = [
+    { label: "Students Managed", visible: cmsHomeStats?.showStudents !== false, ...processStat(cmsHomeStats?.students, 100000, "+") },
+    { label: "Institutions", visible: cmsHomeStats?.showInstitutions !== false, ...processStat(cmsHomeStats?.institutions, 50, "+") },
+    { label: "Modules", visible: cmsHomeStats?.showModules !== false, ...processStat(cmsHomeStats?.modules, 25, "+") },
+    { label: "Uptime", visible: cmsHomeStats?.showUptime !== false, ...processStat(cmsHomeStats?.uptime, 99.9, "%") },
   ];
+  const stats = allStats.filter((s) => s.visible);
 
 
   const trustedLogos: TrustLogo[] = (Array.isArray(cmsClientLogos) ? cmsClientLogos : []).map((logo: any) => ({
