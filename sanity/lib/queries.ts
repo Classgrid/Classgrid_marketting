@@ -1181,9 +1181,13 @@ export const teamMembersQuery = `*[_type == "teamMember"] | order(order asc, nam
 
 export const homeStatsQuery = `*[_type == "homeStats"][0]{
   _id,
+  showInstitutions,
   institutions,
+  showStudents,
   students,
+  showModules,
   modules,
+  showUptime,
   uptime
 }`;
 
