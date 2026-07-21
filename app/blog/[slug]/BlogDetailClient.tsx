@@ -475,7 +475,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                     const aName = authorItem.name || 'ClassGrid Team';
                     const aImage = authorItem.image;
                     const aLink = authorItem.profileLink;
-                    const aBio = authorItem.bio || (idx === 0 ? "Exploring how modern technology integrates directly into global education. Dedicated to bringing scalable solutions to administration through ClassGrid." : undefined);
+                    const aBio = authorItem.bio;
 
                     const avatarEl = (
                       <Avatar className="h-20 w-20 ring-2 ring-emerald-500/20 hover:ring-emerald-500 hover:scale-105 transition-all duration-300 cursor-pointer">
