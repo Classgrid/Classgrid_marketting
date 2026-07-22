@@ -18,8 +18,9 @@ type QueueItem = {
   max_retries: number;
 };
 
-// ─── SMTP Transporter ────────────────────────────────────────────────────────
-const transporter = nodemailer.createTransport({
+// ─── SMTP Transporters ───────────────────────────────────────────────────────
+// Primary: Brevo (300/day free — we reserve 50 for demos, use 250 for subscribers)
+const brevoTransporter = nodemailer.createTransport({
   host: process.env.BREVO_SMTP_HOST,
   port: Number(process.env.BREVO_SMTP_PORT || 587),
   secure: false,
@@ -28,6 +29,20 @@ const transporter = nodemailer.createTransport({
     pass: process.env.BREVO_SMTP_PASS,
   },
 });
+
+// Fallback: Resend (100/day free via updates.classgrid.in)
+const resendTransporter = nodemailer.createTransport({
+  host: "smtp.resend.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
+  },
+});
+
+// Track which provider to use — starts with Brevo, falls back to Resend
+let useResendFallback = false;
 
 // ─── Utility Functions ───────────────────────────────────────────────────────
 function getLocalizedString(value: unknown, fallback = ""): string {
@@ -259,8 +274,10 @@ ${renderRecentChangelogs(recentChangelogs, siteUrl)}
 // ─── Cron Processing Logic ───────────────────────────────────────────────────
 async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promise<{ sent: number; failed: number; done: boolean; totalProcessed?: number }> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-  const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
-  const senderEmail = "noreply@classgrid.in";
+  const senderName = "Classgrid";
+  // Brevo sends from noreply@classgrid.in, Resend sends from notification@updates.classgrid.in
+  const brevoSenderEmail = "noreply@classgrid.in";
+  const resendSenderEmail = "notification@updates.classgrid.in";
   const supportEmail = "support@classgrid.in";
 
   // 1. Fetch the full document from Sanity
@@ -363,16 +380,50 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
       const hash = generateUnsubscribeHash(sub.email);
       const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(sub.email)}&token=${hash}`;
 
-      await transporter.sendMail({
-        from: `"${senderName}" <${senderEmail}>`,
+      const mailOptions = {
         replyTo: supportEmail,
         to: sub.email,
         subject,
         text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
         html: buildNotificationEmailHtml(resolvedPost, unsubscribeUrl, blogsWithImages, changelogsWithImages),
-      });
+      };
 
-      sentCount++;
+      if (!useResendFallback) {
+        // Try Brevo first
+        try {
+          await brevoTransporter.sendMail({
+            ...mailOptions,
+            from: `"${senderName}" <${brevoSenderEmail}>`,
+          });
+          sentCount++;
+          continue;
+        } catch (brevoErr: any) {
+          const errMsg = brevoErr?.message || "";
+          // If Brevo hit daily limit (421/529), switch to Resend for remaining emails
+          if (errMsg.includes("421") || errMsg.includes("429") || errMsg.includes("limit") || errMsg.includes("Too many")) {
+            console.log(`⚡ Brevo daily limit reached. Switching to Resend fallback...`);
+            useResendFallback = true;
+          } else {
+            // Non-rate-limit error — log and count as failure
+            console.error(`Failed to send to ${sub.email} via Brevo:`, errMsg);
+            failCount++;
+            continue;
+          }
+        }
+      }
+
+      // Resend fallback
+      try {
+        await resendTransporter.sendMail({
+          ...mailOptions,
+          from: `"${senderName}" <${resendSenderEmail}>`,
+        });
+        sentCount++;
+        console.log(`📨 Sent to ${sub.email} via Resend fallback`);
+      } catch (resendErr: any) {
+        console.error(`Failed to send to ${sub.email} via Resend:`, resendErr?.message);
+        failCount++;
+      }
     } catch (emailErr) {
       console.error(`Failed to send to ${sub.email}:`, emailErr);
       failCount++;
