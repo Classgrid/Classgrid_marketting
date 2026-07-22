@@ -80,17 +80,22 @@ Vercel's Nicole Kovaleski responded to Classgrid's startup inquiry. No direct cr
 
 ---
 
-## ✉️ Multi-Provider Email Architecture Strategy
-**Date:** July 2026  
-**Status:** ✅ Decision Made  
+## 🔴 Redis for Startups Application
+**Date:** July 23, 2026  
+**Status:** ⏳ Applied & In Review  
 
-After a detailed technical evaluation and pricing discussion with Brevo engineering support, Classgrid has finalized a multi-provider email infrastructure to optimize costs and deliverability:
-1. **Amazon SES:** Primary engine for high-volume transactional emails (OTPs, attendance, fee receipts) to leverage the $1,000 Activate credits.
-2. **Brevo (Sendinblue):** Retained exclusively for marketing campaigns, changelogs, and blog updates on the shared IP pool.
-3. **Resend:** Utilized for specific developer-focused transactional flows.
-
-This multi-provider setup avoids Brevo's steep $500/month dedicated IP fees while maintaining enterprise-grade deliverability across all channels.
+Classgrid applied to the **Redis for Startups** program to secure cloud credits and enterprise-grade support. Redis powers Classgrid's real-time WebSocket pub/sub engine (Socket.io), sub-millisecond AI session memory (`ioredis`), and API rate-limiting across institutions.
 
 ---
 
-*Last updated: July 22, 2026*
+## ✉️ Automated Multi-Provider Email & Resend Fallback
+**Date:** July 23, 2026  
+**Status:** ✅ Live & Deployed  
+
+Finalized and deployed Classgrid's automated dual-provider marketing & transactional email engine:
+1. **Amazon SES (Stockholm):** Dedicated engine for high-volume platform transactional emails (OTPs, login alerts, fee receipts) with 50,000/day capacity via $1,000 AWS Activate credits.
+2. **Brevo + Resend Smart Fallback (Cron Engine):** Blog & changelog subscriber notifications send up to 250 emails/day via Brevo. If Brevo hits daily rate limits (421/429), the Vercel cron job automatically seamlessly switches to **Resend** via `updates.classgrid.in` for the next 100 emails/day — achieving **350 emails/day for ₹0**.
+
+---
+
+*Last updated: July 23, 2026*
