@@ -79,7 +79,7 @@ export function PlatformAnimatedBeam({
       <div className="pointer-events-none absolute left-[-10%] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[#00dfd8]/40 blur-[100px]" />
       <div className="pointer-events-none absolute right-[-10%] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[#ff0080]/40 blur-[100px]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-6 sm:gap-12 xl:flex-row xl:items-start xl:gap-16">
           <motion.div
             className="relative flex h-[260px] sm:h-[400px] w-full max-w-[520px] items-center justify-center overflow-visible xl:h-[420px] xl:w-[52%] xl:max-w-none"

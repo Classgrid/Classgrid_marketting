@@ -529,7 +529,7 @@ export function TurboComparisonNew({
         <section
             className="relative overflow-x-clip py-10 pb-44 md:py-24 lg:py-32 bg-muted"
         >
-            <div className="relative mx-auto max-w-6xl px-6">
+            <div className="relative mx-auto max-w-[1400px] px-6">
 
                 {/* Heading */}
                 <div className="mb-8 md:mb-16 text-center">

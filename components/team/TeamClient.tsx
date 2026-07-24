@@ -162,7 +162,7 @@ export default function TeamClient({ leadership, engineering, sales, support }: 
     <div className="min-h-screen bg-background pt-32 pb-24 overflow-hidden relative">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-emerald-500/[0.08] rounded-[100%] blur-[120px] opacity-50 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-32">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

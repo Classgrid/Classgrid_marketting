@@ -188,7 +188,7 @@ export function ViewPlatformPreview() {
         <div className="absolute -left-16 top-12 h-72 w-72 rounded-full bg-cyan-500/16 blur-3xl" />
         <div className="absolute -right-20 top-20 h-80 w-80 rounded-full bg-emerald-500/16 blur-3xl" />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 md:py-20 lg:py-24 text-center">
+        <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-16 md:py-20 lg:py-24 text-center">
           <Badge className="rounded-full border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100">
             <span className="relative mr-2 inline-flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300/80" />
@@ -216,7 +216,7 @@ export function ViewPlatformPreview() {
         <div className="marketing-noise absolute inset-0 opacity-30" />
         <div className="absolute inset-x-[12%] top-0 h-72 bg-gradient-to-b from-emerald-400/20 via-emerald-400/8 to-transparent blur-3xl" />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6">
+        <div className="relative z-10 mx-auto max-w-[1400px] px-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-8">
             
             {/* Dynamic Credentials */}

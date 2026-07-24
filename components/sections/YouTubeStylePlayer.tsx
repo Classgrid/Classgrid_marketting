@@ -285,7 +285,7 @@ export function YouTubeStylePlayer({
       viewport={viewportOnce}
       variants={fadeUp}
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6">
         {/* Section header */}
         <motion.div
           className="mx-auto mb-10 max-w-3xl text-center"

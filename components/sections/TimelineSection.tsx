@@ -28,7 +28,7 @@ export function TimelineSection({ title, subtitle, tabs, defaultTab, roleDataMap
   const activeTabData = tabs.find((t) => t.id === activeTab) ?? tabs[0];
 
   return (
-    <section className="mx-auto w-full max-w-7xl overflow-visible border-t border-foreground/10 px-4 pt-10 pb-16">
+    <section className="mx-auto w-full max-w-[1400px] overflow-visible border-t border-foreground/10 px-4 pt-10 pb-16">
       <div className="mb-10 text-center">
         <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500" />
         <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">

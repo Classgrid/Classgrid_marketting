@@ -198,7 +198,7 @@ export function ClassgridRoleShowcase({
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6">
         {/* ── Section header ── */}
         <div className="mb-16 text-center">
           <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>

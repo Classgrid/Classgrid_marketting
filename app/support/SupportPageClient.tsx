@@ -297,7 +297,7 @@ export default function SupportPageClient({ lang }: { lang: SupportedLang }) {
       </section>
 
       {/* Support Categories Grid */}
-      <section className="px-6 max-w-6xl mx-auto mb-16 relative z-10">
+      <section className="px-6 max-w-[1400px] mx-auto mb-16 relative z-10">
         <div className="text-center mb-16">
           <h3 className="text-2xl font-bold text-foreground mb-4">Select a Category</h3>
           <p className="text-muted-foreground">Quickly route your ticket to the correct department.</p>

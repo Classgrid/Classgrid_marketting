@@ -1041,7 +1041,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
         <Reveal>
           <div className="relative z-10 w-full bg-transparent">
             {(showcaseKicker || normalizedShowcaseTitle || normalizedShowcaseSubtitle) ? (
-              <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+              <div className="mx-auto max-w-[1400px] px-6 md:px-12 lg:px-16">
                 <SectionHeader
                   label={showcaseKicker}
                   title={normalizedShowcaseTitle}
@@ -1081,7 +1081,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
       {showTrust ? (
         <Reveal>
           <section className="px-6 py-16 md:px-12 md:py-24 lg:px-16">
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-[1400px]">
               {(trustedBy || trustSectionDescription) && (
                 <SectionHeader title={trustedBy} description={trustSectionDescription} />
               )}
@@ -1097,7 +1097,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showOrganization ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
+          <section className="mx-auto w-full max-w-[1400px] px-6 py-16 md:px-12 md:py-24 lg:px-16">
             <SectionHeader title={organizationSectionTitle} />
             <BentoGrid className="auto-rows-auto gap-6 md:grid-cols-4 lg:grid-cols-4">
               {organizationCards.map((org, index: number) => {
@@ -1129,7 +1129,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showModules ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl border-t border-black/5 px-6 py-16 dark:border-white/10 md:px-12 md:py-24 lg:px-16">
+          <section className="mx-auto w-full max-w-[1400px] border-t border-black/5 px-6 py-16 dark:border-white/10 md:px-12 md:py-24 lg:px-16">
             {(normalizedModulesTitle || normalizedModulesSubtitle) && (
               <SectionHeader
                 title={normalizedModulesTitle}
@@ -1231,7 +1231,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
 
       {showTestimonials ? (
         <Reveal>
-          <section className="mx-auto w-full max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
+          <section className="mx-auto w-full max-w-[1400px] px-6 py-16 md:px-12 md:py-24 lg:px-16">
             {(testimonialsLabel || testimonialsTitle || testimonialsSectionDescription) && (
               <SectionHeader
                 label={testimonialsLabel}
@@ -1323,7 +1323,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
               id="demo"
               className="border-t border-black/5 bg-muted/50 px-6 py-24 dark:border-white/10 md:px-12 md:py-32 lg:px-16"
             >
-              <div className="mx-auto max-w-7xl">
+              <div className="mx-auto max-w-[1400px]">
                 <DemoRequestForm
                   label={demoSectionLabel}
                   title={demoSectionHeading}

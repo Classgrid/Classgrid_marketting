@@ -188,7 +188,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
       </div>
 
       {/* Hero */}
-      <section className="px-6 md:px-12 max-w-7xl mx-auto text-center mb-16 relative z-10">
+      <section className="px-6 md:px-12 max-w-[1400px] mx-auto text-center mb-16 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <SectionAccentBar />
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -281,7 +281,7 @@ export default function HelpCenterClient({ lang, initialData }: { lang: Supporte
           </p>
         </section>
       ) : (
-        <section className="px-6 max-w-6xl mx-auto mb-20 relative z-10">
+        <section className="px-6 max-w-[1400px] mx-auto mb-20 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {sortedCategories.map((category, index) => {
             const isActive = activeCategory === category.title;

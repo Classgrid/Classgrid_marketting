@@ -24,7 +24,7 @@ export function WhyClassgridSection({
   if (!cards || cards.length === 0) return null;
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-16 md:py-24">
+    <section className="mx-auto w-full max-w-[1400px] px-4 py-16 md:py-24">
       <Reveal>
         <div className="mb-12 text-center md:mb-16">
           <div className="mx-auto mb-6 h-1.5 w-24 rounded-full bg-orange-500"></div>
