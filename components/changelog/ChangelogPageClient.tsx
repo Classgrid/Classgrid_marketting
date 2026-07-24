@@ -69,7 +69,7 @@ const MONTH_MAP: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 15;
 
 export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageClientProps) {
   // ── Filter state ──────────────────────────────────────────────────
@@ -109,8 +109,8 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
   // ── Pagination ────────────────────────────────────────────────────
   const totalPages  = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const activePage  = Math.min(currentPage, totalPages);
-  const pageStart   = (activePage - 1) * PAGE_SIZE;
-  const visible     = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+  // For "Show more" style, we slice from 0 to (activePage * PAGE_SIZE)
+  const visible     = filtered.slice(0, activePage * PAGE_SIZE);
 
   type PageToken = number | "ellipsis-left" | "ellipsis-right";
   const pageTokens: PageToken[] = (() => {
@@ -247,48 +247,17 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
           </div>
         )}
 
-        {/* ── PAGINATION ── */}
-        {totalPages > 1 && (
-          <Pagination className="pb-16 pt-4">
-            <PaginationContent className="gap-1 rounded-xl border border-border bg-card/90 p-1 shadow-sm">
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); if (activePage > 1) setCurrentPage(activePage - 1); }}
-                  aria-disabled={activePage <= 1}
-                  className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage <= 1 ? "pointer-events-none opacity-50" : ""}`}
-                />
-              </PaginationItem>
-              {pageTokens.map((token, i) => (
-                <PaginationItem key={`${token}-${i}`}>
-                  {typeof token === "number" ? (
-                    <PaginationLink
-                      href="#"
-                      isActive={token === activePage}
-                      onClick={(e) => { e.preventDefault(); setCurrentPage(token); }}
-                      className={`h-10 min-w-10 rounded-lg ${
-                        token === activePage
-                          ? "border-emerald-500 bg-emerald-500 text-black hover:bg-emerald-500"
-                          : "text-muted-foreground hover:bg-accent"
-                      }`}
-                    >
-                      {token}
-                    </PaginationLink>
-                  ) : (
-                    <PaginationEllipsis className="text-muted-foreground" />
-                  )}
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); if (activePage < totalPages) setCurrentPage(activePage + 1); }}
-                  aria-disabled={activePage >= totalPages}
-                  className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        {/* ── SHOW MORE BUTTON ── */}
+        {activePage < totalPages && (
+          <div className="flex justify-center pb-16 pt-8">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(activePage + 1)}
+              className="rounded-full px-8 py-5 text-sm font-medium border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
+            >
+              Show more
+            </Button>
+          </div>
         )}
       </div>
 
