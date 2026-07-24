@@ -143,11 +143,11 @@ export default function PricingPage() {
       <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
+      <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-emerald-50/30 px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
         {/* 1. Base Deep Gradient Layer */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white via-emerald-50 to-white dark:from-[#021E16] dark:via-[#063D2E] dark:to-[#021E16]" />
-        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(255,255,255,0.92)_0%,rgba(209,250,229,0.55)_38%,rgba(240,253,250,0.92)_100%)] dark:bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(236,253,245,0.82)_45%,transparent_100%)] dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/40 via-emerald-50/40 to-white/80 dark:from-[#021E16] dark:via-[#063D2E] dark:to-[#021E16]" />
+        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(255,255,255,0.5)_0%,rgba(209,250,229,0.2)_38%,rgba(240,253,250,0.5)_100%)] dark:bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-gradient-to-t from-background to-transparent dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
         
         {/* 2. Platform Photo Underlay */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-15 mix-blend-multiply dark:opacity-40 dark:mix-blend-overlay">
