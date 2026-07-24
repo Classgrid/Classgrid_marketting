@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { DM_Sans, Inter, Outfit } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
@@ -18,13 +18,13 @@ import { PostHogProvider } from "@/components/providers/PostHogProvider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["400", "500", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
+const interBody = Inter({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 
@@ -109,7 +109,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${dmSans.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${inter.variable} ${interBody.variable} font-sans min-h-screen bg-background text-foreground antialiased selection:bg-emerald-300/30 selection:text-emerald-900 dark:selection:bg-emerald-500/30 dark:selection:text-emerald-50`}
       >
         {/* JSON-LD Structured Data for Google Rich Results */}
         <script
