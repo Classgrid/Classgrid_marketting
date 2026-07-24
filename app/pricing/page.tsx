@@ -176,8 +176,8 @@ export default function PricingPage() {
           <div className="absolute left-[-35%] top-[-70%] h-[210%] w-[165%] rotate-[32deg] bg-gradient-to-r from-transparent via-emerald-300/20 to-transparent" />
         </div>
 
-        {/* 6. Bottom Fade to Page Background (Must be last background layer) */}
-        <div className="absolute inset-x-0 bottom-0 z-0 h-64 pointer-events-none bg-gradient-to-t from-background via-background/80 to-transparent" />
+        {/* 6. Bottom Fade to Page Background - REMOVED because it caused a massive white fog over the dark hero */}
+
 
         <div className="relative z-10 mx-auto w-full max-w-[920px] text-center">
           <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-white/10 bg-white/10 text-emerald-100">

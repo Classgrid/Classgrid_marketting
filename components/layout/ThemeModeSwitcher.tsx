@@ -36,7 +36,7 @@ export function ThemeModeSwitcher() {
             type="button"
             onClick={() => setTheme(mode.value)}
             className={cn(
-              "relative flex h-7 w-8 items-center justify-center rounded-full transition-colors duration-200",
+              "cursor-pointer relative flex h-7 w-8 items-center justify-center rounded-full transition-colors duration-200",
               active
                 ? "bg-accent text-accent-foreground shadow-sm"
                 : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
