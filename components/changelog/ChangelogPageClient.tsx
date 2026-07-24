@@ -140,15 +140,6 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
 
         {/* ── HERO — identical structure to Blog hero ── */}
         <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-16 text-center">
-          <Badge
-            variant="outline"
-            className="border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-sm tracking-wide text-emerald-500"
-          >
-            Public Release Log
-          </Badge>
-
-          <SectionAccentBar />
-
           <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
             {(settings.heroHeadline || "").replace(/\.\s*$/, "")}
           </h1>
@@ -157,145 +148,23 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
           </p>
         </section>
 
-        {/* ── FILTER BAR — mirrors Blog layout exactly ──
-              LEFT  : [Sort ▼] [Month ▼] [Module ▼]  (Blog has [Latest ▼] [Month ▼], changelog adds Module too)
-              RIGHT : [All] [New Feature] [Improvement] [Bug Fix]  (like Blog's category pills)
-        */}
-        <section className="flex flex-col items-start justify-between gap-3 py-4 md:flex-row md:items-center">
-
-          {/* LEFT — three Select dropdowns (Sort + Month + Module) */}
-          <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide pb-1 w-full md:w-auto">
-            {/* Sort order — same as Blog */}
-            <div className="relative">
-              <Select
-                value={sortOrder}
-                onValueChange={(v) => { setSortOrder(v); setCurrentPage(1); }}
-              >
-                <SelectTrigger
-                  aria-label="Sort Order"
-                  className="h-11 w-[130px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
-                >
-                  <SelectValue placeholder="Sort: Latest" />
-                </SelectTrigger>
-                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
-                  <SelectItem value="latest">Latest</SelectItem>
-                  <SelectItem value="oldest">Oldest</SelectItem>
-                </SelectContent>
-              </Select>
-              <select
-                value={sortOrder}
-                onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1); }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
-              >
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
-              </select>
-            </div>
-
-            {/* Month filter — same as Blog */}
-            <div className="relative">
-              <Select
-                value={monthFilter}
-                onValueChange={(v) => { setMonthFilter(v); setCurrentPage(1); }}
-              >
-                <SelectTrigger
-                  aria-label="Month Filter"
-                  className="h-11 w-[150px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
-                >
-                  <SelectValue placeholder="Month" />
-                </SelectTrigger>
-                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
-                  <SelectItem value="all">All Months</SelectItem>
-                  <SelectItem value="jan">January</SelectItem>
-                  <SelectItem value="feb">February</SelectItem>
-                  <SelectItem value="mar">March</SelectItem>
-                  <SelectItem value="apr">April</SelectItem>
-                  <SelectItem value="may">May</SelectItem>
-                  <SelectItem value="jun">June</SelectItem>
-                  <SelectItem value="jul">July</SelectItem>
-                  <SelectItem value="aug">August</SelectItem>
-                  <SelectItem value="sep">September</SelectItem>
-                  <SelectItem value="oct">October</SelectItem>
-                  <SelectItem value="nov">November</SelectItem>
-                  <SelectItem value="dec">December</SelectItem>
-                </SelectContent>
-              </Select>
-              <select
-                value={monthFilter}
-                onChange={(e) => { setMonthFilter(e.target.value); setCurrentPage(1); }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
-              >
-                <option value="all">All Months</option>
-                <option value="jan">January</option>
-                <option value="feb">February</option>
-                <option value="mar">March</option>
-                <option value="apr">April</option>
-                <option value="may">May</option>
-                <option value="jun">June</option>
-                <option value="jul">July</option>
-                <option value="aug">August</option>
-                <option value="sep">September</option>
-                <option value="oct">October</option>
-                <option value="nov">November</option>
-                <option value="dec">December</option>
-              </select>
-            </div>
-
-            {/* Module filter — changelog-specific */}
-            <div className="relative">
-              <Select
-                value={activeModule}
-                onValueChange={(v) => { setActiveModule(v); setCurrentPage(1); }}
-              >
-                <SelectTrigger
-                  aria-label="Module Filter"
-                  className="h-11 w-[160px] rounded-xl border border-border bg-card text-card-foreground shadow-sm"
-                >
-                  <SelectValue placeholder="Module" />
-                </SelectTrigger>
-                <SelectContent side="bottom" position="popper" className="rounded-xl border-border bg-card text-card-foreground">
-                  {moduleOptions.map((opt) => (
-                    <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <select
-                value={activeModule}
-                onChange={(e) => { setActiveModule(e.target.value); setCurrentPage(1); }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
-              >
-                {moduleOptions.map((opt) => (
-                  <option key={opt.id} value={opt.id}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* RIGHT — Update Type pills (like Blog's category pills) */}
-          <div className="scrollbar-hide flex w-full gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
+        {/* ── FILTER BAR — Clean Vercel-style horizontal tabs ── */}
+        <section className="mb-10 flex items-center justify-between border-b border-border pb-0">
+          <div className="scrollbar-hide flex items-center gap-1 overflow-x-auto pb-2 md:pb-3">
             {(Object.entries(UPDATE_TYPE_META) as [UpdateType, typeof UPDATE_TYPE_META[UpdateType]][]).map(([id, meta]) => {
-              const Icon = meta.icon;
               const isActive = activeType === id;
               return (
-                <Button
+                <button
                   key={id}
-                  variant="outline"
                   onClick={() => { setActiveType(id); setCurrentPage(1); }}
-                  className={`rounded-full border px-4 py-2 font-medium shadow-none transition flex items-center gap-1.5 ${
+                  className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[14px] font-medium transition-colors ${
                     isActive
-                      ? "border-emerald-500 bg-emerald-500 text-black hover:bg-emerald-500 hover:text-black"
-                      : "border-border bg-card text-muted-foreground hover:border-emerald-400 hover:bg-emerald-500/10 hover:text-foreground"
+                      ? "bg-slate-100 text-slate-900 dark:bg-white/10 dark:text-white"
+                      : "text-slate-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white"
                   }`}
                 >
-                  <Icon className="h-3.5 w-3.5" />
                   {meta.label}
-                </Button>
+                </button>
               );
             })}
           </div>
@@ -337,74 +206,45 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
                     className="group relative flex gap-0 md:gap-8"
                   >
                     {/* LEFT — date column */}
-                    <div className="hidden w-28 shrink-0 pt-5 text-right md:block">
+                    <div className="hidden w-32 shrink-0 pt-[3px] text-right md:block">
                       <time
                         dateTime={entry.releaseDate}
-                        className="text-xs font-medium text-muted-foreground"
+                        className="text-[14px] font-medium text-slate-500 dark:text-neutral-400"
                       >
-                        {format(new Date(entry.releaseDate), "MMM d")}
+                        {format(new Date(entry.releaseDate), "d MMMM")}
                       </time>
                     </div>
 
-                    {/* Timeline dot */}
-                    <div className="relative hidden md:flex flex-col items-center">
-                      <div className="mt-[1.35rem] h-2.5 w-2.5 rounded-full border-2 border-emerald-500 bg-background transition-all group-hover:bg-emerald-500 group-hover:scale-125" />
-                    </div>
+                    {/* Timeline gap (no dot, just line spacing) */}
+                    <div className="relative hidden w-8 md:block"></div>
 
                     {/* RIGHT — content */}
-                    <div className="flex-1 border-b border-border py-5 pl-0 md:pl-6">
+                    <div className="flex-1 pb-16 pl-0">
                       {/* Mobile date */}
-                      <time className="mb-2 block text-xs text-muted-foreground md:hidden">
-                        {format(new Date(entry.releaseDate), "MMM d, yyyy")}
+                      <time className="mb-3 block text-sm font-medium text-slate-500 dark:text-neutral-400 md:hidden">
+                        {format(new Date(entry.releaseDate), "d MMMM yyyy")}
                       </time>
-
-                      {/* Badges row */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        {/* Type badge */}
-                        <span
-                          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${meta.color}`}
-                        >
-                          <Icon className="h-3 w-3" />
-                          {meta.label}
-                        </span>
-
-                        {/* Version */}
-                        {entry.versionLabel && (
-                          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-500">
-                            {entry.versionLabel}
-                          </span>
-                        )}
-
-                        {/* Module chips */}
-                        {entry.modules.map((m) => (
-                          <span
-                            key={m}
-                            className="rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground"
-                          >
-                            {prettyModule(m)}
-                          </span>
-                        ))}
-                      </div>
 
                       {/* Title */}
                       <Link href={href}>
-                        <h3 className="mt-3 text-base font-semibold leading-snug text-foreground transition-colors hover:text-emerald-500">
+                        <h3 className="text-2xl font-semibold tracking-tight leading-snug text-slate-900 dark:text-white transition-colors hover:text-slate-600 dark:hover:text-neutral-300">
                           {(entry.title || "").replace(/\.\s*$/, "")}
                         </h3>
                       </Link>
 
                       {/* Summary */}
-                      <p className="mt-1.5 text-sm leading-6 text-muted-foreground line-clamp-2">
+                      <p className="mt-3 text-[16px] leading-relaxed text-[#171717] dark:text-[#a1a1aa]">
                         {entry.summary}
                       </p>
-
-                      {/* Read more */}
-                      <Link
-                        href={href}
-                        className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-emerald-500 transition-colors hover:border-emerald-500/30 hover:bg-emerald-500/10"
-                      >
-                        Read full update &rarr;
-                      </Link>
+                      
+                      {/* Optional: if you want a mock author row like Vercel */}
+                      <div className="mt-5 flex items-center gap-3">
+                        <div className="flex -space-x-2">
+                          <div className="h-6 w-6 rounded-full border border-background bg-slate-200 dark:bg-white/10" />
+                          <div className="h-6 w-6 rounded-full border border-background bg-slate-300 dark:bg-white/20" />
+                        </div>
+                        <span className="text-[13px] text-slate-500 dark:text-neutral-400">Classgrid Engineering</span>
+                      </div>
                     </div>
                   </MotionDiv>
                 );
