@@ -378,10 +378,10 @@ export function Footer({
       ══════════════════════════════════════ */}
       <div className="border-t border-border">
         <div className="mx-auto max-w-[1400px] px-6 py-4 md:px-10">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-between">
 
             {/* LEFT — status */}
-            <div className={`text-[13px] min-w-[200px] font-medium tracking-wide ${statusTextClass}`}>
+            <div className={`text-[13px] font-medium tracking-wide ${statusTextClass}`}>
               <span className="flex items-center gap-2">
                 <span className={`h-2 w-2 animate-pulse rounded-full ${statusDotClass}`} />
                 {!liveStatus && !statusLabel ? (
@@ -404,9 +404,9 @@ export function Footer({
               </span>
             </div>
 
-            {/* RIGHT — language and theme */}
+            {/* RIGHT — language and theme (stacked on mobile, inline on sm+) */}
             {mounted ? (
-              <div className="flex items-center gap-2.5">
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2.5">
                 <LanguageSelector />
                 <ThemeModeSwitcher />
               </div>
