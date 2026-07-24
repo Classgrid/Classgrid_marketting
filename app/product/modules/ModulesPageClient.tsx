@@ -108,7 +108,7 @@ export default function ModulesPageClient({ modules }: { modules: Module[] }) {
 
       {/* ── SEARCH + FILTER BAR ── */}
       <div className="border-b border-border bg-background">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Search */}
           <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -144,7 +144,7 @@ export default function ModulesPageClient({ modules }: { modules: Module[] }) {
       </div>
 
       {/* ── MODULE GRID ── */}
-      <section id="modules-library" className="mx-auto max-w-7xl px-4 py-14">
+      <section id="modules-library" className="mx-auto max-w-[1400px] px-4 py-14">
         {filtered.length === 0 ? (
           <div className="py-20 text-center text-muted-foreground">
             <p>No modules match your search.</p>

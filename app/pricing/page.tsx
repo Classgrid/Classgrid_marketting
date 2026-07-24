@@ -237,7 +237,7 @@ export default function PricingPage() {
 
         {/* --- ONE PLAN + ADD-ONS SECTION --- */}
         <section className="relative z-10 px-4 pb-24">
-          <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="mx-auto max-w-[1400px] grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             
             {/* THE PREMIUM PLAN (Spans 2 columns) */}
             <div className="relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30 md:col-span-2 md:p-10">
@@ -345,7 +345,7 @@ export default function PricingPage() {
 
         {/* --- MATRIX --- */}
         <section id="pricing-module-matrix" className="scroll-mt-24 px-4 pb-32">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-[1400px]">
             <div className="text-center mb-12">
               <SectionAccentBar />
               <h2 className="text-3xl font-bold text-slate-950 dark:text-white mb-4">Detailed Module Matrix</h2>
@@ -433,7 +433,7 @@ export default function PricingPage() {
 
         {/* --- ENTERPRISE BANNER --- */}
         <section className="px-4 pb-32">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-[1400px]">
             <div className="rounded-3xl p-8 md:p-12 border border-slate-200 bg-gradient-to-br from-white via-white to-emerald-50/40 dark:border-white/[0.08] dark:bg-gradient-to-br dark:from-white/[0.05] dark:via-white/[0.03] dark:to-emerald-950/10 relative overflow-hidden text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30">
               {/* Background accent */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[90px] rounded-full pointer-events-none" />

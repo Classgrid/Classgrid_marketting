@@ -162,7 +162,7 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
 
   return (
     <main className="bg-background text-foreground pb-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
         
         {/* ── HERO ── */}
         <section className="pt-16 pb-12 text-center flex flex-col items-center">

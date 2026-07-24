@@ -57,7 +57,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
   }, [pathname]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── MOBILE NAV BAR (Vercel Style) ── */}
       <div className="lg:hidden sticky top-16 z-40 bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 flex items-center justify-between -mx-4 px-4 sm:-mx-6 sm:px-6 h-12">
         <button 

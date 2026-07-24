@@ -33,7 +33,7 @@ export function AboutMissionVision({
       {/* Background Subtle mesh/gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.15)_0%,transparent_70%)]" />
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <MotionDiv variants={fadeIn} transition={{ duration: 0.5 }}>
             <h2 className="text-3xl font-extrabold tracking-tight text-emerald-400 sm:text-5xl">

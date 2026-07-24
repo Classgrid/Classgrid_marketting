@@ -289,7 +289,7 @@ export function BlogClient({
   const hasAnyPost = filteredAndSortedPosts.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
       {/* Reusable Google One Tap Login Popup */}
       {/* <GoogleOneTap /> */}
       

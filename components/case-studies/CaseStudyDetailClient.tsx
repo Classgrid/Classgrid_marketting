@@ -81,7 +81,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
 
         <div className="absolute inset-0 flex items-end">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,7 +114,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
 
       {/* QUICK FACTS STRIP */}
       <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3 py-5 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground font-medium uppercase tracking-widest text-xs">Client</span>
@@ -334,7 +334,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
 
         return (
           <section className="pt-8 pb-24">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-28">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-28">
               {blocks.map((block, i) => {
                 const layoutPref = block.media?.layout || 'left';
                 const isCenterSplit = layoutPref === 'center' && block.media && block.textBlocks.length >= 2;
@@ -612,7 +612,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
       {/* PROOF GALLERY */}
       {data.galleryImageUrls && data.galleryImageUrls.length > 0 && (
         <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
             <h2 className="text-2xl font-bold tracking-tight">Gallery</h2>
           </div>
           <ImageGallery images={data.galleryImageUrls.map((url, i) => ({
@@ -631,7 +631,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
       {/* MODULES STRIP */}
       {data.modules && data.modules.length > 0 && (
         <section className="py-16 border-t border-border bg-card/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-8">Modules Deployed in this Solution</h3>
             <div className="flex flex-wrap justify-center gap-4">
               {data.modules.map(m => (
@@ -648,7 +648,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
       {data.nextCaseStudy && (
         <section className="border-t border-border bg-card">
           <Link href={`/case-studies/${data.nextCaseStudy.slug}`} className="block group">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex-1">
                 <p className="text-emerald-500 font-semibold uppercase tracking-widest text-sm mb-4">Next Case Study</p>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground group-hover:text-emerald-500 transition-colors mb-2">

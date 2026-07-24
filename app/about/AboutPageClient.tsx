@@ -101,7 +101,7 @@ export default function AboutPageClient({
       </section>
 
       {/* 2. GLOBE + OUR STORY */}
-      <section className="relative w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <section className="relative w-full max-w-[1400px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <MotionDiv
             initial={{ opacity: 0, scale: 0.95 }}
@@ -145,7 +145,7 @@ export default function AboutPageClient({
       {/* 2.5 PLATFORM OVERVIEW CARDS */}
       {(whatIsClassgrid || whatWeDo || whyChooseClassgrid) && (
         <section className="relative w-full bg-muted/30 px-4 py-16 sm:px-6 lg:px-8 border-y border-border">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-[1400px]">
             <div className="grid gap-8 md:grid-cols-3">
               {whatIsClassgrid && (
                 <MotionDiv
@@ -230,13 +230,13 @@ export default function AboutPageClient({
 
       {/* 6. MADE IN INDIA */}
       <section className="w-full bg-background px-4 py-12 sm:px-6 lg:px-8">
-        <AboutMadeInIndia className="w-full h-auto max-w-6xl mx-auto" />
+        <AboutMadeInIndia className="w-full h-auto max-w-[1400px] mx-auto" />
       </section>
 
       {/* 7. LATEST UPDATES — 4 most recent changelog entries */}
       {recentEntries.length > 0 && (
         <section className="w-full border-t border-border bg-muted/50 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-[1400px]">
             {/* Heading */}
             <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>

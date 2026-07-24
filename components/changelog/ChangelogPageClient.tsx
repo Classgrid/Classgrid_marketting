@@ -136,7 +136,7 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
   // ── Render ────────────────────────────────────────────────────────
   return (
     <main className="bg-background text-foreground pb-10">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
 
         {/* ── HERO — identical structure to Blog hero ── */}
         <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-16 text-center">

@@ -60,7 +60,7 @@ export function AboutCoreValues({ values = defaultValues }: AboutCoreValuesProps
       viewport={{ once: true, margin: "-100px" }}
       className="relative w-full overflow-hidden bg-background py-24 lg:py-32"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="mb-16 text-center">
           <MotionDiv variants={itemVariant}>
             <h2 className="text-sm font-bold uppercase tracking-widest text-emerald-400">

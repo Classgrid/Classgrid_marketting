@@ -263,7 +263,7 @@ export function Navbar({
 
   return (
     <header className="sticky top-0 z-[100] w-full border-b border-border bg-[#F7F7F7]/90 dark:bg-[rgba(0,0,0,0.72)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (
             <Link href="/" prefetch={false} className="flex items-center gap-1.5 group">
