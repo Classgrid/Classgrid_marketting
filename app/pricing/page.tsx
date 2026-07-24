@@ -147,7 +147,6 @@ export default function PricingPage() {
         {/* 1. Base Deep Gradient Layer */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#021E16] via-[#063D2E] to-[#021E16]" />
         <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(236,253,245,0.82)_45%,transparent_100%)] dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
         
         {/* 2. Platform Photo Underlay */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-overlay">
@@ -176,6 +175,9 @@ export default function PricingPage() {
         <div className="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
           <div className="absolute left-[-35%] top-[-70%] h-[210%] w-[165%] rotate-[32deg] bg-gradient-to-r from-transparent via-emerald-300/20 to-transparent" />
         </div>
+
+        {/* 6. Bottom Fade to Page Background (Must be last background layer) */}
+        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(236,253,245,0.82)_45%,transparent_100%)] dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
 
         <div className="relative z-10 mx-auto w-full max-w-[920px] text-center">
           <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-white/10 bg-white/10 text-emerald-100">
