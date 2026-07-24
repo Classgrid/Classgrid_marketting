@@ -476,7 +476,7 @@ export function BlogClient({
                         src={urlFor(post.coverImage).url()}
                         alt={extractLocaleString(post.title, lang)}
                         fill
-                        className="object-contain p-1"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-emerald-500/5">
