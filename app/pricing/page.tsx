@@ -143,13 +143,14 @@ export default function PricingPage() {
       <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#021E16] px-4 py-[76px] md:py-[88px]">
+      <section className="relative flex min-h-[60vh] items-center overflow-hidden overflow-x-clip bg-[#f0fdf8] bg-[linear-gradient(180deg,#ffffff_0%,#ecfdf5_55%,#f0fdf4_100%)] px-4 py-[76px] dark:bg-[#021E16] md:py-[88px]">
         {/* 1. Base Deep Gradient Layer */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#021E16] via-[#063D2E] to-[#021E16]" />
-        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white via-emerald-50 to-white dark:from-[#021E16] dark:via-[#063D2E] dark:to-[#021E16]" />
+        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(255,255,255,0.92)_0%,rgba(209,250,229,0.55)_38%,rgba(240,253,250,0.92)_100%)] dark:bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(236,253,245,0.82)_45%,transparent_100%)] dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
         
         {/* 2. Platform Photo Underlay */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-overlay">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-15 mix-blend-multiply dark:opacity-40 dark:mix-blend-overlay">
           <img 
             src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/classroom-files/modules%20logo/ChatGPT%20Image%20Apr%2026,%202026,%2005_03_01%20PM.png" 
             alt="Classgrid Platform" 
@@ -177,16 +178,16 @@ export default function PricingPage() {
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-[920px] text-center">
-          <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-white/10 bg-white/10 text-emerald-100">
+          <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-emerald-200 bg-white/80 text-emerald-700 dark:border-white/10 dark:bg-white/10 dark:text-emerald-100">
             Flexible ERP Pricing
           </Chip>
 
           <SectionAccentBar />
-          <h1 className="mx-auto w-full max-w-[900px] text-2xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.2] tracking-tight text-white whitespace-normal">
+          <h1 className="mx-auto w-full max-w-[900px] text-2xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.2] tracking-tight text-slate-900 dark:text-white whitespace-normal">
             One operating system for every kind of institution
           </h1>
 
-          <p className="mx-auto mt-4 max-w-[760px] text-base leading-7 text-emerald-50/75 md:text-lg">
+          <p className="mx-auto mt-4 max-w-[760px] text-base leading-7 text-slate-600 dark:text-emerald-50/75 md:text-lg">
             Choose your institution type to see the modules included in Basic and Premium tiers.
           </p>
 
@@ -212,14 +213,14 @@ export default function PricingPage() {
                   }}
                   className={`relative shrink-0 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-all ${
                     isActive
-                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 shadow-lg shadow-emerald-900/20"
-                      : "border-white/15 bg-white/10 text-white hover:border-white/30 hover:bg-white/15"
+                      ? "border-emerald-300 bg-white text-emerald-950 shadow-lg shadow-emerald-950/20"
+                      : "border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-white dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/30 dark:hover:bg-white/15"
                   }`}
                 >
                   {isActive ? (
                     <MotionSpan
                       layoutId="pricing-tab-active"
-                      className="absolute inset-0 z-0 bg-emerald-500/20 rounded-full"
+                      className="absolute inset-0 z-0 bg-white rounded-full"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.45 }}
                     />
                   ) : null}
@@ -236,7 +237,7 @@ export default function PricingPage() {
 
         {/* --- ONE PLAN + ADD-ONS SECTION --- */}
         <section className="relative z-10 px-4 pb-24">
-          <div className="mx-auto max-w-[1400px] grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             
             {/* THE PREMIUM PLAN (Spans 2 columns) */}
             <div className="relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30 md:col-span-2 md:p-10">
@@ -344,7 +345,7 @@ export default function PricingPage() {
 
         {/* --- MATRIX --- */}
         <section id="pricing-module-matrix" className="scroll-mt-24 px-4 pb-32">
-          <div className="mx-auto max-w-[1400px]">
+          <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
               <SectionAccentBar />
               <h2 className="text-3xl font-bold text-slate-950 dark:text-white mb-4">Detailed Module Matrix</h2>
@@ -402,7 +403,7 @@ export default function PricingPage() {
                                         {module[activeTab.toLowerCase()] === "BASIC" ? (
                                           <Check className="w-5 h-5 mx-auto text-emerald-500" />
                                         ) : (
-                                          <span className="text-slate-400 dark:text-slate-600">-</span>
+                                          <span className="text-slate-300 dark:text-slate-700">-</span>
                                         )}
                                       </td>
                                       
@@ -410,7 +411,7 @@ export default function PricingPage() {
                                         {module[activeTab.toLowerCase()] === "BASIC" || module[activeTab.toLowerCase()] === "PREMIUM" ? (
                                           <Check className="w-5 h-5 mx-auto text-emerald-500 dark:text-emerald-400" />
                                         ) : (
-                                          <span className="text-slate-400 dark:text-slate-600">Not Available</span>
+                                          <span className="text-slate-300 dark:text-slate-700">Not Available</span>
                                         )}
                                       </td>
                                     </tr>
@@ -432,7 +433,7 @@ export default function PricingPage() {
 
         {/* --- ENTERPRISE BANNER --- */}
         <section className="px-4 pb-32">
-          <div className="mx-auto max-w-[1400px]">
+          <div className="mx-auto max-w-5xl">
             <div className="rounded-3xl p-8 md:p-12 border border-slate-200 bg-gradient-to-br from-white via-white to-emerald-50/40 dark:border-white/[0.08] dark:bg-gradient-to-br dark:from-white/[0.05] dark:via-white/[0.03] dark:to-emerald-950/10 relative overflow-hidden text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl shadow-slate-950/5 dark:shadow-2xl dark:shadow-black/30">
               {/* Background accent */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[90px] rounded-full pointer-events-none" />
