@@ -25,8 +25,8 @@ function SidebarLink({ href, children }: { href: string; children: React.ReactNo
       href={href}
       className={`block rounded-lg px-3 py-1.5 text-[13px] transition-all duration-150 ${
         isActive
-          ? 'bg-emerald-500/[0.1] text-emerald-400 font-medium border-l-2 border-emerald-400'
-          : 'text-zinc-400 hover:bg-white/[0.04] hover:text-white/80'
+          ? 'bg-slate-100 dark:bg-white/[0.08] text-slate-900 dark:text-white font-medium border-l-2 border-slate-900 dark:border-white'
+          : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white/80'
       }`}
     >
       {children}
@@ -44,11 +44,11 @@ function CollapsibleSection({ section }: { section: SidebarSection }) {
     <div className="py-3 first:pt-2">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wider text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
+        className="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wider text-slate-900 dark:text-white/70 transition-colors hover:bg-slate-100 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white"
       >
         <span>{section.title}</span>
         <ChevronDown
-          className={`h-4 w-4 text-white/50 transition-transform duration-200 ${
+          className={`h-4 w-4 text-slate-900 dark:text-white/50 transition-transform duration-200 ${
             isOpen ? 'rotate-0' : '-rotate-90'
           }`}
         />
@@ -85,8 +85,8 @@ function CollapsibleSection({ section }: { section: SidebarSection }) {
 
 export function DocsSidebar({ className, sections }: { className?: string, sections: SidebarSection[] }) {
   return (
-    <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-auto border-r border-white/10 pr-2 custom-scrollbar"}>
-      <div className="flex flex-col divide-y divide-white/[0.06] pt-2">
+    <aside className={className ?? "w-[260px] hidden lg:block h-full pb-8 overflow-y-auto border-r border-slate-200 dark:border-white/10 pr-2 custom-scrollbar"}>
+      <div className="flex flex-col divide-y divide-slate-200 dark:divide-white/[0.06] pt-2">
         {sections.map((section) => (
           <CollapsibleSection key={section.title} section={section} />
         ))}

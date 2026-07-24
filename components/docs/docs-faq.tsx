@@ -37,17 +37,17 @@ export function DocsFAQItem({
   });
 
   return (
-    <div className="border-b border-white/10">
+    <div className="border-b border-slate-200 dark:border-white/10">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium leading-snug text-white transition-colors hover:text-emerald-400 focus-visible:outline-none"
+        className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium leading-snug text-slate-900 dark:text-white transition-colors hover:text-emerald-400 focus-visible:outline-none"
         aria-expanded={isOpen}
       >
         <span>{summaryContent}</span>
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
-          className="mt-0.5 shrink-0 text-zinc-500"
+          className="mt-0.5 shrink-0 text-slate-500 dark:text-zinc-500"
         >
           <ChevronDown className="h-4 w-4" />
         </motion.span>
@@ -66,7 +66,7 @@ export function DocsFAQItem({
             }}
             style={{ overflow: "hidden" }}
           >
-            <div className="pb-5 pr-4 text-sm leading-7 text-zinc-400">
+            <div className="pb-5 pr-4 text-sm leading-7 text-slate-600 dark:text-zinc-400">
               {bodyContent}
             </div>
           </motion.div>

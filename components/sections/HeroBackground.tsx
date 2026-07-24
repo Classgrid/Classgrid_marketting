@@ -51,11 +51,11 @@ export function HeroBackground() {
       <div ref={parallaxRef} className="absolute inset-0 z-[1]">
         <motion.div
           style={{ y: y1, opacity }}
-          className="absolute left-[-15%] top-[-15%] h-[1000px] w-[1000px] rounded-full bg-[#00dfd8]/35 blur-[160px] transition-colors duration-500 dark:bg-[#00dfd8]/40"
+          className="absolute left-[-15%] top-[-15%] h-[1000px] w-[1000px] rounded-full bg-[#10b981]/45 blur-[160px] transition-colors duration-500 dark:bg-[#00dfd8]/40"
         />
         <motion.div
           style={{ y: y2, opacity }}
-          className="absolute right-[-10%] top-[5%] h-[900px] w-[900px] rounded-full bg-[#ff0080]/25 blur-[150px] transition-colors duration-500 dark:bg-[#ff0080]/30"
+          className="absolute right-[-10%] top-[5%] h-[900px] w-[900px] rounded-full bg-[#3b82f6]/35 blur-[150px] transition-colors duration-500 dark:bg-[#ff0080]/30"
         />
       </div>
     </div>

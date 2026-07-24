@@ -16,7 +16,7 @@ export async function CodeBlock({ children }: any) {
   try {
     html = await codeToHtml(rawCode, {
       lang: language,
-      theme: 'github-dark',
+      themes: { light: 'github-light', dark: 'github-dark' },
       transformers: [
         {
           line(node, line) {

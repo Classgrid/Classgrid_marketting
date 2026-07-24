@@ -212,19 +212,19 @@ export function DocsToc() {
   }, [activeId]);
 
   return (
-    <aside className="w-[250px] hidden xl:block sticky top-[4.5rem] h-[calc(100vh-4.5rem)] pb-8 pt-4 pl-6 border-l border-white/10 text-sm flex flex-col">
+    <aside className="w-[250px] hidden xl:block sticky top-[4.5rem] h-[calc(100vh-4.5rem)] pb-8 pt-4 pl-6 border-l border-slate-200 dark:border-white/10 text-sm flex flex-col">
       <div className="flex flex-col h-full gap-8">
         {/* Is this helpful */}
         <div className="shrink-0">
-          <h4 className="font-mono text-xs uppercase tracking-wider text-zinc-500 mb-3">Is this helpful?</h4>
+          <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-3">Is this helpful?</h4>
           <div className="flex gap-2">
             <button
               disabled={hasVoted || isSubmittingFeedback}
               className={`p-2 rounded-full border transition-all duration-300 active:scale-90 ${hasVoted && votedValue === true
                 ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400 scale-110'
                 : hasVoted
-                  ? 'border-white/5 text-zinc-600 cursor-not-allowed opacity-50'
-                  : 'border-white/10 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/50 hover:scale-110 text-zinc-400 cursor-pointer'
+                  ? 'border-slate-200 dark:border-white/5 text-slate-400 dark:text-zinc-600 cursor-not-allowed opacity-50'
+                  : 'border-slate-200 dark:border-white/10 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/50 hover:scale-110 text-slate-600 dark:text-zinc-400 cursor-pointer'
                 }`}
               onClick={() => handleFeedback(true)}
             >
@@ -235,8 +235,8 @@ export function DocsToc() {
               className={`p-2 rounded-full border transition-all duration-300 active:scale-90 ${hasVoted && votedValue === false
                 ? 'border-red-500/50 bg-red-500/10 text-red-400 scale-110'
                 : hasVoted
-                  ? 'border-white/5 text-zinc-600 cursor-not-allowed opacity-50'
-                  : 'border-white/10 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 hover:scale-110 text-zinc-400 cursor-pointer'
+                  ? 'border-slate-200 dark:border-white/5 text-slate-400 dark:text-zinc-600 cursor-not-allowed opacity-50'
+                  : 'border-slate-200 dark:border-white/10 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 hover:scale-110 text-slate-600 dark:text-zinc-400 cursor-pointer'
                 }`}
               onClick={() => handleFeedback(false)}
             >
@@ -254,7 +254,7 @@ export function DocsToc() {
               )}
               <button 
                 onClick={() => setShowCommentForm(true)}
-                className="text-zinc-500 hover:text-white transition-colors underline decoration-white/20 underline-offset-2"
+                className="text-slate-500 dark:text-zinc-500 hover:text-white transition-colors underline decoration-white/20 underline-offset-2"
               >
                 {votedValue ? 'What went well?' : 'What could we improve?'}
               </button>
@@ -271,24 +271,24 @@ export function DocsToc() {
           )}
         </div>
 
-        {/* AI Tools */}
-        <div className="shrink-0">
-          <h4 className="font-mono text-xs uppercase tracking-wider text-zinc-500 mb-3">AI Tools</h4>
-          <ul className="space-y-1 text-zinc-400">
+        {/* Utility Actions */}
+        <div className="shrink-0 mb-6 border-b border-slate-200 dark:border-white/10 pb-6 hidden xl:block">
+          <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-3">AI Tools</h4>
+          <ul className="space-y-1.5 text-[13px]">
             <li>
-              <button onClick={handleCopyMarkdown} className="flex items-center gap-2.5 hover:bg-white/5 hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 cursor-pointer">
-                {copiedMarkdown ? <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> : <Copy className="w-4 h-4" />}
-                {copiedMarkdown ? <span className="text-emerald-400">Copied!</span> : <span>Copy as Markdown</span>}
+              <button onClick={handleCopyMarkdown} className="flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 text-slate-600 cursor-pointer">
+                {copiedMarkdown ? <svg className="w-4 h-4 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> : <Copy className="w-4 h-4" />}
+                {copiedMarkdown ? <span className="text-emerald-500 dark:text-emerald-400">Copied!</span> : <span>Copy as Markdown</span>}
               </button>
             </li>
             <li>
-              <button onClick={() => handleCopyAI('ChatGPT')} className="flex items-center gap-2.5 hover:bg-white/5 hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 cursor-pointer">
+              <button onClick={() => handleCopyAI('ChatGPT')} className="flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 text-slate-600 cursor-pointer">
                 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/images.jpg" alt="ChatGPT" className="w-4 h-4 rounded-full object-cover" />
                 <span>Ask ChatGPT</span>
               </button>
             </li>
             <li>
-              <button onClick={() => handleCopyAI('Claude')} className="flex items-center gap-2.5 hover:bg-white/5 hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 cursor-pointer">
+              <button onClick={() => handleCopyAI('Claude')} className="flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 text-slate-600 cursor-pointer">
                 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/claude-color.svg" alt="Claude" className="w-4 h-4" />
                 <span>Ask Claude</span>
               </button>
@@ -299,20 +299,20 @@ export function DocsToc() {
         {/* On this page */}
         {headings.length > 0 && (
           <div className="flex flex-col flex-1 min-h-0">
-            <h4 className="font-mono text-xs uppercase tracking-wider text-zinc-500 mb-3 shrink-0">On this page</h4>
+            <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-3 shrink-0">On this page</h4>
             <ul className="space-y-2.5 overflow-y-auto custom-scrollbar pr-2 pb-4 -ml-6 pl-6">
               {headings.map((heading) => (
                 <li id={`toc-item-${heading.id}`} key={heading.id} className={`relative shrink-0 ${heading.level === 3 ? 'pl-4' : ''}`}>
                   {activeId === heading.id && (
                     <motion.div 
                       layoutId="toc-indicator"
-                      className="absolute -left-6 top-0 bottom-0 w-[2px] bg-white rounded-full" 
+                      className="absolute -left-6 top-0 bottom-0 w-[2px] bg-slate-900 dark:bg-white rounded-full" 
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
                   <a
                     href={`#${heading.id}`}
-                    className={`block truncate transition-colors py-0.5 ${activeId === heading.id ? 'text-white font-medium' : 'text-zinc-400 hover:text-emerald-400'
+                    className={`block truncate transition-colors py-0.5 ${activeId === heading.id ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
                     {heading.text}
@@ -330,16 +330,16 @@ export function DocsToc() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="w-full max-w-[500px] bg-[#1c1c1c] border border-white/10 rounded-xl shadow-2xl relative overflow-hidden"
+            className="w-full max-w-[500px] bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-white/10 rounded-xl shadow-2xl relative overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-              <h3 className="text-base font-medium text-white">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-white/10">
+              <h3 className="text-base font-medium text-slate-900 dark:text-white">
                 Leave a comment
               </h3>
               <button 
                 onClick={() => setShowCommentForm(false)} 
-                className="text-zinc-500 hover:bg-white/10 hover:text-white p-1.5 rounded-md transition-all duration-200 active:scale-90"
+                className="text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white p-1.5 rounded-md transition-all duration-200 active:scale-90"
                 aria-label="Close comment form"
               >
                 <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
@@ -349,12 +349,12 @@ export function DocsToc() {
             <div className="p-6">
               {/* Title Field */}
               <div className="mb-4">
-                <label className="text-sm font-medium text-white mb-2 block">Title</label>
+                <label className="text-sm font-medium text-slate-900 dark:text-white mb-2 block">Title</label>
                 <input
                   type="text"
                   value={commentTitle}
                   onChange={(e) => setCommentTitle(e.target.value)}
-                  className="w-full bg-[#141414] border border-white/10 rounded-md p-2.5 text-sm text-white focus:outline-none focus:border-white/30 transition-all"
+                  className="w-full bg-white dark:bg-[#141414] border border-slate-300 dark:border-white/10 rounded-md p-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-all"
                   autoFocus
                 />
               </div>
@@ -362,23 +362,23 @@ export function DocsToc() {
               {/* Comment Field */}
               <div className="mb-6">
                 <div className="flex items-baseline gap-2 mb-2">
-                  <label className="text-sm font-medium text-white">Comment</label>
-                  <span className="text-xs text-zinc-500">
+                  <label className="text-sm font-medium text-slate-900 dark:text-white">Comment</label>
+                  <span className="text-xs text-slate-500 dark:text-zinc-500">
                     ({session?.user ? 'not anonymous' : 'anonymous'})
                   </span>
                 </div>
                 <textarea
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full h-24 bg-[#141414] border border-white/10 rounded-md p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-all resize-none"
+                  className="w-full h-24 bg-white dark:bg-[#141414] border border-slate-300 dark:border-white/10 rounded-md p-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-all resize-none"
                 />
               </div>
 
               {/* Minimal Warning Message */}
               <div className="flex items-start gap-3 mb-6">
                 <span className="text-yellow-500 shrink-0 mt-0.5 text-lg leading-none">💡</span>
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
-                  <strong className="text-white font-medium">Need help or support?</strong> This feedback form is for documentation improvements only. For technical support, please submit a <a href="/support" className="text-emerald-500 hover:text-emerald-400 transition-colors">support request</a>.
+                <p className="text-[13px] text-slate-600 dark:text-zinc-400 leading-relaxed">
+                  <strong className="text-slate-900 dark:text-white font-medium">Need help or support?</strong> This feedback form is for documentation improvements only. For technical support, please submit a <a href="/support" className="text-emerald-500 hover:text-emerald-400 transition-colors">support request</a>.
                 </p>
               </div>
 
@@ -386,7 +386,7 @@ export function DocsToc() {
               <div className="flex justify-end gap-3">
                 <button 
                   onClick={() => setShowCommentForm(false)}
-                  className="px-4 py-2 text-sm font-medium bg-white/5 border border-white/10 text-white rounded-md hover:bg-white/10 transition-colors"
+                  className="px-4 py-2 text-sm font-medium bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white rounded-md hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
                 >
                   Cancel
                 </button>

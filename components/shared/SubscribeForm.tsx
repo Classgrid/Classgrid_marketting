@@ -69,20 +69,20 @@ export function SubscribeForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
-          className="rounded-full bg-white/5 border border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 text-white placeholder:text-white/40 h-11 px-5 sm:w-44 shrink-0 transition-all"
+          className="rounded-full bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 h-11 px-5 sm:w-44 shrink-0 transition-all"
         />
-        <div className="relative flex items-center flex-1 rounded-full bg-white/5 border border-white/10 p-1.5 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all">
+        <div className="relative flex items-center flex-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 p-1.5 focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500/50 transition-all">
           <Input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="flex-1 bg-transparent border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white/40 h-10 px-4"
+            className="flex-1 bg-transparent border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 h-10 px-4"
           />
           <Button
             type="submit"
-            className="rounded-full bg-white text-black hover:bg-white/90 h-10 px-6 font-medium shrink-0 gap-2"
+            className="rounded-full bg-slate-900 text-white dark:bg-white dark:text-black hover:bg-slate-800 dark:hover:bg-white/90 h-10 px-6 font-medium shrink-0 gap-2"
             disabled={loading}
           >
             {loading ? (

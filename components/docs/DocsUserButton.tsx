@@ -87,7 +87,7 @@ export function DocsUserButton() {
       <button
         type="button"
         onClick={() => signIn(undefined, { callbackUrl: pathname })}
-        className="hidden md:inline-flex h-9 items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer"
+        className="hidden md:inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-slate-900 dark:text-white/90 shadow-sm dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-slate-200 dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.2] hover:text-slate-900 dark:hover:text-white cursor-pointer"
       >
         Sign up
       </button>
@@ -126,12 +126,12 @@ export function DocsUserButton() {
           href={dashboardUrl || "#"}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-4 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer"
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-4 text-sm font-medium tracking-tight text-slate-900 dark:text-white/90 shadow-sm dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-slate-200 dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.2] hover:text-slate-900 dark:hover:text-white cursor-pointer"
         >
           <span>Dashboard</span>
         </a>
       ) : (
-        <span className="inline-flex h-9 items-center px-3 text-sm font-medium tracking-tight text-white/70 select-none">
+        <span className="inline-flex h-9 items-center px-3 text-sm font-medium tracking-tight text-slate-900 dark:text-white/70 select-none">
           {userName}
         </span>
       )}
@@ -157,8 +157,8 @@ export function DocsUserButton() {
           <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-white/[0.08] bg-[#111] shadow-2xl shadow-black/60 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
             {/* Name & Email */}
             <div className="px-4 py-3 border-b border-white/[0.06]">
-              <p className="text-sm font-semibold text-white truncate">{userName}</p>
-              <p className="text-xs text-white/50 truncate mt-0.5">{userEmail}</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{userName}</p>
+              <p className="text-xs text-slate-900 dark:text-white/50 truncate mt-0.5">{userEmail}</p>
             </div>
 
             {/* Organization & Role */}
@@ -173,16 +173,16 @@ export function DocsUserButton() {
                   />
                 ) : (
                   <div className="h-8 w-8 rounded-md bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-                    <span className="text-[10px] font-bold text-white/40">
+                    <span className="text-[10px] font-bold text-slate-900 dark:text-white/40">
                       {(user?.orgName || "CG").slice(0, 2).toUpperCase()}
                     </span>
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-white/80 truncate">
+                  <p className="text-xs font-medium text-slate-900 dark:text-white/80 truncate">
                     {user?.orgName || "Classgrid"}
                   </p>
-                  <p className="text-[10px] text-white/40 truncate">
+                  <p className="text-[10px] text-slate-900 dark:text-white/40 truncate">
                     {getRoleLabel(user?.platformRole)}
                   </p>
                 </div>
@@ -204,7 +204,7 @@ export function DocsUserButton() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white/70 hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
                     Settings
@@ -220,7 +220,7 @@ export function DocsUserButton() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setDropdownOpen(false)}
-                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white/70 hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <LifeBuoy className="h-4 w-4" />
                 Support
@@ -235,7 +235,7 @@ export function DocsUserButton() {
                   setDropdownOpen(false);
                   signOut({ callbackUrl: "/" });
                 }}
-                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+                className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white/70 hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <LogOut className="h-4 w-4" />
                 Log Out

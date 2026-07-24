@@ -34,7 +34,7 @@ export function DocsImage({ src, alt, title }: DocsImageProps) {
 
       {/* Caption */}
       {caption && caption !== alt?.replace(/\s+/g, '') && (
-        <span className="mt-3 block text-center text-[13px] text-zinc-500 leading-relaxed">
+        <span className="mt-3 block text-center text-[13px] text-slate-500 dark:text-zinc-500 leading-relaxed">
           {caption}
         </span>
       )}

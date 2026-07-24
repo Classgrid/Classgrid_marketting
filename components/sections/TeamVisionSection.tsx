@@ -84,7 +84,7 @@ export function TeamVisionSection({
         </Reveal>
 
         {/* BlueprintBox is FIXED — only content inside slides */}
-        <BlueprintBox maxWidth="max-w-6xl" className="mt-12 py-4 px-2 md:px-8 bg-emerald-950/20 dark:bg-emerald-950/25">
+        <BlueprintBox maxWidth="max-w-6xl" className="mt-12 py-4 px-2 md:px-8 bg-slate-200 dark:bg-emerald-950/25 border-slate-300">
           {/* Overflow hidden clips the sliding text track */}
           <div className="overflow-hidden w-full" style={{ contain: 'layout' }}>
             {/* Spring track — same pattern as testimonial-carousel-v2 */}

@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classgrid ERP — Enterprise Brochure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ─── PAGE 1: COVER ─── */
+    .cover-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #0a0a0a 0%, #0f1a14 40%, #0a0a0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(25, 185, 124, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover-page::after {
+      content: '';
+      position: absolute;
+      bottom: -150px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(249, 85, 8, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 32px;
+      filter: drop-shadow(0 0 40px rgba(25, 185, 124, 0.3));
+    }
+
+    .cover-title {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #19B97C, #14d68a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .cover-subtitle {
+      font-size: 18px;
+      font-weight: 600;
+      color: #F95508;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+
+    .cover-tagline {
+      font-size: 16px;
+      color: #999;
+      text-align: center;
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: 64px;
+    }
+
+    .cover-stats {
+      display: flex;
+      gap: 48px;
+      margin-bottom: 64px;
+    }
+
+    .cover-stat {
+      text-align: center;
+    }
+
+    .cover-stat-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: #19B97C;
+    }
+
+    .cover-stat-label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(25, 185, 124, 0.1);
+      border: 1px solid rgba(25, 185, 124, 0.2);
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 13px;
+      color: #19B97C;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .cover-footer {
+      position: absolute;
+      bottom: 32px;
+      display: flex;
+      gap: 32px;
+      font-size: 12px;
+      color: #444;
+    }
+
+    .cover-footer a {
+      color: #555;
+      text-decoration: none;
+    }
+
+    /* ─── PAGE 2: MODULE TABLE ─── */
+    .table-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #0a0a0a;
+      padding: 24px 20px;
+      page-break-after: always;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-header-logo {
+      width: 32px;
+      height: 32px;
+    }
+
+    .page-header-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #19B97C;
+    }
+
+    .page-header-right {
+      font-size: 10px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    /* Table Styles */
+    .module-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .module-table thead th {
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-bottom: 2px solid #19B97C;
+    }
+
+    .module-table thead th:first-child {
+      text-align: left;
+      width: 36%;
+    }
+
+    .module-table thead th.col-school {
+      color: #4FC3F7;
+      background: rgba(79, 195, 247, 0.05);
+    }
+
+    .module-table thead th.col-coaching {
+      color: #FFB74D;
+      background: rgba(255, 183, 77, 0.05);
+    }
+
+    .module-table thead th.col-engineering {
+      color: #CE93D8;
+      background: rgba(206, 147, 216, 0.05);
+    }
+
+    .module-table thead th.col-tier {
+      color: #19B97C;
+    }
+
+    .module-table thead th.col-feature {
+      color: #fff;
+    }
+
+    .module-table tbody td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #141414;
+      text-align: center;
+      color: #bbb;
+    }
+
+    .module-table tbody td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: #ddd;
+    }
+
+    .module-table tbody tr:hover {
+      background: rgba(25, 185, 124, 0.03);
+    }
+
+    .category-row td {
+      padding: 10px 8px 6px !important;
+      font-weight: 800 !important;
+      font-size: 11px !important;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-bottom: 1px solid #222 !important;
+      color: #19B97C !important;
+      background: rgba(25, 185, 124, 0.04);
+    }
+
+    .category-icon {
+      margin-right: 6px;
+    }
+
+    .check {
+      color: #19B97C;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .dash {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .tier-basic {
+      background: rgba(25, 185, 124, 0.08);
+      color: #19B97C;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .tier-pro {
+      background: rgba(249, 85, 8, 0.1);
+      color: #F95508;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .tier-master {
+      background: rgba(156, 39, 176, 0.1);
+      color: #CE93D8;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* ─── PAGE 3: DIFFERENTIATORS ─── */
+    .diff-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #0a0a0a;
+      padding: 24px 20px;
+      page-break-after: always;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .diff-card {
+      background: linear-gradient(135deg, #111 0%, #0d0d0d 100%);
+      border: 1px solid #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .diff-card-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .diff-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .diff-card-desc {
+      font-size: 11px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* Institution Types Section */
+    .inst-section {
+      margin-top: 28px;
+    }
+
+    .inst-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .inst-card {
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .inst-card.school {
+      background: rgba(79, 195, 247, 0.06);
+      border: 1px solid rgba(79, 195, 247, 0.15);
+    }
+
+    .inst-card.coaching {
+      background: rgba(255, 183, 77, 0.06);
+      border: 1px solid rgba(255, 183, 77, 0.15);
+    }
+
+    .inst-card.engineering {
+      background: rgba(206, 147, 216, 0.06);
+      border: 1px solid rgba(206, 147, 216, 0.15);
+    }
+
+    .inst-card-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .inst-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .inst-card-modules {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .inst-card.school .inst-card-modules {
+      color: #4FC3F7;
+    }
+
+    .inst-card.coaching .inst-card-modules {
+      color: #FFB74D;
+    }
+
+    .inst-card.engineering .inst-card-modules {
+      color: #CE93D8;
+    }
+
+    .inst-card-label {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      margin-top: 32px;
+      background: linear-gradient(135deg, rgba(25, 185, 124, 0.08), rgba(249, 85, 8, 0.05));
+      border: 1px solid rgba(25, 185, 124, 0.15);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .cta-subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #19B97C, #14a86e);
+      color: #fff;
+      padding: 12px 36px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-contacts {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .cta-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ─── FOOTER STRIP ─── */
+    .page-footer {
+      position: absolute;
+      bottom: 16px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #333;
+    }
+
+    .made-in-india {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #555;
+      margin-top: 16px;
+    }
+
+    /* Print overrides */
+    @media print {
+      body {
+        background: #0a0a0a;
+      }
+
+      .cover-page,
+      .table-page,
+      .diff-page {
+        page-break-after: always;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════ PAGE 1: COVER ═══════════════════ -->
+  <div class="cover-page">
+    <img src="https://cdn.classgrid.in/Classgrid.svg" alt="Classgrid Logo" class="cover-logo">
+
+    <div class="cover-title">CLASSGRID</div>
+    <div class="cover-subtitle">Enterprise ERP</div>
+
+    <p class="cover-tagline">
+      The unified digital infrastructure for schools, coaching institutes,
+      and engineering colleges. Built in India, for India.
+    </p>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="cover-stat-number">41</div>
+        <div class="cover-stat-label">Modules</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-number">13</div>
+        <div class="cover-stat-label">Institution Types</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-number">3</div>
+        <div class="cover-stat-label">Platforms</div>
+      </div>
+    </div>
+
+    <div class="cover-badge">
+      🇮🇳 &nbsp; Made in India · Feature Comparison 2025–26
+    </div>
+
+    <div class="cover-footer">
+      <span>classgrid.in</span>
+      <span>•</span>
+      <span>cdn.classgrid.in</span>
+      <span>•</span>
+      <span>Web · Android · iOS</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ PAGE 2: MODULE TABLE ═══════════════════ -->
+  <div class="table-page">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="https://cdn.classgrid.in/Classgrid.svg" alt="Logo" class="page-header-logo">
+        <span class="page-header-title">CLASSGRID ERP</span>
+      </div>
+      <div class="page-header-right">Feature Comparison Matrix</div>
+    </div>
+
+    <div class="section-title">Module Availability</div>
+    <div class="section-subtitle">Checkmark indicates module is available for that institution type</div>
+
+    <table class="module-table">
+      <thead>
+        <tr>
+          <th class="col-feature">#</th>
+          <th class="col-feature" style="text-align:left; width:36%;">Module</th>
+          <th class="col-school">🏫 School</th>
+          <th class="col-coaching">📚 Coaching</th>
+          <th class="col-engineering">🎓 Engineering</th>
+          <th class="col-tier">Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- BASIC MODULES -->
+        <tr class="category-row">
+          <td colspan="6"><span class="category-icon">📦</span> Core Modules — Included Free</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Classroom Hub</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Homework & Assignments</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Attendance Engine</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Exams & Results</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Course & Subject Mapping</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Timetable / Schedule</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Internal Tests</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Student & Parent Communication</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Study Notes & Materials</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Online Meetings (Zoom / Meet)</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Digital ID Cards</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Student Management</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Faculty Management</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Leave Management</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>Academic Calendar</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>Events & Notice Management</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>Academic Hierarchy Builder</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>Organization Control</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>Feedback & Survey Dashboard</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-basic">BASIC</span></td>
+        </tr>
+
+        <!-- PRO MODULES -->
+        <tr class="category-row">
+          <td colspan="6"><span class="category-icon">⚡</span> PRO Modules — Premium Add-ons</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>AI Quiz Maker</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td>AI Tutor / Sidekick</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td>Digital Certificates</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td>Admission Management</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td>Fee Management (Razorpay)</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td>Library Management</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>Alumni Management</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td>Canteen QR-Ordering</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>28</td>
+          <td>Transport & Bus Tracking</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+        <tr>
+          <td>29</td>
+          <td>Hostel Management</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-pro">PRO</span></td>
+        </tr>
+
+        <!-- MASTER MODULES -->
+        <tr class="category-row">
+          <td colspan="6"><span class="category-icon">👑</span> MASTER Modules — Enterprise Only</td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>NAAC / NBA Accreditation</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="tier-master">MASTER</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="made-in-india">
+      🇮🇳 &nbsp; Pricing is quoted based on institution size, scope, and rollout timeline. Contact us for a custom
+      quote.
+    </div>
+  </div>
+
+  <!-- ═══════════════════ PAGE 3: DIFFERENTIATORS + CTA ═══════════════════ -->
+  <div class="diff-page" style="position: relative;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="https://cdn.classgrid.in/Classgrid.svg" alt="Logo" class="page-header-logo">
+        <span class="page-header-title">CLASSGRID ERP</span>
+      </div>
+      <div class="page-header-right">Why Classgrid</div>
+    </div>
+
+    <div class="section-title">Built Different</div>
+    <div class="section-subtitle">What sets Classgrid apart from every other ERP in India</div>
+
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-card-icon">🏛️</div>
+        <div class="diff-card-title">13 Institution Structure Types</div>
+        <div class="diff-card-desc">Engineering, School, Coaching, Junior College, Diploma, Autonomous, University, and
+          more — all from one platform with dynamic hierarchy enforcement.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-card-icon">🎨</div>
+        <div class="diff-card-title">White-Label Branding</div>
+        <div class="diff-card-desc">Every institution gets its own logo, theme colors, subdomain, and terminology
+          mapping. Each campus login is instantly institution-branded.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-card-icon">🤖</div>
+        <div class="diff-card-title">AI-Powered Assessments</div>
+        <div class="diff-card-desc">AI Viva Exams, AI Quiz Generation, AI Tutoring, and a RAG-backed Assistant. Not just
+          an LMS — an intelligent learning engine.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-card-icon">📱</div>
+        <div class="diff-card-title">Multi-Platform</div>
+        <div class="diff-card-desc">Full-featured Web dashboard + Native Android app with biometric login, GPS
+          attendance, and push notifications. iOS coming soon.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-card-icon">🔒</div>
+        <div class="diff-card-title">Enterprise Security</div>
+        <div class="diff-card-desc">Role-Based Access Control, device fingerprinting, geofence validation, JWT tenant
+          isolation, and new-device email OTP verification.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-card-icon">🇮🇳</div>
+        <div class="diff-card-title">Made for India</div>
+        <div class="diff-card-desc">NAAC/NBA compliance, SGPA/CGPA engines, CET admission flows, Razorpay UPI payments,
+          and terminology that Indian educators understand.</div>
+      </div>
+    </div>
+
+    <!-- Institution Types -->
+    <div class="inst-section">
+      <div class="section-title" style="font-size: 18px;">Supported Institution Types</div>
+      <div class="inst-grid">
+        <div class="inst-card school">
+          <div class="inst-card-icon">🏫</div>
+          <div class="inst-card-title">Schools</div>
+          <div class="inst-card-modules">22</div>
+          <div class="inst-card-label">Modules Available</div>
+        </div>
+        <div class="inst-card coaching">
+          <div class="inst-card-icon">📚</div>
+          <div class="inst-card-title">Coaching</div>
+          <div class="inst-card-modules">21</div>
+          <div class="inst-card-label">Modules Available</div>
+        </div>
+        <div class="inst-card engineering">
+          <div class="inst-card-icon">🎓</div>
+          <div class="inst-card-title">Engineering</div>
+          <div class="inst-card-modules">30</div>
+          <div class="inst-card-label">Modules Available</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <div class="cta-title">Choose the Right Plan for Your Institution</div>
+      <div class="cta-subtitle">Talk to our team — we'll help you pick the right modules for your campus.</div>
+      <a href="https://classgrid.in/contact/sales" class="cta-button">📩 &nbsp; Get Custom Quote</a>
+      <div class="cta-contacts">
+        <div class="cta-contact-item">🌐 classgrid.in</div>
+        <div class="cta-contact-item">📧 contact@classgrid.in</div>
+      </div>
+    </div>
+
+    <div class="made-in-india" style="justify-content: center; margin-top: 20px;">
+      🇮🇳 &nbsp; Classgrid — The Unified Digital Infrastructure for Indian Education
+    </div>
+  </div>
+
+</body>
+
+</html>

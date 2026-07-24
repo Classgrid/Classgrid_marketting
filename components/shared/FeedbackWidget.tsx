@@ -38,7 +38,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
   return (
     <div className={cn("relative flex items-center justify-center w-full py-6", className)}>
       {/* Feedback Widget Wrapper — fixed width, no shape morph */}
-      <div className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-neutral-900 overflow-hidden w-full max-w-[400px]">
+      <div className="relative flex flex-col rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-neutral-900 overflow-hidden w-full max-w-[400px]">
 
         {/* ── SUBMITTED OR ERROR STATE ── */}
         {feedbackState === 'submitted' || feedbackState === 'error' ? (
@@ -145,7 +145,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
                 feedbackState === 'opened' ? "max-h-[320px] opacity-100" : "max-h-0 opacity-0"
               )}
             >
-              <div className="border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-neutral-900">
+              <div className="border-t border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-neutral-900">
                 {/* Write / Preview Tabs */}
                 <div className="flex items-center gap-0 px-3 pt-2">
                   <button
@@ -153,7 +153,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
                     className={cn(
                       "px-3 py-1 text-[12px] font-medium rounded-t-md border border-b-0 transition-colors cursor-pointer",
                       !feedbackPreview
-                        ? "bg-white dark:bg-neutral-800 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
+                        ? "bg-white dark:bg-neutral-800 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white"
                         : "bg-transparent border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-neutral-300"
                     )}
                   >
@@ -164,7 +164,7 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
                     className={cn(
                       "px-3 py-1 text-[12px] font-medium rounded-t-md border border-b-0 transition-colors cursor-pointer",
                       feedbackPreview
-                        ? "bg-white dark:bg-neutral-800 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
+                        ? "bg-white dark:bg-neutral-800 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white"
                         : "bg-transparent border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-neutral-300"
                     )}
                   >
@@ -179,10 +179,10 @@ export function FeedbackWidget({ pageTitle, pageType = 'general', className, hid
                       onChange={(e) => setFeedbackText(e.target.value)}
                       placeholder="Your feedback... (**bold**, - lists supported)"
                       aria-label="Your feedback"
-                      className="w-full min-h-[80px] bg-white dark:bg-neutral-800 text-[13px] text-slate-900 dark:text-white placeholder:text-slate-400 border border-slate-200 dark:border-white/10 rounded-b-lg rounded-tr-lg p-3 outline-none focus:border-emerald-500 transition-colors resize-none"
+                      className="w-full min-h-[80px] bg-white dark:bg-neutral-800 text-[13px] text-slate-900 dark:text-white placeholder:text-slate-400 border border-slate-300 dark:border-white/10 rounded-b-lg rounded-tr-lg p-3 outline-none focus:border-emerald-500 transition-colors resize-none"
                     />
                   ) : (
-                    <div className="w-full min-h-[80px] bg-white dark:bg-neutral-800 border border-slate-200 dark:border-white/10 rounded-b-lg rounded-tr-lg p-3">
+                    <div className="w-full min-h-[80px] bg-white dark:bg-neutral-800 border border-slate-300 dark:border-white/10 rounded-b-lg rounded-tr-lg p-3">
                       {feedbackText.trim() ? (
                         <div className="text-[13px] text-slate-900 dark:text-white prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-li:my-0.5">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>

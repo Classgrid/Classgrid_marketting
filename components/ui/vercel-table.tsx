@@ -37,20 +37,20 @@ export function VercelTable({ columns, rows, className }: VercelTableProps) {
   return (
     <div
       className={cn(
-        "overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-card scrollbar-hide",
+        "overflow-x-auto overflow-y-hidden rounded-xl border border-slate-300 dark:border-white/10 bg-card scrollbar-hide",
         className
       )}
     >
       <table className="w-full min-w-[600px] text-left text-sm md:min-w-0">
         <thead>
-          <tr className="border-b border-border">
+          <tr className="border-b border-slate-300 dark:border-white/10">
             {columns.map((col, i) => (
               <th
                 key={col.key}
                 className={cn(
                   "px-6 py-3.5 text-[13px] font-semibold text-foreground bg-muted/50",
                   col.width,
-                  i > 0 && "border-l border-border"
+                  i > 0 && "border-l border-slate-300 dark:border-white/10"
                 )}
               >
                 {col.header}
@@ -64,7 +64,7 @@ export function VercelTable({ columns, rows, className }: VercelTableProps) {
               key={rowIdx}
               className={cn(
                 "transition-colors hover:bg-muted/30",
-                rowIdx < rows.length - 1 && "border-b border-border/60"
+                rowIdx < rows.length - 1 && "border-b border-slate-300 dark:border-white/10"
               )}
             >
               {columns.map((col, colIdx) => (
@@ -73,10 +73,10 @@ export function VercelTable({ columns, rows, className }: VercelTableProps) {
                   className={cn(
                     "px-6 py-3.5",
                     col.width,
-                    colIdx > 0 && "border-l border-border/60",
+                    colIdx > 0 && "border-l border-slate-300 dark:border-white/10",
                     col.accent
                       ? "font-medium text-emerald-600 dark:text-emerald-400"
-                      : "text-muted-foreground"
+                      : "text-slate-900 dark:text-slate-300 font-medium"
                   )}
                 >
                   {row[col.key]}

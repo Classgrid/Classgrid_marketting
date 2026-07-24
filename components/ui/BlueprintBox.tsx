@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export const BlueprintCrosshair = ({ className }: { className?: string }) => (
   <svg
     className={cn(
-      "absolute w-[17px] h-[17px] text-slate-300 dark:text-white/20",
+      "absolute w-[17px] h-[17px] text-slate-500 dark:text-white/20",
       className
     )}
     viewBox="0 0 17 17"
@@ -56,14 +56,14 @@ export function BlueprintBox({
       {/* Left/Right vertical border lines — visible on all screens */}
       <div
         className={cn(
-          "relative border-l border-r border-slate-200 dark:border-white/10",
+          "relative border-l border-r border-slate-400 dark:border-white/10",
           className
         )}
       >
         {/* Top border + top corner crosshairs */}
         {showTopBorder && (
           <>
-            <div className="absolute top-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
+            <div className="absolute top-0 left-0 w-full border-t border-slate-400 dark:border-white/10" />
             <BlueprintCrosshair className="-top-[6px] -left-[6px] sm:-top-[8px] sm:-left-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
             <BlueprintCrosshair className="-top-[6px] -right-[6px] sm:-top-[8px] sm:-right-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
           </>
@@ -74,7 +74,7 @@ export function BlueprintBox({
         {/* Bottom border + bottom corner crosshairs */}
         {showBottomBorder && (
           <>
-            <div className="absolute bottom-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
+            <div className="absolute bottom-0 left-0 w-full border-t border-slate-400 dark:border-white/10" />
             <BlueprintCrosshair className="-bottom-[6px] -left-[6px] sm:-bottom-[8px] sm:-left-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
             <BlueprintCrosshair className="-bottom-[6px] -right-[6px] sm:-bottom-[8px] sm:-right-[8px] w-[11px] h-[11px] sm:w-[17px] sm:h-[17px]" />
           </>
@@ -109,7 +109,7 @@ export function BlueprintSection({
     <div className={cn("relative", className)}>
       <div
         className={cn(
-          "absolute top-0 left-0 w-full border-t border-slate-200 dark:border-white/10",
+          "absolute top-0 left-0 w-full border-t border-slate-400 dark:border-white/10",
           dashed && "border-dashed"
         )}
       />

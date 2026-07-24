@@ -59,10 +59,10 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── MOBILE NAV BAR (Vercel Style) ── */}
-      <div className="lg:hidden sticky top-16 z-40 bg-[#0a0a0a] border-b border-white/10 flex items-center justify-between -mx-4 px-4 sm:-mx-6 sm:px-6 h-12">
+      <div className="lg:hidden sticky top-16 z-40 bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 flex items-center justify-between -mx-4 px-4 sm:-mx-6 sm:px-6 h-12">
         <button 
           onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileTocOpen(false); }} 
-          className="flex items-center gap-2 text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-[13px] font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors"
         >
           <Menu className="w-4 h-4" />
           Menu
@@ -70,7 +70,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
         
         <button 
           onClick={() => { setMobileTocOpen(!mobileTocOpen); setMobileMenuOpen(false); }} 
-          className="flex items-center gap-2 text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-[13px] font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors"
         >
           On this page
           <FileText className="w-4 h-4" />
@@ -100,14 +100,14 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-0 left-0 right-0 bg-[#0a0a0a] border-b border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-4rem)] px-4 py-4 z-[70]"
+              className="absolute top-0 left-0 right-0 bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-4rem)] px-4 py-4 z-[70]"
             >
               <div className="flex items-center justify-between mb-3 mt-1 px-2">
-                <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Navigation</span>
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Navigation</span>
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                  className="p-1.5 rounded-md bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </motion.button>
@@ -133,14 +133,14 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-0 right-0 left-0 sm:left-auto sm:w-80 bg-[#0a0a0a] border-b border-l border-white/10 shadow-2xl overflow-y-auto max-h-[calc(100vh-4rem)] py-4 z-[70]"
+              className="absolute top-0 right-0 left-0 sm:left-auto sm:w-80 bg-[#0a0a0a] border-b border-l border-slate-200 dark:border-white/10 shadow-2xl overflow-y-auto max-h-[calc(100vh-4rem)] py-4 z-[70]"
             >
-              <div className="px-6 py-2 mb-2 border-b border-white/5 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">On this page</span>
+              <div className="px-6 py-2 mb-2 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-500 uppercase tracking-wider">On this page</span>
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setMobileTocOpen(false)}
-                  className="p-1.5 -mr-1.5 rounded-md bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                  className="p-1.5 -mr-1.5 rounded-md bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </motion.button>
@@ -162,12 +162,12 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
                         }
                       }, 50);
                     }}
-                    className={`block px-4 py-1.5 text-[13px] text-zinc-400 hover:text-emerald-400 transition-colors ${heading.level === 3 ? 'pl-8' : ''}`}
+                    className={`block px-4 py-1.5 text-[13px] text-slate-600 dark:text-zinc-400 hover:text-emerald-400 transition-colors ${heading.level === 3 ? 'pl-8' : ''}`}
                   >
                     {heading.text}
                   </a>
                 )) : (
-                  <div className="px-4 py-2 text-[13px] text-zinc-500">No headings found</div>
+                  <div className="px-4 py-2 text-[13px] text-slate-500 dark:text-zinc-500">No headings found</div>
                 )}
               </div>
             </motion.div>
@@ -208,7 +208,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
               whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.07)" }}
               whileTap={{ scale: 0.94 }}
               transition={{ duration: 0.15 }}
-              className="h-8 w-8 flex items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/70 hover:text-white shrink-0"
+              className="h-8 w-8 flex items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-slate-900 dark:text-white/70 hover:text-slate-900 dark:hover:text-white shrink-0"
               aria-label="Toggle sidebar"
             >
               <motion.span
@@ -222,15 +222,15 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
 
             {/* Breadcrumb */}
             {breadcrumb && (
-              <nav className="flex items-center gap-1.5 text-[13px] text-zinc-400">
+              <nav className="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-zinc-400">
                 <Link
                   href="/docs"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   {breadcrumb.category}
                 </Link>
                 <ChevronRight className="h-3 w-3 text-zinc-600" />
-                <span className="font-medium text-white">{breadcrumb.title}</span>
+                <span className="font-medium text-slate-900 dark:text-white">{breadcrumb.title}</span>
               </nav>
             )}
           </div>
@@ -238,7 +238,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
           {children}
 
           {/* Feedback Widget (Mobile Only) */}
-          <div className="xl:hidden mt-16 pt-8 border-t border-white/10 flex justify-center pb-12">
+          <div className="xl:hidden mt-16 pt-8 border-t border-slate-200 dark:border-white/10 flex justify-center pb-12">
             <FeedbackWidget 
               pageTitle={breadcrumb?.title || 'Documentation'} 
             />

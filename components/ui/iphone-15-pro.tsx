@@ -15,16 +15,16 @@ export function IPhone15Pro({
   return (
     <div
       className={cn(
-        "relative mx-auto aspect-[350/712] w-full max-w-[350px] shrink-0 rounded-[3.5rem] border-[8px] border-zinc-900 bg-zinc-900 shadow-2xl dark:border-zinc-800 dark:bg-zinc-800",
+        "relative mx-auto aspect-[350/712] w-full max-w-[350px] shrink-0 rounded-[3.5rem] border-[8px] border-slate-200 bg-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] dark:border-zinc-800 dark:bg-zinc-800 dark:shadow-2xl",
         className
       )}
       {...props}
     >
       {/* Power Button */}
-      <div className="absolute -right-[2.3%] top-[22.5%] h-[13.5%] w-[1.8%] rounded-l-md bg-zinc-800 dark:bg-zinc-700" />
+      <div className="absolute -right-[2.3%] top-[22.5%] h-[13.5%] w-[1.8%] rounded-l-md bg-slate-300 dark:bg-zinc-700" />
       {/* Volume Buttons */}
-      <div className="absolute -left-[2.3%] top-[18%] h-[9%] w-[1.8%] rounded-r-md bg-zinc-800 dark:bg-zinc-700" />
-      <div className="absolute -left-[2.3%] top-[29.2%] h-[9%] w-[1.8%] rounded-r-md bg-zinc-800 dark:bg-zinc-700" />
+      <div className="absolute -left-[2.3%] top-[18%] h-[9%] w-[1.8%] rounded-r-md bg-slate-300 dark:bg-zinc-700" />
+      <div className="absolute -left-[2.3%] top-[29.2%] h-[9%] w-[1.8%] rounded-r-md bg-slate-300 dark:bg-zinc-700" />
 
       {/* Screen */}
       <div className="relative h-full w-full overflow-hidden rounded-[2.85rem] bg-[#fafafa] dark:bg-zinc-950">

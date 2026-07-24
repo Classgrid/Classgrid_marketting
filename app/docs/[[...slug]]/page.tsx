@@ -66,11 +66,11 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
     <>
       <JsonLd data={jsonLdData} />
       <article className="min-w-0 flex-1 pb-24">
-      <header className="mb-10 border-b border-white/10 pb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-white mb-3">
+      <header className="mb-10 border-b border-slate-300 dark:border-white/10 pb-6">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-3">
           {doc.title}
         </h1>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-slate-600 dark:text-zinc-400">
           {dateLabel}
         </p>
       </header>
@@ -97,7 +97,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                 return (
                   <h2 {...props} className="group relative scroll-mt-24">
                     {id && (
-                      <a href={`#${id}`} className="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-emerald-400 transition-colors font-normal no-underline flex items-center justify-center w-6 h-6" aria-hidden="true">
+                      <a href={`#${id}`} className="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-500 dark:text-zinc-500 hover:text-emerald-400 transition-colors font-normal no-underline flex items-center justify-center w-6 h-6" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                       </a>
                     )}
@@ -110,7 +110,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                 return (
                   <h3 {...props} className="group relative scroll-mt-24">
                     {id && (
-                      <a href={`#${id}`} className="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-emerald-400 transition-colors font-normal no-underline flex items-center justify-center w-6 h-6" aria-hidden="true">
+                      <a href={`#${id}`} className="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-500 dark:text-zinc-500 hover:text-emerald-400 transition-colors font-normal no-underline flex items-center justify-center w-6 h-6" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                       </a>
                     )}
@@ -134,7 +134,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
             {doc.content}
           </ReactMarkdown>
         ) : (
-          <p className="text-zinc-400">This documentation page is currently empty.</p>
+          <p className="text-slate-600 dark:text-zinc-400">This documentation page is currently empty.</p>
         )}
       </div>
       <DocsNavigation />

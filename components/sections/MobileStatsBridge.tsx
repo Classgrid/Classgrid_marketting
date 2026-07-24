@@ -42,8 +42,8 @@ export function MobileStatsBridge() {
           <div className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_45%,#00dfd8_65%,#ff0080_85%,rgba(0,0,0,0)_100%)] opacity-100" />
           
           {/* Inner dark pill */}
-          <div className="relative flex flex-col items-center px-8 py-3.5 rounded-full bg-[#050505]/90 backdrop-blur-xl z-10">
-            <span className="font-mono text-[26px] font-bold tracking-widest text-white">
+          <div className="relative flex flex-col items-center px-8 py-3.5 rounded-full bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl z-10">
+            <span className="font-mono text-[26px] font-bold tracking-widest text-slate-900 dark:text-white">
               {count.toLocaleString()}
             </span>
           </div>

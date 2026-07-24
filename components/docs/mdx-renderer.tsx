@@ -9,7 +9,7 @@ const components = {
   pre: CodeBlock,
   code: ({ children, className }: any) => {
     if (className) return <code className={className}>{children}</code>;
-    return <code className="bg-white/10 rounded px-1.5 py-0.5 text-sm font-mono text-emerald-400">{children}</code>;
+    return <code className="bg-slate-100 dark:bg-white/10 rounded px-1.5 py-0.5 text-[13px] font-mono text-slate-800 dark:text-emerald-400">{children}</code>;
   }
 };
 

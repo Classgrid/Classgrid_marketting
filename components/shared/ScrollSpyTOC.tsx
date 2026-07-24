@@ -23,10 +23,10 @@ export function ScrollSpyTOC({ tocItems, activeSection }: ScrollSpyTOCProps) {
       <div className="sticky top-1/2 -translate-y-1/2 pointer-events-auto flex flex-col items-end w-full">
 
         {/* "On this page" dropdown label */}
-        <div className="group relative inline-flex items-center gap-2 mb-4 text-[13px] font-medium text-muted-foreground cursor-pointer">
+        <div className="group relative inline-flex items-center gap-2 mb-4 text-[13px] font-semibold text-slate-900 dark:text-muted-foreground cursor-pointer">
           On this page
           <div className="absolute top-full right-0 mt-2 w-56 max-h-[300px] overflow-y-auto overscroll-contain rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[999] p-2 text-left">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-500 mb-2 px-2 pt-1">Table of Contents</div>
             {tocItems.map(item => (
               <a key={`dropdown-${item.id}`} href={`#${item.id}`} className={cn(
                 "block px-2 py-1.5 text-[13px] rounded hover:bg-slate-100 dark:hover:bg-white/5",
@@ -54,8 +54,8 @@ export function ScrollSpyTOC({ tocItems, activeSection }: ScrollSpyTOCProps) {
                   className={cn(
                     "h-[1px] transition-all duration-300 ease-in-out",
                     isActive
-                      ? "w-10 bg-emerald-500 dark:bg-emerald-400"
-                      : "w-5 bg-slate-400 dark:bg-white/40 group-hover:w-7 group-hover:bg-slate-500 dark:group-hover:bg-white/60"
+                      ? "w-10 bg-emerald-600 dark:bg-emerald-400"
+                      : "w-5 bg-slate-500 dark:bg-white/40 group-hover:w-7 group-hover:bg-slate-700 dark:group-hover:bg-white/60"
                   )}
                 />
                 {/* Hover Tooltip */}

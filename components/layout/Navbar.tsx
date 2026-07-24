@@ -205,11 +205,11 @@ export function Navbar({
     setOpenSections({});
   };
   const megaMenuPanelClass =
-    "grid w-[min(92vw,540px)] grid-cols-2 items-start gap-x-2 gap-y-2 rounded-xl border border-white/[0.08] bg-[#080808]/95 p-2.5 shadow-[0_16px_46px_rgba(0,0,0,0.42)] backdrop-blur-xl";
+    "grid w-[min(92vw,540px)] grid-cols-2 items-start gap-x-2 gap-y-2 rounded-xl border border-border bg-popover/95 p-2.5 shadow-[0_16px_46px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.42)] backdrop-blur-xl";
   const desktopNavItemClass =
-    "h-9 rounded-lg px-3 text-sm font-medium tracking-tight text-white/85 transition-all duration-200 hover:bg-white/[0.08] hover:text-white focus:bg-white/[0.08] focus:text-white data-open:bg-white/[0.1] data-open:text-white data-popup-open:bg-white/[0.1] data-popup-open:text-white";
+    "h-9 rounded-lg px-3 text-sm font-medium tracking-tight text-foreground/75 transition-all duration-200 hover:bg-accent hover:text-foreground focus:bg-accent focus:text-foreground data-open:bg-accent data-open:text-foreground data-popup-open:bg-accent data-popup-open:text-foreground";
   const desktopNavItemActiveClass =
-    "bg-white/[0.1] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]";
+    "bg-accent text-foreground shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]";
 
   const DEFAULT_NAV_ITEMS: NavItem[] = [
     {
@@ -262,7 +262,7 @@ export function Navbar({
     : [{ label: "Home", href: "/" }, ...baseItems];
 
   return (
-    <header className="sticky top-0 z-[100] w-full border-b border-white/[0.18] bg-[rgba(0,0,0,0.72)] shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
+    <header className="sticky top-0 z-[100] w-full border-b border-border bg-[#F7F7F7]/90 dark:bg-[rgba(0,0,0,0.72)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           {(logoUrl || brandName) && (
@@ -278,7 +278,7 @@ export function Navbar({
               ) : null}
               {brandName ? (
                 <span className={cn(
-                  "text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-white/90",
+                  "text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/90",
                   docsMode && "hidden sm:inline"
                 )}>
                   {brandName}
@@ -322,7 +322,7 @@ export function Navbar({
                               {shouldSplitSingleSection ? (
                                 <div className="col-span-2">
                                   {sections[0]?.heading?.trim() ? (
-                                    <h4 className="text-[13px] font-medium tracking-tight text-white/55">
+                                    <h4 className="text-[13px] font-medium tracking-tight text-muted-foreground">
                                       {sections[0].heading}
                                     </h4>
                                   ) : null}
@@ -357,7 +357,7 @@ export function Navbar({
                                 return (
                                   <div key={section.heading ? `${section.heading}-${s_idx}` : `${item.label}-${s_idx}`} className="flex flex-col gap-1.5">
                                     {section.heading?.trim() ? (
-                                      <h4 className="text-[13px] font-medium tracking-tight text-white/55">
+                                      <h4 className="text-[13px] font-medium tracking-tight text-muted-foreground">
                                         {section.heading}
                                       </h4>
                                     ) : null}
@@ -418,7 +418,7 @@ export function Navbar({
                 prefetch={false}
                 onClick={handleChangelogClick}
                 className={cn(
-                  "group relative hidden h-9 items-center justify-center rounded-lg px-3.5 text-sm font-medium tracking-tight text-white/85 transition-all duration-200 hover:bg-white/[0.08] hover:text-white focus:bg-white/[0.08] focus:text-white md:inline-flex",
+                  "group relative hidden h-9 items-center justify-center rounded-lg px-3.5 text-sm font-medium tracking-tight text-foreground/75 transition-all duration-200 hover:bg-accent hover:text-foreground focus:bg-accent focus:text-foreground md:inline-flex",
                   isHrefActive(pathname, "/changelog") && desktopNavItemActiveClass
                 )}
                 aria-label={dict.changelog}
@@ -447,7 +447,7 @@ export function Navbar({
               <Button
                 type="button"
                 variant="outline"
-                className="relative h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-sm font-medium tracking-tight text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.2] hover:text-white cursor-pointer"
+                className="relative h-9 rounded-lg border-border bg-accent px-2 md:px-3 text-sm font-medium tracking-tight text-foreground/90 transition-all duration-200 hover:bg-slate-200 dark:hover:bg-accent/80 hover:border-border hover:text-foreground cursor-pointer"
                 onClick={onAskAiClick}
               >
                 {dict.askAi}
@@ -460,20 +460,20 @@ export function Navbar({
             <Button
               type="button"
               variant="outline"
-              className="h-9 rounded-lg border-white/[0.1] bg-white/[0.04] px-2 md:px-3 text-[13px] font-medium tracking-tight text-white/70 shadow-sm transition-all duration-200 hover:border-white/[0.18] hover:bg-white/[0.08] hover:text-white inline-flex items-center gap-1.5 md:gap-2 cursor-pointer"
+              className="h-9 rounded-lg border-border bg-accent px-2 md:px-3 text-[13px] font-medium tracking-tight text-muted-foreground shadow-sm transition-all duration-200 hover:border-border hover:bg-slate-200 dark:hover:bg-accent/80 hover:text-foreground inline-flex items-center gap-1.5 md:gap-2 cursor-pointer"
               onClick={onDocsSearchClick}
             >
-              <Search className="h-3.5 w-3.5 text-white/50" />
+              <Search className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="hidden lg:inline">Search Documentation</span>
               <span className="inline lg:hidden">Search...</span>
-              <kbd className="ml-1 hidden sm:inline-flex items-center gap-0.5 rounded-[5px] border border-white/[0.1] bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-medium text-white/35 cursor-pointer">
+              <kbd className="ml-1 hidden sm:inline-flex items-center gap-0.5 rounded-[5px] border border-border bg-accent px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground cursor-pointer">
                 ⌘K
               </kbd>
             </Button>
           ) : (
             <>
               {!isPlatformUser && secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
-                <Button asChild variant="outline" className="hidden h-9 rounded-lg border-white/[0.12] bg-white/[0.04] px-4 text-[13px] font-medium tracking-tight text-white/90 shadow-sm transition-all duration-200 hover:border-white/[0.2] hover:bg-white/[0.08] hover:text-white lg:inline-flex">
+                <Button asChild variant="outline" className="hidden h-9 rounded-lg border-border bg-accent px-4 text-[13px] font-medium tracking-tight text-foreground/90 shadow-sm transition-all duration-200 hover:border-border hover:bg-accent/80 hover:text-foreground lg:inline-flex">
                   <Link
                     href={secondaryLinkHref}
                     prefetch={false}
@@ -528,7 +528,7 @@ export function Navbar({
                   return !prev;
                 });
               }}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/90 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-foreground/90 transition-colors duration-200 hover:bg-accent hover:text-foreground"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               <span className="sr-only">{mobileOpen ? "Close menu" : dict.toggleMenu}</span>
@@ -543,7 +543,7 @@ export function Navbar({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                  className="fixed inset-x-0 top-16 z-40 flex flex-col bg-[#080808] text-white"
+                  className="fixed inset-x-0 top-16 z-40 flex flex-col bg-background text-foreground"
                   style={{ height: "calc(100dvh - 64px)" }}
                 >
 
@@ -555,7 +555,7 @@ export function Navbar({
                       <Link
                         href={resolveCtaHref(primaryCtaLabel, primaryCtaHref)}
                         onClick={closeMobileMenu}
-                        className="flex h-12 w-full items-center justify-center rounded-lg bg-white text-[15px] font-semibold text-black transition-transform active:scale-[0.98]"
+                        className="flex h-12 w-full items-center justify-center rounded-lg bg-foreground text-[15px] font-semibold text-background transition-transform active:scale-[0.98]"
                       >
                         {primaryCtaLabel}
                       </Link>
@@ -566,7 +566,7 @@ export function Navbar({
                         target={isExternalHref(secondaryLinkHref) ? "_blank" : undefined}
                         rel={isExternalHref(secondaryLinkHref) ? "noopener noreferrer" : undefined}
                         onClick={closeMobileMenu}
-                        className="flex h-12 w-full items-center justify-center rounded-lg bg-[#111] border border-white/10 text-[15px] font-medium text-white transition-transform active:scale-[0.98] active:bg-white/5"
+                        className="flex h-12 w-full items-center justify-center rounded-lg bg-accent border border-border text-[15px] font-medium text-foreground transition-transform active:scale-[0.98] active:bg-accent/80"
                       >
                         {secondaryLinkLabel}
                       </Link>
@@ -582,8 +582,8 @@ export function Navbar({
                         rel={isExternalHref(navItems[0].href || "") ? "noopener noreferrer" : undefined}
                         onClick={closeMobileMenu}
                         className={cn(
-                          "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white border-b border-white/10",
-                          isNavItemActive(pathname, navItems[0]) && "text-white"
+                          "flex items-center justify-between py-4 text-[17px] font-medium text-foreground/90 transition-colors active:text-foreground border-b border-border",
+                          isNavItemActive(pathname, navItems[0]) && "text-foreground"
                         )}
                       >
                         {navItems[0].label}
@@ -609,9 +609,9 @@ export function Navbar({
                             rel={isExternalHref(item.href) ? "noopener noreferrer" : undefined}
                             onClick={closeMobileMenu}
                             className={cn(
-                              "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
-                              !isLast && "border-b border-white/10",
-                              active && "text-white"
+                              "flex items-center justify-between py-4 text-[17px] font-medium text-foreground/90 transition-colors active:text-foreground",
+                              !isLast && "border-b border-border",
+                              active && "text-foreground"
                             )}
                           >
                             {item.label}
@@ -621,19 +621,19 @@ export function Navbar({
 
                       if (hasSections) {
                         return (
-                          <div key={`mobile-${sectionKey}-${idx}`} className={cn("flex flex-col", !isLast && "border-b border-white/10")}>
+                          <div key={`mobile-${sectionKey}-${idx}`} className={cn("flex flex-col", !isLast && "border-b border-border")}>
                             <button
                               type="button"
                               onClick={() => setOpenSections(prev => ({ ...prev, [sectionKey]: !isOpen }))}
                               className={cn(
-                                "flex w-full items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
-                                active && "text-white"
+                                "flex w-full items-center justify-between py-4 text-[17px] font-medium text-foreground/90 transition-colors active:text-foreground",
+                                active && "text-foreground"
                               )}
                             >
                               <span>{item.label}</span>
                               <ChevronDown
                                 className={cn(
-                                  "h-5 w-5 text-white/40 transition-transform duration-300 ease-out",
+                                  "h-5 w-5 text-muted-foreground transition-transform duration-300 ease-out",
                                   isOpen && "rotate-180"
                                 )}
                               />
@@ -660,12 +660,12 @@ export function Navbar({
                                             rel={isExternalHref(link.href ?? "") ? "noopener noreferrer" : undefined}
                                             onClick={closeMobileMenu}
                                             className={cn(
-                                              "group flex items-center gap-3 rounded-xl py-2 pl-6 pr-2 text-[14px] font-medium text-white/70 transition-all duration-200 active:bg-white/5 active:text-white",
-                                              isHrefActive(pathname, link.href) && "text-white bg-white/5"
+                                              "group flex items-center gap-3 rounded-xl py-2 pl-6 pr-2 text-[14px] font-medium text-muted-foreground transition-all duration-200 active:bg-accent active:text-foreground",
+                                              isHrefActive(pathname, link.href) && "text-foreground bg-accent"
                                             )}
                                           >
                                             {ResolvedIcon && (
-                                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/60 transition-colors group-active:bg-white/10 group-active:text-white border border-white/5">
+                                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-muted-foreground transition-colors group-active:bg-accent/80 group-active:text-foreground border border-border">
                                                 <ResolvedIcon className="h-3.5 w-3.5" strokeWidth={2} />
                                               </div>
                                             )}
@@ -693,8 +693,8 @@ export function Navbar({
                         closeMobileMenu();
                       }}
                       className={cn(
-                        "flex items-center justify-between py-4 text-[17px] font-medium text-white/90 transition-colors active:text-white",
-                        isHrefActive(pathname, "/changelog") && "text-white"
+                        "flex items-center justify-between py-4 text-[17px] font-medium text-foreground/90 transition-colors active:text-foreground",
+                        isHrefActive(pathname, "/changelog") && "text-foreground"
                       )}
                     >
                       <div className="flex items-center gap-2">
@@ -738,7 +738,7 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
         <NavigationMenuLink
           ref={ref}
           className={cn(
-            "group block select-none rounded-lg p-1.5 leading-none no-underline outline-none transition-colors duration-200 hover:bg-white/[0.04] hover:text-white focus:bg-white/[0.04] focus:text-white",
+            "group block select-none rounded-lg p-1.5 leading-none no-underline outline-none transition-colors duration-200 hover:bg-accent hover:text-foreground focus:bg-accent focus:text-foreground",
             className
           )}
           render={
@@ -759,12 +759,12 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
         >
           <div className="flex min-h-7 items-center gap-2">
             {Icon && (
-              <div className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border border-white/[0.07] bg-white/[0.025] text-white/50 transition-colors group-hover:border-white/[0.14] group-hover:text-white/75">
+              <div className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border border-border bg-accent text-muted-foreground transition-colors group-hover:border-border group-hover:text-foreground/75">
                 <Icon size={13} strokeWidth={1.6} />
               </div>
             )}
             <div className="flex min-w-0 flex-col">
-              <div className="text-[13px] font-medium leading-none tracking-tight text-white/90 transition-colors group-hover:text-white">
+              <div className="text-[13px] font-medium leading-none tracking-tight text-foreground/90 transition-colors group-hover:text-foreground">
                 {title}
               </div>
             </div>

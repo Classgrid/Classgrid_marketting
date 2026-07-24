@@ -32,14 +32,14 @@ export function DocsNavigation() {
         {prev ? (
           <Link
             href={`/docs/${prev.slug}`}
-            className="group flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
+            className="group flex items-center gap-2 text-sm text-slate-600 dark:text-zinc-400 transition-colors hover:text-slate-900 dark:hover:text-white"
           >
             <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             <div>
-              <div className="text-[11px] text-zinc-500 mb-0.5">Previous</div>
+              <div className="text-[11px] text-slate-500 dark:text-zinc-500 mb-0.5">Previous</div>
               <div className="font-medium">
                 {prev.category !== DOCS_NAV_ORDER[currentIndex]?.category && (
-                  <span className="text-zinc-500">{prev.category} / </span>
+                  <span className="text-slate-500 dark:text-zinc-500">{prev.category} / </span>
                 )}
                 {prev.title}
               </div>
@@ -53,14 +53,14 @@ export function DocsNavigation() {
         {next ? (
           <Link
             href={`/docs/${next.slug}`}
-            className="group flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white text-right"
+            className="group flex items-center gap-2 text-sm text-slate-600 dark:text-zinc-400 transition-colors hover:text-slate-900 dark:hover:text-white text-right"
           >
             <div>
-              <div className="text-[11px] text-zinc-500 mb-0.5">Next</div>
+              <div className="text-[11px] text-slate-500 dark:text-zinc-500 mb-0.5">Next</div>
               <div className="font-medium">
                 {next.title}
                 {next.category !== DOCS_NAV_ORDER[currentIndex]?.category && (
-                  <span className="text-zinc-500"> / {next.category}</span>
+                  <span className="text-slate-500 dark:text-zinc-500"> / {next.category}</span>
                 )}
               </div>
             </div>

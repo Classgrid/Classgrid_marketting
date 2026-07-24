@@ -247,12 +247,12 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
       <div className="relative mx-4 sm:mx-auto max-w-[900px] mb-24">
 
         {/* Main Box Area with borders */}
-        <div className="relative border-l border-r border-slate-200 dark:border-white/10">
+        <div className="relative border-l border-r border-slate-300 dark:border-white/10">
 
           {/* Header Section */}
           <section id="intro" className="relative px-4 md:px-12 pt-16 pb-20 text-center">
             {/* Top Border Line for Header */}
-            <div className="absolute top-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
+            <div className="absolute top-0 left-0 w-full border-t border-slate-300 dark:border-white/10" />
             <Crosshair className="-top-[8px] -left-[8px]" />
             <Crosshair className="-top-[8px] -right-[8px]" />
 
@@ -260,20 +260,20 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               Classgrid vs {comparison.competitorName}
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-[#171717] dark:text-[#ededed]">
               {comparison.metaDescription || `A detailed guide to Classgrid vs ${comparison.competitorName}: compute architecture, AI infrastructure, security, and when to choose each platform for your institution.`}
             </p>
 
             {/* Author / Competitor Badge */}
             <div className="flex flex-col items-center justify-center gap-2 mb-10">
-              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
+              <div className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
                 <Image src="/logo.png" alt="Classgrid" width={16} height={16} className="object-contain" />
                 <span className="text-[13px] font-medium tracking-tight text-slate-900 dark:text-white">Classgrid</span>
               </div>
             </div>
 
             {/* Utility links */}
-            <div className="mb-6 flex flex-wrap items-center justify-center gap-5 text-slate-500 dark:text-neutral-500">
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-5 text-slate-700 dark:text-neutral-400">
               <button
                 type="button"
                 onClick={handleCopyUrl}
@@ -295,7 +295,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               <span className="sr-only" aria-live="polite">{copiedPage ? "Copied!" : ""}</span>
             </div>
 
-            <div className="flex items-center justify-center gap-4 text-[14px] text-slate-500 dark:text-neutral-500">
+            <div className="flex items-center justify-center gap-4 text-[14px] text-slate-700 dark:text-neutral-400">
               <span>{comparison.readTime || 11} min read</span>
               <div className="h-3.5 w-px bg-slate-200 dark:bg-white/10" />
               <span>Last updated {lastUpdatedFormatted}</span>
@@ -305,7 +305,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           {/* Body Content Sections */}
           <div className="relative px-4 md:px-12 py-16 [&_a:not(.toc-link)]:text-emerald-600 [&_a:not(.toc-link)]:dark:text-emerald-400 [&_a:not(.toc-link)]:underline [&_a:not(.toc-link)]:underline-offset-4 [&_a:not(.toc-link)]:decoration-emerald-500/40 [&_a:not(.toc-link)]:hover:decoration-emerald-500">
             {/* Top Border Line for Content */}
-            <div className="absolute top-0 left-0 w-full border-t border-dashed border-slate-200 dark:border-white/10" />
+            <div className="absolute top-0 left-0 w-full border-t border-dashed border-slate-300 dark:border-white/10" />
             <Crosshair className="-top-[8px] -left-[8px]" />
             <Crosshair className="-top-[8px] -right-[8px]" />
 
@@ -340,7 +340,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* Strengths */}
                   <section id="strengths" className="space-y-6 pt-4">
                     <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Strengths of each platform</h2>
-                    <p className="text-[15px] leading-relaxed text-muted-foreground">
+                    <p className="text-[15px] leading-relaxed text-[#171717] dark:text-[#ededed]">
                       Each platform has distinct strengths depending on your institutional requirements and architecture patterns.
                     </p>
                   </section>
@@ -348,7 +348,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* When to choose Classgrid */}
                   <section id="when-to-choose" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">When to choose Classgrid</h3>
-                    <p className="text-[15px] leading-relaxed text-muted-foreground">
+                    <p className="text-[15px] leading-relaxed text-[#171717] dark:text-[#ededed]">
                       Classgrid excels at institutional-wide automation, AI-driven workflows, and performance-critical operations. The platform provides native ERP integration, real-time analytics, and infrastructure designed for modern education with global edge distribution.
                     </p>
                     <VercelTable
@@ -368,12 +368,12 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   {/* AI Tools */}
                   <section id="ai-tools" className="space-y-6 pt-4">
                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">AI-powered institutional tools</h3>
-                    <p className="text-[15px] leading-relaxed text-muted-foreground">
+                    <p className="text-[15px] leading-relaxed text-[#171717] dark:text-[#ededed]">
                       <span className="font-medium text-slate-900 dark:text-white">Classgrid AI</span> accelerates institutional workflows with AI assistance.
                     </p>
                     <div className="space-y-4">
                       <h4 className="text-base font-semibold text-slate-900 dark:text-white">Smart Analytics</h4>
-                      <ul className="ml-4 space-y-2 text-[15px] text-muted-foreground">
+                      <ul className="ml-4 space-y-2 text-[15px] text-[#171717] dark:text-[#ededed]">
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Predicts student dropout risk from attendance and grade patterns</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />Generates compliance-ready reports automatically</li>
                         <li className="flex items-start gap-3"><span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-neutral-600" />One-click NAAC/NBA data aggregation</li>
@@ -388,7 +388,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               {featureMatrix.length > 0 && (
                 <section id="competitor-comparison" className="space-y-6 pt-4">
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">{comparison.competitorName} comparison</h3>
-                  <p className="text-[15px] leading-relaxed text-muted-foreground">
+                  <p className="text-[15px] leading-relaxed text-[#171717] dark:text-[#ededed]">
                     <span className="font-medium text-slate-900 dark:text-white">{comparison.competitorName}</span> provides foundational campus management features but may differ in automation depth, real-time capabilities, and deployment architecture.
                   </p>
                   <VercelTable
@@ -412,9 +412,9 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Expert ratings</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(comparison.ratingBadges ?? []).map((badge, idx) => (
-                      <div key={idx} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+                      <div key={idx} className="flex items-center justify-between rounded-xl border border-slate-300 bg-slate-50/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
                         <div className="flex flex-col">
-                          <span className="mb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-neutral-500">{badge.platform}</span>
+                          <span className="mb-1 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-neutral-400">{badge.platform}</span>
                           <span className="text-sm font-medium text-slate-900 dark:text-white">{badge.badgeLabel || "Expert Rating"}</span>
                         </div>
                         <div className="text-2xl font-semibold text-slate-900 dark:text-white">{badge.score?.toFixed(1)}</div>
@@ -427,14 +427,14 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
               {/* Migration Testimonial */}
               {comparison.migrationTestimonial?.quoteText && (
                 <section id="migration" className="space-y-6 pt-4">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 dark:border-white/10 dark:bg-white/[0.02]">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-neutral-500 mb-6">Migration perspective</p>
+                  <div className="rounded-2xl border border-slate-300 bg-slate-50 p-8 dark:border-white/10 dark:bg-white/[0.02]">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-neutral-400 mb-6">Migration perspective</p>
                     <blockquote className="text-xl font-medium leading-relaxed text-slate-900 dark:text-white mb-6">
                       &ldquo;{comparison.migrationTestimonial.quoteText}&rdquo;
                     </blockquote>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[15px] font-semibold text-slate-900 dark:text-white">{comparison.migrationTestimonial.authorName}</span>
-                      <span className="text-[13px] text-slate-500 dark:text-neutral-500">
+                      <span className="text-[13px] text-slate-700 dark:text-neutral-400">
                         {comparison.migrationTestimonial.authorRole}
                       </span>
                     </div>
@@ -461,7 +461,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
 
           {/* "Was this helpful?" Footer (Inside the box) */}
-          <div className="relative border-t border-slate-200 dark:border-white/10 flex items-center justify-center py-8">
+          <div className="relative border-t border-slate-300 dark:border-white/10 flex items-center justify-center py-8">
             <Crosshair className="-top-[8px] -left-[8px]" />
             <Crosshair className="-top-[8px] -right-[8px]" />
 
@@ -478,7 +478,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
           </div>
 
           {/* Bottom Border Closing Crosshairs */}
-          <div className="absolute bottom-0 left-0 w-full border-t border-slate-200 dark:border-white/10" />
+          <div className="absolute bottom-0 left-0 w-full border-t border-slate-300 dark:border-white/10" />
           <Crosshair className="-bottom-[8px] -left-[8px]" />
           <Crosshair className="-bottom-[8px] -right-[8px]" />
 

@@ -11,9 +11,9 @@ import { motion } from "framer-motion";
 function MonitorIcon() {
     return (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="4" width="26" height="17" rx="2.5" stroke="white" strokeWidth="1.6" fill="none" />
-            <line x1="16" y1="21" x2="16" y2="25" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
-            <line x1="9" y1="25" x2="23" y2="25" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+            <rect x="3" y="4" width="26" height="17" rx="2.5" stroke="currentColor" strokeWidth="1.6" fill="none" />
+            <line x1="16" y1="21" x2="16" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            <line x1="9" y1="25" x2="23" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
     );
 }
@@ -94,10 +94,9 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                 initial="cardHidden"
                 whileInView="cardVisible"
                 viewport={{ once: true, amount: 0.3 }}
-                className="w-[72px] h-[72px] rounded-full flex items-center justify-center"
+                className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-white dark:bg-[#111] shadow-[0_0_0_1.5px_rgba(0,0,0,0.1),0_0_18px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_0_0_1.5px_rgba(255,255,255,0.22),0_0_18px_6px_rgba(255,255,255,0.13),0_0_40px_10px_rgba(255,255,255,0.07)] text-zinc-600 dark:text-white"
                 style={{
-                    background: "radial-gradient(circle at 45% 38%, #404040 0%, #1c1c1c 55%, #111 100%)",
-                    boxShadow: "0 0 0 1.5px rgba(255,255,255,0.22), 0 0 18px 6px rgba(255,255,255,0.13), 0 0 40px 10px rgba(255,255,255,0.07)",
+                    backgroundImage: "var(--monitor-bg)"
                 }}
             >
                 <MonitorIcon />
@@ -110,7 +109,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                 initial="cardHidden"
                 whileInView="cardVisible"
                 viewport={{ once: true, amount: 0.3 }}
-                className="w-px h-[46px] bg-white/30 origin-top"
+                className="w-px h-[46px] bg-zinc-300 dark:bg-white/30 origin-top"
             />
 
             {/* Terminal window */}
@@ -120,17 +119,16 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                 initial="cardHidden"
                 whileInView="cardVisible"
                 viewport={{ once: true, amount: 0.3 }}
-                className="w-full sm:w-[220px] rounded-[14px] bg-[#0d0d0d] border border-white/10 relative overflow-visible"
+                className="w-full sm:w-[220px] rounded-[14px] bg-white dark:bg-[#0d0d0d] border border-zinc-200 dark:border-white/10 shadow-xl dark:shadow-none relative overflow-visible"
             >
                 {/* Title bar */}
                 <div className="flex flex-row items-center px-4 pt-[14px] relative">
                     {/* Centre pip (connector dot) */}
                     <div
-                        className="w-[9px] h-[9px] rounded-full bg-white border-[1.5px] border-black absolute -top-[5px] left-1/2 -translate-x-1/2"
-                        style={{ boxShadow: "0 0 5px 1px rgba(255,255,255,0.25)" }}
+                        className="w-[9px] h-[9px] rounded-full bg-zinc-300 dark:bg-white border-[1.5px] border-white dark:border-black absolute -top-[5px] left-1/2 -translate-x-1/2 shadow-sm dark:shadow-[0_0_5px_1px_rgba(255,255,255,0.25)]"
                     />
                     {/* Left dim dot */}
-                    <div className="w-[13px] h-[13px] rounded-full bg-[#2a2a2a] border border-white/[0.06] shrink-0" />
+                    <div className="w-[13px] h-[13px] rounded-full bg-zinc-200 dark:bg-[#2a2a2a] border border-black/5 dark:border-white/[0.06] shrink-0" />
                 </div>
 
                 {/* Terminal content */}
@@ -142,7 +140,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-zinc-600 dark:text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[0]}
                     </motion.p>
@@ -154,7 +152,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-zinc-600 dark:text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[1]}
                     </motion.p>
@@ -166,7 +164,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
+                        className="text-[14px] sm:text-[15px] text-zinc-600 dark:text-white/75 tracking-[0.01em] leading-none mb-[16px] sm:mb-[18px]"
                     >
                         {lines[2]}
                     </motion.p>
@@ -178,7 +176,7 @@ function TerminalCard({ cardIndex, lines }: { cardIndex: number; lines: string[]
                         initial="cardHidden"
                         whileInView="cardVisible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="text-[14px] sm:text-[15px] text-white/75 tracking-[0.01em] leading-none mt-0.5"
+                        className="text-[14px] sm:text-[15px] text-zinc-600 dark:text-white/75 tracking-[0.01em] leading-none mt-0.5"
                     >
                         {lines[3]}
                     </motion.p>
@@ -342,39 +340,39 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
 
                 {/* ── LEFT TERMINAL — emerald green border ── */}
                 <motion.div custom={D.termL} variants={rcTermV} initial="cardHidden" whileInView="cardVisible" viewport={vp}
-                    className="rc-pl"
-                    style={{ position: "absolute", left: px(88), top: py(36), width: px(310), background: "rgba(4,5,10,0.97)", borderRadius: 13, overflow: "hidden", border: "1.5px solid rgba(52,211,153,0.82)", zIndex: 20 }}>
+                    className="rc-pl bg-white dark:bg-[#04050a]"
+                    style={{ position: "absolute", left: px(88), top: py(36), width: px(310), borderRadius: 13, overflow: "hidden", border: "1.5px solid rgba(52,211,153,0.82)", zIndex: 20 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 14px 9px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(210,60,60,0.82)" }} />
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(196,150,36,0.65)" }} />
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(46,176,50,0.65)" }} />
                     </div>
-                    <div style={{ padding: "14px 17px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, color: "#a8a8bc" }}>
-                        <div style={{ color: "#48485e" }}>{rightTermCmd}</div>
-                        <div style={{ marginTop: 8 }}><span style={{ color: "#4ade80", fontWeight: 700 }}>{rightTermLine1}</span></div>
-                        <div style={{ color: "#48485e" }}>{rightTermLine2}</div>
-                        <div style={{ color: "#fff", fontWeight: 700 }}>{rightTermLine3}</div>
+                    <div className="text-zinc-500 dark:text-[#a8a8bc]" style={{ padding: "14px 17px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7 }}>
+                        <div className="text-zinc-400 dark:text-[#48485e]">{rightTermCmd}</div>
+                        <div style={{ marginTop: 8 }}><span className="text-emerald-500 dark:text-[#4ade80]" style={{ fontWeight: 700 }}>{rightTermLine1}</span></div>
+                        <div className="text-zinc-400 dark:text-[#48485e]">{rightTermLine2}</div>
+                        <div className="text-zinc-900 dark:text-[#fff]" style={{ fontWeight: 700 }}>{rightTermLine3}</div>
                     </div>
                 </motion.div>
 
                 {/* ── RIGHT TERMINAL — pink border ── */}
                 <motion.div custom={D.termR} variants={rcTermV} initial="cardHidden" whileInView="cardVisible" viewport={vp}
-                    className="rc-pr"
-                    style={{ position: "absolute", left: px(496), top: py(76), width: px(310), background: "rgba(4,5,10,0.97)", borderRadius: 13, overflow: "hidden", border: "1.5px solid rgba(236,72,153,0.82)", zIndex: 20 }}>
+                    className="rc-pr bg-white dark:bg-[#04050a]"
+                    style={{ position: "absolute", left: px(496), top: py(76), width: px(310), borderRadius: 13, overflow: "hidden", border: "1.5px solid rgba(236,72,153,0.82)", zIndex: 20 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 14px 9px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(210,60,60,0.82)" }} />
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(196,150,36,0.65)" }} />
                         <div style={{ width: 11, height: 11, borderRadius: "50%", background: "rgba(46,176,50,0.65)" }} />
                     </div>
-                    <div style={{ padding: "14px 17px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, color: "#a8a8bc", letterSpacing: "-0.02em" }}>
-                        <div style={{ color: "#48485e" }}>{rightTermCmd}</div>
-                        <div style={{ marginTop: 8 }}><span style={{ color: "#4ade80", fontWeight: 700 }}>{rightTermLine1}</span></div>
-                        <div><span style={{ color: "#22d3ee", fontWeight: 700 }}>{rightTermLine2}</span></div>
-                        <div style={{ color: "#48485e" }}>{rightTermLine3}</div>
+                    <div className="text-zinc-500 dark:text-[#a8a8bc]" style={{ padding: "14px 17px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, letterSpacing: "-0.02em" }}>
+                        <div className="text-zinc-400 dark:text-[#48485e]">{rightTermCmd}</div>
+                        <div style={{ marginTop: 8 }}><span className="text-emerald-500 dark:text-[#4ade80]" style={{ fontWeight: 700 }}>{rightTermLine1}</span></div>
+                        <div><span className="text-cyan-500 dark:text-[#22d3ee]" style={{ fontWeight: 700 }}>{rightTermLine2}</span></div>
+                        <div className="text-zinc-400 dark:text-[#48485e]">{rightTermLine3}</div>
                         <div style={{ display: "flex", gap: 2, flexWrap: "nowrap", marginTop: 4 }}>
-                            <span style={{ color: "#fff", fontWeight: 700 }}>116ms</span>
-                            <span style={{ color: "#22d3ee", fontWeight: 700 }}>&nbsp;{">>>"}</span>
-                            <span style={{ color: "#f472b6", fontWeight: 700 }}>&nbsp;CLASSGRID OS</span>
+                            <span className="text-zinc-900 dark:text-[#fff]" style={{ fontWeight: 700 }}>116ms</span>
+                            <span className="text-cyan-500 dark:text-[#22d3ee]" style={{ fontWeight: 700 }}>&nbsp;{">>>"}</span>
+                            <span className="text-pink-500 dark:text-[#f472b6]" style={{ fontWeight: 700 }}>&nbsp;CLASSGRID OS</span>
                         </div>
                     </div>
                 </motion.div>
@@ -403,7 +401,7 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
                         <path className="rc-aa" d="M 44 6 A 38 38 0 0 0 44 82" fill="none" stroke="rgba(52,211,153,0.92)" strokeWidth="5" strokeLinecap="round" filter="url(#rcGML)" />
                         <path className="rc-ab" d="M 44 82 A 38 38 0 0 0 44 6" fill="none" stroke="rgba(236,72,153,0.92)" strokeWidth="5" strokeLinecap="round" filter="url(#rcGML)" />
                     </svg>
-                    <div style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "80%", borderRadius: "50%", background: "rgba(4,6,14,0.97)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div className="bg-white dark:bg-[#04060e] shadow-[0_2px_12px_rgba(0,0,0,0.05)] dark:shadow-none" style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "80%", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
                             <rect x="3" y="5" width="34" height="20" rx="3" stroke="rgba(196,170,255,0.88)" strokeWidth="1.8" fill="none" />
                             <rect x="16" y="25" width="8" height="5" rx="1" stroke="rgba(196,170,255,0.88)" strokeWidth="1.6" fill="none" />
@@ -426,7 +424,7 @@ function RightColumn({ rightTermCmd, rightTermLine1, rightTermLine2, rightTermLi
                         <path className="rc-ab" d="M 44 6 A 38 38 0 0 1 44 82" fill="none" stroke="rgba(236,72,153,0.92)" strokeWidth="5" strokeLinecap="round" filter="url(#rcGMR)" />
                         <path className="rc-aa" d="M 44 82 A 38 38 0 0 1 44 6" fill="none" stroke="rgba(52,211,153,0.92)" strokeWidth="5" strokeLinecap="round" filter="url(#rcGMR)" />
                     </svg>
-                    <div style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "80%", borderRadius: "50%", background: "rgba(4,6,14,0.97)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div className="bg-white dark:bg-[#04060e] shadow-[0_2px_12px_rgba(0,0,0,0.05)] dark:shadow-none" style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "80%", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
                             <rect x="3" y="5" width="34" height="20" rx="3" stroke="rgba(130,204,255,0.90)" strokeWidth="1.8" fill="none" />
                             <rect x="16" y="25" width="8" height="5" rx="1" stroke="rgba(130,204,255,0.90)" strokeWidth="1.6" fill="none" />
@@ -529,18 +527,17 @@ export function TurboComparisonNew({
 
     return (
         <section
-            style={{ backgroundColor: "var(--muted)" }}
-            className="relative overflow-x-clip py-10 pb-44 md:py-24 lg:py-32"
+            className="relative overflow-x-clip py-10 pb-44 md:py-24 lg:py-32 bg-muted"
         >
             <div className="relative mx-auto max-w-6xl px-6">
 
                 {/* Heading */}
                 <div className="mb-8 md:mb-16 text-center">
                     <div className="mx-auto mb-4 md:mb-6 h-1.5 w-16 md:w-24 rounded-full bg-orange-500" />
-                    <h2 className="text-2xl font-extrabold tracking-tight text-white md:text-5xl">
+                    <h2 className="text-2xl font-extrabold tracking-tight text-foreground dark:text-white md:text-5xl">
                         {headline || "Close Admissions in Minutes, Not Days"}
                     </h2>
-                    <p className="mx-auto mt-3 max-w-2xl text-sm md:text-base text-zinc-400 px-2">
+                    <p className="mx-auto mt-3 max-w-2xl text-sm md:text-base text-muted-foreground dark:text-zinc-400 px-2">
                         {subheadline || "Classgrid verifies documents, builds merit lists, issues PRNs, links fee ledgers, and syncs every dashboard automatically."}
                     </p>
                 </div>
@@ -567,13 +564,13 @@ export function TurboComparisonNew({
                             className="mt-[52px] hidden sm:flex flex-col items-center gap-2"
                         >
                             <span
-                                className="text-[11.5px] font-medium text-white/40 tracking-[0.21em] uppercase"
+                                className="text-[11.5px] font-medium text-muted-foreground dark:text-white/40 tracking-[0.21em] uppercase"
                                 style={{ fontFamily: "-apple-system, 'Helvetica Neue', Arial, sans-serif" }}
                             >
                                 {leftLabel || "Without ClassGrid"}
                             </span>
                             <span
-                                className="text-[32px] font-bold text-white tracking-[-0.015em] leading-[1.1]"
+                                className="text-[32px] font-bold text-foreground dark:text-white tracking-[-0.015em] leading-[1.1]"
                                 style={{ fontFamily: "-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" }}
                             >
                                 {leftTime || "48h 12m"}

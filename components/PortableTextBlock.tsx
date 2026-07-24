@@ -27,7 +27,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
   return {
     block: {
       normal: ({ children }) => (
-        <p className="mt-5 mx-auto max-w-[750px] text-base leading-7 text-muted-foreground antialiased font-normal">
+        <p className="mt-5 mx-auto max-w-[750px] text-base leading-7 text-[#171717] dark:text-[#ededed] antialiased font-normal">
           {children}
         </p>
       ),
@@ -50,7 +50,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         </h4>
       ),
       blockquote: ({ children }) => (
-        <blockquote className="my-8 mx-auto max-w-[750px] rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/10 py-4 pl-5 pr-4 text-base leading-7 text-muted-foreground antialiased">
+        <blockquote className="my-8 mx-auto max-w-[750px] rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/10 py-4 pl-5 pr-4 text-base leading-7 text-[#171717] dark:text-[#ededed] antialiased">
           {children}
         </blockquote>
       ),
@@ -69,13 +69,13 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
     },
     listItem: {
       bullet: ({ children }) => (
-        <li className="relative pl-6 text-base leading-7 text-muted-foreground">
+        <li className="relative pl-6 text-base leading-7 text-[#171717] dark:text-[#ededed]">
           <span className="absolute left-0 top-[0.6em] h-2 w-2 rounded-full bg-emerald-500 block" />
           {children}
         </li>
       ),
       number: ({ children }) => (
-        <li className="pl-2 text-base leading-7 text-muted-foreground">
+        <li className="pl-2 text-base leading-7 text-[#171717] dark:text-[#ededed]">
           {children}
         </li>
       ),
@@ -194,61 +194,61 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         );
       },
       table: ({ value }) => {
-        if (!value?.rows?.length) return null;
-        return (
-          <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
-                <tr>
-                  {value.rows[0].cells.map((cell: any, i: number) => (
-                    <th key={i} className="px-5 py-3 font-semibold text-emerald-400 antialiased border-r border-border last:border-r-0">
-                      {cell}
-                    </th>
+      if (!value?.rows?.length) return null;
+      return (
+        <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-slate-300 dark:border-white/10 bg-card shadow-sm">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
+              <tr>
+                {value.rows[0].cells.map((cell: any, i: number) => (
+                  <th key={i} className="px-5 py-3 font-semibold text-emerald-700 dark:text-emerald-400 antialiased border-r border-slate-300 dark:border-white/10 last:border-r-0">
+                    {cell}
+                  </th>
                   ))}
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {value.rows.slice(1).map((row: any, i: number) => (
-                  <tr key={i} className="transition-colors hover:bg-emerald-500/5">
-                    {row.cells.map((cell: any, j: number) => (
-                      <td key={j} className="px-5 py-3.5 text-muted-foreground antialiased leading-relaxed border-r border-border/40 last:border-r-0">
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
+            </thead>
+            <tbody className="divide-y divide-slate-300 dark:divide-white/10">
+              {value.rows.slice(1).map((row: any, i: number) => (
+                <tr key={i} className="transition-colors hover:bg-emerald-500/5">
+                  {row.cells.map((cell: any, j: number) => (
+                    <td key={j} className="px-5 py-3.5 text-slate-800 dark:text-slate-300 font-medium antialiased leading-relaxed border-r border-slate-300 dark:border-white/10 last:border-r-0">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
             </table>
           </div>
         );
       },
       richTable: ({ value }) => {
-        if (!value?.headers?.length && !value?.rows?.length) return null;
-        return (
-          <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-            <table className="w-full border-collapse text-left text-sm">
-              {value.headers?.length > 0 && (
-                <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
-                  <tr>
-                    {value.headers.map((header: string, i: number) => (
-                      <th key={i} className="px-5 py-3 font-semibold text-emerald-400 antialiased border-r border-border last:border-r-0">
-                        {header}
-                      </th>
+      if (!value?.headers?.length && !value?.rows?.length) return null;
+      return (
+        <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-slate-300 dark:border-white/10 bg-card shadow-sm">
+          <table className="w-full border-collapse text-left text-sm">
+            {value.headers?.length > 0 && (
+              <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
+                <tr>
+                  {value.headers.map((header: string, i: number) => (
+                    <th key={i} className="px-5 py-3 font-semibold text-emerald-700 dark:text-emerald-400 antialiased border-r border-slate-300 dark:border-white/10 last:border-r-0">
+                      {header}
+                    </th>
                     ))}
                   </tr>
-                </thead>
-              )}
-              <tbody className="divide-y divide-border/60">
-                {(value.rows || []).map((row: any, i: number) => (
-                  <tr key={i} className="transition-colors hover:bg-emerald-500/5">
-                    {(row.cells || []).map((cell: string, j: number) => (
-                      <td key={j} className="px-5 py-3.5 text-muted-foreground antialiased leading-relaxed border-r border-border/40 last:border-r-0">
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
+              </thead>
+            )}
+            <tbody className="divide-y divide-slate-300 dark:divide-white/10">
+              {(value.rows || []).map((row: any, i: number) => (
+                <tr key={i} className="transition-colors hover:bg-emerald-500/5">
+                  {(row.cells || []).map((cell: string, j: number) => (
+                    <td key={j} className="px-5 py-3.5 text-slate-800 dark:text-slate-300 font-medium antialiased leading-relaxed border-r border-slate-300 dark:border-white/10 last:border-r-0">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
             </table>
           </div>
         );

@@ -162,10 +162,10 @@ export function DocsSearchPalette({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-x-0 top-[12vh] z-[101] mx-auto w-[min(92vw,580px)]"
           >
-            <div className="overflow-hidden rounded-xl border border-white/[0.12] bg-[#0a0a0a]/95 shadow-[0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/[0.12] bg-white/95 dark:bg-[#0a0a0a]/95 shadow-[0_25px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl">
               {/* Search Input */}
-              <div className="flex items-center gap-3 border-b border-white/[0.08] px-4 py-3">
-                <Search className="h-5 w-5 shrink-0 text-white/40" />
+              <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/[0.08] px-4 py-3">
+                <Search className="h-5 w-5 shrink-0 text-slate-900 dark:text-white/40" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -173,14 +173,14 @@ export function DocsSearchPalette({
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search documentation..."
-                  className="flex-1 bg-transparent text-[15px] text-white placeholder:text-white/35 outline-none"
+                  className="flex-1 bg-transparent text-[15px] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/35 outline-none"
                   autoComplete="off"
                   spellCheck={false}
                 />
                 {loading && (
-                  <Loader2 className="h-4 w-4 shrink-0 animate-spin text-white/30" />
+                  <Loader2 className="h-4 w-4 shrink-0 animate-spin text-slate-900 dark:text-white/30" />
                 )}
-                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-white/[0.1] bg-white/[0.04] px-1.5 py-0.5 text-[11px] font-medium text-white/40">
+                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-1.5 py-0.5 text-[11px] font-medium text-slate-500 dark:text-white/40">
                   Esc
                 </kbd>
               </div>
@@ -190,7 +190,7 @@ export function DocsSearchPalette({
                 {/* Empty state when no query */}
                 {!query.trim() && (
                   <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-                    <div className="flex items-center gap-2 text-white/25">
+                    <div className="flex items-center gap-2 text-slate-900 dark:text-white/25">
                       <Command className="h-4 w-4" />
                       <span className="text-[13px]">Type to search across all documentation</span>
                     </div>
@@ -200,8 +200,8 @@ export function DocsSearchPalette({
                 {/* No results */}
                 {query.trim().length >= 2 && !loading && results.length === 0 && (
                   <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-                    <Search className="h-6 w-6 text-white/15" />
-                    <p className="text-[13px] text-white/40">
+                    <Search className="h-6 w-6 text-slate-900 dark:text-white/15" />
+                    <p className="text-[13px] text-slate-900 dark:text-white/40">
                       No documentation found for &ldquo;{query}&rdquo;
                     </p>
                   </div>
@@ -219,30 +219,30 @@ export function DocsSearchPalette({
                         className={cn(
                           "group flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-100 cursor-pointer",
                           activeIndex === index
-                            ? "bg-white/[0.07]"
-                            : "hover:bg-white/[0.04]"
+                            ? "bg-slate-100 dark:bg-white/[0.07]"
+                            : "hover:bg-slate-50 dark:hover:bg-white/[0.04]"
                         )}
                       >
                         <FileText className={cn(
                           "mt-0.5 h-4 w-4 shrink-0 transition-colors",
-                          activeIndex === index ? "text-emerald-400" : "text-white/30"
+                          activeIndex === index ? "text-emerald-400" : "text-slate-900 dark:text-white/30"
                         )} />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <span className={cn(
                               "text-[14px] font-medium truncate transition-colors",
-                              activeIndex === index ? "text-white" : "text-white/80"
+                              activeIndex === index ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-white/80"
                             )}>
                               {highlightMatch(result.title, query)}
                             </span>
                             {result.category && (
-                              <span className="shrink-0 rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-medium text-white/40 uppercase tracking-wider">
+                              <span className="shrink-0 rounded-full bg-slate-100 dark:bg-white/[0.06] px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:text-white/40 uppercase tracking-wider">
                                 {CATEGORY_LABELS[result.category] || result.category}
                               </span>
                             )}
                           </div>
                           {result.snippet && (
-                            <p className="mt-0.5 text-[12px] leading-relaxed text-white/35 line-clamp-2">
+                            <p className="mt-0.5 text-[12px] leading-relaxed text-slate-900 dark:text-white/35 line-clamp-2">
                               {highlightMatch(result.snippet, query)}
                             </p>
                           )}
@@ -251,7 +251,7 @@ export function DocsSearchPalette({
                           "mt-1 h-3.5 w-3.5 shrink-0 transition-all",
                           activeIndex === index
                             ? "text-emerald-400 translate-x-0 opacity-100"
-                            : "text-white/20 -translate-x-1 opacity-0"
+                            : "text-slate-900 dark:text-white/20 -translate-x-1 opacity-0"
                         )} />
                       </button>
                     ))}
@@ -261,22 +261,22 @@ export function DocsSearchPalette({
 
               {/* Footer */}
               {results.length > 0 && (
-                <div className="flex items-center justify-between border-t border-white/[0.06] px-4 py-2">
-                  <div className="flex items-center gap-3 text-[11px] text-white/30">
+                <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/[0.06] px-4 py-2">
+                  <div className="flex items-center gap-3 text-[11px] text-slate-900 dark:text-white/30">
                     <span className="flex items-center gap-1">
-                      <kbd className="rounded border border-white/[0.1] bg-white/[0.04] px-1 py-0.5 text-[10px]">↑↓</kbd>
+                      <kbd className="rounded border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-1 py-0.5 text-[10px]">↑↓</kbd>
                       Navigate
                     </span>
                     <span className="flex items-center gap-1">
-                      <kbd className="rounded border border-white/[0.1] bg-white/[0.04] px-1 py-0.5 text-[10px]">↵</kbd>
+                      <kbd className="rounded border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-1 py-0.5 text-[10px]">↵</kbd>
                       Open
                     </span>
                     <span className="flex items-center gap-1">
-                      <kbd className="rounded border border-white/[0.1] bg-white/[0.04] px-1 py-0.5 text-[10px]">Esc</kbd>
+                      <kbd className="rounded border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-1 py-0.5 text-[10px]">Esc</kbd>
                       Close
                     </span>
                   </div>
-                  <span className="text-[11px] text-white/25">{results.length} result{results.length !== 1 ? "s" : ""}</span>
+                  <span className="text-[11px] text-slate-900 dark:text-white/25">{results.length} result{results.length !== 1 ? "s" : ""}</span>
                 </div>
               )}
             </div>
