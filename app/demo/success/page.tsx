@@ -845,7 +845,7 @@ function DemoSuccessPageInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-6 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-6 bg-black/40 dark:bg-black/70 backdrop-blur-md"
           >
             <motion.div
               key="talk-card"
@@ -853,7 +853,7 @@ function DemoSuccessPageInner() {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 80, opacity: 0, scale: 0.96 }}
               transition={{ type: "spring", damping: 26, stiffness: 320, mass: 0.85 }}
-              className="relative w-full sm:max-w-md overflow-hidden bg-[#0d0d0d] border border-zinc-800/80 rounded-t-3xl sm:rounded-2xl shadow-[0_-8px_40px_rgba(16,185,129,0.08),0_30px_80px_rgba(0,0,0,0.8)]"
+              className="relative w-full sm:max-w-md overflow-hidden bg-card border border-border rounded-t-3xl sm:rounded-2xl shadow-[0_-8px_40px_rgba(16,185,129,0.08),0_30px_80px_rgba(0,0,0,0.3)] dark:shadow-[0_-8px_40px_rgba(16,185,129,0.08),0_30px_80px_rgba(0,0,0,0.8)]"
             >
               {/* Thin emerald line at top */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
@@ -866,14 +866,14 @@ function DemoSuccessPageInner() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.45 }}
                 onClick={() => { setShowTalkPopup(false); setShowThankYou(true); }}
-                className="absolute top-4 right-4 p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded-full hover:bg-white/5 z-10"
+                className="absolute top-4 right-4 p-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted z-10"
               >
                 <X className="w-4 h-4" />
               </motion.button>
 
               {/* Mobile drag indicator */}
               <div className="sm:hidden flex justify-center pt-3 pb-0">
-                <div className="w-9 h-1 rounded-full bg-zinc-700" />
+                <div className="w-9 h-1 rounded-full bg-border" />
               </div>
 
               <div className="p-6 sm:p-8">
@@ -902,7 +902,7 @@ function DemoSuccessPageInner() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15, type: "spring", stiffness: 280 }}
-                  className="text-[22px] font-bold text-white mb-2 tracking-tight leading-snug"
+                  className="text-[22px] font-bold text-foreground mb-2 tracking-tight leading-snug"
                 >
                   Classgrid Talk
                 </motion.h3>
@@ -912,9 +912,9 @@ function DemoSuccessPageInner() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.22, type: "spring", stiffness: 280 }}
-                  className="text-sm text-zinc-400 mb-5 leading-relaxed"
+                  className="text-sm text-muted-foreground mb-5 leading-relaxed"
                 >
-                  Have questions before our meeting? Submit an inquiry and chat directly with a product specialist — get answers tailored to your institution&apos;s needs, <span className="text-zinc-200 font-medium">right now</span>.
+                  Have questions before our meeting? Submit an inquiry and chat directly with a product specialist — get answers tailored to your institution&apos;s needs, <span className="text-foreground font-medium">right now</span>.
                 </motion.p>
 
                 {/* Feature tags */}
@@ -925,7 +925,7 @@ function DemoSuccessPageInner() {
                   className="flex flex-wrap gap-2 mb-6"
                 >
                   {["Direct inquiry", "Expert response", "Within 24h"].map((tag) => (
-                    <span key={tag} className="text-[11px] text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1 font-medium">
+                    <span key={tag} className="text-[11px] text-muted-foreground bg-muted border border-border rounded-full px-3 py-1 font-medium">
                       {tag}
                     </span>
                   ))}
@@ -953,7 +953,7 @@ function DemoSuccessPageInner() {
                   </a>
                   <button
                     onClick={() => { setShowTalkPopup(false); setShowThankYou(true); }}
-                    className="w-full py-3 px-4 text-zinc-500 hover:text-zinc-300 text-sm font-medium rounded-xl text-center transition-colors hover:bg-white/5"
+                    className="cursor-pointer w-full py-3 px-4 text-muted-foreground hover:text-foreground text-sm font-medium rounded-xl text-center transition-colors hover:bg-muted"
                   >
                     Maybe Later
                   </button>
