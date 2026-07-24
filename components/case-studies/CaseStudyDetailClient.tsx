@@ -56,7 +56,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
 
 
       {/* 2. HERO */}
-      <section className="relative w-full h-[72vh] min-h-[520px] max-h-[860px] bg-muted overflow-hidden">
+      <section className="relative w-full h-[72vh] min-h-[520px] max-h-[860px] bg-zinc-950 overflow-hidden">
         {data.heroImageUrl && (
           <>
             {/* Blurred ambient backdrop — fills empty space for portrait photos */}
@@ -78,7 +78,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
             />
           </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
 
         <div className="absolute inset-0 flex items-end">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16">
@@ -101,10 +101,10 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                   {data.year}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
                 {data.title}
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground font-medium">
+              <p className="text-lg md:text-xl text-zinc-300 font-medium">
                 {data.clientName}
               </p>
             </motion.div>
