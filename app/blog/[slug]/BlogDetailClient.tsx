@@ -293,15 +293,16 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                   />
                 </div>
               ) : section.imageUrl ? (
-                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10 group`}>
+                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
                   <ImageGallery
                     images={[{
                       id: `blog-section-${i}`,
                       src: section.imageUrl,
                       alt: section.imageAlt || section.heading || 'Blog section media',
-                      className: "absolute inset-0 w-full h-full border-none rounded-none group-hover:scale-105 transition-transform duration-700"
+                      className: "absolute inset-0 w-full h-full border-none rounded-none"
                     }]}
                     className="!grid-cols-1 !auto-rows-auto !gap-0 w-full h-full"
+                    disableHoverZoom={true}
                   />
                 </div>
               ) : null;

@@ -18,6 +18,7 @@ export interface GalleryImage {
 interface ImageGalleryProps {
   images: GalleryImage[];
   className?: string;
+  disableHoverZoom?: boolean;
 }
 
 /* ─── slide variants for arrow-key / swipe navigation ─── */
@@ -54,7 +55,7 @@ const slideVariants = {
  * Mobile: swipe left/right to navigate, pinch to zoom, tap outside to close
  * Desktop: arrow keys, prev/next buttons, keyboard Escape
  */
-export function ImageGallery({ images, className }: ImageGalleryProps) {
+export function ImageGallery({ images, className, disableHoverZoom = false }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [direction, setDirection] = useState(0);
   const clickedImageRef = useRef<GalleryImage | null>(null);
@@ -176,10 +177,16 @@ export function ImageGallery({ images, className }: ImageGalleryProps) {
               src={img.src}
               alt={img.alt}
               fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className={cn(
+                "object-cover transition-transform duration-700 ease-out",
+                !disableHoverZoom && "group-hover:scale-105"
+              )}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20 z-10" />
+            <div className={cn(
+              "absolute inset-0 bg-black/0 transition-colors duration-300 z-10",
+              !disableHoverZoom && "group-hover:bg-black/20"
+            )} />
             {img.caption && (
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                 <p className="text-white text-sm font-medium">{img.caption}</p>
