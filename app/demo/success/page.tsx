@@ -494,7 +494,7 @@ function DemoSuccessPageInner() {
                 <div className="flex items-center p-1 bg-muted rounded-xl w-full relative">
                   <button
                     onClick={() => setPlatform("google_meet")}
-                    className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
+                    className={`cursor-pointer relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
                       platform === "google_meet" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -512,7 +512,7 @@ function DemoSuccessPageInner() {
                   
                   <button
                     onClick={() => setPlatform("zoom")}
-                    className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
+                    className={`cursor-pointer relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
                       platform === "zoom" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -578,7 +578,7 @@ function DemoSuccessPageInner() {
                         setSlideDir(-1);
                         setCurrentMonth(subMonths(currentMonth, 1));
                       }}
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
+                      className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <ChevronLeftIcon className="w-4 h-4" />
                     </button>
@@ -590,7 +590,7 @@ function DemoSuccessPageInner() {
                         setSlideDir(1);
                         setCurrentMonth(addMonths(currentMonth, 1));
                       }}
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
+                      className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <ChevronRightIcon className="w-4 h-4" />
                     </button>
@@ -752,7 +752,7 @@ function DemoSuccessPageInner() {
                             <button
                               key={time}
                               onClick={() => setSelectedTime(time)}
-                              className="w-full px-4 py-3 text-sm font-medium rounded-lg border border-border hover:border-foreground/50 bg-transparent text-foreground transition-all"
+                              className="cursor-pointer w-full px-4 py-3 text-sm font-medium rounded-lg border border-border hover:border-foreground/50 bg-transparent text-foreground transition-all"
                             >
                               {time}
                             </button>
