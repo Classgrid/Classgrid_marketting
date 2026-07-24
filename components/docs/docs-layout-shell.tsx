@@ -59,7 +59,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── MOBILE NAV BAR (Vercel Style) ── */}
-      <div className="lg:hidden sticky top-16 z-40 bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 flex items-center justify-between -mx-4 px-4 sm:-mx-6 sm:px-6 h-12">
+      <div className="lg:hidden sticky top-16 z-40 bg-white dark:bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 flex items-center justify-between -mx-4 px-4 sm:-mx-6 sm:px-6 h-12">
         <button 
           onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileTocOpen(false); }} 
           className="flex items-center gap-2 text-[13px] font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -100,7 +100,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-0 left-0 right-0 bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-4rem)] px-4 py-4 z-[70]"
+              className="absolute top-0 left-0 right-0 bg-white dark:bg-[#0a0a0a] border-b border-slate-200 dark:border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-4rem)] px-4 py-4 z-[70]"
             >
               <div className="flex items-center justify-between mb-3 mt-1 px-2">
                 <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Navigation</span>
@@ -133,7 +133,7 @@ export function DocsLayoutShell({ children, sidebarSections = [] }: { children: 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-0 right-0 left-0 sm:left-auto sm:w-80 bg-[#0a0a0a] border-b border-l border-slate-200 dark:border-white/10 shadow-2xl overflow-y-auto max-h-[calc(100vh-4rem)] py-4 z-[70]"
+              className="absolute top-0 right-0 left-0 sm:left-auto sm:w-80 bg-white dark:bg-[#0a0a0a] border-b border-l border-slate-200 dark:border-white/10 shadow-2xl overflow-y-auto max-h-[calc(100vh-4rem)] py-4 z-[70]"
             >
               <div className="px-6 py-2 mb-2 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-500 uppercase tracking-wider">On this page</span>

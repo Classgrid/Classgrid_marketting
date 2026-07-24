@@ -496,12 +496,12 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
 
         {/* Slide-up TOC panel — only mounted when open to avoid GPU layer conflicts */}
         {mobileTocOpen && (
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-white/10 rounded-t-2xl animate-in slide-in-from-bottom duration-300">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-              <span className="text-[13px] font-semibold text-white tracking-wide">On this page</span>
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#0a0a0a] border-t border-slate-200 dark:border-white/10 rounded-t-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/10">
+              <span className="text-[13px] font-semibold text-slate-900 dark:text-white tracking-wide">On this page</span>
               <button
                 onClick={() => setMobileTocOpen(false)}
-                className="text-neutral-400 hover:text-white transition-colors"
+                className="text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Close table of contents"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -518,8 +518,8 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
                   className={cn(
                     "block px-3 py-2.5 rounded-lg text-[14px] transition-colors",
                     activeSection === item.id
-                      ? "bg-emerald-500/15 text-emerald-400 font-medium"
-                      : "text-neutral-400 hover:text-white hover:bg-white/5"
+                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-medium"
+                      : "text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                   )}
                 >
                   {item.label}
@@ -533,7 +533,7 @@ export function ComparisonDetailClient({ comparison }: ComparisonDetailClientPro
         {/* Floating pill trigger button */}
         <button
           onClick={() => setMobileTocOpen((v) => !v)}
-          className="fixed bottom-5 right-4 z-40 flex items-center gap-2 rounded-full bg-[#111] border border-white/15 px-4 py-2.5 text-[13px] font-medium text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-emerald-500/40 hover:bg-[#1a1a1a] active:scale-95"
+          className="fixed bottom-5 right-4 z-40 flex items-center gap-2 rounded-full bg-white dark:bg-[#111] border border-slate-200 dark:border-white/15 px-4 py-2.5 text-[13px] font-medium text-slate-900 dark:text-white shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-emerald-500/40 hover:bg-slate-50 dark:hover:bg-[#1a1a1a] active:scale-95"
           aria-label="Open table of contents"
         >
           <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
