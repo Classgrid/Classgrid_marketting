@@ -225,15 +225,15 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
 
         // Shared marks and types for both modes
         const sharedMarks = {
-          strong: ({ children }: any) => <strong className="font-semibold text-white">{children}</strong>,
-          em: ({ children }: any) => <em className="italic text-zinc-200">{children}</em>,
+          strong: ({ children }: any) => <strong className="font-semibold text-foreground dark:text-white">{children}</strong>,
+          em: ({ children }: any) => <em className="italic text-slate-700 dark:text-zinc-200">{children}</em>,
           code: ({ children }: any) => (
-            <code className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[14px] font-medium text-emerald-400">
+            <code className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[14px] font-medium text-emerald-600 dark:text-emerald-400">
               {children}
             </code>
           ),
           link: ({ children, value }: any) => (
-            <a className="font-medium text-emerald-400 underline-offset-4 hover:underline transition-colors" href={value?.href} target="_blank" rel="noreferrer">
+            <a className="font-medium text-emerald-600 dark:text-emerald-400 underline-offset-4 hover:underline transition-colors" href={value?.href} target="_blank" rel="noreferrer">
               {children}
             </a>
           ),
@@ -248,7 +248,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
                   <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
                     <tr>
                       {value.rows[0].cells.map((cell: any, i: number) => (
-                        <th key={i} className="px-5 py-3.5 font-semibold text-emerald-400 border-r border-border last:border-r-0">{cell}</th>
+                        <th key={i} className="px-5 py-3.5 font-semibold text-emerald-700 dark:text-emerald-400 border-r border-border last:border-r-0">{cell}</th>
                       ))}
                     </tr>
                   </thead>
@@ -279,12 +279,12 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
         // COMPACT — for text paired with image/video (restrained, short)
         const ptCompact = {
           block: {
-            h2: ({ children }: any) => <h2 className="text-2xl font-semibold mb-4 text-white leading-snug first:mt-0">{children}</h2>,
-            h3: ({ children }: any) => <h3 className="text-xl font-semibold mb-3 text-white first:mt-0">{children}</h3>,
-            h4: ({ children }: any) => <h4 className="text-lg font-medium mb-2 text-white first:mt-0">{children}</h4>,
+            h2: ({ children }: any) => <h2 className="text-2xl font-semibold mb-4 text-foreground dark:text-white leading-snug first:mt-0">{children}</h2>,
+            h3: ({ children }: any) => <h3 className="text-xl font-semibold mb-3 text-foreground dark:text-white first:mt-0">{children}</h3>,
+            h4: ({ children }: any) => <h4 className="text-lg font-medium mb-2 text-foreground dark:text-white first:mt-0">{children}</h4>,
             normal: ({ children }: any) => <p className="text-base text-muted-foreground mb-5 leading-7 antialiased">{children}</p>,
             blockquote: ({ children }: any) => (
-              <blockquote className="my-6 border-l-2 border-emerald-500 pl-4 text-base leading-7 text-zinc-200 italic">{children}</blockquote>
+              <blockquote className="my-6 border-l-2 border-emerald-500 pl-4 text-base leading-7 text-slate-700 dark:text-zinc-200 italic">{children}</blockquote>
             ),
           },
           marks: sharedMarks,
@@ -307,12 +307,12 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
         // FULL — for standalone text blocks (spacious, editorial)
         const ptFull = {
           block: {
-            h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-serif font-bold mt-12 mb-6 text-white leading-tight first:mt-0">{children}</h2>,
-            h3: ({ children }: any) => <h3 className="text-2xl md:text-3xl font-serif font-semibold mt-10 mb-5 text-white leading-snug first:mt-0">{children}</h3>,
-            h4: ({ children }: any) => <h4 className="text-xl font-semibold mt-8 mb-4 text-white first:mt-0">{children}</h4>,
+            h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-serif font-bold mt-12 mb-6 text-foreground dark:text-white leading-tight first:mt-0">{children}</h2>,
+            h3: ({ children }: any) => <h3 className="text-2xl md:text-3xl font-serif font-semibold mt-10 mb-5 text-foreground dark:text-white leading-snug first:mt-0">{children}</h3>,
+            h4: ({ children }: any) => <h4 className="text-xl font-semibold mt-8 mb-4 text-foreground dark:text-white first:mt-0">{children}</h4>,
             normal: ({ children }: any) => <p className="text-base md:text-lg text-muted-foreground mb-5 leading-7 md:leading-9 antialiased">{children}</p>,
             blockquote: ({ children }: any) => (
-              <blockquote className="my-10 rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/5 py-5 pl-6 pr-5 text-lg leading-8 text-zinc-200 italic">{children}</blockquote>
+              <blockquote className="my-10 rounded-r-xl border-l-2 border-emerald-500 bg-emerald-500/5 py-5 pl-6 pr-5 text-lg leading-8 text-slate-700 dark:text-zinc-200 italic">{children}</blockquote>
             ),
           },
           marks: sharedMarks,
@@ -520,7 +520,7 @@ export function CaseStudyDetailClient({ data }: { data: CaseStudyData }) {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">Conclusion</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground dark:text-white mb-8">Conclusion</h2>
               <p className="text-xl text-muted-foreground leading-9 font-light antialiased">
                 {data.conclusion}
               </p>

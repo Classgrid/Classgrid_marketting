@@ -296,10 +296,10 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
                   <Link href={`/case-studies/${study.slug}`} className="block h-full group">
                     <article
                       className="flex flex-col h-full bg-card rounded-sm overflow-hidden cursor-pointer
-                                 shadow-[0_0_0_1px_rgba(255,255,255,0.08),_0_2px_8px_rgba(0,0,0,0.3)]
+                                 shadow-sm border border-border dark:border-transparent dark:shadow-[0_0_0_1px_rgba(255,255,255,0.08),_0_2px_8px_rgba(0,0,0,0.3)]
                                  transition-all duration-[350ms] ease-[cubic-bezier(0.16,1,0.3,1)]
                                  group-hover:-translate-y-1.5
-                                 group-hover:shadow-[0_0_0_2px_#10b981,_0_16px_48px_rgba(16,185,129,0.18)]"
+                                 group-hover:border-emerald-500 dark:group-hover:shadow-[0_0_0_2px_#10b981,_0_16px_48px_rgba(16,185,129,0.18)]"
                     >
                       {/* Image */}
                       <div className="relative h-[220px] w-full bg-muted overflow-hidden shrink-0">
@@ -317,7 +317,7 @@ export function CaseStudiesClient({ caseStudies: initialCaseStudies, heroSubtitl
                             />
                           </div>
                         ) : (
-                          <div className="absolute inset-0 bg-neutral-900 transition-transform duration-[600ms] group-hover:scale-[1.08]" />
+                          <div className="absolute inset-0 bg-slate-200 dark:bg-neutral-900 transition-transform duration-[600ms] group-hover:scale-[1.08]" />
                         )}
                         <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%)" }} />
                         {/* Tag Badge */}
