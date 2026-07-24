@@ -17,8 +17,13 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast, Toaster } from "sonner";
-
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function DemoSuccessPageInner() {
   const searchParams = useSearchParams();
@@ -394,17 +399,21 @@ function DemoSuccessPageInner() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Organization Type</Label>
-                    <select
+                    <Select
                       value={editForm.orgType}
-                      onChange={e => setEditForm({ ...editForm, orgType: e.target.value })}
-                      className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      onValueChange={(value) => setEditForm({ ...editForm, orgType: value })}
                     >
-                      <option value="Engineering College">Engineering College</option>
-                      <option value="School">School</option>
-                      <option value="Junior College">Junior College</option>
-                      <option value="Coaching Institute">Coaching Institute</option>
-                      <option value="Diploma Institute">Diploma Institute</option>
-                    </select>
+                      <SelectTrigger className="h-10 w-full bg-background border-border">
+                        <SelectValue placeholder="Select organization type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Engineering College">Engineering College</SelectItem>
+                        <SelectItem value="School">School</SelectItem>
+                        <SelectItem value="Junior College">Junior College</SelectItem>
+                        <SelectItem value="Coaching Institute">Coaching Institute</SelectItem>
+                        <SelectItem value="Diploma Institute">Diploma Institute</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1 block">Phone Number</Label>
