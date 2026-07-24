@@ -177,7 +177,7 @@ export default function PricingPage() {
         </div>
 
         {/* 6. Bottom Fade to Page Background (Must be last background layer) */}
-        <div className="absolute inset-x-0 bottom-0 z-0 h-48 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(236,253,245,0.82)_45%,transparent_100%)] dark:bg-[linear-gradient(to_top,rgba(2,3,3,1)_0%,rgba(2,30,22,0.62)_45%,transparent_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 z-0 h-64 pointer-events-none bg-gradient-to-t from-background via-background/80 to-transparent" />
 
         <div className="relative z-10 mx-auto w-full max-w-[920px] text-center">
           <Chip variant="emerald" icon={<Sparkles />} className="mb-4 border-white/10 bg-white/10 text-emerald-100">
