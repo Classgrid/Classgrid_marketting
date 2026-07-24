@@ -200,23 +200,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         style={{ scaleX }}
       />
 
-      {/* ── FULL-WIDTH COVER IMAGE HERO ── */}
-      {post.coverImage && (
-        <section className="relative w-full bg-background overflow-hidden">
-          <div className="mx-auto max-w-5xl px-4 py-8">
-            <div className="relative w-full aspect-video max-h-[480px] rounded-2xl overflow-hidden border border-slate-300 dark:border-border/30 bg-slate-50 dark:bg-zinc-900 flex items-center justify-center shadow-md dark:shadow-none">
-              <Image
-                src={urlFor(post.coverImage).url()}
-                alt={post.title || 'Blog cover image'}
-                fill
-                priority
-                className="object-contain"
-                sizes="(max-width: 1024px) 100vw, 1024px"
-              />
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* Wrap TOC and main content in a relative div to constrain the absolute TOC */}
       <div className="relative w-full">
@@ -260,13 +244,27 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             </DocumentHero>
 
             {post.excerpt && (
-              <div className="mt-10">
+              <div className="mt-8 mb-8">
                 <div className="relative px-6 py-5 sm:px-8 sm:py-6 bg-slate-50/50 dark:bg-white/[0.02] border border-slate-300 dark:border-white/[0.05] rounded-3xl shadow-sm backdrop-blur-md text-left">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gradient-to-r from-emerald-400/0 via-emerald-500 to-emerald-400/0 rounded-full" />
                   <p className="text-[1.05rem] sm:text-[1.1rem] leading-relaxed text-foreground/80 font-medium">
                     {extractLocaleString(post.excerpt, lang)}
                   </p>
                 </div>
+              </div>
+            )}
+
+            {/* ── FULL-WIDTH COVER IMAGE ── */}
+            {post.coverImage && (
+              <div className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden shadow-lg border border-border mt-8 mb-12">
+                <Image
+                  src={urlFor(post.coverImage).url()}
+                  alt={post.title || 'Blog cover image'}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                />
               </div>
             )}
           </div>
