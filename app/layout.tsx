@@ -175,7 +175,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           themes={["light", "dark"]}
           disableTransitionOnChange
         >
