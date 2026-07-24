@@ -282,7 +282,7 @@ function DemoSuccessPageInner() {
 
       {!isVerified ? (
         /* OTP COVER PAGE */
-        <div className="w-full max-w-lg bg-black rounded-2xl border border-white/10 shadow-xl overflow-hidden p-8 text-card-foreground">
+        <div className="w-full max-w-lg bg-card rounded-2xl border border-border shadow-xl overflow-hidden p-8 text-card-foreground">
 
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -476,12 +476,12 @@ function DemoSuccessPageInner() {
       ) : (
         /* CALENDAR SCHEDULER (Unlocked after Verification) */
         <div className="w-full max-w-[1000px] mx-auto">
-          <div className="bg-black rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden flex flex-col md:flex-row text-card-foreground animate-in fade-in zoom-in duration-500">
+          <div className="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden flex flex-col md:flex-row text-card-foreground animate-in fade-in zoom-in duration-500">
 
             {/* LEFT PANEL */}
-            <div className="p-8 md:w-[320px] border-b md:border-b-0 md:border-r border-zinc-800">
+            <div className="p-8 md:w-[320px] border-b md:border-b-0 md:border-r border-border">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full border border-white/10 bg-[#111] flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 rounded-full border border-border bg-background flex items-center justify-center overflow-hidden">
                   <Image src="/logo.png" alt="Classgrid Logo" width={24} height={24} className="w-6 h-6 object-contain" />
                 </div>
                 <p className="text-muted-foreground font-medium">Classgrid Platform</p>
@@ -491,17 +491,17 @@ function DemoSuccessPageInner() {
 
               {/* Platform Toggle */}
               <div className="mb-8 w-full">
-                <div className="flex items-center p-1 bg-zinc-900 rounded-xl w-full relative">
+                <div className="flex items-center p-1 bg-muted rounded-xl w-full relative">
                   <button
                     onClick={() => setPlatform("google_meet")}
                     className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
-                      platform === "google_meet" ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                      platform === "google_meet" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {platform === "google_meet" && (
                       <motion.div
                         layoutId="ios-active"
-                        className="absolute inset-0 bg-[#27272a] rounded-lg shadow-sm border border-white/5"
+                        className="absolute inset-0 bg-background rounded-lg shadow-sm border border-border"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                       />
                     )}
@@ -513,13 +513,13 @@ function DemoSuccessPageInner() {
                   <button
                     onClick={() => setPlatform("zoom")}
                     className={`relative w-1/2 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors z-10 ${
-                      platform === "zoom" ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                      platform === "zoom" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {platform === "zoom" && (
                       <motion.div
                         layoutId="ios-active"
-                        className="absolute inset-0 bg-[#27272a] rounded-lg shadow-sm border border-white/5"
+                        className="absolute inset-0 bg-background rounded-lg shadow-sm border border-border"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                       />
                     )}
@@ -565,7 +565,7 @@ function DemoSuccessPageInner() {
             </div>
 
             {/* MIDDLE PANEL */}
-            <div className="p-8 md:flex-1 md:min-w-[420px] md:border-r border-zinc-800">
+            <div className="p-8 md:flex-1 md:min-w-[420px] md:border-r border-border">
               <h2 className="text-lg font-semibold mb-6 text-center md:text-left text-foreground">
                 Select a Date & Time
               </h2>
@@ -643,14 +643,14 @@ function DemoSuccessPageInner() {
                                 className={`
                                     relative aspect-square w-full flex items-center justify-center text-base font-medium rounded-lg transition-all
                                     ${isDisabled ? "text-muted-foreground opacity-30 cursor-not-allowed bg-transparent" : "cursor-pointer text-foreground"}
-                                    ${isSelected && !isDisabled ? "!bg-white !text-black shadow-md font-bold" : ""}
-                                    ${!isSelected && !isDisabled ? "bg-zinc-800 hover:bg-zinc-700" : ""}
-                                    ${isToday && !isSelected ? "border-2 border-white/70" : ""}
+                                    ${isSelected && !isDisabled ? "!bg-primary !text-primary-foreground shadow-md font-bold" : ""}
+                                    ${!isSelected && !isDisabled ? "bg-muted hover:bg-muted/80" : ""}
+                                    ${isToday && !isSelected ? "border-2 border-primary/50" : ""}
                                   `}
                               >
                                 {format(day, 'd')}
                                 {isToday && !isSelected && (
-                                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-white/70" />
+                                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-primary/70" />
                                 )}
                               </button>
                             );
@@ -665,7 +665,7 @@ function DemoSuccessPageInner() {
 
             {/* RIGHT PANEL */}
             {date && (
-              <div className="p-6 md:p-8 w-full md:w-[320px] bg-black/40 md:h-[500px] md:overflow-y-auto md:overscroll-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] animate-in slide-in-from-right-8 duration-300 relative">
+              <div className="p-6 md:p-8 w-full md:w-[320px] bg-muted/30 md:h-[500px] md:overflow-y-auto md:overscroll-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] animate-in slide-in-from-right-8 duration-300 relative">
                 {lead.status === "demo_scheduled" ? (
                   <div className="flex flex-col h-full text-left animate-in fade-in zoom-in duration-500">
                     <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
@@ -728,7 +728,7 @@ function DemoSuccessPageInner() {
                           <Spinner className="w-6 h-6 text-emerald-500" />
                         </div>
                       ) : availableSlots.length === 0 ? (
-                        <div className="text-center py-8 px-4 text-muted-foreground border rounded-lg bg-black/20 border-white/5">
+                        <div className="text-center py-8 px-4 text-muted-foreground border rounded-lg bg-muted/50 border-border">
                           <p className="text-sm font-medium">No time slots available today.</p>
                           <p className="text-xs mt-1">Please select tomorrow or a later date.</p>
                         </div>
@@ -777,7 +777,7 @@ function DemoSuccessPageInner() {
             transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.1 }}
             className="w-full max-w-[500px] mx-auto mt-10 mb-6 px-4 sm:px-0"
           >
-            <div className="relative text-center py-10 px-8 rounded-2xl border border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-sm overflow-hidden">
+            <div className="relative text-center py-10 px-8 rounded-2xl border border-border bg-card/80 backdrop-blur-sm overflow-hidden shadow-xl">
               {/* Subtle top glow line */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
 
@@ -788,14 +788,14 @@ function DemoSuccessPageInner() {
                 transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.25 }}
                 className="w-14 h-14 mx-auto mb-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"
               >
-                <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+                <CheckCircle2 className="w-7 h-7 text-emerald-500" />
               </motion.div>
 
               <motion.h3
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}
-                className="text-xl font-bold text-white mb-2 tracking-tight"
+                className="text-xl font-bold text-foreground mb-2 tracking-tight"
               >
                 Thank You! 😊
               </motion.h3>
