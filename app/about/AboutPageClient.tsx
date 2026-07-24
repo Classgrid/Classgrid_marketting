@@ -79,8 +79,12 @@ export default function AboutPageClient({
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {/* 1. HERO */}
-      <section className="relative overflow-hidden px-4 pb-6 pt-12 sm:px-6 lg:px-8 text-center flex flex-col items-center bg-background">
+      <div className="relative bg-[#021E16] text-white overflow-hidden pb-12">
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#021E16] via-[#063D2E] to-[#021E16]" />
+        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(115deg,rgba(2,30,22,0.96)_0%,rgba(6,61,46,0.42)_38%,rgba(2,30,22,0.9)_100%)]" />
+        
+        {/* 1. HERO */}
+        <section className="relative z-10 px-4 pb-6 pt-16 sm:px-6 lg:px-8 text-center flex flex-col items-center">
         <SectionAccentBar align="center" />
         <MotionDiv
           initial={{ opacity: 0, y: 18 }}
@@ -88,17 +92,17 @@ export default function AboutPageClient({
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="mx-auto max-w-4xl"
         >
-          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-6xl lg:text-7xl">
+          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
             About Us
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground sm:text-xl">
+          <p className="mt-6 text-lg text-emerald-50/75 sm:text-xl">
             We build the infrastructure that lets educators focus on education.
           </p>
         </MotionDiv>
       </section>
 
       {/* 2. GLOBE + OUR STORY */}
-      <section className="relative w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <section className="relative z-10 w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <MotionDiv
             initial={{ opacity: 0, scale: 0.95 }}
@@ -117,13 +121,13 @@ export default function AboutPageClient({
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
             className="max-w-2xl"
           >
-            <h2 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 sm:text-3xl mb-6">
+            <h2 className="text-2xl font-bold tracking-tight text-emerald-400 sm:text-3xl mb-6">
               {storyTitle || "Our Story"}
             </h2>
-            <div className="space-y-6 text-base leading-8 text-muted-foreground sm:text-lg">
+            <div className="space-y-6 text-base leading-8 text-emerald-50/75 sm:text-lg">
               {paragraphs.map((p, i) =>
                 p.startsWith("—") ? (
-                  <p key={i} className="mt-2 text-sm font-semibold italic text-emerald-600 dark:text-emerald-400 tracking-wide">
+                  <p key={i} className="mt-2 text-sm font-semibold italic text-emerald-300 tracking-wide">
                     {p}
                   </p>
                 ) : (
@@ -134,6 +138,8 @@ export default function AboutPageClient({
           </MotionDiv>
         </div>
       </section>
+
+      </div>
 
       {/* 2.5 PLATFORM OVERVIEW CARDS */}
       {(whatIsClassgrid || whatWeDo || whyChooseClassgrid) && (
