@@ -13,10 +13,10 @@ const GLOBE_SCALE = 1.06;
 const GLOBE_RADIUS = 1200 * ((0.8 * GLOBE_SCALE) / 2);
 
 /* ── Light-mode tuned colors ────────────────────────────── */
-// White/off-white globe surface
-const LIGHT_BASE_COLOR: [number, number, number] = [1.0, 1.0, 1.0];
-// Subtle warm gray glow
-const LIGHT_GLOW_COLOR: [number, number, number] = [0.88, 0.88, 0.88];
+// Slightly off-white globe surface for contrast
+const LIGHT_BASE_COLOR: [number, number, number] = [0.95, 0.95, 0.95];
+// Dark glow for contrast on light backgrounds
+const LIGHT_GLOW_COLOR: [number, number, number] = [0.35, 0.35, 0.35];
 // Emerald-ish marker color
 const LIGHT_MARKER_COLOR: [number, number, number] = [0.2, 0.72, 0.53];
 
@@ -73,11 +73,11 @@ export default function GlobeLight({ className, showLabel = false }: GlobeLightP
       phi: 0,
       theta: 0.15,
       dark: 0,            // ← KEY: light mode globe
-      diffuse: 2.2,       // softer diffuse lighting for light surface
+      diffuse: 1.2,       // tighter diffuse = more contrast
       scale: GLOBE_SCALE,
       mapSamples: 16000,
-      mapBrightness: 1.8, // lower brightness → darker dots on white
-      mapBaseBrightness: 0.04,
+      mapBrightness: 6,   // high brightness = bold dark dots
+      mapBaseBrightness: 0,
       baseColor: LIGHT_BASE_COLOR,
       markerColor: LIGHT_MARKER_COLOR,
       glowColor: LIGHT_GLOW_COLOR,
