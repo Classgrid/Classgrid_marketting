@@ -3,7 +3,13 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { LogIn, LayoutDashboard, LogOut, Settings, LifeBuoy } from "lucide-react";
+import {
+  LifeBuoy,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+} from "lucide-react";
+import { ThemeModeSwitcher } from "@/components/layout/ThemeModeSwitcher";
 import { getDashboardUrl, getRoleLabel, getSettingsUrl } from "@/lib/platform-dashboard";
 
 const DEFAULT_AVATAR_URL =
@@ -225,6 +231,12 @@ export function DocsUserButton() {
                 <LifeBuoy className="h-4 w-4 text-slate-500 dark:text-white/70" />
                 Support
               </a>
+            </div>
+
+            {/* Theme */}
+            <div className="p-2 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between px-4">
+              <span className="text-sm text-slate-700 dark:text-white/70">Theme</span>
+              <ThemeModeSwitcher />
             </div>
 
             {/* Logout */}
