@@ -213,14 +213,14 @@ export default function PricingPage() {
                   }}
                   className={`relative shrink-0 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-all ${
                     isActive
-                      ? "border-emerald-300 bg-white text-emerald-950 shadow-lg shadow-emerald-950/20"
+                      ? "border-emerald-300 bg-white text-emerald-950 shadow-lg shadow-emerald-950/20 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:shadow-emerald-900/20"
                       : "border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-white dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/30 dark:hover:bg-white/15"
                   }`}
                 >
                   {isActive ? (
                     <MotionSpan
                       layoutId="pricing-tab-active"
-                      className="absolute inset-0 z-0 bg-white rounded-full"
+                      className="absolute inset-0 z-0 bg-white dark:bg-emerald-500/20 rounded-full"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.45 }}
                     />
                   ) : null}
@@ -403,7 +403,7 @@ export default function PricingPage() {
                                         {module[activeTab.toLowerCase()] === "BASIC" ? (
                                           <Check className="w-5 h-5 mx-auto text-emerald-500" />
                                         ) : (
-                                          <span className="text-slate-300 dark:text-slate-700">-</span>
+                                          <span className="text-slate-400 dark:text-slate-600">-</span>
                                         )}
                                       </td>
                                       
@@ -411,7 +411,7 @@ export default function PricingPage() {
                                         {module[activeTab.toLowerCase()] === "BASIC" || module[activeTab.toLowerCase()] === "PREMIUM" ? (
                                           <Check className="w-5 h-5 mx-auto text-emerald-500 dark:text-emerald-400" />
                                         ) : (
-                                          <span className="text-slate-300 dark:text-slate-700">Not Available</span>
+                                          <span className="text-slate-400 dark:text-slate-600">Not Available</span>
                                         )}
                                       </td>
                                     </tr>
