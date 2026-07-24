@@ -19,6 +19,7 @@ import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
 import { buildLangHref, extractLocaleString, type SupportedLang } from "@/lib/locale";
 import { BlueprintBox, BlueprintSection } from "@/components/ui/BlueprintBox";
 import { ScrollSpyTOC } from "@/components/shared/ScrollSpyTOC";
+import { ImageGallery } from "@/components/shared/ImageGallery";
 import { cn } from "@/lib/utils";
 // import GoogleOneTap from "@/components/auth/GoogleOneTap";
 
@@ -292,13 +293,15 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                   />
                 </div>
               ) : section.imageUrl ? (
-                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
-                  <Image
-                    src={section.imageUrl}
-                    alt={section.imageAlt || section.heading || 'Blog section media'}
-                    fill
-                    className={`object-cover transition-transform duration-700 ${!isMobile ? 'hover:scale-105' : ''}`}
-                    sizes="(max-width: 768px) 100vw, 55vw"
+                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10 group`}>
+                  <ImageGallery
+                    images={[{
+                      id: `blog-section-${i}`,
+                      src: section.imageUrl,
+                      alt: section.imageAlt || section.heading || 'Blog section media',
+                      className: "absolute inset-0 w-full h-full border-none rounded-none group-hover:scale-105 transition-transform duration-700"
+                    }]}
+                    className="!grid-cols-1 !auto-rows-auto !gap-0 w-full h-full"
                   />
                 </div>
               ) : null;
