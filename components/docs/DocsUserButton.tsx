@@ -188,9 +188,11 @@ export function DocsUserButton() {
                   <p className="text-xs font-medium text-slate-900 dark:text-white/80 truncate">
                     {user?.orgName || "Classgrid"}
                   </p>
+                  {/* Temporarily hidden for screenshot 
                   <p className="text-[10px] text-slate-500 dark:text-white/40 truncate">
                     {getRoleLabel(user?.platformRole)}
                   </p>
+                  */}
                 </div>
               </div>
             )}
