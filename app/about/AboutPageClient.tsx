@@ -127,7 +127,7 @@ export default function AboutPageClient({
             <h2 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 sm:text-3xl mb-6">
               {storyTitle || "Our Story"}
             </h2>
-            <div className="space-y-6 text-base leading-8 text-muted-foreground sm:text-lg">
+            <div className="space-y-6 text-base leading-8 text-slate-700 dark:text-slate-300 sm:text-lg">
               {paragraphs.map((p, i) =>
                 p.startsWith("—") ? (
                   <p key={i} className="mt-2 text-sm font-semibold italic text-emerald-600 dark:text-emerald-400 tracking-wide">
