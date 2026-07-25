@@ -175,8 +175,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          themes={["light", "dark"]}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <PostHogProvider>
