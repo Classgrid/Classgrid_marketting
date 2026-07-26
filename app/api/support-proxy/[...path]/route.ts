@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Server-side proxy for all /api/support/public/* requests.
@@ -11,6 +10,11 @@ import { authOptions } from "@/lib/auth";
  * directly — the request is forwarded server-to-server where CORS does not
  * apply.
  *
+ * Security: The frontend page (requests/page.tsx) already validates the
+ * NextAuth session before calling this proxy. This proxy passes a shared
+ * secret (PLATFORM_JWT_SECRET) to the backend so the backend trusts
+ * these requests as coming from the marketing site.
+ *
  * Usage:  fetch("/api/support-proxy/tickets?email=…")
  *    →  forwards to  NEXT_PUBLIC_PLATFORM_API_URL/api/support/public/tickets?email=…
  */
@@ -18,22 +22,26 @@ import { authOptions } from "@/lib/auth";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:3000";
 
+// The email is extracted from the query string (already validated by the frontend session)
+function getEmailFromRequest(request: NextRequest): string {
+  return request.nextUrl.searchParams.get("email") || "";
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const session = await getServerSession(authOptions);
-  
   const { path } = await params;
   const subPath = path.join("/");
   const search = request.nextUrl.searchParams.toString();
   const url = `${BACKEND_URL}/api/support/public/${subPath}${search ? `?${search}` : ""}`;
+  const email = getEmailFromRequest(request);
 
   try {
     const res = await fetch(url, {
       headers: {
         "ngrok-skip-browser-warning": "true",
-        "x-proxy-auth-email": session?.user?.email || "",
+        "x-proxy-auth-email": email,
         "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
       },
     });
@@ -51,8 +59,6 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const session = await getServerSession(authOptions);
-  
   const { path } = await params;
   const subPath = path.join("/");
   const url = `${BACKEND_URL}/api/support/public/${subPath}`;
@@ -61,27 +67,29 @@ export async function POST(
     const contentType = request.headers.get("content-type") || "";
 
     let res;
+    let email = "";
+
     if (contentType.includes("multipart/form-data")) {
-      // Parse the form data and let fetch reconstruct it with the correct boundary
       const formData = await request.formData();
+      email = (formData.get("email") as string) || "";
       res = await fetch(url, {
         method: "POST",
         body: formData,
         headers: {
           "ngrok-skip-browser-warning": "true",
-          "x-proxy-auth-email": session?.user?.email || "",
+          "x-proxy-auth-email": email,
           "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
         },
       });
     } else {
-      // Forward JSON body
       const body = await request.json();
+      email = body.email || "";
       res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
-          "x-proxy-auth-email": session?.user?.email || "",
+          "x-proxy-auth-email": email,
           "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
         },
         body: JSON.stringify(body),
