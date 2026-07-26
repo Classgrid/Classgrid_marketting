@@ -11,11 +11,25 @@ function LogoutContent() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   useEffect(() => {
-    // Add a 3 second delay so the user actually sees the smooth logging out animation!
-    const timer = setTimeout(() => {
-      signOut({ callbackUrl });
-    }, 3000);
-    return () => clearTimeout(timer);
+    const doLogout = async () => {
+      // 1. Clear the Platform session cookie
+      try {
+        const BACKEND_URL = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+        await fetch(`${BACKEND_URL}/api/auth/logout`, { 
+          method: "POST",
+          credentials: "include" 
+        });
+      } catch (err) {
+        console.error("Failed to clear platform session", err);
+      }
+
+      // 2. Clear NextAuth session & redirect
+      const timer = setTimeout(() => {
+        signOut({ callbackUrl });
+      }, 3000);
+    };
+
+    doLogout();
   }, [callbackUrl]);
 
   return null; // The visual UI is handled by the parent
