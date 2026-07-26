@@ -334,9 +334,9 @@ function TicketDetailPageInner() {
           <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Access Denied</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">No ticket found</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            This ticket belongs to a different account. Please sign in with the correct account to view it.
+            The requested ticket does not exist.
           </p>
           <Link
             href="/support/requests"
