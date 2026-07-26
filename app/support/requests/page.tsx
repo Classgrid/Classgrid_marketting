@@ -126,7 +126,7 @@ export default function MyRequestsPage() {
   };
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/login" });
+    window.location.href = "/logout?callbackUrl=/login";
   };
 
   const filteredRequests = tickets.filter((r) =>

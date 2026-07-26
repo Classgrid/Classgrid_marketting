@@ -251,7 +251,7 @@ export default function InquiryPage() {
     setEmail("");
     setShowForm(false);
     if (status === "authenticated") {
-      await signOut({ redirect: false });
+      window.location.href = "/logout?callbackUrl=/login";
     }
   };
 
