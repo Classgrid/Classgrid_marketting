@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * Server-side proxy for all /api/support/public/* requests.
@@ -21,6 +22,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
+  const session = await getServerSession(authOptions);
+  
   const { path } = await params;
   const subPath = path.join("/");
   const search = request.nextUrl.searchParams.toString();
@@ -30,6 +33,8 @@ export async function GET(
     const res = await fetch(url, {
       headers: {
         "ngrok-skip-browser-warning": "true",
+        "x-proxy-auth-email": session?.user?.email || "",
+        "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
       },
     });
     const data = await res.json();
@@ -46,6 +51,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
+  const session = await getServerSession(authOptions);
+  
   const { path } = await params;
   const subPath = path.join("/");
   const url = `${BACKEND_URL}/api/support/public/${subPath}`;
@@ -62,6 +69,8 @@ export async function POST(
         body: formData,
         headers: {
           "ngrok-skip-browser-warning": "true",
+          "x-proxy-auth-email": session?.user?.email || "",
+          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
         },
       });
     } else {
@@ -72,6 +81,8 @@ export async function POST(
         headers: {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
+          "x-proxy-auth-email": session?.user?.email || "",
+          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
         },
         body: JSON.stringify(body),
       });
