@@ -157,12 +157,12 @@ function TicketDetailPageInner() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
 
-  // ── Auth guard — allow public access via email token ──────────────
+  // ── Auth guard — ALWAYS require login (like AWS Support) ──────────────
   useEffect(() => {
     if (sessionStatus === "loading") return; // wait for session to resolve
 
-    // If unauthenticated AND there is no email token in the URL, redirect to login
-    if (sessionStatus === "unauthenticated" && !queryEmail) {
+    // Always redirect to login if unauthenticated — no public access via URL email
+    if (sessionStatus === "unauthenticated") {
       const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
       window.location.href = `/login?callbackUrl=${returnUrl}`;
       return;
@@ -171,7 +171,7 @@ function TicketDetailPageInner() {
     const sessionEmail = normalizeSupportEmail(session?.user?.email);
     const paramEmail = normalizeSupportEmail(queryEmail);
 
-    // Verify the active email matches the query email (ownership check)
+    // Verify the logged-in email matches the URL email (ownership check)
     if (sessionEmail && paramEmail && sessionEmail.toLowerCase() !== paramEmail.toLowerCase()) {
       // Trying to access someone else's ticket via URL
       setAccessDenied(true);
@@ -180,8 +180,8 @@ function TicketDetailPageInner() {
     }
   }, [sessionStatus, session, queryEmail]);
 
-  // The email to use for all API calls: prefer session, fallback to URL token
-  const verifiedEmail = normalizeSupportEmail(session?.user?.email) || normalizeSupportEmail(queryEmail);
+  // The email to use for all API calls: ONLY use the session email (never trust URL alone)
+  const verifiedEmail = normalizeSupportEmail(session?.user?.email);
 
   // ── Fetch ticket ──────────────────────────────────────────────────────────
 
