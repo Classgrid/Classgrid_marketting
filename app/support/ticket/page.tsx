@@ -47,7 +47,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import LinkModal from "@/app/support/components/LinkModal";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
-import { uploadToSupabase } from "@/lib/supabase-storage";
+
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
@@ -798,37 +798,9 @@ export default function RaiseTicketPage() {
                       input.onchange = async (e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
-                          setUploadingImage(true);
-                          setUploadProgress(10);
-                          const interval = setInterval(() => {
-                            setUploadProgress((prev) => {
-                              if (prev >= 80) {
-                                clearInterval(interval);
-                                return 80;
-                              }
-                              return prev + 10;
-                            });
-                          }, 200);
-
-                          const result = await uploadToSupabase(file, "tickets");
-                          clearInterval(interval);
-
-                          if (result) {
-                            setUploadProgress(100);
-                            setTimeout(() => {
-                              setUploadingImage(false);
-                              const editor = document.getElementById("richEditor");
-                              if (editor) editor.focus();
-                              document.execCommand("insertHTML", false,
-                                `<img src="${result.url}" alt="${file.name}" data-path="${result.path}" style="max-width:200px;max-height:200px;border-radius:8px;margin:8px 4px;cursor:pointer;" />`
-                              );
-                              if (editor) setDescription(editor.innerHTML);
-                            }, 300);
-                          } else {
-                            setUploadingImage(false);
-                            alert("Image upload failed. Please try again.");
-                          }
+                          alert("Inline image upload is not supported. Please use the Attachments section below.");
                         }
+                        (e.target as HTMLInputElement).value = "";
                       };
                       input.click();
                     }}
@@ -1187,7 +1159,7 @@ export default function RaiseTicketPage() {
                       </motion.div>
                     ))}
                     <p className="text-xs text-muted-foreground">
-                      {files.length}/5 files · Max 5 MB each
+                      {files.length}/5 files · Max 10 MB each
                     </p>
                   </motion.div>
                 )}

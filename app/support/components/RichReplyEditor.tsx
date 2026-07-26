@@ -23,7 +23,6 @@ import {
   Eye,
 } from "lucide-react";
 import LinkModal from "@/app/support/components/LinkModal";
-import { uploadToSupabase } from "@/lib/supabase-storage";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
 // ── Toolbar button ──────────────────────────────────────────────
@@ -60,7 +59,11 @@ interface RichReplyEditorProps {
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: number;
+  maxHeight?: number;
   onSubmit?: () => void;
+  initialHtml?: string;
+  hideAttachments?: boolean;
+  onImageUpload?: (file: File) => Promise<{ url: string; path: string } | null>;
 }
 
 // ── Link Tooltip ────────────────────────────────────────────────
@@ -74,7 +77,7 @@ interface LinkTooltipState {
 // ── Main Component ──────────────────────────────────────────────
 
 const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
-  ({ onChange, placeholder = "Type your reply here...", minHeight = 120, onSubmit }, ref) => {
+  ({ onChange, placeholder = "Type your reply here...", minHeight = 120, maxHeight = 600, onSubmit, initialHtml, hideAttachments, onImageUpload }, ref) => {
     const editorRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -350,7 +353,13 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
           });
         }, 200);
 
-        const result = await uploadToSupabase(file, "replies");
+        if (!onImageUpload) {
+          alert("Image upload is not supported in this form.");
+          setUploadingImage(false);
+          return;
+        }
+        
+        const result = await onImageUpload(file);
         clearInterval(interval);
 
         if (result) {
@@ -369,7 +378,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
         }
         e.target.value = "";
       },
-      [syncContent]
+      [syncContent, onImageUpload]
     );
 
     // Hover handler for links — shows tooltip
@@ -459,23 +468,6 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                   <SelectItem value="p">Paragraph</SelectItem>
                 </SelectContent>
               </Select>
-              <select
-                onChange={(e) => {
-                  editorRef.current?.focus();
-                  document.execCommand("formatBlock", false, e.target.value);
-                  syncContent();
-                  e.target.value = "";
-                }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
-                defaultValue=""
-              >
-                <option value="" disabled>Heading</option>
-                <option value="h2">Heading 2</option>
-                <option value="h3">Heading 3</option>
-                <option value="p">Paragraph</option>
-              </select>
             </div>
             <div className="relative">
               <Select
@@ -498,27 +490,6 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
                   <SelectItem value="7">Size 7</SelectItem>
                 </SelectContent>
               </Select>
-              <select
-                onChange={(e) => {
-                  editorRef.current?.focus();
-                  document.execCommand("fontSize", false, e.target.value);
-                  syncContent();
-                  e.target.value = "";
-                }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="absolute inset-0 w-full h-full opacity-0 sm:hidden z-10 appearance-none"
-                defaultValue=""
-              >
-                <option value="" disabled>Size</option>
-                <option value="1">Size 1</option>
-                <option value="2">Size 2</option>
-                <option value="3">Size 3</option>
-                <option value="4">Size 4</option>
-                <option value="5">Size 5</option>
-                <option value="6">Size 6</option>
-                <option value="7">Size 7</option>
-              </select>
             </div>
             <Sep />
             <ToolBtn icon={<Bold className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("bold"); syncContent(); }} title="Bold" />
@@ -593,7 +564,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
               className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:!mb-0 [&_li]:!py-0.5 [&_li_*]:!mb-0 [&_li_*]:!mt-0 [&_li_p]:!leading-relaxed [&_li_div]:!leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
-              style={{ minHeight, maxHeight: 300, overflowY: "auto" }}
+              style={{ minHeight, maxHeight, overflowY: "auto" }}
             />
 
             {/* Link Hover Tooltip */}
@@ -629,7 +600,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
         </div>
 
         {/* Attachments UI below toolbar */}
-        {files.length > 0 && (
+        {!hideAttachments && files.length > 0 && (
           <div className="px-4 py-3 bg-muted/5 border-t border-border flex flex-wrap gap-2">
             {files.map((file, idx) => (
               <div key={`${file.name}-${idx}`} className="group flex items-center gap-2 px-3 py-1.5 bg-background border border-border rounded-full shadow-sm text-xs transition-all hover:border-primary/50 hover:shadow">
@@ -660,38 +631,40 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             ))}
           </div>
         )}
-        <div className="px-4 py-3 bg-card border-t border-border flex items-center justify-between rounded-b-xl">
-          <input
-            type="file"
-            multiple
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xlsx"
-            onChange={(e) => {
-              if (e.target.files) {
-                const arr = Array.from(e.target.files);
-                const valid = arr.filter(f => f.size <= 10 * 1024 * 1024);
-                setFiles(prev => [...prev, ...valid].slice(0, 5));
-              }
-              e.target.value = "";
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-full border border-dashed border-border hover:border-primary hover:bg-primary/5 transition-all"
-          >
-            <div className="w-6 h-6 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-              <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+        {!hideAttachments && (
+          <div className="px-4 py-3 bg-card border-t border-border flex items-center justify-between rounded-b-xl">
+            <input
+              type="file"
+              multiple
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xlsx"
+              onChange={(e) => {
+                if (e.target.files) {
+                  const arr = Array.from(e.target.files);
+                  const valid = arr.filter(f => f.size <= 10 * 1024 * 1024);
+                  setFiles(prev => [...prev, ...valid].slice(0, 5));
+                }
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="group flex items-center gap-2 px-3 py-1.5 rounded-full border border-dashed border-border hover:border-primary hover:bg-primary/5 transition-all"
+            >
+              <div className="w-6 h-6 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+                Attach files
+              </span>
+            </button>
+            <div className="text-[10px] text-muted-foreground/60 font-medium tracking-wide uppercase">
+              Max 5 files, up to 10MB each
             </div>
-            <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
-              Attach files
-            </span>
-          </button>
-          <div className="text-[10px] text-muted-foreground/60 font-medium tracking-wide uppercase">
-            Max 10MB per file
           </div>
-        </div>
+        )}
 
         {/* Link Modal */}
         <LinkModal

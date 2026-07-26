@@ -1166,7 +1166,7 @@ export default function InquiryPage() {
                       </motion.div>
                     ))}
                     <p className="text-xs text-muted-foreground">
-                      {files.length}/5 files · Max 5 MB each
+                      {files.length}/5 files · Max 10 MB each
                     </p>
                   </motion.div>
                 )}
