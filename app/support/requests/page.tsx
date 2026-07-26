@@ -371,7 +371,7 @@ export default function MyRequestsPage() {
                         >
                           <td className="p-4">
                             <Link
-                              href={`/support/requests/${req._id}?email=${encodeURIComponent(email)}`}
+                              href={`/support/requests/${req._id}`}
                               className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/40 underline-offset-2 hover:decoration-emerald-500 inline-flex items-center gap-1.5"
                             >
                               {req.subject}
@@ -444,7 +444,7 @@ export default function MyRequestsPage() {
                     <div key={idx} className="p-5 flex flex-col gap-3 hover:bg-muted transition-colors group">
                       <div className="flex items-start justify-between gap-4">
                         <Link
-                          href={`/support/requests/${req._id}?email=${encodeURIComponent(email)}`}
+                          href={`/support/requests/${req._id}`}
                           className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 underline decoration-emerald-500/40 underline-offset-2 hover:decoration-emerald-500"
                         >
                           {req.subject}
