@@ -20,7 +20,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_PLATFORM_API_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
 
 // The email is extracted from the query string (already validated by the frontend session)
 function getEmailFromRequest(request: NextRequest): string {
