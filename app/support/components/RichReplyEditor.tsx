@@ -704,7 +704,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
         {/* Image Preview / Delete Modal */}
         {previewImage && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 backdrop-blur-sm"
             onClick={() => setPreviewImage(null)}
           >
             {/* Top-right action buttons */}
@@ -737,7 +737,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
         {/* File Preview Modal */}
         {filePreview && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 backdrop-blur-sm"
             onClick={() => { URL.revokeObjectURL(filePreview.url); setFilePreview(null); }}
           >
             {/* Top-right action buttons */}
