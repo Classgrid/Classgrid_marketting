@@ -357,8 +357,8 @@ function TicketDetailPageInner() {
           <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Unable to load ticket</h2>
-          <p className="text-sm text-muted-foreground mb-6">{error || "Ticket not found."}</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">No ticket found</h2>
+          <p className="text-sm text-muted-foreground mb-6">The requested ticket does not exist.</p>
           <Link
             href="/support/requests"
             className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
