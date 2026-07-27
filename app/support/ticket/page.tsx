@@ -790,6 +790,64 @@ export default function RaiseTicketPage() {
                   <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <Sep />
                   <ToolBtn
+                    icon={<ImageIcon className="w-3.5 h-3.5" />}
+                    onClick={() => {
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept = "image/*";
+                      input.onchange = async (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) {
+                          const editor = document.getElementById("richEditor");
+                          const currentImages = editor?.querySelectorAll("img").length || 0;
+                          if (currentImages >= 5) {
+                            alert("You can only upload a maximum of 5 inline images.");
+                            (e.target as HTMLInputElement).value = "";
+                            return;
+                          }
+
+                          setUploadingImage(true);
+                          setUploadProgress(10);
+                          const interval = setInterval(() => {
+                            setUploadProgress((prev) => {
+                              if (prev >= 80) { clearInterval(interval); return 80; }
+                              return prev + 10;
+                            });
+                          }, 200);
+
+                          try {
+                            const { getPresignedUrlForSupportImage } = await import("@/app/actions/r2-actions");
+                            const { uploadUrl, publicUrl } = await getPresignedUrlForSupportImage(file.name, file.type);
+                            
+                            await fetch(uploadUrl, {
+                              method: "PUT",
+                              body: file,
+                              headers: { "Content-Type": file.type },
+                            });
+
+                            clearInterval(interval);
+                            setUploadProgress(100);
+                            
+                            setTimeout(() => {
+                              setUploadingImage(false);
+                              if (editor) editor.focus();
+                              document.execCommand("insertHTML", false,
+                                `<img src="${publicUrl}" alt="${file.name}" style="max-width:200px;max-height:200px;border-radius:8px;margin:8px 4px;cursor:pointer;" />`
+                              );
+                              if (editor) setDescription(editor.innerHTML);
+                            }, 300);
+                          } catch (err) {
+                            clearInterval(interval);
+                            setUploadingImage(false);
+                            alert("Image upload failed. Please try again.");
+                          }
+                        }
+                        (e.target as HTMLInputElement).value = "";
+                      };
+                      input.click();
+                    }}
+                  />
+                  <ToolBtn
                     icon={<Link2 className="w-3.5 h-3.5" />}
                     onClick={() => {
                       const editor = document.getElementById("richEditor");

@@ -852,6 +852,14 @@ export default function InquiryPage() {
                       input.onchange = async (e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
+                          const editor = document.getElementById("richEditor");
+                          const currentImages = editor?.querySelectorAll("img").length || 0;
+                          if (currentImages >= 5) {
+                            alert("You can only upload a maximum of 5 inline images.");
+                            (e.target as HTMLInputElement).value = "";
+                            return;
+                          }
+
                           setUploadingImage(true);
                           setUploadProgress(10);
                           const interval = setInterval(() => {
