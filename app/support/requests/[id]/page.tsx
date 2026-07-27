@@ -493,7 +493,7 @@ function TicketDetailPageInner() {
                             <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-muted/60 border border-border text-xs font-medium text-muted-foreground">
                               {(msg.orgLogo && msg.orgLogo !== "null") ? (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={msg.orgLogo} alt="" className="w-4 h-4 rounded-sm object-contain bg-white p-[2px]" referrerPolicy="no-referrer" />
+                                <img src={msg.orgLogo} alt="" className="w-4 h-4 rounded-none object-contain bg-white p-[2px]" referrerPolicy="no-referrer" />
                               ) : (
                                 <div className="w-4 h-4 rounded-sm bg-muted-foreground/20 flex items-center justify-center">
                                   <span className="text-[8px] font-bold text-foreground/40">
