@@ -639,6 +639,27 @@ function TicketDetailPageInner() {
                     <p className="text-xs text-muted-foreground">
                       Press Enter to send, Shift+Enter for new line.
                     </p>
+                    <div className="flex items-center gap-2 ml-auto">
+                      {ticket.status === "resolved" && (
+                        <button
+                          onClick={handleCloseTicket}
+                          disabled={isSending || isClosing}
+                          className="inline-flex items-center gap-2 px-5 py-2 bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground text-sm font-semibold rounded-lg transition-colors disabled:opacity-40"
+                        >
+                          {isClosing ? (
+                            <>
+                              <Spinner className="w-4 h-4 text-inherit" />
+                              Closing...
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="w-4 h-4" />
+                              Close Ticket
+                            </>
+                          )}
+                        </button>
+                      )}
+                      
                       <button
                         onClick={handleReply}
                         disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending || isClosing}
@@ -657,26 +678,6 @@ function TicketDetailPageInner() {
                         )}
                       </button>
                     </div>
-                    
-                    {ticket.status === "resolved" && (
-                      <button
-                        onClick={handleCloseTicket}
-                        disabled={isSending || isClosing}
-                        className="inline-flex items-center gap-2 px-5 py-2 bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground text-sm font-semibold rounded-lg transition-colors disabled:opacity-40 ml-auto sm:ml-0"
-                      >
-                        {isClosing ? (
-                          <>
-                            <Spinner className="w-4 h-4 text-inherit" />
-                            Closing...
-                          </>
-                        ) : (
-                          <>
-                            <Lock className="w-4 h-4" />
-                            Close Ticket
-                          </>
-                        )}
-                      </button>
-                    )}
                   </div>
                   {replyError && (
                     <p className="text-sm text-red-500">{replyError}</p>
