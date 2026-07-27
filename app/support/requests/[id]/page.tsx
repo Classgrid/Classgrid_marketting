@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Send, AlertCircle, BadgeCheck, RefreshCw, Paperclip, Eye, FileText, CheckCircle2, Lock } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -154,6 +154,7 @@ function TicketDetailPageInner() {
   const [replyError, setReplyError] = useState("");
   const [replySent, setReplySent] = useState(false);
   const replySentTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
@@ -309,6 +310,38 @@ function TicketDetailPageInner() {
       setReplyError("Network error. Please try again.");
     } finally {
       setIsSending(false);
+    }
+  };
+
+  // ── Close Ticket ──────────────────────────────────────────────────────────
+  
+  const handleCloseTicket = async () => {
+    if (!ticket || isClosing) return;
+    
+    setIsClosing(true);
+    setReplyError("");
+    
+    try {
+      const res = await fetch(`/api/support-proxy/tickets/${ticketId}/close`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: verifiedEmail }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok || !data.success) {
+        setReplyError(data.message || "Failed to close ticket.");
+      } else {
+        if (data.ticket) {
+          setTicket(data.ticket);
+        } else {
+          await fetchTicket();
+        }
+      }
+    } catch {
+      setReplyError("Network error. Please try again.");
+    } finally {
+      setIsClosing(false);
     }
   };
 
@@ -555,6 +588,25 @@ function TicketDetailPageInner() {
                     )}
                   </AnimatePresence>
 
+                  <AnimatePresence>
+                    {ticket.status === "resolved" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex gap-3"
+                      >
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                        <div className="text-sm text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                          <p className="font-semibold mb-1">This ticket has been marked as resolved.</p>
+                          <p>
+                            If you are satisfied with the support team's reply, you can close this ticket. 
+                            Replying will automatically reopen it. If you do not reply within 7 days, it will automatically close.
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <RichReplyEditor
                     ref={editorRef}
                     onChange={(text) => {
@@ -587,23 +639,44 @@ function TicketDetailPageInner() {
                     <p className="text-xs text-muted-foreground">
                       Press Enter to send, Shift+Enter for new line.
                     </p>
-                    <button
-                      onClick={handleReply}
-                      disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending}
-                      className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
-                    >
-                      {isSending ? (
-                        <>
-                          <Spinner className="w-4 h-4 text-inherit" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          Send Reply
-                        </>
-                      )}
-                    </button>
+                      <button
+                        onClick={handleReply}
+                        disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending || isClosing}
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                      >
+                        {isSending ? (
+                          <>
+                            <Spinner className="w-4 h-4 text-inherit" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            Send Reply
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    
+                    {ticket.status === "resolved" && (
+                      <button
+                        onClick={handleCloseTicket}
+                        disabled={isSending || isClosing}
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground text-sm font-semibold rounded-lg transition-colors disabled:opacity-40 ml-auto sm:ml-0"
+                      >
+                        {isClosing ? (
+                          <>
+                            <Spinner className="w-4 h-4 text-inherit" />
+                            Closing...
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="w-4 h-4" />
+                            Close Ticket
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                   {replyError && (
                     <p className="text-sm text-red-500">{replyError}</p>
