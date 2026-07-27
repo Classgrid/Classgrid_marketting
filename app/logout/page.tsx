@@ -45,20 +45,16 @@ export default function LogoutPage() {
         <LogoutContent />
       </Suspense>
 
-      {/* Top Left Logo - matching Classgrid's exact login page design */}
+      {/* Top Left Logo */}
       <Link href="/" className="absolute top-6 left-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <img src="/logo.png" alt="Classgrid Logo" className="w-6 h-6 object-contain" />
-        <span className="font-bold text-lg tracking-wide uppercase">CLASSGRID</span>
+        <img src="/logo.png" alt="Classgrid Logo" className="w-8 h-8 object-contain" />
       </Link>
 
       <div className="flex flex-col items-center justify-center p-4 text-center space-y-4">
-        <Spinner className="w-8 h-8 text-slate-500 dark:text-[#888888]" />
-        <h1 className="text-xl font-medium tracking-tight text-slate-900 dark:text-[#f1f1f1]">
-          Signing you out of Classgrid...
+        <Spinner className="w-6 h-6 text-slate-500 dark:text-[#888888]" />
+        <h1 className="text-base font-medium tracking-tight text-slate-900 dark:text-[#f1f1f1]">
+          Logging out
         </h1>
-        <p className="text-[14px] text-slate-500 dark:text-[#888888]">
-          Please wait a moment while we securely end your session.
-        </p>
       </div>
 
     </div>

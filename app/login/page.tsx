@@ -221,10 +221,9 @@ function LoginContent() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative font-sans">
       
-      {/* Top Left Logo - matching Cursor */}
+      {/* Top Left Logo */}
       <Link href="/" className="absolute top-6 left-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <img src="/logo.png" alt="Classgrid Logo" className="w-6 h-6 object-contain" />
-        <span className="font-bold text-lg tracking-wide uppercase">CLASSGRID</span>
+        <img src="/logo.png" alt="Classgrid Logo" className="w-8 h-8 object-contain" />
       </Link>
 
       <div className="flex-1 flex flex-col items-center justify-center p-4">
