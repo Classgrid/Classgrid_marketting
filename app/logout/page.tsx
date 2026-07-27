@@ -55,9 +55,9 @@ export default function LogoutPage() {
         <img src="/logo.png" alt="Classgrid Logo" className="w-8 h-8 object-contain" />
       </Link>
 
-      <div className="flex flex-col items-center justify-center p-4 text-center space-y-4">
-        <Spinner className="w-6 h-6 text-slate-500 dark:text-[#888888]" />
-        <h1 className="text-base font-medium tracking-tight text-slate-900 dark:text-[#f1f1f1]">
+      <div className="flex flex-col items-center justify-center p-4 text-center space-y-5">
+        <Spinner className="w-8 h-8 text-slate-500 dark:text-[#888888]" />
+        <h1 className="text-xl font-medium tracking-tight text-slate-900 dark:text-[#f1f1f1]">
           Logging out
         </h1>
       </div>
