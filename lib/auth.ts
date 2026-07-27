@@ -347,7 +347,7 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: "token",
+      name: "cg-session",
       options: {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",

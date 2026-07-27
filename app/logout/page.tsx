@@ -27,6 +27,8 @@ function LogoutContent() {
       const timer = setTimeout(() => {
         signOut({ callbackUrl });
       }, 3000);
+
+      return () => clearTimeout(timer);
     };
 
     doLogout();

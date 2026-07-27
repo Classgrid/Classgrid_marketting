@@ -32,9 +32,9 @@ export async function GET() {
     return NextResponse.json({ error: "Not a platform user" }, { status: 403 });
   }
 
-  const platformJwtSecret = process.env.PLATFORM_JWT_SECRET;
+  const platformJwtSecret = process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET;
   if (!platformJwtSecret) {
-    console.error("[platform-sso] PLATFORM_JWT_SECRET env var is not set");
+    console.error("[platform-sso] PLATFORM_JWT_SECRET or JWT_SECRET env var is not set");
     return NextResponse.json({ error: "SSO not configured" }, { status: 500 });
   }
 

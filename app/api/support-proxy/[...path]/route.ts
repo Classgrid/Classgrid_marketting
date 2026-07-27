@@ -42,7 +42,7 @@ export async function GET(
       headers: {
         "ngrok-skip-browser-warning": "true",
         "x-proxy-auth-email": email,
-        "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
+        "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
       },
     });
     const data = await res.json();
@@ -78,7 +78,7 @@ export async function POST(
         headers: {
           "ngrok-skip-browser-warning": "true",
           "x-proxy-auth-email": email,
-          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
+          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
         },
       });
     } else {
@@ -90,7 +90,7 @@ export async function POST(
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
           "x-proxy-auth-email": email,
-          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || "",
+          "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
         },
         body: JSON.stringify(body),
       });
