@@ -798,6 +798,12 @@ export default function RaiseTicketPage() {
                       input.onchange = async (e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
+                          if (file.size > 5 * 1024 * 1024) {
+                            alert("Image size exceeds the 5MB limit. Please upload a smaller image.");
+                            (e.target as HTMLInputElement).value = "";
+                            return;
+                          }
+
                           const editor = document.getElementById("richEditor");
                           const currentImages = editor?.querySelectorAll("img").length || 0;
                           if (currentImages >= 5) {
