@@ -142,6 +142,9 @@ function TicketDetailPageInner() {
   const { data: session, status: sessionStatus } = useSession();
   const ticketId = params?.id as string;
   const queryEmail = searchParams?.get("email") || "";
+  const isPlatformUser = (session?.user as any)?.isPlatformUser === true;
+  const entityName = isPlatformUser ? "ticket" : "inquiry";
+  const entityNameCapitalized = isPlatformUser ? "Ticket" : "Inquiry";
 
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -597,9 +600,9 @@ function TicketDetailPageInner() {
                       >
                         <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                         <div className="text-sm text-emerald-800 dark:text-emerald-300 leading-relaxed">
-                          <p className="font-semibold mb-1">This ticket has been marked as resolved.</p>
+                          <p className="font-semibold mb-1">This {entityName} has been marked as resolved.</p>
                           <p>
-                            If you are satisfied with the support team's reply, you can close this ticket. 
+                            If you are satisfied with the support team's reply, you can close this {entityName}. 
                             Replying will automatically reopen it. If you do not reply within 7 days, it will automatically close.
                           </p>
                         </div>
@@ -654,7 +657,7 @@ function TicketDetailPageInner() {
                           ) : (
                             <>
                               <Lock className="w-4 h-4" />
-                              Close Ticket
+                              Close {entityNameCapitalized}
                             </>
                           )}
                         </button>
@@ -687,9 +690,9 @@ function TicketDetailPageInner() {
             ) : (
               <div className="mt-8 pt-8 border-t border-border text-center py-6">
                 <p className="text-sm text-muted-foreground">
-                  This ticket has been <strong>{ticket.status}</strong>. If you need further help,{" "}
-                  <Link href="/support/ticket" className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
-                    submit a new ticket
+                  This {entityName} has been <strong>{ticket.status}</strong>. If you need further help,{" "}
+                  <Link href={isPlatformUser ? "/support/ticket" : "/support/inquiry"} className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
+                    submit a new {entityName}
                   </Link>.
                 </p>
               </div>
