@@ -381,7 +381,7 @@ export function Footer({ copyrightText, statusLabel, statusState, statusHref }: 
   const statusDotClass = getFooterStatusDotClass(statusState);
 
   return (
-    <footer className="relative mt-24 border-t border-border bg-background text-foreground">
+    <footer className="relative mt-24 border-t border-border bg-slate-50 dark:bg-[#0c0c0e] text-foreground">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-8 border-b border-border pb-12 md:grid-cols-2 xl:grid-cols-6">
           {utilityColumns.map((column) => (

@@ -140,6 +140,7 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
 
         {/* ── HERO — identical structure to Blog hero ── */}
         <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-16 text-center">
+          <SectionAccentBar align="center" />
           <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
             {(settings.heroHeadline || "").replace(/\.\s*$/, "")}
           </h1>

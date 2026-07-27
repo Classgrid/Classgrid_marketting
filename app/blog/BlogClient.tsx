@@ -294,8 +294,7 @@ export function BlogClient({
       {/* <GoogleOneTap /> */}
       
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
-
-
+        <SectionAccentBar align="center" />
         <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
           {title || "Welcome to Our Blog"}
         </h1>
