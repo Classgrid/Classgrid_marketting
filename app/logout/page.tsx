@@ -23,6 +23,11 @@ function LogoutContent() {
         console.error("Failed to clear platform session", err);
       }
 
+      // Also clear any locally saved support emails
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("support_email");
+      }
+
       // 2. Clear NextAuth session & redirect
       const timer = setTimeout(() => {
         signOut({ callbackUrl });
