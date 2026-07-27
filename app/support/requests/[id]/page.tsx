@@ -253,20 +253,18 @@ function TicketDetailPageInner() {
   const handleReply = async () => {
     const files = editorRef.current?.getFiles() || [];
     const hasFiles = files.length > 0;
+    const currentHTML = editorRef.current?.getHTML() || "";
     
-    if ((!replyText.trim() && !hasFiles) || isSending || !ticket) return;
+    if ((!currentHTML.trim() && !hasFiles) || isSending || !ticket) return;
 
     setIsSending(true);
     setReplyError("");
 
     try {
-      const files = editorRef.current?.getFiles() || [];
-      const hasFiles = files.length > 0;
-
       let res;
       if (hasFiles) {
         const formData = new FormData();
-        const messageToSend = replyText.trim() || (hasFiles ? "Sent an attachment" : "");
+        const messageToSend = currentHTML.trim() || (hasFiles ? "Sent an attachment" : "");
         formData.append("email", verifiedEmail);
         formData.append("message", messageToSend);
         formData.append("name", ticket.requester?.name || "User");
@@ -282,7 +280,7 @@ function TicketDetailPageInner() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: verifiedEmail,
-            message: replyText.trim(),
+            message: currentHTML.trim(),
             name: ticket.requester?.name || "User",
           }),
         });
