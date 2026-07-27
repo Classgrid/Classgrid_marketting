@@ -215,7 +215,7 @@ export default function RaiseTicketPage() {
         ? customCategory.trim() 
         : (category || "general").toLowerCase().trim();
 
-      formData.append("message", description.trim());
+      formData.append("message", latestDescription.trim());
       formData.append("category", selectedCategory);
       formData.append("priority", priority);
       files.forEach((f) => formData.append("files", f));
@@ -789,22 +789,6 @@ export default function RaiseTicketPage() {
                   <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("italic"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); setDescription(document.getElementById("richEditor")?.innerHTML || ""); }} />
                   <Sep />
-                  <ToolBtn
-                    icon={<ImageIcon className="w-3.5 h-3.5" />}
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/*";
-                      input.onchange = async (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0];
-                        if (file) {
-                          alert("Inline image upload is not supported. Please use the Attachments section below.");
-                        }
-                        (e.target as HTMLInputElement).value = "";
-                      };
-                      input.click();
-                    }}
-                  />
                   <ToolBtn
                     icon={<Link2 className="w-3.5 h-3.5" />}
                     onClick={() => {

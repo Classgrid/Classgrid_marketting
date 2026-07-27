@@ -496,7 +496,7 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
             <ToolBtn icon={<Italic className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("italic"); syncContent(); }} title="Italic" />
             <ToolBtn icon={<Underline className="w-3.5 h-3.5" />} onClick={() => { ensureEditorFocus(); document.execCommand("underline"); syncContent(); }} title="Underline" />
             <Sep />
-            <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />
+            {onImageUpload && <ToolBtn icon={<ImageIcon className="w-3.5 h-3.5" />} onClick={handleImageUpload} title="Insert image" />}
             <ToolBtn icon={<Link2 className="w-3.5 h-3.5" />} onClick={() => {
               const sel = window.getSelection();
               if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
@@ -563,8 +563,8 @@ const RichReplyEditor = forwardRef<RichReplyEditorRef, RichReplyEditorProps>(
               onClick={handleEditorClick}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:!mb-0 [&_li]:!py-0.5 [&_li_*]:!mb-0 [&_li_*]:!mt-0 [&_li_p]:!leading-relaxed [&_li_div]:!leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
-              style={{ minHeight, maxHeight, overflowY: "auto" }}
+              className="caret-primary p-4 bg-transparent text-sm text-foreground outline-none prose prose-sm dark:prose-invert max-w-none break-words break-all [&_p]:mb-3 [&_p]:leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-400 dark:empty:before:text-zinc-600 empty:before:pointer-events-none [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:!mb-0 [&_li]:!py-0.5 [&_li_*]:!mb-0 [&_li_*]:!mt-0 [&_li_p]:!leading-relaxed [&_li_div]:!leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:!text-blue-500 [&_a]:!no-underline [&_a]:cursor-pointer [&_u]:!decoration-emerald-500 [&_u]:underline-offset-4 [&_u]:decoration-2 [&_span[style*='underline']]:!decoration-emerald-500 [&_span[style*='underline']]:underline-offset-4 [&_span[style*='underline']]:decoration-2 [&_img]:max-w-[150px] [&_img]:max-h-[150px] [&_img]:object-cover [&_img]:rounded-lg [&_img]:cursor-pointer [&_img]:border [&_img]:border-border [&_img]:shadow-sm [&_img]:inline-block [&_img]:m-2 hover:[&_img]:opacity-80"
+              style={{ minHeight, maxHeight, overflowY: "auto", overflowX: "hidden" }}
             />
 
             {/* Link Hover Tooltip */}

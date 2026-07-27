@@ -218,7 +218,7 @@ export default function InquiryPage() {
         ? customCategory.trim() 
         : (category || "general").toLowerCase().trim();
 
-      formData.append("message", description.trim());
+      formData.append("message", latestDescription.trim());
       formData.append("category", selectedCategory);
       formData.append("institution", institution.trim());
       const selectedRole = role === "other" && customRole.trim() 
