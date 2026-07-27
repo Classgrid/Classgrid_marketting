@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import RichReplyEditor, { type RichReplyEditorRef } from "@/app/support/components/RichReplyEditor";
+import { getPresignedUrlForSupportImage } from "@/app/actions/r2-actions";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -567,6 +568,20 @@ function TicketDetailPageInner() {
                     placeholder="Type your reply here..."
                     minHeight={120}
                     onSubmit={handleReply}
+                    onImageUpload={async (file) => {
+                      try {
+                        const { uploadUrl, publicUrl } = await getPresignedUrlForSupportImage(file.name, file.type);
+                        await fetch(uploadUrl, {
+                          method: "PUT",
+                          body: file,
+                          headers: { "Content-Type": file.type },
+                        });
+                        return { url: publicUrl, path: publicUrl };
+                      } catch (err) {
+                        console.error("Image upload failed:", err);
+                        return null;
+                      }
+                    }}
                   />
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-xs text-muted-foreground">

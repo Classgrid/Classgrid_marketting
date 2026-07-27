@@ -211,8 +211,8 @@ export default function RaiseTicketPage() {
       formData.append("email", email.trim());
       formData.append("subject", subject.trim());
 
-      const selectedCategory = category === "other" && customCategory.trim() 
-        ? customCategory.trim() 
+      const selectedCategory = category === "other" && customCategory.trim()
+        ? customCategory.trim()
         : (category || "general").toLowerCase().trim();
 
       formData.append("message", latestDescription.trim());
@@ -687,7 +687,7 @@ export default function RaiseTicketPage() {
                     <option value="other">Other</option>
                   </select>
                 </div>
-                
+
                 {category === "other" && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { getPresignedUrlForSupportImage } from "@/app/actions/r2-actions";
 import {
   ArrowLeft,
   ArrowRight,
@@ -848,38 +849,46 @@ export default function InquiryPage() {
                       const input = document.createElement("input");
                       input.type = "file";
                       input.accept = "image/*";
-                      input.onchange = (e) => {
+                      input.onchange = async (e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
                           setUploadingImage(true);
                           setUploadProgress(10);
                           const interval = setInterval(() => {
                             setUploadProgress((prev) => {
-                              if (prev >= 90) {
-                                clearInterval(interval);
-                                return 90;
-                              }
-                              return prev + 15;
+                              if (prev >= 80) { clearInterval(interval); return 80; }
+                              return prev + 10;
                             });
-                          }, 100);
+                          }, 200);
 
-                          const reader = new FileReader();
-                          reader.onload = (re) => {
+                          try {
+                            const { uploadUrl, publicUrl } = await getPresignedUrlForSupportImage(file.name, file.type);
+                            
+                            await fetch(uploadUrl, {
+                              method: "PUT",
+                              body: file,
+                              headers: { "Content-Type": file.type },
+                            });
+
+                            clearInterval(interval);
+                            setUploadProgress(100);
+                            
                             setTimeout(() => {
-                              setUploadProgress(100);
-                              setTimeout(() => {
-                                setUploadingImage(false);
-                                if (re.target?.result) {
-                                  const editor = document.getElementById("richEditor");
-                                  if (editor) editor.focus();
-                                  document.execCommand("insertImage", false, re.target.result.toString());
-                                  if (editor) setDescription(editor.innerHTML);
-                                }
-                              }, 300);
-                            }, 700);
-                          };
-                          reader.readAsDataURL(file);
+                              setUploadingImage(false);
+                              const editor = document.getElementById("richEditor");
+                              if (editor) editor.focus();
+                              document.execCommand("insertHTML", false,
+                                `<img src="${publicUrl}" alt="${file.name}" style="max-width:200px;max-height:200px;border-radius:8px;margin:8px 4px;cursor:pointer;" />`
+                              );
+                              if (editor) setDescription(editor.innerHTML);
+                            }, 300);
+                          } catch (err) {
+                            clearInterval(interval);
+                            setUploadingImage(false);
+                            alert("Image upload failed. Please try again.");
+                          }
                         }
+                        (e.target as HTMLInputElement).value = "";
                       };
                       input.click();
                     }}
