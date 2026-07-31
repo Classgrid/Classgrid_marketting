@@ -939,7 +939,7 @@ export function CareersForm({
         </motion.label>
 
         <motion.label variants={itemVariants} className="block text-sm">
-          <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB</span>
+          <span className="mb-2 block text-muted-foreground">Upload Resume (PDF, DOCX) - Max 5MB (Optional)</span>
           <div className="relative">
             <motion.div 
               whileHover={(!isSubmitting ? { scale: 1.01 } : {}) as any}
@@ -953,7 +953,7 @@ export function CareersForm({
                 type="file"
                 name="resume"
                 accept=".pdf,.doc,.docx"
-                required
+
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
                     setSelectedFile(e.target.files[0]);
