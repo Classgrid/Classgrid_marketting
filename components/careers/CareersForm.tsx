@@ -81,6 +81,7 @@ export function CareersForm({
 
   // OAuth States
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleFilled, setGoogleFilled] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
   const [githubRepos, setGithubRepos] = useState<any[]>([]);
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<string[]>([]);
@@ -93,6 +94,7 @@ export function CareersForm({
 
       if (data.type === 'google_oauth_success') {
         setGoogleLoading(false);
+        setGoogleFilled(true);
         const { firstName, lastName, email } = data.profile;
         const fnInput = document.querySelector('input[name="firstName"]') as HTMLInputElement;
         const lnInput = document.querySelector('input[name="lastName"]') as HTMLInputElement;
@@ -347,21 +349,23 @@ export function CareersForm({
             </div>
           )}
 
-          <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between bg-secondary/30 p-4 rounded-xl border border-border">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground block">Save time applying</span>
-              Autofill your name and email using Google.
+          {!googleFilled && (
+            <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between bg-secondary/30 p-4 rounded-xl border border-border">
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground block">Save time applying</span>
+                Autofill your name and email using Google.
+              </div>
+              <button
+                type="button"
+                onClick={handleGooglePrefill}
+                disabled={googleLoading}
+                className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 border border-slate-200 shadow-sm transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 dark:hover:bg-zinc-800 disabled:opacity-50"
+              >
+                <img src="https://cdn.classgrid.in/svg__logo_collection/google-icon-logo-svgrepo-com.svg" alt="Google" className="h-5 w-5" />
+                {googleLoading ? "Connecting..." : "Fill with Google"}
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={handleGooglePrefill}
-              disabled={googleLoading}
-              className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 border border-slate-200 shadow-sm transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 dark:hover:bg-zinc-800 disabled:opacity-50"
-            >
-              <img src="https://cdn.classgrid.in/svg__logo_collection/google-icon-logo-svgrepo-com.svg" alt="Google" className="h-5 w-5" />
-              {googleLoading ? "Connecting..." : "Fill with Google"}
-            </button>
-          </div>
+          )}
 
           <motion.form 
             onSubmit={handleSubmit} 
