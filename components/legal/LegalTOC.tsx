@@ -120,14 +120,14 @@ export function LegalTOC({ sections }: LegalTOCProps) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-[#080808] shadow-2xl lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-background border-r border-border shadow-2xl lg:hidden"
             >
               <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
-                <span className="text-sm font-semibold text-white">Contents</span>
+                <span className="text-sm font-semibold text-foreground">Contents</span>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/70 transition-colors hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-accent/50 text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <X className="h-4 w-4" />
                 </button>
