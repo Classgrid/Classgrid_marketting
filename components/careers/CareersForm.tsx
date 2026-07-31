@@ -779,55 +779,28 @@ export function CareersForm({
                 )}
               </div>
               
-              <div className="relative mt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsGithubDropdownOpen(!isGithubDropdownOpen)}
-                  className="flex items-center justify-between w-full h-11 px-3 bg-white border border-slate-300 rounded-lg dark:bg-[#0A0A0A] dark:border-zinc-700 focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors text-sm"
+              <div className="mt-2">
+                <select
+                  multiple
+                  value={selectedGithubRepos}
+                  onChange={(e) => {
+                    const options = Array.from(e.target.selectedOptions);
+                    const selected = options.map(opt => opt.value);
+                    if (selected.length <= 3) {
+                      setSelectedGithubRepos(selected);
+                    }
+                  }}
+                  className="w-full h-[150px] rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white custom-scrollbar"
                 >
-                  <span className={`truncate ${selectedGithubRepos.length === 0 ? 'text-muted-foreground' : 'text-foreground font-medium'}`}>
-                    {selectedGithubRepos.length === 0 
-                      ? `Select 2-3 repositories... (${githubRepos.length} found)` 
-                      : `${selectedGithubRepos.length} repositories selected`}
-                  </span>
-                  <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${isGithubDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {isGithubDropdownOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg dark:bg-[#111] dark:border-zinc-800 max-h-[250px] overflow-y-auto custom-scrollbar p-1">
-                    {githubRepos.map(repo => {
-                      const isSelected = selectedGithubRepos.includes(repo.url);
-                      const isDisabled = !isSelected && selectedGithubRepos.length >= 3;
-                      return (
-                        <div 
-                          key={repo.id}
-                          onClick={() => {
-                            if (isSelected) {
-                              setSelectedGithubRepos(prev => prev.filter(r => r !== repo.url));
-                            } else if (!isDisabled) {
-                              setSelectedGithubRepos(prev => [...prev, repo.url]);
-                            }
-                          }}
-                          className={`flex items-center gap-3 px-2 py-2 cursor-pointer transition-colors rounded-md ${
-                            isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-50 dark:hover:bg-zinc-900/50'
-                          }`}
-                        >
-                          <div className={`flex items-center justify-center w-4 h-4 border rounded shrink-0 ${isSelected ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 dark:border-zinc-700'}`}>
-                            {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-foreground truncate">{repo.name}</div>
-                            {repo.description && <div className="text-[11px] text-muted-foreground truncate">{repo.description}</div>}
-                          </div>
-                          <div className="flex gap-2 shrink-0 text-[10px] text-slate-500 font-medium">
-                            {repo.language && <span>{repo.language}</span>}
-                            <span>★ {repo.stars}</span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+                  {githubRepos.map(repo => (
+                    <option key={repo.id} value={repo.url} className="py-1.5 px-1 border-b border-slate-100 dark:border-zinc-800 last:border-0">
+                      {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
+                    </option>
+                  ))}
+                </select>
+                <div className="text-xs text-muted-foreground mt-1.5 text-right">
+                  Hold Ctrl (Windows) or Cmd (Mac) to select multiple. Selected: {selectedGithubRepos.length}/3
+                </div>
               </div>
             </div>
           )}
