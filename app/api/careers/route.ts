@@ -76,150 +76,149 @@ export async function POST(request: NextRequest) {
       to: "Classgrid Team <team@classgrid.in>",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`,
-      html: `<!DOCTYPE html>
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`      html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
 <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
   <div style="text-align:center;margin-bottom:32px;">
     <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" style="height:40px;" />
   </div>
-  <div style="background:#f9f9f9;border:1px solid #eaeaea;border-radius:16px;padding:32px;">
+  <div style="background:#ffffff;border:1px solid #eaeaea;border-radius:16px;padding:32px;">
     <h2 style="color:#111111;margin:0 0 24px;font-size:20px;">Someone Wants to Join the Classgrid Team!</h2>
     <table style="width:100%;border-collapse:collapse;">
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;width:130px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName} (${sanitizedGender})</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;width:130px;vertical-align:top;">Name</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">\${sanitizedName} (\${sanitizedGender})</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:${sanitizedEmail}" style="color:#10b981;text-decoration:none;">${sanitizedEmail}</a></td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:\${sanitizedEmail}" style="color:#10b981;text-decoration:none;">\${sanitizedEmail}</a></td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Phone</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedPhone}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Phone</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedPhone}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Gender</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedGender}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Gender</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedGender}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Country</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${escapeHtml(country || "India")}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Country</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${escapeHtml(country || "India")}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">State</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedState}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">State</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedState}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">District</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedDistrict}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">District</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedDistrict}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Taluka</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedTaluka}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Taluka</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedTaluka}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">City/Village</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedCityVillage}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">City/Village</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedCityVillage}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Interested Role</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedRole}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Interested Role</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedRole}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Work Type</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedWorkType}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Work Type</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedWorkType}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Occupation</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedCurrentOccupation}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Occupation</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedCurrentOccupation}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Experience</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedExperience}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Experience</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedExperience}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Expected Joining</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedAvailability}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Expected Joining</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedAvailability}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Degree</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedDegree}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Degree</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedDegree}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Branch</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedBranch}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Branch</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedBranch}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Year of Study</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedYearOfStudy}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Year of Study</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedYearOfStudy}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">College / Univ</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedCollege}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">College / Univ</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedCollege}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">CGPA</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedCgpa}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">CGPA</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedCgpa}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Over 18?</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedAge}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Over 18?</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedAge}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">LinkedIn</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedLinkedin !== "Not provided" ? `<a href="${sanitizedLinkedin}" style="color:#10b981;text-decoration:none;">${sanitizedLinkedin}</a>` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">LinkedIn</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedLinkedin !== "Not provided" ? \`<a href="\${sanitizedLinkedin}" style="color:#10b981;text-decoration:none;">\${sanitizedLinkedin}</a>\` : "Not provided"}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">GitHub</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedGithub !== "Not provided" ? `<a href="${sanitizedGithub}" style="color:#10b981;text-decoration:none;">${sanitizedGithub}</a>` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">GitHub</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedGithub !== "Not provided" ? \`<a href="\${sanitizedGithub}" style="color:#10b981;text-decoration:none;">\${sanitizedGithub}</a>\` : "Not provided"}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Twitter / X</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedTwitter !== "Not provided" ? `<a href="${sanitizedTwitter}" style="color:#10b981;text-decoration:none;">${sanitizedTwitter}</a>` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Twitter / X</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedTwitter !== "Not provided" ? \`<a href="\${sanitizedTwitter}" style="color:#10b981;text-decoration:none;">\${sanitizedTwitter}</a>\` : "Not provided"}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Portfolio</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedPortfolio !== "Not provided" ? `<a href="${sanitizedPortfolio}" style="color:#10b981;text-decoration:none;">${sanitizedPortfolio}</a>` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Portfolio</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedPortfolio !== "Not provided" ? \`<a href="\${sanitizedPortfolio}" style="color:#10b981;text-decoration:none;">\${sanitizedPortfolio}</a>\` : "Not provided"}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Coding Profile</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${sanitizedCodingProfile !== "Not provided" ? `<a href="${sanitizedCodingProfile}" style="color:#10b981;text-decoration:none;">${sanitizedCodingProfile}</a>` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Coding Profile</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedCodingProfile !== "Not provided" ? \`<a href="\${sanitizedCodingProfile}" style="color:#10b981;text-decoration:none;">\${sanitizedCodingProfile}</a>\` : "Not provided"}</td>
       </tr>
       <tr>
-        <td style="padding:12px 0;color:#888;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Resume</td>
-        <td style="padding:12px 0;color:#fff;font-size:14px;border-bottom:1px solid #eaeaea;">${resumeUrl ? `<a href="${resumeUrl}" style="color:#10b981;text-decoration:none;font-weight:bold;">📥 Download Resume</a>` : "No resume attached"}</td>
+        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Resume</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${resumeUrl ? \`<a href="\${resumeUrl}" style="color:#10b981;text-decoration:none;font-weight:bold;">📥 Download Resume</a>\` : "No resume attached"}</td>
       </tr>
     </table>
     
-    <div style="margin-top:24px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Tech Stack (${techStackItems.length} selected)</p>
-      <div style="margin:0;line-height:2;">${techStackHtml}</div>
+    <div style="margin-top:24px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
+      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Tech Stack (\${techStackItems.length} selected)</p>
+      <div style="margin:0;line-height:2;">\${techStackHtml}</div>
     </div>
 
-    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Additional Skills</p>
-      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedSkills}</div>
+    <div style="margin-top:16px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
+      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Additional Skills</p>
+      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">\${sanitizedSkills}</div>
     </div>
 
-    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Why Join Classgrid?</p>
-      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedWhyJoin}</div>
+    <div style="margin-top:16px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
+      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Why Join Classgrid?</p>
+      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">\${sanitizedWhyJoin}</div>
     </div>
 
-    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Open Source Contributions</p>
-      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedOpenSource}</div>
+    <div style="margin-top:16px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
+      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Open Source Contributions</p>
+      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">\${sanitizedOpenSource}</div>
     </div>
 
-    <div style="margin-top:16px;padding:20px;background:#111;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#888;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Async / Remote Experience</p>
-      <div style="color:#e0e0e0;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${sanitizedAsyncRemote}</div>
+    <div style="margin-top:16px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
+      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Async / Remote Experience</p>
+      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">\${sanitizedAsyncRemote}</div>
     </div>
   </div>
-  <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #1a1a1a;">
-    <p style="color:#555;font-size:11px;margin:0;">Submitted via <a href="https://classgrid.in/careers" style="color:#10b981;text-decoration:none;">classgrid.in/careers</a></p>
+  <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #eaeaea;">
+    <p style="color:#888888;font-size:11px;margin:0;">Submitted via <a href="https://classgrid.in/careers" style="color:#10b981;text-decoration:none;">classgrid.in/careers</a></p>
   </div>
 </div>
 </body></html>`,

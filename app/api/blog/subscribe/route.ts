@@ -312,7 +312,7 @@ export async function POST(req: Request) {
     .btn {
       display: inline-block;
       background-color: #34d399;
-      color: #ffffff !important;
+      color: #000000 !important;
       text-decoration: none;
       padding: 12px 28px;
       border-radius: 6px;
