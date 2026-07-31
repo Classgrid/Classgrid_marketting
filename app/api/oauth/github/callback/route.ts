@@ -39,29 +39,73 @@ export async function GET(req: NextRequest) {
       throw new Error(tokenData.error_description || "Failed to obtain access token");
     }
 
-    const reposRes = await fetch("https://api.github.com/user/repos?type=all&per_page=100&sort=updated", {
+    const graphqlQuery = `
+      query {
+        viewer {
+          repositoriesContributedTo(first: 50, contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY]) {
+            nodes {
+              id
+              name
+              nameWithOwner
+              url
+              description
+              primaryLanguage { name }
+              stargazerCount
+            }
+          }
+          repositories(first: 50, ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER], orderBy: {field: PUSHED_AT, direction: DESC}) {
+            nodes {
+              id
+              name
+              nameWithOwner
+              url
+              description
+              primaryLanguage { name }
+              stargazerCount
+            }
+          }
+        }
+      }
+    `;
+
+    const reposRes = await fetch("https://api.github.com/graphql", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
-        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
         "User-Agent": "Classgrid-Careers-App"
       },
+      body: JSON.stringify({ query: graphqlQuery })
     });
     
     if (!reposRes.ok) {
-       throw new Error("Failed to fetch repositories");
+       throw new Error("Failed to fetch repositories via GraphQL");
     }
 
     const reposData = await reposRes.json();
     
-    const repos = reposData.map((repo: any) => ({
-      id: repo.id,
-      name: repo.name,
-      fullName: repo.full_name,
-      url: repo.html_url,
-      description: repo.description,
-      language: repo.language,
-      stars: repo.stargazers_count
-    }));
+    const contributedNodes = reposData.data?.viewer?.repositoriesContributedTo?.nodes || [];
+    const ownedNodes = reposData.data?.viewer?.repositories?.nodes || [];
+    
+    const allNodes = [...ownedNodes, ...contributedNodes];
+    
+    // Deduplicate by id
+    const uniqueReposMap = new Map();
+    allNodes.forEach((node: any) => {
+      if (node && !uniqueReposMap.has(node.id)) {
+        uniqueReposMap.set(node.id, {
+          id: node.id,
+          name: node.nameWithOwner,
+          fullName: node.nameWithOwner,
+          url: node.url,
+          description: node.description,
+          language: node.primaryLanguage?.name || null,
+          stars: node.stargazerCount
+        });
+      }
+    });
+
+    const repos = Array.from(uniqueReposMap.values());
 
     const userRes = await fetch("https://api.github.com/user", {
       headers: {
