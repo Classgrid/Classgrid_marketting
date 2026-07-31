@@ -471,9 +471,6 @@ export function getCareerApplicationConfirmationEmailHtml(firstName: string, rol
       
       <div class="meta" style="margin-top: 16px;">Step 2 — Shortlisting & Intro Call</div>
       <p>If your profile is shortlisted, our team will reach out directly to schedule a brief introductory chat.</p>
-      
-      <div class="meta" style="margin-top: 16px;">Step 3 — Explore Classgrid</div>
-      <p>While you wait, feel free to explore our platform at <a href="https://classgrid.in" style="color: #10b981;">classgrid.in</a> or read our latest updates on our <a href="https://classgrid.in/blog" style="color: #10b981;">Blog</a>.</p>
     </div>
 
     <p style="margin-top: 24px;">We appreciate your interest in building the future of education with us!</p>
@@ -482,6 +479,7 @@ export function getCareerApplicationConfirmationEmailHtml(firstName: string, rol
   return baseTemplate({
     content,
     title: `Application Received: ${role}`,
-    ignoreText: "You are receiving this email because you submitted an application on Classgrid Careers."
+    hideSupportLink: true,
+    ignoreText: null
   });
 }
