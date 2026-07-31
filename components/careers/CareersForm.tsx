@@ -403,7 +403,7 @@ export function CareersForm({
                   type="text"
                   name="firstName"
                   required
-                  placeholder="John"
+                  placeholder="Sadie"
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
                 />
               </label>
@@ -413,7 +413,7 @@ export function CareersForm({
                   type="text"
                   name="lastName"
                   required
-                  placeholder="Doe"
+                  placeholder="Sink"
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
                 />
               </label>
