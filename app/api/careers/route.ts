@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
       to: "Classgrid Team <team@classgrid.in>",
       replyTo: sanitizedEmail,
       subject: `🚀 New Career Application: ${sanitizedName} for ${sanitizedRole}`,
-      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`      html: `<!DOCTYPE html>
+      text: `New Career Application:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nRole: ${sanitizedRole}\nState: ${sanitizedState}\nDistrict: ${sanitizedDistrict}\nTaluka: ${sanitizedTaluka}\nCity/Village: ${sanitizedCityVillage}\nDegree: ${sanitizedDegree}\nYear: ${sanitizedYearOfStudy}\nTech Stack: ${techStackItems.join(", ")}`,
+      html: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
 <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
