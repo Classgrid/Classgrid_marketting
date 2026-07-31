@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
   const clientId = process.env.GOOGLE_CLIENT_ID!;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/oauth/google/callback`;
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "https://classgrid.in"}/api/oauth/google/callback`;
 
   try {
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
