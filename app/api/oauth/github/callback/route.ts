@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
         Accept: "application/vnd.github.v3+json",
+        "User-Agent": "Classgrid-Careers-App"
       },
     });
     
