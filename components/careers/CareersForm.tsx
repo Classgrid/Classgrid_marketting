@@ -766,6 +766,11 @@ export function CareersForm({
             </button>
           ) : (
               <div className="space-y-4">
+                {githubProfile && (
+                  <div className="text-sm font-medium text-muted-foreground">
+                    Handle: <a href={githubProfile.url} target="_blank" rel="noreferrer" className="text-emerald-500 hover:underline font-semibold">@{githubProfile.username}</a>
+                  </div>
+                )}
                 <div className="flex flex-col gap-3">
                   <select
                     value={selectedDropdownRepo}
