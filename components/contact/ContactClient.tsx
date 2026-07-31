@@ -201,7 +201,7 @@ export default function ContactClient() {
                                 <User className="h-4 w-4 text-emerald-500" />
                               </InputGroupText>
                             </InputGroupAddon>
-                            <InputGroupInput id="fullName" name="fullName" placeholder="John Doe" className="bg-transparent border-0 focus-visible:ring-0 px-2" required />
+                            <InputGroupInput id="fullName" name="fullName" placeholder="John Doe" className="bg-transparent border-0 focus-visible:ring-0 px-2 placeholder:text-zinc-400 dark:placeholder:text-zinc-600" required />
                           </InputGroup>
                         </div>
 
@@ -216,8 +216,8 @@ export default function ContactClient() {
                               name="phoneNumber"
                               inputMode="numeric"
                               pattern="[0-9]{10}"
-                              placeholder="8623947038"
-                              className="bg-transparent border-0 focus-visible:ring-0 px-2"
+                              placeholder="9876543210"
+                              className="bg-transparent border-0 focus-visible:ring-0 px-2 placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                               required
                             />
                           </InputGroup>
@@ -239,7 +239,7 @@ export default function ContactClient() {
                             placeholder="you@institution.edu"
                             pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
                             title="Please enter a valid email address (e.g. name@gmail.com)"
-                            className="bg-transparent border-0 focus-visible:ring-0 px-2"
+                            className="bg-transparent border-0 focus-visible:ring-0 px-2 placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                             required
                           />
                         </InputGroup>
@@ -258,7 +258,7 @@ export default function ContactClient() {
                             name="message"
                             rows={5}
                             placeholder="How can we help you?"
-                            className="bg-transparent border-0 focus-visible:ring-0 p-3 pt-4 resize-y"
+                            className="bg-transparent border-0 focus-visible:ring-0 p-3 pt-4 resize-y placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                             required
                           />
                         </InputGroup>
