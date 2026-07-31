@@ -13,7 +13,7 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, github, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
+    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, githubRepos, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
 
     if (!email?.trim() || !firstName?.trim() || !lastName?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim() || !termsConsent) {
       return NextResponse.json(
@@ -53,7 +53,9 @@ export async function POST(request: NextRequest) {
     // New fields
     const sanitizedAge = escapeHtml(age18?.trim() || "Not provided");
     const sanitizedTwitter = escapeHtml(twitter?.trim() || "Not provided");
-    const sanitizedGithub = escapeHtml(github?.trim() || "Not provided");
+    const githubReposHtml = Array.isArray(githubRepos) && githubRepos.length > 0 
+      ? githubRepos.map((repoUrl: string) => `<a href="${escapeHtml(repoUrl)}" style="color:#10b981;text-decoration:none;display:block;margin-bottom:4px;">${escapeHtml(repoUrl)}</a>`).join("")
+      : "Not provided";
     const sanitizedLinkedin = escapeHtml(linkedin?.trim() || "Not provided");
     const sanitizedPortfolio = escapeHtml(portfolio?.trim() || "Not provided");
     const sanitizedCodingProfile = escapeHtml(codingProfile?.trim() || "Not provided");
@@ -173,7 +175,7 @@ export async function POST(request: NextRequest) {
       </tr>
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">GitHub</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">\${sanitizedGithub !== "Not provided" ? \`<a href="\${sanitizedGithub}" style="color:#10b981;text-decoration:none;">\${sanitizedGithub}</a>\` : "Not provided"}</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">${githubReposHtml}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Twitter / X</td>

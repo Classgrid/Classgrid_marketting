@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon } from "lucide-react";
+import { Github } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -31,6 +32,30 @@ type SalesRole = {
   label: string;
   value: string;
 };
+
+function GoogleMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
+      <path
+        fill="#EA4335"
+        d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.6-2.5C16.9 3.5 14.7 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9.1 0-.6-.1-1.1-.2-1.6H12Z"
+      />
+      <path
+        fill="#34A853"
+        d="M2.6 7.6 5.8 10c.9-2.6 3.3-4.4 6.2-4.4 1.9 0 3.2.8 3.9 1.5l2.6-2.5C16.9 3.5 14.7 2.6 12 2.6c-3.6 0-6.8 2-8.4 5Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M12 21.4c2.6 0 4.8-.9 6.4-2.4l-3-2.4c-.8.6-1.9 1.1-3.4 1.1-3.9 0-5.2-2.6-5.5-3.9L3.3 16c1.5 3.1 4.7 5.4 8.7 5.4Z"
+      />
+      <path
+        fill="#4285F4"
+        d="M21 12.3c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.5-2.1 3.3l3 2.4c1.8-1.7 2.8-4.2 2.8-7Z"
+      />
+    </svg>
+  );
+}
+
 
 type CareersFormProps = {
   formTitle: string;
@@ -76,6 +101,64 @@ export function CareersForm({
   const [availabilityDate, setAvailabilityDate] = useState<Date>();
   const [tempDate, setTempDate] = useState<Date>();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // OAuth States
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [githubRepos, setGithubRepos] = useState<any[]>([]);
+  const [selectedGithubRepos, setSelectedGithubRepos] = useState<string[]>([]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const data = event.data;
+      if (!data || typeof data !== 'object') return;
+
+      if (data.type === 'google_oauth_success') {
+        setGoogleLoading(false);
+        const { firstName, lastName, email } = data.profile;
+        const fnInput = document.querySelector('input[name="firstName"]') as HTMLInputElement;
+        const lnInput = document.querySelector('input[name="lastName"]') as HTMLInputElement;
+        const emInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+        if (fnInput && firstName) fnInput.value = firstName;
+        if (lnInput && lastName) lnInput.value = lastName;
+        if (emInput && email) emInput.value = email;
+      }
+
+      if (data.type === 'github_oauth_success') {
+        setGithubLoading(false);
+        setGithubRepos(data.repos);
+      }
+
+      if (data.type === 'oauth_error') {
+        setGoogleLoading(false);
+        setGithubLoading(false);
+        setErrorMsg("OAuth Error: " + data.error);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const handleGooglePrefill = () => {
+    setGoogleLoading(true);
+    setErrorMsg("");
+    const width = 500;
+    const height = 600;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    window.open('/api/oauth/google/login', 'Google OAuth', `width=${width},height=${height},left=${left},top=${top}`);
+  };
+
+  const handleGithubConnect = () => {
+    setGithubLoading(true);
+    setErrorMsg("");
+    const width = 500;
+    const height = 600;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    window.open('/api/oauth/github/login', 'GitHub OAuth', `width=${width},height=${height},left=${left},top=${top}`);
+  };
 
   // Merge states + union territories into one sorted list
   const allStates = useMemo(() => {
@@ -137,6 +220,12 @@ export function CareersForm({
     setIsSubmitting(true);
     setErrorMsg("");
     setUploadProgress(0);
+
+    if (selectedGithubRepos.length < 2 || selectedGithubRepos.length > 3) {
+      setErrorMsg("Please connect GitHub and select 2 to 3 of your best repositories.");
+      setIsSubmitting(false);
+      return;
+    }
 
     let progressInterval: NodeJS.Timeout;
     if (selectedFile) {
@@ -214,7 +303,7 @@ export function CareersForm({
         whyJoin: formData.get("whyJoin") as string,
         age18: formData.get("age18") as string,
         twitter: formData.get("twitter") as string,
-        github: formData.get("github") as string,
+        githubRepos: selectedGithubRepos,
         linkedin: formData.get("linkedin") as string,
         portfolio: formData.get("portfolio") as string,
         codingProfile: formData.get("codingProfile") as string,
@@ -276,6 +365,22 @@ export function CareersForm({
               {errorMsg}
             </div>
           )}
+
+          <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between bg-secondary/30 p-4 rounded-xl border border-border">
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground block">Save time applying</span>
+              Autofill your name and email using Google.
+            </div>
+            <button
+              type="button"
+              onClick={handleGooglePrefill}
+              disabled={googleLoading}
+              className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 border border-slate-200 shadow-sm transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 dark:hover:bg-zinc-800 disabled:opacity-50"
+            >
+              <GoogleMark />
+              {googleLoading ? "Connecting..." : "Prefill with Google"}
+            </button>
+          </div>
 
           <motion.form 
             onSubmit={handleSubmit} 
@@ -648,16 +753,6 @@ export function CareersForm({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-2 block text-muted-foreground">GitHub profile</span>
-            <input
-              type="url"
-              name="github"
-              required
-              placeholder="https://"
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
-            />
-          </label>
-          <label className="block text-sm">
             <span className="mb-2 block text-muted-foreground">LinkedIn profile</span>
             <input
               type="url"
@@ -667,6 +762,73 @@ export function CareersForm({
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
             />
           </label>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="block text-sm border border-border p-5 rounded-xl bg-slate-50/50 dark:bg-[#111]">
+          <span className="mb-2 block font-medium text-foreground">GitHub Portfolio (Required)</span>
+          <p className="text-xs text-muted-foreground mb-4">Connect your GitHub to select your best 2-3 repositories to show us your work.</p>
+          
+          {githubRepos.length === 0 ? (
+            <button
+              type="button"
+              onClick={handleGithubConnect}
+              disabled={githubLoading}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap rounded-lg bg-[#24292F] px-4 py-2.5 text-sm font-semibold text-white border border-transparent shadow-sm transition hover:bg-[#24292F]/90 disabled:opacity-50"
+            >
+              <Github className="h-4 w-4" />
+              {githubLoading ? "Connecting to GitHub..." : "Connect GitHub"}
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                <CheckCircle2 className="h-4 w-4" /> GitHub Connected! Found {githubRepos.length} repositories.
+              </div>
+              
+              <div className="text-xs text-slate-500 bg-slate-100 dark:bg-zinc-900 p-2 rounded-md">
+                Select your best work (Min 2, Max 3). Selected: {selectedGithubRepos.length}
+              </div>
+              
+              <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                {githubRepos.map(repo => {
+                  const isSelected = selectedGithubRepos.includes(repo.url);
+                  const isDisabled = !isSelected && selectedGithubRepos.length >= 3;
+                  return (
+                    <div 
+                      key={repo.id}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedGithubRepos(prev => prev.filter(r => r !== repo.url));
+                        } else if (!isDisabled) {
+                          setSelectedGithubRepos(prev => [...prev, repo.url]);
+                        }
+                      }}
+                      className={`p-3 rounded-lg border text-left cursor-pointer transition-all flex items-start justify-between gap-3 ${
+                        isSelected 
+                          ? "border-emerald-500 bg-emerald-500/10" 
+                          : isDisabled
+                            ? "border-slate-200 bg-slate-50 opacity-50 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-900/50"
+                            : "border-slate-200 bg-white hover:border-slate-300 dark:border-zinc-800 dark:bg-[#0A0A0A] dark:hover:border-zinc-700"
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm text-foreground truncate">{repo.name}</div>
+                        {repo.description && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{repo.description}</div>}
+                        <div className="flex gap-3 mt-2 text-[10px] text-slate-500 font-medium">
+                          {repo.language && <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>{repo.language}</span>}
+                          <span className="flex items-center gap-0.5">★ {repo.stars}</span>
+                        </div>
+                      </div>
+                      <div className={`mt-1 h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 dark:border-zinc-700"
+                      }`}>
+                        {isSelected && <CheckCircle2 className="h-3.5 w-3.5" />}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </motion.div>
 
         <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
