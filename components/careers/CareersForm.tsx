@@ -206,8 +206,8 @@ export function CareersForm({
     setErrorMsg("");
     setUploadProgress(0);
 
-    if (selectedGithubRepos.length < 2 || selectedGithubRepos.length > 3) {
-      setErrorMsg("Please connect GitHub and select 2 to 3 of your best repositories.");
+    if (selectedGithubRepos.length === 0) {
+      setErrorMsg("Please connect GitHub and select your best repository.");
       setIsSubmitting(false);
       return;
     }
