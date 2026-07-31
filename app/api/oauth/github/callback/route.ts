@@ -63,10 +63,31 @@ export async function GET(req: NextRequest) {
       stars: repo.stargazers_count
     }));
 
+    const userRes = await fetch("https://api.github.com/user", {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "Classgrid-Careers-App"
+      },
+    });
+
+    if (!userRes.ok) {
+       throw new Error("Failed to fetch user profile");
+    }
+
+    const userData = await userRes.json();
+    const githubUsername = userData.login;
+    const githubProfileUrl = userData.html_url;
+
     return new NextResponse(`
       <script>
         const repos = ${JSON.stringify(repos)};
-        window.opener.postMessage({ type: 'github_oauth_success', repos }, '*');
+        window.opener.postMessage({ 
+          type: 'github_oauth_success', 
+          repos, 
+          username: '${githubUsername}', 
+          profileUrl: '${githubProfileUrl}' 
+        }, '*');
         window.close();
       </script>
     `, { headers: { "Content-Type": "text/html" } });

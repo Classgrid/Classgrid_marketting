@@ -84,6 +84,7 @@ export function CareersForm({
   const [githubLoading, setGithubLoading] = useState(false);
   const [githubRepos, setGithubRepos] = useState<any[]>([]);
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<string[]>([]);
+  const [githubProfile, setGithubProfile] = useState<{username: string, url: string} | null>(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -104,6 +105,7 @@ export function CareersForm({
       if (data.type === 'github_oauth_success') {
         setGithubLoading(false);
         setGithubRepos(data.repos);
+        setGithubProfile({ username: data.username, url: data.profileUrl });
       }
 
       if (data.type === 'oauth_error') {
@@ -281,6 +283,8 @@ export function CareersForm({
         age18: formData.get("age18") as string,
         twitter: formData.get("twitter") as string,
         githubRepos: selectedGithubRepos,
+        githubProfileUrl: githubProfile?.url || "",
+        githubUsername: githubProfile?.username || "",
         linkedin: formData.get("linkedin") as string,
         portfolio: formData.get("portfolio") as string,
         codingProfile: formData.get("codingProfile") as string,
@@ -757,12 +761,19 @@ export function CareersForm({
             </button>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
-                <CheckCircle2 className="h-4 w-4" /> GitHub Connected! Found {githubRepos.length} repositories.
+              <div className="flex flex-col gap-1 text-sm">
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
+                  <CheckCircle2 className="h-4 w-4" /> GitHub Connected!
+                </div>
+                {githubProfile && (
+                  <div className="text-muted-foreground ml-6">
+                    Logged in as: <a href={githubProfile.url} target="_blank" rel="noreferrer" className="text-emerald-500 hover:underline">@{githubProfile.username}</a>
+                  </div>
+                )}
               </div>
               
               <div className="text-xs text-slate-500 bg-slate-100 dark:bg-zinc-900 p-2 rounded-md">
-                Select your best work (Min 2, Max 3). Selected: {selectedGithubRepos.length}
+                Found {githubRepos.length} repositories. Select your best work (Min 2, Max 3). Selected: {selectedGithubRepos.length}
               </div>
               
               <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
