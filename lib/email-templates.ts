@@ -459,7 +459,6 @@ If you believe you should have access, please reach out to your institution admi
 // ------------- CAREER APPLICATION CONFIRMATION EMAIL -------------
 export function getCareerApplicationConfirmationEmailHtml(firstName: string, role: string): string {
   const content = `
-    <h1>Application Received: ${role}</h1>
     <p>Hi <strong>${firstName}</strong>,</p>
     <p>Congratulations on applying to Classgrid! We have successfully received your application for the <strong>${role}</strong> position.</p>
     
