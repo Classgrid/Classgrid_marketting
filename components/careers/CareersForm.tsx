@@ -87,6 +87,8 @@ export function CareersForm({
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<string[]>([]);
   const [githubProfile, setGithubProfile] = useState<{username: string, url: string} | null>(null);
   const [selectedDropdownRepo, setSelectedDropdownRepo] = useState("");
+  const [isVerifyingRepo, setIsVerifyingRepo] = useState(false);
+  const [isGithubVerified, setIsGithubVerified] = useState(false);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -766,70 +768,70 @@ export function CareersForm({
             </button>
           ) : (
               <div className="space-y-4">
-                {githubProfile && (
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Handle: <a href={githubProfile.url} target="_blank" rel="noreferrer" className="text-emerald-500 hover:underline font-semibold">@{githubProfile.username}</a>
-                  </div>
-                )}
-                <div className="flex flex-col gap-3">
-                  <select
-                    value={selectedDropdownRepo}
-                    onChange={(e) => setSelectedDropdownRepo(e.target.value)}
-                    disabled={selectedGithubRepos.length >= 3}
-                    className="w-full h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50"
-                  >
-                    <option value="" disabled>Select a repository you've contributed to...</option>
-                    {githubRepos.map(repo => (
-                      <option key={repo.id} value={repo.url} disabled={selectedGithubRepos.includes(repo.url)}>
-                        {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (selectedDropdownRepo && selectedGithubRepos.length < 3 && !selectedGithubRepos.includes(selectedDropdownRepo)) {
-                        setSelectedGithubRepos([...selectedGithubRepos, selectedDropdownRepo]);
-                        setSelectedDropdownRepo("");
-                      }
-                    }}
-                    disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3}
-                    className="w-full sm:w-auto sm:self-start h-11 px-6 rounded-lg bg-white border border-slate-200 text-slate-900 text-sm font-medium hover:bg-slate-50 transition dark:bg-zinc-900 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800 disabled:opacity-50 shadow-sm"
-                  >
-                    Use this repository
-                  </button>
-                </div>
-
-                {selectedGithubRepos.length > 0 && (
-                  <div className="space-y-2 mt-4">
-                    <div className="text-xs text-muted-foreground font-medium px-1">
-                      Selected Repositories ({selectedGithubRepos.length}/3)
+                {isGithubVerified ? (
+                  <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-[#111] space-y-2">
+                    <div className="text-[11px] font-bold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">
+                      GITHUB VERIFIED
                     </div>
-                    <div className="flex flex-col gap-2">
-                      {selectedGithubRepos.map(repoUrl => {
-                        const repoData = githubRepos.find(r => r.url === repoUrl);
-                        if (!repoData) return null;
-                        return (
-                          <div key={repoUrl} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 dark:border-zinc-800/50 dark:bg-zinc-900/30">
-                            <div className="flex flex-col min-w-0 pr-4">
-                              <span className="text-sm font-medium text-foreground truncate">{repoData.name}</span>
-                              {repoData.description && (
-                                <span className="text-xs text-muted-foreground truncate mt-0.5">{repoData.description}</span>
-                              )}
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedGithubRepos(selectedGithubRepos.filter(r => r !== repoUrl))}
-                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition shrink-0"
-                              title="Remove repository"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        )
-                      })}
+                    <div className="text-sm text-foreground">
+                      Handle: <span className="font-semibold">@{githubProfile?.username}</span>
                     </div>
+                    <div className="text-sm text-foreground">
+                      Repository: <span className="font-semibold">{selectedGithubRepos.map(url => {
+                        const repo = githubRepos.find(r => r.url === url);
+                        return repo ? repo.name : url;
+                      }).join(', ')}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsGithubVerified(false)}
+                      className="text-xs text-muted-foreground underline hover:text-foreground mt-2 block"
+                    >
+                      Change repository
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    {githubProfile && (
+                      <div className="text-sm font-medium text-muted-foreground">
+                        Handle: <a href={githubProfile.url} target="_blank" rel="noreferrer" className="text-emerald-500 hover:underline font-semibold">@{githubProfile.username}</a>
+                      </div>
+                    )}
+                    <div className="flex flex-col gap-3">
+                      <select
+                        value={selectedDropdownRepo}
+                        onChange={(e) => setSelectedDropdownRepo(e.target.value)}
+                        disabled={selectedGithubRepos.length >= 3 || isVerifyingRepo}
+                        className="w-full h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50"
+                      >
+                        <option value="" disabled>Select a repository you've contributed to...</option>
+                        {githubRepos.map(repo => (
+                          <option key={repo.id} value={repo.url} disabled={selectedGithubRepos.includes(repo.url)}>
+                            {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (selectedDropdownRepo && selectedGithubRepos.length < 3 && !selectedGithubRepos.includes(selectedDropdownRepo)) {
+                            setIsVerifyingRepo(true);
+                            const updated = [...selectedGithubRepos, selectedDropdownRepo];
+                            setSelectedGithubRepos(updated);
+                            setTimeout(() => {
+                              setIsVerifyingRepo(false);
+                              setIsGithubVerified(true);
+                              setSelectedDropdownRepo("");
+                            }, 700);
+                          }
+                        }}
+                        disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3 || isVerifyingRepo}
+                        className="w-full sm:w-auto sm:self-start h-11 px-6 rounded-lg bg-white border border-slate-200 text-slate-900 text-sm font-medium hover:bg-slate-50 transition dark:bg-zinc-900 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800 disabled:opacity-50 shadow-sm"
+                      >
+                        {isVerifyingRepo ? "Verifying..." : "Use this repository"}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
           )}
