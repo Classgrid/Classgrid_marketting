@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSmtpTransporter, getNoReplyAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
+import { getSmtpTransporter, getNoReplyAddress, getCareersAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
+import { getCareerApplicationConfirmationEmailHtml } from "@/lib/email-templates";
 
 function escapeHtml(str: string) {
   return str
@@ -243,6 +244,21 @@ export async function POST(request: NextRequest) {
         ],
       }),
     });
+
+    // Send confirmation email to applicant from careers@classgrid.in
+    try {
+      const applicantConfirmationHtml = getCareerApplicationConfirmationEmailHtml(sanitizedFirstName, sanitizedRole);
+      await transporter.sendMail({
+        from: getCareersAddress(),
+        replyTo: "careers@classgrid.in",
+        to: sanitizedEmail,
+        subject: `Application Received: ${sanitizedRole} at Classgrid 🚀`,
+        text: `Hi ${sanitizedFirstName},\n\nThank you for applying to Classgrid for the ${sanitizedRole} role! We have received your application and our team is currently reviewing your profile.\n\nGood luck!\nThe Classgrid Team`,
+        html: applicantConfirmationHtml,
+      });
+    } catch (applicantEmailErr) {
+      console.error("[Careers] Failed to send applicant confirmation email:", applicantEmailErr);
+    }
 
     return NextResponse.json({
       success: true,
