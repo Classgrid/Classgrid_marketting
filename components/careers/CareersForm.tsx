@@ -359,7 +359,7 @@ export function CareersForm({
               className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 border border-slate-200 shadow-sm transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 dark:hover:bg-zinc-800 disabled:opacity-50"
             >
               <img src="https://cdn.classgrid.in/svg__logo_collection/google-icon-logo-svgrepo-com.svg" alt="Google" className="h-5 w-5" />
-              {googleLoading ? "Connecting..." : "Prefill with Google"}
+              {googleLoading ? "Connecting..." : "Fill with Google"}
             </button>
           </div>
 
