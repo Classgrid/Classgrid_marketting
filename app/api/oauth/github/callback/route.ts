@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       throw new Error(tokenData.error_description || "Failed to obtain access token");
     }
 
-    const reposRes = await fetch("https://api.github.com/user/repos?per_page=100&sort=updated", {
+    const reposRes = await fetch("https://api.github.com/user/repos?type=all&per_page=100&sort=updated", {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
         Accept: "application/vnd.github.v3+json",
