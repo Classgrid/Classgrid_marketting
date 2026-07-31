@@ -66,20 +66,20 @@ export async function POST(request: NextRequest) {
     <table style="width:100%;border-collapse:collapse;">
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;width:100px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">\${sanitizedName}</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:\${sanitizedEmail}" style="color:#10b981;text-decoration:none;">\${sanitizedEmail}</a></td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:${sanitizedEmail}" style="color:#10b981;text-decoration:none;">${sanitizedEmail}</a></td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Phone</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">+91 \${sanitizedPhone}</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">+91 ${sanitizedPhone}</td>
       </tr>
     </table>
     <div style="margin-top:24px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
       <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Message</p>
-      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">\${formattedMessage}</div>
+      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${formattedMessage}</div>
     </div>
   </div>
   <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #eaeaea;">
