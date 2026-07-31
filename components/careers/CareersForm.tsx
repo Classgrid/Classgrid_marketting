@@ -765,21 +765,7 @@ export function CareersForm({
               {githubLoading ? "Connecting to GitHub..." : "Connect GitHub"}
             </button>
           ) : (
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1 text-sm">
-                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
-                  <CheckCircle2 className="h-4 w-4" /> 
-                  <Github className="h-4 w-4" />
-                  GitHub Connected!
-                </div>
-                {githubProfile && (
-                  <div className="text-muted-foreground ml-6">
-                    Logged in as: <a href={githubProfile.url} target="_blank" rel="noreferrer" className="text-emerald-500 hover:underline">@{githubProfile.username}</a>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-col sm:flex-row gap-3">
                     <select
