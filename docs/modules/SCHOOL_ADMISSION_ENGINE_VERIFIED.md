@@ -395,7 +395,7 @@ Parent access is implemented as a school-relevant public service:
 The unified school notification service supports:
 
 - email via Brevo
-- SMS via Fast2SMS
+- SMS via AWS SNS
 - push via Firebase FCM
 
 Built trigger templates include:

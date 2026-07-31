@@ -1,5 +1,5 @@
 export const homeCopy = {
-  headline: "The Operating System for Modern Education",
+  headline: "The Operating System for Educational Institutions",
   subheadline:
     "One platform to manage academics, operations, and growth—ClassGrid helps institutions run smarter, faster, and without the chaos of disconnected systems.",
   trustedBy: "Trusted by institutions across India",

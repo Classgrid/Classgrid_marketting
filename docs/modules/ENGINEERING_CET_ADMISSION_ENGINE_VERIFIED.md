@@ -519,7 +519,7 @@ Engineering reuses the shared document and notification layers:
 - document status values `pending`, `verified`, `rejected`
 - notification channels:
   - email via Brevo
-  - SMS via Fast2SMS
+  - SMS via AWS SNS
   - push via Firebase FCM
 
 ---

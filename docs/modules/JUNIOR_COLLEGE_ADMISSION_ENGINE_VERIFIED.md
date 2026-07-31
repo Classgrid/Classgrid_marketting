@@ -468,7 +468,7 @@ Those variant names are not recognized by the `isCollege` check in the enrollmen
 The notification service supports:
 
 - email via Brevo
-- SMS via Fast2SMS
+- SMS via AWS SNS
 - push via Firebase FCM
 
 The reviewed trigger templates include:

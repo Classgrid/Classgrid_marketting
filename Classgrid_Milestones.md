@@ -98,4 +98,34 @@ Finalized and deployed Classgrid's automated dual-provider marketing & transacti
 
 ---
 
-*Last updated: July 23, 2026*
+## 🧠 Anthropic Claude for Startups Program
+**Date:** July 31, 2026  
+**Status:** ✅ Accepted (Community) / ⏳ Credits Pending  
+
+Classgrid was officially welcomed into the **Claude for Startups** community program! This grants Classgrid a direct line to the Anthropic team, early access to new Claude models, and priority invites to technical deep dives and builder events. The application for API credits to power intelligent workflows for educators and admins is still pending further review.
+
+---
+
+## 🤖 OpenAI Startup Community Application
+**Date:** July 31, 2026  
+**Status:** ⏳ Applied & In Review  
+
+Classgrid applied to the **OpenAI Startup Community** to gain access to technical resources, events, and API credits for integrating GPT models. This expands Classgrid's AI capabilities, ensuring the platform has multi-model access (Anthropic + OpenAI) to power robust features for educational institutions.
+
+---
+
+## ☁️ Microsoft for Startups Founders Hub
+**Status:** 📌 To Do (Upcoming)  
+
+Classgrid plans to apply for the Microsoft Founders Hub to secure up to $150,000 in Azure credits, OpenAI API credits, GitHub Enterprise, and Microsoft 365 licenses. Application paused temporarily to create a personal Microsoft account.
+
+---
+
+## ☁️ Google for Startups Cloud Program
+**Status:** 📌 To Do (Upcoming)  
+
+Classgrid plans to apply for the Google Cloud program to secure up to $100,000 in GCP credits for Firebase, Google Maps API, and Gemini AI workloads.
+
+---
+
+*Last updated: July 31, 2026*

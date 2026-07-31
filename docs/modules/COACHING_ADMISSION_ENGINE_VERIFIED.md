@@ -472,7 +472,7 @@ So if the institute wants an actual Classgrid student login, `fullEnrollStudent(
 The notification service supports:
 
 - email via Brevo
-- SMS via Fast2SMS
+- SMS via AWS SNS
 - push via Firebase FCM
 
 The reviewed trigger templates include:

@@ -229,7 +229,7 @@ The current platform backend contains many organization-linked data models, but 
 181. Track email queue wait time, processing time, attempts, retry reason, final status, and provider message ID.
 182. Track email cost by type: authentication, admissions, billing, classroom, support, announcement, digest, and marketing.
 183. Track suppressed recipients, invalid addresses, abuse risk, and money wasted on preventable sends.
-184. Track Fast2SMS or replacement SMS messages attempted, delivered, failed, expired, and provider response codes.
+184. Track AWS SNS or replacement SMS messages attempted, delivered, failed, expired, and provider response codes.
 185. Track SMS segments, encoding, destination country/operator, transactional/promotional category, and per-segment cost.
 186. Track WhatsApp templates, conversations, categories, messages, delivery, reads, failures, and conversation-window cost.
 187. Track push notifications attempted, accepted, delivered where available, failed tokens, and Firebase/provider cost.
