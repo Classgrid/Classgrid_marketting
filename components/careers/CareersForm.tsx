@@ -33,29 +33,6 @@ type SalesRole = {
   value: string;
 };
 
-function GoogleMark() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
-      <path
-        fill="#EA4335"
-        d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.6-2.5C16.9 3.5 14.7 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9.1 0-.6-.1-1.1-.2-1.6H12Z"
-      />
-      <path
-        fill="#34A853"
-        d="M2.6 7.6 5.8 10c.9-2.6 3.3-4.4 6.2-4.4 1.9 0 3.2.8 3.9 1.5l2.6-2.5C16.9 3.5 14.7 2.6 12 2.6c-3.6 0-6.8 2-8.4 5Z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M12 21.4c2.6 0 4.8-.9 6.4-2.4l-3-2.4c-.8.6-1.9 1.1-3.4 1.1-3.9 0-5.2-2.6-5.5-3.9L3.3 16c1.5 3.1 4.7 5.4 8.7 5.4Z"
-      />
-      <path
-        fill="#4285F4"
-        d="M21 12.3c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.5-2.1 3.3l3 2.4c1.8-1.7 2.8-4.2 2.8-7Z"
-      />
-    </svg>
-  );
-}
-
 
 type CareersFormProps = {
   formTitle: string;
@@ -377,7 +354,7 @@ export function CareersForm({
               disabled={googleLoading}
               className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 border border-slate-200 shadow-sm transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 dark:hover:bg-zinc-800 disabled:opacity-50"
             >
-              <GoogleMark />
+              <img src="https://cdn.classgrid.in/svg__logo_collection/google-icon-logo-svgrepo-com.svg" alt="Google" className="h-5 w-5" />
               {googleLoading ? "Connecting..." : "Prefill with Google"}
             </button>
           </div>
