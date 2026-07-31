@@ -246,11 +246,11 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    // Send confirmation email to applicant (with replyTo set to careers@classgrid.in)
+    // Send confirmation email to applicant (from careers@classgrid.in with replyTo set to careers@classgrid.in)
     try {
       const applicantConfirmationHtml = getCareerApplicationConfirmationEmailHtml(sanitizedFirstName, sanitizedRole);
       await transporter.sendMail({
-        from: getNoReplyAddress(),
+        from: '"Classgrid Careers" <careers@classgrid.in>',
         replyTo: "careers@classgrid.in",
         to: sanitizedEmail,
         subject: `Application Received: ${sanitizedRole} at Classgrid 🚀`,
