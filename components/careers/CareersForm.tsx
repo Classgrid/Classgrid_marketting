@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon, ChevronDown } from "lucide-react";
+import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon, ChevronDown, Loader2 } from "lucide-react";
 import { Github } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -1092,11 +1092,19 @@ export function CareersForm({
               variants={itemVariants}
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 mt-4"
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-500 px-4 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
-              {isSubmitting && <Spinner className="h-5 w-5 text-inherit" />}
-              {isSubmitting ? "Submitting..." : submitLabel}
-              {!isSubmitting && <Send className="h-4 w-4 text-white" />}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <span>Submitting Application...</span>
+                </>
+              ) : (
+                <>
+                  <span>{submitLabel}</span>
+                  <Send className="h-4 w-4 text-white" />
+                </>
+              )}
             </motion.button>
           </>
         )}
