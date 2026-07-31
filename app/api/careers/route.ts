@@ -57,7 +57,10 @@ export async function POST(request: NextRequest) {
       ? `<div style="margin-bottom:8px;"><strong>Profile:</strong> <a href="${escapeHtml(githubProfileUrl)}" style="color:#10b981;text-decoration:none;">@${escapeHtml(githubUsername)}</a></div>` 
       : "";
     const githubReposHtml = Array.isArray(githubRepos) && githubRepos.length > 0 
-      ? githubRepos.map((repoUrl: string) => `<a href="${escapeHtml(repoUrl)}" style="color:#10b981;text-decoration:none;display:block;margin-bottom:4px;">${escapeHtml(repoUrl)}</a>`).join("")
+      ? githubRepos.map((repoUrl: string) => {
+          const cleanName = repoUrl.replace("https://github.com/", "");
+          return `<div><strong>Repository:</strong> <a href="${escapeHtml(repoUrl)}" style="color:#10b981;text-decoration:none;font-weight:500;">${escapeHtml(cleanName)}</a></div>`;
+        }).join("")
       : "No repositories selected";
     const githubCombinedHtml = githubProfileHtml || githubReposHtml !== "No repositories selected" 
       ? githubProfileHtml + githubReposHtml 
