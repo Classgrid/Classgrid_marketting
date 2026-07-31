@@ -784,7 +784,11 @@ export function CareersForm({
                     </div>
                     <button
                       type="button"
-                      onClick={() => setIsGithubVerified(false)}
+                      onClick={() => {
+                        setIsGithubVerified(false);
+                        setSelectedGithubRepos([]);
+                        setSelectedDropdownRepo("");
+                      }}
                       className="text-xs text-muted-foreground underline hover:text-foreground mt-2 block"
                     >
                       Change repository
@@ -822,7 +826,7 @@ export function CareersForm({
                               setIsVerifyingRepo(false);
                               setIsGithubVerified(true);
                               setSelectedDropdownRepo("");
-                            }, 700);
+                            }, 600);
                           }
                         }}
                         disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3 || isVerifyingRepo}
@@ -831,6 +835,38 @@ export function CareersForm({
                         {isVerifyingRepo ? "Verifying..." : "Use this repository"}
                       </button>
                     </div>
+
+                    {selectedGithubRepos.length > 0 && (
+                      <div className="space-y-2 mt-4">
+                        <div className="text-xs text-muted-foreground font-medium px-1">
+                          Selected Repositories ({selectedGithubRepos.length}/3)
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {selectedGithubRepos.map(repoUrl => {
+                            const repoData = githubRepos.find(r => r.url === repoUrl);
+                            if (!repoData) return null;
+                            return (
+                              <div key={repoUrl} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 dark:border-zinc-800/50 dark:bg-zinc-900/30">
+                                <div className="flex flex-col min-w-0 pr-4">
+                                  <span className="text-sm font-medium text-foreground truncate">{repoData.name}</span>
+                                  {repoData.description && (
+                                    <span className="text-xs text-muted-foreground truncate mt-0.5">{repoData.description}</span>
+                                  )}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedGithubRepos(selectedGithubRepos.filter(r => r !== repoUrl))}
+                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition shrink-0"
+                                  title="Remove repository"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
