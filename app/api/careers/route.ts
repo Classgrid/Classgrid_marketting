@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sanitizedFirstName = escapeHtml(firstName.trim());
     const sanitizedName = escapeHtml(`${firstName.trim()} ${lastName.trim()}`);
     const sanitizedEmail = escapeHtml(email.trim().toLowerCase());
     const sanitizedPhone = escapeHtml(phone.trim());
