@@ -194,10 +194,13 @@ export const authOptions: NextAuthOptions = {
           isPlatformUser = !!platformUser;
         }
 
-        // If not a platform user, send "no account" email asynchronously
-        if (!isPlatformUser && user.email) {
+        // Only send "no account" email if the user is logging in from the Docs (/docs) page
+        const reqHeaders = await headers();
+        const referer = reqHeaders.get("referer") || "";
+        const isDocsLogin = referer.includes("/docs");
+
+        if (!isPlatformUser && user.email && isDocsLogin) {
           // Parse user agent for device info
-          const reqHeaders = await headers();
           const userAgent = reqHeaders.get("user-agent") || "";
           let device = "Unknown device";
           if (userAgent.includes("Windows")) device = "Windows PC";
