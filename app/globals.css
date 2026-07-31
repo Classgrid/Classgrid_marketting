@@ -185,6 +185,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv08" 1; /* Enables serifs on capital I for Inter font */
   }
 
   /* NOTE: overflow-x:clip on html/body breaks position:sticky on real mobile devices.
