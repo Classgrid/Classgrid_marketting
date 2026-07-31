@@ -398,7 +398,7 @@ export function CareersForm({
           >
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">First Name</span>
+                <span className="mb-2 block text-muted-foreground">First Name <span className="text-red-500">*</span></span>
                 <input
                   type="text"
                   name="firstName"
@@ -408,7 +408,7 @@ export function CareersForm({
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Last Name</span>
+                <span className="mb-2 block text-muted-foreground">Last Name <span className="text-red-500">*</span></span>
                 <input
                   type="text"
                   name="lastName"
@@ -421,7 +421,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">{fieldEmail}</span>
+                <span className="mb-2 block text-muted-foreground">{fieldEmail} <span className="text-red-500">*</span></span>
                 <input
                   type="email"
                   name="email"
@@ -431,7 +431,7 @@ export function CareersForm({
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Phone Number</span>
+                <span className="mb-2 block text-muted-foreground">Phone Number <span className="text-red-500">*</span></span>
                 <input
                   type="tel"
                   name="phone"
@@ -444,7 +444,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Gender</span>
+                <span className="mb-2 block text-muted-foreground">Gender <span className="text-red-500">*</span></span>
                 <select
                   name="gender"
                   required
@@ -459,7 +459,7 @@ export function CareersForm({
                 </select>
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Are you over the age of 18?</span>
+                <span className="mb-2 block text-muted-foreground">Are you over the age of 18? <span className="text-red-500">*</span></span>
                 <div className="flex gap-4 items-center h-11 px-3">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input 
@@ -505,7 +505,7 @@ export function CareersForm({
                 </div>
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">State / UT</span>
+                <span className="mb-2 block text-muted-foreground">State / UT <span className="text-red-500">*</span></span>
                 <select
                   name="state"
                   required
@@ -520,7 +520,7 @@ export function CareersForm({
                 </select>
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">District</span>
+                <span className="mb-2 block text-muted-foreground">District <span className="text-red-500">*</span></span>
                 <select
                   name="district"
                   required
@@ -538,7 +538,7 @@ export function CareersForm({
               </label>
               {selectedDistrict !== "Other" && (
                 <label className="block text-sm">
-                  <span className="mb-2 block text-muted-foreground">Taluka</span>
+                  <span className="mb-2 block text-muted-foreground">Taluka <span className="text-red-500">*</span></span>
                   <select
                     name="taluka"
                     required
@@ -585,7 +585,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Highest Qualification / Degree</span>
+                <span className="mb-2 block text-muted-foreground">Highest Qualification / Degree <span className="text-red-500">*</span></span>
                 <select
                   name="degree"
                   required
@@ -599,7 +599,7 @@ export function CareersForm({
                 </select>
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Current Year of Study</span>
+                <span className="mb-2 block text-muted-foreground">Current Year of Study <span className="text-red-500">*</span></span>
                 <select
                   name="yearOfStudy"
                   required
@@ -616,7 +616,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">College / University Name</span>
+                <span className="mb-2 block text-muted-foreground">College / University Name <span className="text-red-500">*</span></span>
                 <input
                   type="text"
                   name="college"
@@ -626,7 +626,7 @@ export function CareersForm({
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Branch / Specialization</span>
+                <span className="mb-2 block text-muted-foreground">Branch / Specialization <span className="text-red-500">*</span></span>
                 <input
                   type="text"
                   name="branch"
@@ -636,11 +636,10 @@ export function CareersForm({
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">CGPA / Percentage</span>
+                <span className="mb-2 block text-muted-foreground">CGPA / Percentage <span className="text-xs text-muted-foreground font-normal">(Optional)</span></span>
                 <input
                   type="text"
                   name="cgpa"
-                  required
                   placeholder="Optional"
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition-all focus:border-slate-900 dark:focus:border-white dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white"
                 />
@@ -648,7 +647,7 @@ export function CareersForm({
             </motion.div>
 
             <motion.label variants={itemVariants} className="block text-sm">
-              <span className="mb-2 block text-muted-foreground">City / Village</span>
+              <span className="mb-2 block text-muted-foreground">City / Village <span className="text-red-500">*</span></span>
               <input
                 type="text"
                 name="cityVillage"
@@ -660,7 +659,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-1 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">{fieldRole}</span>
+                <span className="mb-2 block text-muted-foreground">{fieldRole} <span className="text-red-500">*</span></span>
                 <select
                   name="role"
                   required
@@ -677,7 +676,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Current Occupation</span>
+                <span className="mb-2 block text-muted-foreground">Current Occupation <span className="text-red-500">*</span></span>
                 <select
                   name="currentOccupation"
                   required
@@ -691,7 +690,7 @@ export function CareersForm({
                 </select>
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Years of Experience</span>
+                <span className="mb-2 block text-muted-foreground">Years of Experience <span className="text-red-500">*</span></span>
                 <select
                   name="experience"
                   required
@@ -709,7 +708,7 @@ export function CareersForm({
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Expected Joining Date</span>
+                <span className="mb-2 block text-muted-foreground">Expected Joining Date <span className="text-red-500">*</span></span>
                 <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <button
@@ -744,7 +743,7 @@ export function CareersForm({
                 </Popover>
               </div>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Preferred Work Type</span>
+                <span className="mb-2 block text-muted-foreground">Preferred Work Type <span className="text-red-500">*</span></span>
                 <select
                   name="workType"
                   required
@@ -759,24 +758,22 @@ export function CareersForm({
               </label>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">Twitter / X profile</span>
+                <span className="mb-2 block text-muted-foreground">Twitter / X profile <span className="text-xs text-muted-foreground font-normal">(Optional)</span></span>
                 <input
                   type="url"
                   name="twitter"
-                  required
-                  placeholder="https://"
+                  placeholder="https:// (Optional)"
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-2 block text-muted-foreground">LinkedIn profile</span>
+                <span className="mb-2 block text-muted-foreground">LinkedIn profile <span className="text-xs text-muted-foreground font-normal">(Optional)</span></span>
                 <input
                   type="url"
                   name="linkedin"
-                  required
-                  placeholder="https://"
+                  placeholder="https:// (Optional)"
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
                 />
               </label>
@@ -894,7 +891,7 @@ export function CareersForm({
             {Object.keys(techStackGroups).length > 0 && (
               <motion.div variants={itemVariants} className="block text-sm">
                 <span className="mb-1 flex items-center justify-between text-muted-foreground">
-                  <span>Your Tech Stack</span>
+                  <span>Your Tech Stack <span className="text-xs text-muted-foreground font-normal">(Optional)</span></span>
                   <span className="text-xs text-slate-500">
                     {selectedStacks.length} / 10 selected
                   </span>
@@ -967,7 +964,7 @@ export function CareersForm({
             )}
 
             <motion.label variants={itemVariants} className="block text-sm">
-              <span className="mb-2 block text-muted-foreground">Additional Skills (Comma separated)</span>
+              <span className="mb-2 block text-muted-foreground">Additional Skills <span className="text-xs text-muted-foreground font-normal">(Optional)</span></span>
               <textarea
                 name="skills"
                 rows={2}
@@ -1049,7 +1046,7 @@ export function CareersForm({
             </motion.label>
 
             <motion.label variants={itemVariants} className="block text-sm">
-              <span className="mb-2 block text-muted-foreground">Have you made any open source contributions in the past that you'd like to share with us?</span>
+              <span className="mb-2 block text-muted-foreground">Have you made any open source contributions in the past that you'd like to share with us? <span className="text-red-500">*</span></span>
               <textarea
                 name="openSource"
                 rows={3}
@@ -1060,7 +1057,7 @@ export function CareersForm({
             </motion.label>
 
             <motion.label variants={itemVariants} className="block text-sm">
-              <span className="mb-2 block text-muted-foreground">Why are you interested in joining the Classgrid team?</span>
+              <span className="mb-2 block text-muted-foreground">Why are you interested in joining the Classgrid team? <span className="text-red-500">*</span></span>
               <textarea
                 name="whyJoin"
                 rows={3}
@@ -1071,7 +1068,7 @@ export function CareersForm({
             </motion.label>
 
             <motion.label variants={itemVariants} className="block text-sm">
-              <span className="mb-2 block text-muted-foreground">Tell us about your experience working in an async and/or remote environment. What practices or approaches have worked well for you? What challenges have you faced?</span>
+              <span className="mb-2 block text-muted-foreground">Tell us about your experience working in an async and/or remote environment. What practices or approaches have worked well for you? What challenges have you faced? <span className="text-red-500">*</span></span>
               <textarea
                 name="asyncRemote"
                 rows={4}
