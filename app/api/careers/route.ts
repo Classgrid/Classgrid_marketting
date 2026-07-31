@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     <table style="width:100%;border-collapse:collapse;">
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;width:130px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName} (${sanitizedGender})</td>
+        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName}</td>
       </tr>
       <tr>
         <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
