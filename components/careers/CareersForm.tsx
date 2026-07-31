@@ -766,35 +766,33 @@ export function CareersForm({
             </button>
           ) : (
               <div className="space-y-4">
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <select
-                      value={selectedDropdownRepo}
-                      onChange={(e) => setSelectedDropdownRepo(e.target.value)}
-                      disabled={selectedGithubRepos.length >= 3}
-                      className="flex-1 h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50"
-                    >
-                      <option value="" disabled>Select a repository you've contributed to...</option>
-                      {githubRepos.map(repo => (
-                        <option key={repo.id} value={repo.url} disabled={selectedGithubRepos.includes(repo.url)}>
-                          {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (selectedDropdownRepo && selectedGithubRepos.length < 3 && !selectedGithubRepos.includes(selectedDropdownRepo)) {
-                          setSelectedGithubRepos([...selectedGithubRepos, selectedDropdownRepo]);
-                          setSelectedDropdownRepo("");
-                        }
-                      }}
-                      disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3}
-                      className="h-11 px-4 rounded-lg bg-white border border-slate-200 text-slate-900 text-sm font-medium hover:bg-slate-50 transition dark:bg-zinc-900 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800 disabled:opacity-50 whitespace-nowrap shadow-sm"
-                    >
-                      Use this repository
-                    </button>
-                  </div>
+                <div className="flex flex-col gap-3">
+                  <select
+                    value={selectedDropdownRepo}
+                    onChange={(e) => setSelectedDropdownRepo(e.target.value)}
+                    disabled={selectedGithubRepos.length >= 3}
+                    className="w-full h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50"
+                  >
+                    <option value="" disabled>Select a repository you've contributed to...</option>
+                    {githubRepos.map(repo => (
+                      <option key={repo.id} value={repo.url} disabled={selectedGithubRepos.includes(repo.url)}>
+                        {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedDropdownRepo && selectedGithubRepos.length < 3 && !selectedGithubRepos.includes(selectedDropdownRepo)) {
+                        setSelectedGithubRepos([...selectedGithubRepos, selectedDropdownRepo]);
+                        setSelectedDropdownRepo("");
+                      }
+                    }}
+                    disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3}
+                    className="w-full sm:w-auto sm:self-start h-11 px-6 rounded-lg bg-white border border-slate-200 text-slate-900 text-sm font-medium hover:bg-slate-50 transition dark:bg-zinc-900 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800 disabled:opacity-50 shadow-sm"
+                  >
+                    Use this repository
+                  </button>
                 </div>
 
                 {selectedGithubRepos.length > 0 && (
