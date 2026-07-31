@@ -1096,7 +1096,7 @@ export function CareersForm({
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <Spinner className="h-4 w-4 text-white" />
                   <span>Submitting Application...</span>
                 </>
               ) : (
