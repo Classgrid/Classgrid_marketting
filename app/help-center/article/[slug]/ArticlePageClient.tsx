@@ -235,14 +235,14 @@ export default function ArticlePageClient({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-[#080808] shadow-2xl lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col bg-background border-r border-border shadow-2xl lg:hidden"
             >
               <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
-                <span className="text-sm font-semibold text-white">In this article</span>
+                <span className="text-sm font-semibold text-foreground">In this article</span>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-white/70 hover:text-white transition-colors"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-accent/50 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -259,7 +259,7 @@ export default function ArticlePageClient({
                         "block rounded-md px-3 py-2.5 text-[13px] leading-snug transition-colors",
                         isActive
                           ? "bg-emerald-500/10 font-semibold text-emerald-500"
-                          : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
                       )}
                     >
                       <span className="line-clamp-2">{heading.title}</span>
