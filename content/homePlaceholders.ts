@@ -82,7 +82,7 @@ export type ChromeContent = {
 
 export const placeholderChromeContent: ChromeContent = {
   brandName: "Classgrid",
-  brandTagline: "The operating system for educational institutions",
+  brandTagline: "The Operating System for Educational Institutions",
   siteUrl: siteMeta.domain,
   contactEmail: siteMeta.supportEmail,
   logoUrl: "/logo.png?v=2",
@@ -183,7 +183,7 @@ export const placeholderChromeContent: ChromeContent = {
   footerStatusState: DEFAULT_FOOTER_STATUS_STATE,
   footerStatusHref: "https://status.classgrid.in",
   seo: {
-    metaTitle: "Classgrid | The operating system for educational institutions",
+    metaTitle: "Classgrid | The Operating System for Educational Institutions",
     metaDescription: "Manage admissions, academics, operations, communication, and analytics in one unified education platform.",
     slug: "home",
   },
