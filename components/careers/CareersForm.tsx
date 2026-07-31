@@ -86,7 +86,7 @@ export function CareersForm({
   const [githubRepos, setGithubRepos] = useState<any[]>([]);
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<string[]>([]);
   const [githubProfile, setGithubProfile] = useState<{username: string, url: string} | null>(null);
-  const [isGithubDropdownOpen, setIsGithubDropdownOpen] = useState(false);
+  const [selectedDropdownRepo, setSelectedDropdownRepo] = useState("");
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -779,28 +779,69 @@ export function CareersForm({
                 )}
               </div>
               
-              <div className="mt-2">
-                <select
-                  multiple
-                  value={selectedGithubRepos}
-                  onChange={(e) => {
-                    const options = Array.from(e.target.selectedOptions);
-                    const selected = options.map(opt => opt.value);
-                    if (selected.length <= 3) {
-                      setSelectedGithubRepos(selected);
-                    }
-                  }}
-                  className="w-full h-[150px] rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white custom-scrollbar"
-                >
-                  {githubRepos.map(repo => (
-                    <option key={repo.id} value={repo.url} className="py-1.5 px-1 border-b border-slate-100 dark:border-zinc-800 last:border-0">
-                      {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
-                    </option>
-                  ))}
-                </select>
-                <div className="text-xs text-muted-foreground mt-1.5 text-right">
-                  Hold Ctrl (Windows) or Cmd (Mac) to select multiple. Selected: {selectedGithubRepos.length}/3
+              <div className="mt-4 space-y-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <select
+                      value={selectedDropdownRepo}
+                      onChange={(e) => setSelectedDropdownRepo(e.target.value)}
+                      disabled={selectedGithubRepos.length >= 3}
+                      className="flex-1 h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white disabled:opacity-50"
+                    >
+                      <option value="" disabled>Select a repository you've contributed to...</option>
+                      {githubRepos.map(repo => (
+                        <option key={repo.id} value={repo.url} disabled={selectedGithubRepos.includes(repo.url)}>
+                          {repo.name} {repo.language ? `• ${repo.language}` : ''} {repo.stars > 0 ? `• ★ ${repo.stars}` : ''}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (selectedDropdownRepo && selectedGithubRepos.length < 3 && !selectedGithubRepos.includes(selectedDropdownRepo)) {
+                          setSelectedGithubRepos([...selectedGithubRepos, selectedDropdownRepo]);
+                          setSelectedDropdownRepo("");
+                        }
+                      }}
+                      disabled={!selectedDropdownRepo || selectedGithubRepos.length >= 3}
+                      className="h-11 px-4 rounded-lg bg-white border border-slate-200 text-slate-900 text-sm font-medium hover:bg-slate-50 transition dark:bg-zinc-900 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800 disabled:opacity-50 whitespace-nowrap shadow-sm"
+                    >
+                      Use this repository
+                    </button>
+                  </div>
                 </div>
+
+                {selectedGithubRepos.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                    <div className="text-xs text-muted-foreground font-medium px-1">
+                      Selected Repositories ({selectedGithubRepos.length}/3)
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {selectedGithubRepos.map(repoUrl => {
+                        const repoData = githubRepos.find(r => r.url === repoUrl);
+                        if (!repoData) return null;
+                        return (
+                          <div key={repoUrl} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 dark:border-zinc-800/50 dark:bg-zinc-900/30">
+                            <div className="flex flex-col min-w-0 pr-4">
+                              <span className="text-sm font-medium text-foreground truncate">{repoData.name}</span>
+                              {repoData.description && (
+                                <span className="text-xs text-muted-foreground truncate mt-0.5">{repoData.description}</span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedGithubRepos(selectedGithubRepos.filter(r => r !== repoUrl))}
+                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition shrink-0"
+                              title="Remove repository"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
