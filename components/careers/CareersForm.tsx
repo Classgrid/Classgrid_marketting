@@ -751,7 +751,7 @@ export function CareersForm({
         </motion.div>
 
         <motion.div variants={itemVariants} className="block text-sm border border-border p-5 rounded-xl bg-slate-50/50 dark:bg-[#111]">
-          <span className="mb-2 block font-medium text-foreground">GitHub Portfolio (Required)</span>
+          <span className="mb-2 block font-medium text-foreground">GitHub Portfolio <span className="text-red-500">*</span></span>
           <p className="text-xs text-muted-foreground mb-4">Connect your GitHub to select your best 2-3 repositories to show us your work.</p>
           
           {githubRepos.length === 0 ? (
