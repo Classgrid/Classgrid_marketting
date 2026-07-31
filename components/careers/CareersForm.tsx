@@ -359,7 +359,7 @@ export function CareersForm({
               <div>
                 <div className="font-semibold text-sm sm:text-base text-red-700 dark:text-red-400">Not Eligible to Apply</div>
                 <div className="text-xs sm:text-sm text-red-600/90 dark:text-red-300/90 mt-0.5">
-                  Applicants must be at least 18 years of age to apply for roles at Classgrid. All further application fields have been disabled.
+                  Applicants must be at least 18 years of age to apply for roles at Classgrid.
                 </div>
               </div>
             </div>
