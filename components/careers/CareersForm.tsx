@@ -829,7 +829,6 @@ export function CareersForm({
                   </div>
                 )}
               </div>
-            </div>
           )}
         </motion.div>
 
