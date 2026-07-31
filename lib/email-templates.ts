@@ -460,20 +460,22 @@ If you believe you should have access, please reach out to your institution admi
 export function getCareerApplicationConfirmationEmailHtml(firstName: string, role: string): string {
   const content = `
     <p>Hi <strong>${firstName}</strong>,</p>
-    <p>Congratulations on applying to Classgrid! We have successfully received your application for the <strong>${role}</strong> position.</p>
+    <p>Congratulations on applying to Classgrid!</p>
+    <p>We’ve successfully received your application for the <strong>${role}</strong> position.</p>
     
-    <p>Our hiring team is currently reviewing your profile, tech stack, and portfolio. Here is what to expect next in our process:</p>
+    <p>Our hiring team is currently reviewing your profile, technical skills, experience, and portfolio. Here’s what you can expect next:</p>
     
     <div class="box">
       <div class="meta">Step 1 — Application Review</div>
-      <p>Our engineering and team leads review every application individually to evaluate your code quality and experience.</p>
+      <p>Our engineering and team leads will carefully review your application, technical background, projects, and overall experience.</p>
       
-      <div class="meta" style="margin-top: 16px;">Step 2 — Shortlisting & Intro Call</div>
-      <p>If your profile is shortlisted, our team will reach out directly to schedule a brief introductory chat.</p>
+      <div class="meta" style="margin-top: 16px;">Step 2 — Shortlisting & Introductory Call</div>
+      <p>If your profile is shortlisted, a member of our team will reach out to schedule a brief introductory conversation.</p>
     </div>
 
-    <p style="margin-top: 24px;">We appreciate your interest in building the future of education with us!</p>
-    <p><strong>Good luck!</strong><br/>The Classgrid Team</p>
+    <p style="margin-top: 24px;">We appreciate your interest in joining Classgrid and helping us build the future of education technology.</p>
+    <p>Thank you for taking the time to apply. We wish you the very best!</p>
+    <p style="margin-top: 20px;"><strong>The Classgrid Team</strong></p>
   `;
   return baseTemplate({
     content,
