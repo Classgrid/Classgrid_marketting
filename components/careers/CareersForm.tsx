@@ -89,6 +89,7 @@ export function CareersForm({
   const [selectedDropdownRepo, setSelectedDropdownRepo] = useState("");
   const [isVerifyingRepo, setIsVerifyingRepo] = useState(false);
   const [isGithubVerified, setIsGithubVerified] = useState(false);
+  const [isUnder18, setIsUnder18] = useState(false);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -352,6 +353,18 @@ export function CareersForm({
             </div>
           )}
 
+          {isUnder18 && (
+            <div className="mt-4 p-4 bg-red-500/10 text-red-600 dark:text-red-400 text-sm font-medium rounded-xl border border-red-500/20 flex items-start gap-3 shadow-sm">
+              <span className="text-xl shrink-0">⛔</span>
+              <div>
+                <div className="font-semibold text-sm sm:text-base text-red-700 dark:text-red-400">Not Eligible to Apply</div>
+                <div className="text-xs sm:text-sm text-red-600/90 dark:text-red-300/90 mt-0.5">
+                  Applicants must be at least 18 years of age to apply for roles at Classgrid. All further application fields have been disabled.
+                </div>
+              </div>
+            </div>
+          )}
+
           {!googleFilled && (
             <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between bg-secondary/30 p-4 rounded-xl border border-border">
               <div className="text-sm text-muted-foreground">
@@ -449,16 +462,33 @@ export function CareersForm({
                 <span className="mb-2 block text-muted-foreground">Are you over the age of 18?</span>
                 <div className="flex gap-4 items-center h-11 px-3">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="age18" value="Yes" required className="accent-emerald-500 w-4 h-4" />
+                    <input 
+                      type="radio" 
+                      name="age18" 
+                      value="Yes" 
+                      required 
+                      onChange={() => setIsUnder18(false)}
+                      className="accent-emerald-500 w-4 h-4" 
+                    />
                     <span className="text-slate-900 dark:text-white">Yes</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="age18" value="No" required className="accent-emerald-500 w-4 h-4" />
+                    <input 
+                      type="radio" 
+                      name="age18" 
+                      value="No" 
+                      required 
+                      onChange={() => setIsUnder18(true)}
+                      className="accent-emerald-500 w-4 h-4" 
+                    />
                     <span className="text-slate-900 dark:text-white">No</span>
                   </label>
                 </div>
               </label>
             </motion.div>
+
+            {!isUnder18 && (
+              <>
 
             {/* Location: Country → State → District → Taluka */}
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1068,7 +1098,9 @@ export function CareersForm({
               {isSubmitting ? "Submitting..." : submitLabel}
               {!isSubmitting && <Send className="h-4 w-4 text-white" />}
             </motion.button>
-          </motion.form>
+          </>
+        )}
+      </motion.form>
         </>
       )}
 
