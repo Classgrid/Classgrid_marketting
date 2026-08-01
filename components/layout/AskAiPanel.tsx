@@ -1326,40 +1326,37 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                     >
                       <div
                         className={cn(
-                          "flex h-7 w-7 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                          "flex h-8 w-8 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
                           isUser
-                            ? "order-2 bg-emerald-500 text-white"
-                            : "order-1 border border-border bg-muted text-emerald-500"
+                            ? "order-2 bg-muted text-muted-foreground"
+                            : "hidden"
                         )}
                       >
                         {isUser ? (
                           (session?.user as any)?.image ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img src={(session.user as any).image} alt="User" className="h-full w-full object-cover" />
-                          ) : userInitial ? userInitial : <UserRound className="h-3.5 w-3.5" />
-                        ) : (
-                          <Bot className="h-3.5 w-3.5" />
-                        )}
+                          ) : userInitial ? userInitial : <UserRound className="h-4 w-4" />
+                        ) : null}
                       </div>
 
                       <div
                         className={cn(
-                          "rounded-2xl px-4 py-3 transition-colors",
+                          "transition-colors",
                           isUser
-                            ? "order-1 max-w-[70%] bg-emerald-500 text-white hover:bg-emerald-500/95"
-                            : "order-2 max-w-[75%] border border-border bg-card text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] hover:border-emerald-500/30 dark:bg-zinc-800 dark:text-white"
+                            ? "order-1 max-w-[75%] rounded-2xl rounded-br-sm px-4 py-2.5 bg-foreground text-background"
+                            : "order-2 w-full max-w-full bg-transparent text-foreground"
                         )}
                       >
                         {isUser ? (
                           <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{message.content}</p>
                         ) : (
-                          <AssistantMessageContent content={message.content} />
+                          <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
                         )}
-                        <p className="mt-1 text-[11px] opacity-70">
-                          {formatMessageTime(message.createdAt)}
-                        </p>
                         {!isUser && !message.typing && message.content.length > 0 && (
-                          <MessageActions content={message.content} messageId={message.id} />
+                          <div className="pl-1 mt-3">
+                            <MessageActions content={message.content} messageId={message.id} />
+                          </div>
                         )}
                       </div>
                     </motion.div>
@@ -1376,22 +1373,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                       transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2 }}
                       className="flex items-end gap-2"
                     >
-                      <div className={cn(
-                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-emerald-500",
-                        (thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") && "border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
-                      )}>
-                        {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
-                          <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
-                        ) : thinkingLabel === "Analyzing results" ? (
-                          <Sparkles className="h-3.5 w-3.5" />
-                        ) : (
-                          <Bot className="h-3.5 w-3.5" />
-                        )}
-                      </div>
-                      <div className={cn(
-                        "max-w-[75%] rounded-2xl border border-border bg-card px-4 py-3 text-foreground shadow-[0_0_10px_rgba(16,185,129,0.14)] dark:bg-zinc-800 dark:text-white",
-                        (thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") && "border-emerald-500/30 shadow-[0_0_14px_rgba(16,185,129,0.22)]"
-                      )}>
+                      <div className="pl-1">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span>{thinkingLabel}</span>
                           {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
