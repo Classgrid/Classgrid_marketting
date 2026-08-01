@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   Expand,
@@ -20,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VercelTable } from "@/components/ui/vercel-table";
 
 /* ── CDN base URL for the CDS demo org ── */
 const BASE = "https://cds.classgrid.in";
@@ -90,17 +91,17 @@ function LiveIframe({
 
   return (
     <div
-      className={cn("relative w-full h-full overflow-hidden rounded-[inherit] bg-[#fafafa] overscroll-contain", className)}
+      className={cn("relative w-full h-full overflow-hidden rounded-[inherit] bg-background overscroll-contain", className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {!isReady && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-50">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background">
           <div className="flex flex-col items-center gap-3 text-center">
-            <div className="rounded-full border border-slate-200 bg-[#fafafa] p-3 shadow-md flex items-center justify-center">
+            <div className="rounded-full border border-border bg-card p-3 shadow-md flex items-center justify-center">
               <Spinner className="h-5 w-5 text-emerald-500" />
             </div>
-            <p className="text-xs font-medium text-slate-500">
+            <p className="text-xs font-medium text-muted-foreground">
               Loading live platform…
             </p>
           </div>
@@ -140,10 +141,10 @@ function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/8 px-2 py-1 text-xs text-white/60 transition-colors hover:bg-white/14 hover:text-white"
+      className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
       {copied ? (
-        <Check className="h-3 w-3 text-emerald-400" />
+        <Check className="h-3 w-3 text-emerald-500" />
       ) : (
         <Copy className="h-3 w-3" />
       )}
@@ -179,30 +180,17 @@ export function ViewPlatformPreview() {
   }
 
   return (
-    <main className="marketing-shell overflow-x-hidden bg-[#030712] text-white">
+    <main className="bg-background text-foreground pb-20 overflow-x-hidden">
       {/* ─── Hero ─── */}
-      <section className="relative isolate overflow-hidden border-b border-white/10">
-        <div className="marketing-mesh absolute inset-0 opacity-80" />
-        <div className="marketing-grid absolute inset-0 opacity-35" />
-        <div className="marketing-noise absolute inset-0 opacity-35" />
-        <div className="absolute -left-16 top-12 h-72 w-72 rounded-full bg-cyan-500/16 blur-3xl" />
-        <div className="absolute -right-20 top-20 h-80 w-80 rounded-full bg-emerald-500/16 blur-3xl" />
-
+      <section className="relative isolate overflow-hidden border-b border-border">
         <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-16 md:py-20 lg:py-24 text-center">
-          <Badge className="rounded-full border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100">
-            <span className="relative mr-2 inline-flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300/80" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
-            </span>
-            Live Platform
-          </Badge>
           <SectionAccentBar className="mt-6" />
 
-          <h1 className="mt-6 mx-auto max-w-4xl text-balance text-4xl font-black leading-[0.95] tracking-[-0.04em] md:text-5xl lg:text-6xl bg-linear-to-r from-emerald-300 via-cyan-300 to-emerald-400 bg-clip-text text-transparent pb-4">
+          <h1 className="mt-6 mx-auto max-w-4xl text-balance text-4xl font-black leading-[0.95] tracking-[-0.04em] md:text-5xl lg:text-6xl text-foreground pb-4">
             Experience Classgrid
           </h1>
 
-          <p className="mt-5 mx-auto max-w-2xl text-base leading-7 text-white/55 md:text-lg md:leading-8">
+          <p className="mt-5 mx-auto max-w-2xl text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
             Select a role below to view its specific dashboard and credentials.
             Log in directly through the preview to explore real workflows.
           </p>
@@ -211,45 +199,40 @@ export function ViewPlatformPreview() {
 
       {/* ─── Main Interactive Preview ─── */}
       <section className="relative py-12 md:py-16">
-        <div className="marketing-divider absolute inset-x-0 top-0" />
-        <div className="marketing-grid absolute inset-0 opacity-20" />
-        <div className="marketing-noise absolute inset-0 opacity-30" />
-        <div className="absolute inset-x-[12%] top-0 h-72 bg-gradient-to-b from-emerald-400/20 via-emerald-400/8 to-transparent blur-3xl" />
-
         <div className="relative z-10 mx-auto max-w-[1400px] px-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-8">
             
             {/* Dynamic Credentials */}
             <div className="w-full lg:max-w-sm shrink-0">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+              <Card className="p-5 shadow-sm border-border bg-card">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <LogIn className="h-4 w-4 text-emerald-400" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.1em] text-white/70">
+                    <LogIn className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                       Demo Credentials
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[10px] uppercase border-emerald-400/20 text-emerald-200 bg-emerald-400/10">
+                  <Badge variant="outline" className="text-[10px] uppercase border-emerald-500/20 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
                     {activeAdminRoleData.label}
                   </Badge>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-2.5">
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-2.5">
                     <div>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">Email</span>
-                      <p className="font-mono text-sm text-white/90">{activeAdminRoleData.email}</p>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Email</span>
+                      <p className="font-mono text-sm text-foreground">{activeAdminRoleData.email}</p>
                     </div>
                     <CopyButton text={activeAdminRoleData.email} />
                   </div>
-                  <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.03] px-4 py-2.5">
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-2.5">
                     <div>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">Password</span>
-                      <p className="font-mono text-sm text-white/90">{activeAdminRoleData.pass}</p>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Password</span>
+                      <p className="font-mono text-sm text-foreground">{activeAdminRoleData.pass}</p>
                     </div>
                     <CopyButton text={activeAdminRoleData.pass} />
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
 
             {/* Controls */}
@@ -259,7 +242,7 @@ export function ViewPlatformPreview() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="hidden lg:flex rounded-full border-white/12 bg-white/6 text-xs text-white hover:bg-white/10 hover:text-white"
+                  className="hidden lg:flex rounded-full text-xs"
                   onClick={handleFullscreen}
                 >
                   <Expand className="mr-1.5 h-3.5 w-3.5" />
@@ -278,8 +261,8 @@ export function ViewPlatformPreview() {
                       className={cn(
                         "rounded-full px-4 py-1.5 text-xs font-semibold transition-all border",
                         active
-                          ? "bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg"
-                          : "border-white/10 bg-white/6 text-white/68 hover:bg-white/12 hover:text-white"
+                          ? "bg-emerald-500 text-white border-emerald-500 shadow-md"
+                          : "border-border bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                       )}
                     >
                       {role.label}
@@ -296,19 +279,19 @@ export function ViewPlatformPreview() {
               <div
                 ref={desktopRef}
                 className={cn(
-                  "rounded-2xl border border-white/8 bg-[#030712] p-2 shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-all relative",
+                  "rounded-2xl border border-border bg-background p-2 shadow-sm transition-all relative",
                   isFullscreen ? "w-full h-screen p-0 md:p-0 rounded-none border-0" : "md:p-3"
                 )}
               >
-                <div className={cn("flex flex-col overflow-hidden bg-slate-900 h-full", isFullscreen ? "rounded-none" : "rounded-xl border border-white/6")}>
+                <div className={cn("flex flex-col overflow-hidden bg-card h-full", isFullscreen ? "rounded-none" : "rounded-xl border border-border")}>
                   {/* Browser chrome */}
-                  <div className="flex items-center gap-4 border-b border-white/8 bg-slate-900/80 px-4 py-2.5 shrink-0">
+                  <div className="flex items-center gap-4 border-b border-border bg-muted/50 px-4 py-2.5 shrink-0">
                     <div className="flex gap-1.5">
                       <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]" />
                       <div className="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]" />
                       <div className="h-2.5 w-2.5 rounded-full bg-[#27C93F]" />
                     </div>
-                    <div className="flex flex-1 items-center gap-2 rounded-md border border-white/8 bg-white/5 px-3 py-1 text-[11px] text-white/50">
+                    <div className="flex flex-1 items-center gap-2 rounded-md border border-border bg-background px-3 py-1 text-[11px] text-muted-foreground">
                       <span className="truncate">{activeAdminRoleData.loginUrl.replace('https://', '')}</span>
                     </div>
                   </div>
@@ -326,7 +309,7 @@ export function ViewPlatformPreview() {
                   <Button
                     variant="outline"
                     onClick={handleFullscreen}
-                    className="absolute bottom-6 right-6 z-50 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border-white/10 shadow-xl"
+                    className="absolute bottom-6 right-6 z-50 rounded-full shadow-xl"
                   >
                     <Shrink className="mr-2 w-4 h-4" />
                     Exit Fullscreen
@@ -339,269 +322,253 @@ export function ViewPlatformPreview() {
       </section>
 
       {/* ─── CDS Organization Details ─── */}
-      <section className="relative py-16 md:py-20">
-        <div className="marketing-divider absolute inset-x-0 top-0" />
-        <div className="marketing-grid absolute inset-0 opacity-20" />
-        <div className="marketing-noise absolute inset-0 opacity-30" />
-
+      <section className="relative py-16 md:py-20 border-t border-border">
         <div className="relative z-10 mx-auto max-w-5xl px-6 space-y-16">
 
           {/* Section Header */}
           <div className="text-center">
-            <Badge className="rounded-full border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-100">
-              Demo Organization
-            </Badge>
             <SectionAccentBar className="mt-6" />
-            <h2 className="mt-6 text-3xl font-black tracking-tight text-white md:text-4xl">
+            <h2 className="mt-6 text-3xl font-black tracking-tight text-foreground md:text-4xl">
               Classgrid Demo School (CDS)
             </h2>
-            <p className="mt-4 mx-auto max-w-2xl text-base text-white/55 leading-7">
+            <p className="mt-4 mx-auto max-w-2xl text-base text-muted-foreground leading-7">
               A fully configured demo organization pre-loaded with sample data.
               Explore every module using the credentials below.
             </p>
           </div>
 
           {/* ── Organization Identity ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-400">
-                <Monitor className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <Monitor className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-lg">Organization Identity &amp; Configuration</CardTitle>
               </div>
-              <h3 className="text-lg font-bold text-white">Organization Identity &amp; Configuration</h3>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Setting</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Value</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {[
-                    ["Institution Name", "Classgrid Demo School"],
-                    ["Official Address", "Demo Campus, Virtual City"],
-                    ["Principal / Owner", "School Principal"],
-                    ["Owner Email", "admin@cds.classgrid.in"],
-                    ["Contact Number", "+91 9999999999"],
-                    ["Website URL", "https://cds.classgrid.in"],
-                    ["Designation", "Principal"],
-                    ["University / Board", "Classgrid Demo Board"],
-                    ["Subdomain", "cds → cds.classgrid.in"],
-                    ["Org Type", "School"],
-                    ["Structure Type", "School with Divisions"],
-                  ].map(([setting, value]) => (
-                    <tr key={setting} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3 font-medium text-white/80">{setting}</td>
-                      <td className="px-5 py-3 font-mono text-white/60 text-xs">{value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "setting", header: "Setting", width: "w-[250px]" },
+                  { key: "value", header: "Value" },
+                ]}
+                rows={[
+                  { setting: "Institution Name", value: "Classgrid Demo School" },
+                  { setting: "Official Address", value: "Demo Campus, Virtual City" },
+                  { setting: "Principal / Owner", value: "School Principal" },
+                  { setting: "Owner Email", value: <span className="font-mono text-xs">admin@cds.classgrid.in</span> },
+                  { setting: "Contact Number", value: "+91 9999999999" },
+                  { setting: "Website URL", value: <span className="font-mono text-xs">https://cds.classgrid.in</span> },
+                  { setting: "Designation", value: "Principal" },
+                  { setting: "University / Board", value: "Classgrid Demo Board" },
+                  { setting: "Subdomain", value: "cds → cds.classgrid.in" },
+                  { setting: "Org Type", value: "School" },
+                  { setting: "Structure Type", value: "School with Divisions" },
+                ]}
+              />
+            </CardContent>
+          </Card>
 
           {/* ── Academic Hierarchy ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400/10 text-cyan-400">
-                <ArrowUpRight className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+                  <ArrowUpRight className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-lg">Academic Hierarchy</CardTitle>
               </div>
-              <h3 className="text-lg font-bold text-white">Academic Hierarchy</h3>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Level</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Example</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  <tr className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3 font-medium text-white/80">Standard</td>
-                    <td className="px-5 py-3 text-white/60">Class 1 through Class 10</td>
-                  </tr>
-                  <tr className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3 font-medium text-white/80">Division (Section)</td>
-                    <td className="px-5 py-3 text-white/60">Section A / Section B</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-white/40 italic">Note: Schools do not use Departments, Semesters, or Sub Batches.</p>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "level", header: "Level", width: "w-[250px]" },
+                  { key: "example", header: "Example" },
+                ]}
+                rows={[
+                  { level: "Standard", example: <span className="text-muted-foreground">Class 1 through Class 10</span> },
+                  { level: "Division (Section)", example: <span className="text-muted-foreground">Section A / Section B</span> },
+                ]}
+              />
+              <div className="p-4 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground italic">Note: Schools do not use Departments, Semesters, or Sub Batches.</p>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* ── Platform Terminology ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-400/10 text-violet-400">
-                <Monitor className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                  <Monitor className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-lg">Platform Terminology (School Mode)</CardTitle>
               </div>
-              <h3 className="text-lg font-bold text-white">Platform Terminology (School Mode)</h3>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Concept</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">UI Label</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {[
-                    ["Org Label", "School"],
-                    ["Top Level", "Standard"],
-                    ["Course", "Class"],
-                    ["Year", "Class"],
-                    ["Period", "Term"],
-                    ["Division", "Section"],
-                    ["Sub Batch", "Not applicable"],
-                    ["Student ID", "Roll No"],
-                    ["Teacher", "Teacher"],
-                    ["Assignment", "Homework"],
-                    ["Exam", "Test"],
-                  ].map(([concept, label]) => (
-                    <tr key={concept} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3 font-medium text-white/80">{concept}</td>
-                      <td className="px-5 py-3 text-white/60">{label}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "concept", header: "Concept", width: "w-[250px]" },
+                  { key: "label", header: "UI Label" },
+                ]}
+                rows={[
+                  { concept: "Org Label", label: <span className="text-muted-foreground">School</span> },
+                  { concept: "Top Level", label: <span className="text-muted-foreground">Standard</span> },
+                  { concept: "Course", label: <span className="text-muted-foreground">Class</span> },
+                  { concept: "Year", label: <span className="text-muted-foreground">Class</span> },
+                  { concept: "Period", label: <span className="text-muted-foreground">Term</span> },
+                  { concept: "Division", label: <span className="text-muted-foreground">Section</span> },
+                  { concept: "Sub Batch", label: <span className="text-muted-foreground">Not applicable</span> },
+                  { concept: "Student ID", label: <span className="text-muted-foreground">Roll No</span> },
+                  { concept: "Teacher", label: <span className="text-muted-foreground">Teacher</span> },
+                  { concept: "Assignment", label: <span className="text-muted-foreground">Homework</span> },
+                  { concept: "Exam", label: <span className="text-muted-foreground">Test</span> },
+                ]}
+              />
+            </CardContent>
+          </Card>
 
           {/* ── Branding & Theme ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-400/10 text-rose-400">
-                <Monitor className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                  <Monitor className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-lg">Branding &amp; Theme</CardTitle>
               </div>
-              <h3 className="text-lg font-bold text-white">Branding &amp; Theme</h3>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Setting</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Value</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {[
-                    ["Primary Color", "#6366f1 (Indigo)"],
-                    ["Secondary Color", "#4f46e5 (Dark Indigo)"],
-                    ["Accent Color", "#f43f5e (Rose)"],
-                    ["Font Preference", "Inter"],
-                    ["Tagline", "Empowering Education"],
-                  ].map(([setting, value]) => (
-                    <tr key={setting} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3 font-medium text-white/80">{setting}</td>
-                      <td className="px-5 py-3 text-white/60 flex items-center gap-2">
-                        {setting === "Primary Color" && <span className="inline-block h-3 w-3 rounded-full bg-indigo-500" />}
-                        {setting === "Secondary Color" && <span className="inline-block h-3 w-3 rounded-full bg-indigo-600" />}
-                        {setting === "Accent Color" && <span className="inline-block h-3 w-3 rounded-full bg-rose-500" />}
-                        {value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "setting", header: "Setting", width: "w-[250px]" },
+                  { key: "value", header: "Value" },
+                ]}
+                rows={[
+                  { setting: "Primary Color", value: <div className="flex items-center gap-2 text-muted-foreground"><span className="inline-block h-3 w-3 rounded-full bg-indigo-500" />#6366f1 (Indigo)</div> },
+                  { setting: "Secondary Color", value: <div className="flex items-center gap-2 text-muted-foreground"><span className="inline-block h-3 w-3 rounded-full bg-indigo-600" />#4f46e5 (Dark Indigo)</div> },
+                  { setting: "Accent Color", value: <div className="flex items-center gap-2 text-muted-foreground"><span className="inline-block h-3 w-3 rounded-full bg-rose-500" />#f43f5e (Rose)</div> },
+                  { setting: "Font Preference", value: <span className="text-muted-foreground">Inter</span> },
+                  { setting: "Tagline", value: <span className="text-muted-foreground">Empowering Education</span> },
+                ]}
+              />
+            </CardContent>
+          </Card>
 
           {/* ── Role Login URLs ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400">
-                <LogIn className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <LogIn className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-lg">Role Login URLs</CardTitle>
               </div>
-              <h3 className="text-lg font-bold text-white">Role Login URLs</h3>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Role</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Login URL</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Device</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {[
-                    ["Org Admin", "cds.classgrid.in/org/login", "Desktop"],
-                    ["Admission Dept", "cds.classgrid.in/dept/admissions/login", "Desktop"],
-                    ["Fees Dept", "cds.classgrid.in/dept/fees/login", "Desktop"],
-                    ["Exam Dept", "cds.classgrid.in/dept/exams/login", "Desktop"],
-                    ["Library Dept", "cds.classgrid.in/dept/library/login", "Desktop"],
-                    ["Attendance Dept", "cds.classgrid.in/dept/attendance/login", "Desktop"],
-                    ["HR & Payroll", "cds.classgrid.in/dept/hr/login", "Desktop"],
-                    ["Hostel & Transport", "cds.classgrid.in/dept/hostel/login", "Desktop"],
-                    ["Faculty / Teachers", "cds.classgrid.in/faculty/login", "Desktop & Mobile"],
-                    ["Students", "cds.classgrid.in/student/login", "Desktop & Mobile"],
-                  ].map(([role, url, device]) => (
-                    <tr key={role} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3 font-medium text-white/80">{role}</td>
-                      <td className="px-5 py-3 font-mono text-xs text-emerald-400/80">{url}</td>
-                      <td className="px-5 py-3 text-white/50 text-xs">{device}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "role", header: "Role", width: "w-[250px]" },
+                  { key: "url", header: "Login URL", accent: true },
+                  { key: "device", header: "Device" },
+                ]}
+                rows={[
+                  { role: "Org Admin", url: "cds.classgrid.in/org/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Admission Dept", url: "cds.classgrid.in/dept/admissions/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Fees Dept", url: "cds.classgrid.in/dept/fees/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Exam Dept", url: "cds.classgrid.in/dept/exams/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Library Dept", url: "cds.classgrid.in/dept/library/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Attendance Dept", url: "cds.classgrid.in/dept/attendance/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "HR & Payroll", url: "cds.classgrid.in/dept/hr/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Hostel & Transport", url: "cds.classgrid.in/dept/hostel/login", device: <span className="text-muted-foreground text-xs">Desktop</span> },
+                  { role: "Faculty / Teachers", url: "cds.classgrid.in/faculty/login", device: <span className="text-muted-foreground text-xs">Desktop & Mobile</span> },
+                  { role: "Students", url: "cds.classgrid.in/student/login", device: <span className="text-muted-foreground text-xs">Desktop & Mobile</span> },
+                ]}
+              />
+            </CardContent>
+          </Card>
 
           {/* ── Demo Accounts & Credentials ── */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-400">
-                <LogIn className="h-4 w-4" />
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <LogIn className="h-4 w-4" />
+                  </div>
+                  <CardTitle className="text-lg">Demo Accounts &amp; Credentials</CardTitle>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-2">
+                  <span className="text-xs text-muted-foreground">Shared Password:</span>
+                  <code className="rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-mono text-sm font-bold text-emerald-600 dark:text-emerald-400">cdspass@123</code>
+                  <CopyButton text="cdspass@123" />
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-white">Demo Accounts &amp; Credentials</h3>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.03] px-4 py-3">
-              <span className="text-xs text-white/50">Shared Password for all accounts:</span>
-              <code className="rounded-md border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 font-mono text-sm font-bold text-emerald-300">cdspass@123</code>
-              <CopyButton text="cdspass@123" />
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/[0.04]">
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Role</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Email</th>
-                    <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50">Access Scope</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {[
-                    ["Org Admin", "admin@cds.classgrid.in", "Full access to CDS configuration, modules, and user management."],
-                    ["Admission Head", "admission@cds.classgrid.in", "Admission portal, fee tracking for new admits, and application review."],
-                    ["Fee Manager", "fees@cds.classgrid.in", "Fee collection, ledgers, invoice generation, and refunds."],
-                    ["Exam Controller", "exam@cds.classgrid.in", "Exam scheduling, marksheets, and result generation."],
-                    ["Library Manager", "library@cds.classgrid.in", "Book inventory, issuance, and fines."],
-                    ["Attendance Manager", "attendance@cds.classgrid.in", "Organization-wide attendance tracking and reports."],
-                    ["HR & Payroll", "hr@cds.classgrid.in", "Faculty/staff payroll, biometric logs, and leave approvals."],
-                    ["Hostel & Transport", "hostel@cds.classgrid.in", "Room allocation, bus routes, and related fees."],
-                    ["Faculty (Teacher)", "faculty@cds.classgrid.in", "Teacher dashboard, student grading, attendance marking, and course content."],
-                    ["Student", "student@cds.classgrid.in", "Student dashboard, fee payment, homework, tests, and attendance view."],
-                  ].map(([role, email, scope]) => (
-                    <tr key={role} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3 font-medium text-white/80 whitespace-nowrap">{role}</td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs text-cyan-300/80">{email}</span>
-                          <CopyButton text={email as string} />
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 text-white/50 text-xs max-w-xs">{scope}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <VercelTable
+                columns={[
+                  { key: "role", header: "Role", width: "w-[200px]" },
+                  { key: "email", header: "Email" },
+                  { key: "scope", header: "Access Scope" },
+                ]}
+                rows={[
+                  { 
+                    role: "Org Admin", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">admin@cds.classgrid.in</span><CopyButton text="admin@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Full access to CDS configuration, modules, and user management.</span> 
+                  },
+                  { 
+                    role: "Admission Head", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">admission@cds.classgrid.in</span><CopyButton text="admission@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Admission portal, fee tracking for new admits, and application review.</span> 
+                  },
+                  { 
+                    role: "Fee Manager", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">fees@cds.classgrid.in</span><CopyButton text="fees@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Fee collection, ledgers, invoice generation, and refunds.</span> 
+                  },
+                  { 
+                    role: "Exam Controller", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">exam@cds.classgrid.in</span><CopyButton text="exam@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Exam scheduling, marksheets, and result generation.</span> 
+                  },
+                  { 
+                    role: "Library Manager", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">library@cds.classgrid.in</span><CopyButton text="library@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Book inventory, issuance, and fines.</span> 
+                  },
+                  { 
+                    role: "Attendance Manager", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">attendance@cds.classgrid.in</span><CopyButton text="attendance@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Organization-wide attendance tracking and reports.</span> 
+                  },
+                  { 
+                    role: "HR & Payroll", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">hr@cds.classgrid.in</span><CopyButton text="hr@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Faculty/staff payroll, biometric logs, and leave approvals.</span> 
+                  },
+                  { 
+                    role: "Hostel & Transport", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">hostel@cds.classgrid.in</span><CopyButton text="hostel@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Room allocation, bus routes, and related fees.</span> 
+                  },
+                  { 
+                    role: "Faculty (Teacher)", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">faculty@cds.classgrid.in</span><CopyButton text="faculty@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Teacher dashboard, student grading, attendance marking, and course content.</span> 
+                  },
+                  { 
+                    role: "Student", 
+                    email: <div className="flex items-center gap-2"><span className="font-mono text-xs text-cyan-600 dark:text-cyan-400">student@cds.classgrid.in</span><CopyButton text="student@cds.classgrid.in" /></div>, 
+                    scope: <span className="text-muted-foreground text-xs">Student dashboard, fee payment, homework, tests, and attendance view.</span> 
+                  },
+                ]}
+              />
+            </CardContent>
+          </Card>
 
         </div>
       </section>
