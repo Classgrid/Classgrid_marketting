@@ -231,6 +231,10 @@ export function ViewPlatformPreview() {
                     </div>
                     <CopyButton text={activeAdminRoleData.pass} />
                   </div>
+                  <p className="text-[11px] text-muted-foreground mt-3 flex items-start gap-1.5 leading-snug bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 p-2 rounded-md">
+                    <span>⚠️</span>
+                    <span>Google Login is blocked inside this preview. Please log in using the email and password above.</span>
+                  </p>
                 </div>
               </Card>
             </div>
