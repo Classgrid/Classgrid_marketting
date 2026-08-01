@@ -666,29 +666,29 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
 
-  // Load chat history and session ID from session storage on mount
+  // Load chat history and session ID from local storage on mount
   useEffect(() => {
     try {
-      const saved = sessionStorage.getItem("classgrid_ai_chat_history");
+      const saved = localStorage.getItem("classgrid_ai_chat_history");
       if (saved) {
         const parsed = JSON.parse(saved);
         // Force typing to false for loaded messages so they don't get stuck
         setMessages(parsed.map((m: any) => ({ ...m, typing: false })));
       }
-      const savedSessionId = sessionStorage.getItem("classgrid_ai_session_id");
+      const savedSessionId = localStorage.getItem("classgrid_ai_session_id");
       if (savedSessionId) {
         setSessionId(savedSessionId);
       }
     } catch (_) {}
   }, []);
 
-  // Save chat history and session ID to session storage whenever they update
+  // Save chat history and session ID to local storage whenever they update
   useEffect(() => {
     if (messages.length > 0) {
-      sessionStorage.setItem("classgrid_ai_chat_history", JSON.stringify(messages));
+      localStorage.setItem("classgrid_ai_chat_history", JSON.stringify(messages));
     }
     if (sessionId) {
-      sessionStorage.setItem("classgrid_ai_session_id", sessionId);
+      localStorage.setItem("classgrid_ai_session_id", sessionId);
     }
   }, [messages, sessionId]);
   const [submitting, setSubmitting] = useState(false);
@@ -703,7 +703,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     
     try {
       // Load current history from storage
-      const savedHistory = sessionStorage.getItem("classgrid_page_history");
+      const savedHistory = localStorage.getItem("classgrid_page_history");
       let history: { path: string; title: string }[] = savedHistory ? JSON.parse(savedHistory) : [];
       
       const newEntry = { 
@@ -714,7 +714,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       // If the current page is different from the last page in history, add it
       if (history.length === 0 || history[history.length - 1].path !== newEntry.path) {
         history = [...history, newEntry].slice(-8); // Keep max 8 pages
-        sessionStorage.setItem("classgrid_page_history", JSON.stringify(history));
+        localStorage.setItem("classgrid_page_history", JSON.stringify(history));
       }
       
       setPageHistory(history);
@@ -783,8 +783,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setMessages([]);
     setInput("");
     setSessionId(null);
-    sessionStorage.removeItem("classgrid_ai_chat_history");
-    sessionStorage.removeItem("classgrid_ai_session_id");
+    localStorage.removeItem("classgrid_ai_chat_history");
+    localStorage.removeItem("classgrid_ai_session_id");
   }
 
   function handleStop() {
@@ -1127,7 +1127,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         if (finalPayload) {
           if (finalPayload.sessionId) {
             setSessionId(finalPayload.sessionId);
-            sessionStorage.setItem("classgrid_ai_session_id", finalPayload.sessionId);
+            localStorage.setItem("classgrid_ai_session_id", finalPayload.sessionId);
           }
 
           const answer =
@@ -1149,7 +1149,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
         if (payload?.sessionId) {
           setSessionId(payload.sessionId);
-          sessionStorage.setItem("classgrid_ai_session_id", payload.sessionId);
+          localStorage.setItem("classgrid_ai_session_id", payload.sessionId);
         }
 
         const answer =
@@ -1326,14 +1326,17 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                     >
                       <div
                         className={cn(
-                          "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                          "flex h-7 w-7 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
                           isUser
                             ? "order-2 bg-emerald-500 text-white"
                             : "order-1 border border-border bg-muted text-emerald-500"
                         )}
                       >
                         {isUser ? (
-                          userInitial ? userInitial : <UserRound className="h-3.5 w-3.5" />
+                          (session?.user as any)?.image ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img src={(session.user as any).image} alt="User" className="h-full w-full object-cover" />
+                          ) : userInitial ? userInitial : <UserRound className="h-3.5 w-3.5" />
                         ) : (
                           <Bot className="h-3.5 w-3.5" />
                         )}
