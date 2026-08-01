@@ -1342,14 +1342,25 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
                       <div
                         className={cn(
-                          "transition-colors",
+                          "relative transition-colors",
                           isUser
-                            ? "order-1 max-w-[75%] rounded-2xl rounded-br-sm px-4 py-2.5 bg-foreground text-background"
+                            ? "order-1 max-w-[75%] rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
                             : "order-2 w-full max-w-full bg-transparent text-foreground"
                         )}
                       >
+                        {isUser && (
+                          <svg
+                            width="8"
+                            height="12"
+                            viewBox="0 0 8 12"
+                            fill="currentColor"
+                            className="absolute bottom-0 -right-1.5 text-foreground"
+                          >
+                            <path d="M0 0V12H8C5 12 2 9 0 0Z" />
+                          </svg>
+                        )}
                         {isUser ? (
-                          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
                         ) : (
                           <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
                         )}
@@ -1403,7 +1414,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
-              <div className="relative w-full">
+              <div className="relative w-full shadow-sm rounded-2xl">
                 <textarea
                   id="ask-ai-input"
                   name="askAiQuestion"
@@ -1419,14 +1430,14 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                   }}
                   placeholder="Ask a Classgrid question..."
                   autoComplete="off"
-                  className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-card pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40 overflow-y-auto [scrollbar-width:thin] leading-relaxed"
+                  className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-background pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:border-foreground/30 focus:ring-1 focus:ring-foreground/30 overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors"
                 />
                 {isGenerating ? (
                   <Button
                     type="button"
                     variant="primary"
                     onClick={handleStop}
-                    className="!absolute !bottom-3 !right-3 !top-auto h-9 shrink-0 rounded-xl bg-zinc-800 text-white hover:bg-zinc-700 px-3 text-xs font-medium shadow-sm transition-all active:scale-95 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                    className="!absolute !bottom-3 !right-3 !top-auto h-8 rounded-full bg-foreground text-background hover:bg-foreground/90 px-3 text-[11px] font-medium shadow-sm transition-all active:scale-95"
                     title="Stop generating"
                   >
                     <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
@@ -1438,9 +1449,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                     variant="primary"
                     size="icon"
                     disabled={!canSubmit}
-                    className="!absolute !bottom-3 !right-3 !top-auto h-9 w-9 shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
+                    className="!absolute !bottom-3 !right-3 !top-auto h-8 w-8 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-all shadow-sm"
                   >
-                    <ArrowUp className="h-4 w-4 text-white" />
+                    <ArrowUp className="h-4 w-4" />
                     <span className="sr-only">Send question</span>
                   </Button>
                 )}
