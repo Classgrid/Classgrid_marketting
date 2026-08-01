@@ -4,7 +4,7 @@
   <h1 align="center">Classgrid | Marketing & Growth Engine</h1>
 
   <p align="center">
-    <strong>The Operating System for Modern Education — Built on the Edge.</strong>
+    <strong>The Operating System for Edcational Institution — Built on the Edge.</strong>
   </p>
 
   <p align="center">
