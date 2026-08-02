@@ -291,17 +291,17 @@ export function Navbar({
                     />
                   ) : null}
                   {brandName ? (
-                    <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
+                    <span className="hidden sm:inline text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
                       {brandName}
                     </span>
                   ) : null}
                 </Link>
                 {/* Slash separator */}
-                <span className="mx-2.5 text-[18px] font-light text-border select-none">/</span>
+                <span className="mx-2 text-[15px] font-semibold text-border select-none">/</span>
                 <Link
                   href="/docs"
                   prefetch={false}
-                  className="text-[15px] font-semibold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-[15px] font-bold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Docs
                 </Link>
