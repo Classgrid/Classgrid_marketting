@@ -837,7 +837,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   const hasDocsContext = pageContext?.path?.startsWith("/docs");
-  const canSubmit = (input.trim().length > 0 || (hasDocsContext && messages.length === 0)) && !submitting;
+  const canSubmit = (input.trim().length > 0 || hasDocsContext) && !submitting;
   const emptyState = useMemo(() => messages.length === 0, [messages.length]);
   const suggestedQuestions = useMemo(() => suggestedQuestionsForPage(pageContext), [pageContext]);
 
@@ -1013,16 +1013,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
   async function askQuestion(question: string) {
     let finalQuestion = question.trim();
-    const isFirstDocsMessage = messages.length === 0 && pageContext?.path?.startsWith("/docs");
+    const hasDocsContext = pageContext?.path?.startsWith("/docs");
 
-    if (!finalQuestion && !isFirstDocsMessage) return;
+    if (!finalQuestion && !hasDocsContext) return;
     if (submitting) return;
 
-    if (isFirstDocsMessage) {
+    if (hasDocsContext) {
       const docsUrl = `https://classgrid.in${pageContext.path}`;
       if (!finalQuestion) {
         finalQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
-      } else {
+      } else if (messages.length === 0) {
         finalQuestion = `${finalQuestion}\n\n*(Context: ${docsUrl})*`;
       }
     }
@@ -1428,7 +1428,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
-                {pageContext?.path?.startsWith("/docs") && messages.length === 0 && (
+                {pageContext?.path?.startsWith("/docs") && (
                   <div className="px-3 pt-3 pb-0">
                     <div className="inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 shadow-sm max-w-[95%]">
                       <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
