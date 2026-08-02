@@ -506,8 +506,8 @@ export function Navbar({
             <div className="h-9 w-[120px]" /> /* invisible placeholder to prevent layout shift */
           ) : (
             <>
-          {/* Ask AI button — hidden in docsMode when user is logged in */}
-          {typeof onAskAiClick === "function" && !(docsMode && docsUserLoggedIn) ? (
+          {/* Ask AI button */}
+          {typeof onAskAiClick === "function" ? (
             <div className="relative inline-flex">
               <Button
                 type="button"
