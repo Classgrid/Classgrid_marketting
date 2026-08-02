@@ -665,6 +665,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const [thinkingLabel, setThinkingLabel] = useState("Thinking");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
+  const [lastSentDocsPath, setLastSentDocsPath] = useState<string | null>(null);
 
   // Load chat history and session ID from local storage on mount
   useEffect(() => {
@@ -836,8 +837,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const inputRef = useRef<HTMLInputElement | null>(null);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
-  const hasDocsContext = pageContext?.path?.startsWith("/docs");
-  const canSubmit = (input.trim().length > 0 || (hasDocsContext && messages.length === 0)) && !submitting;
+  const hasDocsContext = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
+  const canSubmit = (input.trim().length > 0 || hasDocsContext) && !submitting;
   const emptyState = useMemo(() => messages.length === 0, [messages.length]);
   const suggestedQuestions = useMemo(() => suggestedQuestionsForPage(pageContext), [pageContext]);
 
@@ -1013,16 +1014,18 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
 
   async function askQuestion(question: string) {
     let finalQuestion = question.trim();
-    const hasDocsContext = pageContext?.path?.startsWith("/docs");
+    const isDocsContextActive = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
 
-    if (!finalQuestion && !hasDocsContext) return;
+    if (!finalQuestion && !isDocsContextActive) return;
     if (submitting) return;
 
-    if (hasDocsContext) {
+    if (isDocsContextActive && pageContext?.path) {
       const docsUrl = `https://classgrid.in${pageContext.path}`;
+      setLastSentDocsPath(pageContext.path);
+
       if (!finalQuestion) {
         finalQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
-      } else if (messages.length === 0) {
+      } else {
         finalQuestion = `${finalQuestion}\n\n*(Context: ${docsUrl})*`;
       }
     }
@@ -1428,7 +1431,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
-                {pageContext?.path?.startsWith("/docs") && messages.length === 0 && (
+                {pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath && (
                   <div className="px-3 pt-3 pb-0">
                     <div className="inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 shadow-sm max-w-[95%]">
                       <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
