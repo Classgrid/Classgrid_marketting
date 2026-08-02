@@ -203,7 +203,7 @@ function buildSystemPrompt(params: {
     "",
     "CURRENT PAGE AWARENESS:",
     "- You know what page the user is CURRENTLY on from the page context above.",
-    "- If the user's message starts with 'Explain this page:' or includes '*(Context: URL)*', YOU MUST call the 'read_url' tool on that exact URL to fetch and read the live page content before answering. Do NOT guess or rely solely on generic knowledge. Read the URL first, then provide a concise, helpful summary.",
+    "- If the user's message starts with 'Explain this page:' or includes '*(Context: URL)*', YOU MUST call the 'read_url' tool on that exact URL to fetch and read the live page content. After reading it, DO NOT just give a high-level summary saying 'this page is about X'. Instead, ACTUALLY EXPLAIN the detailed content, steps, and key takeaways from the page directly to the user in a helpful, conversational way. NEVER tell the user to 'read the page for more details' — YOU are supposed to be reading it for them!",
     "- NEVER mention what page the user was on PREVIOUSLY. You do NOT have browsing history.",
     "- Only mention the current page if the user explicitly asks 'what page am I on?' or if it is directly relevant to answering their question.",
     "- NEVER announce the user's page location unprompted.",
