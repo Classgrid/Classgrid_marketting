@@ -836,7 +836,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   const inputRef = useRef<HTMLInputElement | null>(null);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
-  const canSubmit = input.trim().length > 0 && !submitting;
+  const hasDocsContext = pageContext?.path?.startsWith("/docs");
+  const canSubmit = (input.trim().length > 0 || (hasDocsContext && messages.length === 0)) && !submitting;
   const emptyState = useMemo(() => messages.length === 0, [messages.length]);
   const suggestedQuestions = useMemo(() => suggestedQuestionsForPage(pageContext), [pageContext]);
 
@@ -1011,8 +1012,20 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   }
 
   async function askQuestion(question: string) {
-    const trimmed = question.trim();
-    if (!trimmed || submitting) return;
+    let finalQuestion = question.trim();
+    const isFirstDocsMessage = messages.length === 0 && pageContext?.path?.startsWith("/docs");
+
+    if (!finalQuestion && !isFirstDocsMessage) return;
+    if (submitting) return;
+
+    if (isFirstDocsMessage) {
+      const docsUrl = `https://classgrid.in${pageContext.path}`;
+      if (!finalQuestion) {
+        finalQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
+      } else {
+        finalQuestion = `${finalQuestion}\n\n*(Context: ${docsUrl})*`;
+      }
+    }
 
     setError("");
     setInput("");
@@ -1026,7 +1039,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       {
         id: createMessageId("user"),
         role: "user",
-        content: trimmed,
+        content: finalQuestion,
         createdAt: Date.now(),
       },
     ];
@@ -1045,7 +1058,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
-          question: trimmed,
+          question: finalQuestion,
           userName: session?.user?.name ?? undefined,
           userEmail: (session?.user as any)?.email || (session?.user as any)?.userEmail || undefined,
           sessionId: sessionId ?? undefined,
@@ -1415,7 +1428,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
-                {pageContext?.path?.startsWith("/docs") && (
+                {pageContext?.path?.startsWith("/docs") && messages.length === 0 && (
                   <div className="px-3 pt-3 pb-0">
                     <div className="inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 shadow-sm max-w-[95%]">
                       <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
