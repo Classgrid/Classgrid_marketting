@@ -332,7 +332,6 @@ export function Navbar({
               {[
                 { label: 'Getting Started', href: '/docs/introduction' },
                 { label: 'Platform Guides', href: '/docs/login-pages' },
-                { label: 'Admin Setup',     href: '/docs/custom-domains-and-subdomains' },
                 { label: 'API Reference',   href: '/docs/api-reference' },
                 { label: 'Changelog',       href: '/changelog' },
               ].map((item) => {
@@ -620,7 +619,6 @@ export function Navbar({
                       {[
                         { label: 'Getting Started', href: '/docs/introduction' },
                         { label: 'Platform Guides', href: '/docs/login-pages' },
-                        { label: 'Admin Setup',     href: '/docs/custom-domains-and-subdomains' },
                         { label: 'API Reference',   href: '/docs/api-reference' },
                         { label: 'Changelog',       href: '/changelog' },
                       ].map((item, idx, arr) => (
