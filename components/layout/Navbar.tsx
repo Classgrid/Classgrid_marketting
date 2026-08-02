@@ -331,8 +331,8 @@ export function Navbar({
             <nav className="hidden md:flex items-center gap-0.5">
               {[
                 { label: 'Getting Started', href: '/docs/introduction' },
-                { label: 'Platform Guides', href: '/docs/login-pages' },
-                { label: 'API Reference',   href: '/docs/api-reference' },
+                { label: 'Platform Guides', href: '/docs/attendance-system' },
+                { label: 'API Reference',   href: '/docs/authentication-api' },
                 { label: 'Changelog',       href: '/changelog' },
               ].map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/changelog' && pathname.startsWith('/docs') && pathname.includes(item.href.split('/docs/')[1] || '___'));
