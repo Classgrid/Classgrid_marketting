@@ -24,6 +24,18 @@ async function getFirstDocSlug() {
   return first?.slug || null;
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }) {
+  const resolvedParams = await params;
+  const slugPath = resolvedParams.slug ? resolvedParams.slug.join('/') : 'introduction';
+  const doc = await getDocFromSanity(slugPath!);
+
+  if (!doc) return { title: "Documentation | Classgrid" };
+
+  return {
+    title: `${doc.title} | Classgrid`,
+  };
+}
+
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const resolvedParams = await params;
   
