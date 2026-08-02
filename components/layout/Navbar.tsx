@@ -257,37 +257,101 @@ export function Navbar({
   const baseItems = normalizeNavItems(parsedItems.length > 0 ? parsedItems : DEFAULT_NAV_ITEMS);
 
   // Force "Home" to be the very first item if it's missing from the data
-  const navItems = baseItems.some(item => item.label?.toLowerCase() === "home")
+  const normalNavItems = baseItems.some(item => item.label?.toLowerCase() === "home")
     ? baseItems
     : [{ label: "Home", href: "/" }, ...baseItems];
+
+  const docsNavItems: NavItem[] = [
+    { label: "Getting Started", href: "/docs" },
+    { label: "Platform Guides", href: "/docs/platform" },
+    { label: "Admin Setup", href: "/docs/admin" },
+    { label: "API Reference", href: "/docs/api" }
+  ];
+
+  const navItems = docsMode ? docsNavItems : normalNavItems;
 
   return (
     <header className="sticky top-0 z-[100] w-full border-b border-border bg-[#F7F7F7]/90 dark:bg-[rgba(0,0,0,0.72)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.32)] backdrop-blur-[14px] backdrop-saturate-150 transition-colors duration-300">
       <div className="container mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           {(logoUrl || brandName) && (
-            <Link href="/" prefetch={false} className="flex items-center gap-1.5 group">
-              {logoUrl ? (
-                <Image
-                  src={logoUrl}
-                  alt={logoAlt || brandName || ""}
-                  width={40}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                />
-              ) : null}
-              {brandName ? (
-                <span className={cn(
-                  "text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/90",
-                  docsMode && "hidden sm:inline"
-                )}>
-                  {brandName}
-                </span>
-              ) : null}
-            </Link>
+            docsMode ? (
+              /* ── Docs mode: "Classgrid / Docs" (Neon-style) ── */
+              <div className="flex items-center gap-0">
+                <Link href="/" prefetch={false} className="flex items-center gap-1.5 group shrink-0">
+                  {logoUrl ? (
+                    <Image
+                      src={logoUrl}
+                      alt={logoAlt || brandName || ""}
+                      width={32}
+                      height={32}
+                      className="h-8 w-auto object-contain"
+                    />
+                  ) : null}
+                  {brandName ? (
+                    <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
+                      {brandName}
+                    </span>
+                  ) : null}
+                </Link>
+                {/* Slash separator */}
+                <span className="mx-2.5 text-[18px] font-light text-border select-none">/</span>
+                <Link
+                  href="/docs"
+                  prefetch={false}
+                  className="text-[15px] font-semibold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Docs
+                </Link>
+              </div>
+            ) : (
+              <Link href="/" prefetch={false} className="flex items-center gap-1.5 group">
+                {logoUrl ? (
+                  <Image
+                    src={logoUrl}
+                    alt={logoAlt || brandName || ""}
+                    width={40}
+                    height={40}
+                    className="h-10 w-auto object-contain"
+                  />
+                ) : null}
+                {brandName ? (
+                  <span className="text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/90">
+                    {brandName}
+                  </span>
+                ) : null}
+              </Link>
+            )
           )}
 
-          {navItems.length > 0 ? (
+          {docsMode ? (
+            /* ── Docs nav: category links ── */
+            <nav className="hidden md:flex items-center gap-0.5">
+              {[
+                { label: 'Getting Started', href: '/docs/introduction' },
+                { label: 'Platform Guides', href: '/docs/login-pages' },
+                { label: 'Admin Setup',     href: '/docs/custom-domains-and-subdomains' },
+                { label: 'API Reference',   href: '/docs/api-reference' },
+                { label: 'Changelog',       href: '/changelog' },
+              ].map((item) => {
+                const isActive = pathname === item.href || (item.href !== '/changelog' && pathname.startsWith('/docs') && pathname.includes(item.href.split('/docs/')[1] || '___'));
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    prefetch={false}
+                    className={cn(
+                      'h-9 inline-flex items-center rounded-lg px-3 text-sm font-medium tracking-tight transition-all duration-200',
+                      'text-foreground/70 hover:bg-accent hover:text-foreground',
+                      isActive && 'bg-accent text-foreground shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]'
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          ) : (
             <div className="hidden md:flex items-center">
               <NavigationMenu value={menuValue} onValueChange={setMenuValue}>
                 <NavigationMenuList className="gap-1.5">
@@ -431,7 +495,7 @@ export function Navbar({
                 )}
               </Link>
             </div>
-          ) : null}
+          )}
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
@@ -546,9 +610,34 @@ export function Navbar({
                   className="fixed inset-x-0 top-16 z-40 flex flex-col bg-background text-foreground"
                   style={{ height: "calc(100dvh - 64px)" }}
                 >
-
-
                 <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
+                  {docsMode ? (
+                    /* ── Docs mobile menu ── */
+                    <div className="flex flex-col">
+                      <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Documentation</p>
+                      {[
+                        { label: 'Getting Started', href: '/docs/introduction' },
+                        { label: 'Platform Guides', href: '/docs/login-pages' },
+                        { label: 'Admin Setup',     href: '/docs/custom-domains-and-subdomains' },
+                        { label: 'API Reference',   href: '/docs/api-reference' },
+                        { label: 'Changelog',       href: '/changelog' },
+                      ].map((item, idx, arr) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={closeMobileMenu}
+                          className={cn(
+                            'flex items-center justify-between py-4 text-[17px] font-medium text-foreground/90 transition-colors active:text-foreground',
+                            idx < arr.length - 1 && 'border-b border-border',
+                            pathname === item.href && 'text-foreground'
+                          )}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                  <>
                   {/* Top Action Buttons (Vercel style) */}
                   <div className="mb-8 flex flex-col gap-3">
                     {!isPlatformUser && primaryCtaLabel?.trim() && primaryCtaHref?.trim() && (
@@ -707,6 +796,8 @@ export function Navbar({
                       </div>
                     </Link>
                   </div>
+                  </>
+                  )}
                 </div>
                 </motion.div>
               ) : null}
