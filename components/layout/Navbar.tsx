@@ -291,7 +291,7 @@ export function Navbar({
                     />
                   ) : null}
                   {brandName ? (
-                    <span className="hidden sm:inline text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
+                    <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
                       {brandName}
                     </span>
                   ) : null}
@@ -301,7 +301,7 @@ export function Navbar({
                 <Link
                   href="/docs"
                   prefetch={false}
-                  className="text-[15px] font-bold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-[15px] font-semibold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Docs
                 </Link>
@@ -618,8 +618,8 @@ export function Navbar({
                       <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Documentation</p>
                       {[
                         { label: 'Getting Started', href: '/docs/introduction' },
-                        { label: 'Platform Guides', href: '/docs/login-pages' },
-                        { label: 'API Reference',   href: '/docs/api-reference' },
+                        { label: 'Platform Guides', href: '/docs/attendance-system' },
+                        { label: 'API Reference',   href: '/docs/authentication-api' },
                         { label: 'Changelog',       href: '/changelog' },
                       ].map((item, idx, arr) => (
                         <Link
