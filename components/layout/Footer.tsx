@@ -158,9 +158,6 @@ export function Footer({
   const legalItems = (Array.isArray(legalLinks) ? legalLinks : [])
     .filter((l) => l?.label?.trim() && l?.href?.trim());
 
-  // INJECTED FOR RAZORPAY REVIEW
-  legalItems.push({ label: 'Compliance & Pricing (Razorpay Review)', href: 'https://billing.classgrid.in' });
-
   const socialItems = [
     { platform: "linkedin", href: "https://linkedin.com/company/classgrid" },
     { platform: "instagram", href: "https://www.instagram.com/classgridedu/" },
