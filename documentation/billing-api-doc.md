@@ -1,5 +1,3 @@
-# Billing API Reference
-
 Classgrid's billing system spans 4 route files for the checkout flow + 1 webhook + 8 super-admin route files for billing management.
 
 ---

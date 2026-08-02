@@ -1,5 +1,3 @@
-# Examinations & Results
-
 Classgrid has two exam engines that work together:
 
 1. **Exam Scheduling System** — Supabase-backed exam creation, timetable management, and AI-powered PDF timetable extraction (`exam.routes.js`)

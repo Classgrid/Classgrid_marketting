@@ -1,5 +1,3 @@
-# Fees & Payment Management
-
 Classgrid provides a full-cycle fee management system covering fee structure creation, student fee record generation, online payment collection via Razorpay, receipt generation, discounts, and overdue tracking. All fee data uses a dual-database architecture: **MongoDB (Mongoose)** for fee structures and configurations, and **Supabase/Postgres** for transactional records.
 
 ---

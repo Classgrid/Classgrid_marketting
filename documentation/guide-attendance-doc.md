@@ -1,5 +1,3 @@
-# Attendance System
-
 The Classgrid Attendance System supports multiple attendance modes: **GPS-verified live sessions**, **manual quick-mark**, and **daily batch submission**. It includes built-in anti-fraud detection (device fingerprinting, paste detection, GPS radius checks) and automated absence notifications.
 
 ## How Attendance Works

@@ -1,10 +1,3 @@
----
-title: Authentication API
-description: "Code-grounded Classgrid REST API reference for authentication api"
----
-
-# Authentication API
-
 This reference is generated from the current Express route definitions and their handlers. It documents route-level authentication and authorization; deployment-wide middleware may add further checks.
 
 ## Conventions

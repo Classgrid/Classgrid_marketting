@@ -1,5 +1,3 @@
-# Organization API Reference
-
 Base path: `/api/org` (mounted as org.routes.js)  
 Source: `server/src/routes/org.routes.js` (3394 lines)  
 Auth: All endpoints require `isAuthenticated` + `requireRole("org_admin")` unless noted.

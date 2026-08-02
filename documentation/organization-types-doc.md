@@ -1,12 +1,3 @@
----
-type: helpArticle
-title: "Organization Types, Academic Structure, Terminology, and Portals"
-slug: organization-types-academic-structure
-category: "I am an Admin"
-subCategory: "Organization Setup"
-summary: "A complete reference for choosing a Classgrid organization type, configuring its academic hierarchy, understanding dynamic terminology, assigning roles, and using tenant portal URLs."
----
-
 Classgrid adapts its academic structure, labels, admissions, attendance, fees, examinations, library behavior, roles, and dashboards to the institution selected during onboarding.
 
 This guide is the central reference for:

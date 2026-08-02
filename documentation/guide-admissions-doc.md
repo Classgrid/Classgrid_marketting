@@ -1,5 +1,3 @@
-# Admissions & Enrollment
-
 Classgrid's Admission System supports **two admission tracks** running in parallel:
 
 1. **CET Track** — For institutions accepting students via Maharashtra CET (Common Entrance Test) allotment through CAP rounds

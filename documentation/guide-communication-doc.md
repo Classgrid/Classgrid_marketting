@@ -1,5 +1,3 @@
-# Communication & Messaging
-
 Classgrid's Communication system is built around a **RAG-powered AI chat assistant** (`chat.routes.js`, 863 lines) that serves as the primary student-facing interface. The AI assistant has deep integration with 13 real-time data sources across the platform. Additionally, the platform supports real-time classroom chat, group messaging, threaded conversations, org-wide announcements, forums, and push notifications through dedicated route files.
 
 ---

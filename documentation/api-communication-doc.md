@@ -1,10 +1,3 @@
----
-title: Communication API
-description: "Code-grounded Classgrid REST API reference for communication api"
----
-
-# Communication API
-
 This reference is generated from the current Express route definitions and their handlers. It documents route-level authentication and authorization; deployment-wide middleware may add further checks.
 
 ## Conventions

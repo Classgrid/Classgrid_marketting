@@ -1,5 +1,3 @@
-# Assignments, Notes & Quizzes
-
 Classgrid's Assignment module handles creation, submission, grading, and analytics for classroom assignments. All assignment data is stored in **Supabase/Postgres** (`assignments`, `assignment_submissions` tables), while classroom membership and student identity are resolved from **MongoDB**.
 
 ---

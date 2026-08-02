@@ -1,5 +1,3 @@
-# Leave & Holiday Management
-
 Classgrid's Leave & Holiday system has two interconnected modules:
 
 1. **Leave Management** (`leave.routes.js`) — Student leave requests, teacher approvals, quick-leave mode, leave summary, and weekly calendar view. Stored in **Supabase** `leave_requests` table.

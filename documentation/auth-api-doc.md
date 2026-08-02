@@ -1,5 +1,3 @@
-# Authentication API Reference
-
 Base path: `/api/auth`  
 Source: `server/src/routes/auth.routes.js` (112 lines) + `auth.controller.js` (2289 lines)
 

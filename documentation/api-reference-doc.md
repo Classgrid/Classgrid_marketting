@@ -1,10 +1,3 @@
----
-title: API Reference & Guidelines
-description: "Complete technical reference for the Classgrid REST API"
----
-
-# API Reference & Guidelines
-
 The Classgrid API allows you to programmatically manage your institution's data, including students, faculty, billing, and attendance records.
 
 ## Base URL

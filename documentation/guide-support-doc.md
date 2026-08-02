@@ -1,5 +1,3 @@
-# Support & Help Desk
-
 Classgrid's Support module provides a full-featured help desk with **public ticket creation** (no login required), **authenticated ticket management**, **file attachments**, **admin reply system**, **ticket lifecycle management**, and **email + push notifications**. All ticket data is stored in **MongoDB** via the `SupportTicket` model.
 
 ---

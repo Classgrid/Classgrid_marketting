@@ -1,10 +1,3 @@
----
-title: Platform Guides & Login
-description: "Understanding the Multi-Tenant Architecture and Login Flows"
----
-
-# Platform Guides & Login Flows
-
 Classgrid is designed with a strict Multi-Tenant Architecture. This means every college or institution gets its own secure, isolated environment (e.g., `pccoe.classgrid.in`). 
 
 Because of this architecture, **where** you log in is just as important as **how** you log in.

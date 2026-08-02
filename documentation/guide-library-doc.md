@@ -1,5 +1,3 @@
-# Library Management
-
 Classgrid's Library Module provides a complete book catalog, issue/return workflow, reservation system, AI-powered book categorization, overdue fine tracking, and analytics dashboard. All data is stored in **Supabase/Postgres** tables (`library_books`, `library_copies`, `library_transactions`, `library_reservations`), with student identity resolved from **MongoDB** (`User` model).
 
 ---

@@ -1,5 +1,3 @@
-# Academics & Classroom Management
-
 Classgrid's Academics module manages the core educational structure: classrooms, membership, timetables, and the relationship between teachers, students, and subjects. The classroom system uses **MongoDB** for identity and membership and **Supabase** for classroom content (materials, announcements, quizzes).
 
 ---
