@@ -297,11 +297,11 @@ export function Navbar({
                   ) : null}
                 </Link>
                 {/* Slash separator */}
-                <span className="mx-2 text-[15px] font-bold text-border select-none">/</span>
+                <span className="mx-2 text-[15px] font-bold text-foreground select-none">/</span>
                 <Link
                   href="/docs"
                   prefetch={false}
-                  className="text-[15px] font-bold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-[15px] font-bold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
                 >
                   Docs
                 </Link>
