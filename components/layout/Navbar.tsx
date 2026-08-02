@@ -65,6 +65,8 @@ type NavbarProps = {
   onDocsSearchClick?: () => void;
   /** When true in docsMode, hides Ask AI button (user is logged in) */
   docsUserLoggedIn?: boolean;
+  /** When true, hides marketing CTAs (user is a platform subscriber) */
+  isPlatformUser?: boolean;
   /** Session loading status from NextAuth */
   sessionStatus?: "loading" | "authenticated" | "unauthenticated";
 };
