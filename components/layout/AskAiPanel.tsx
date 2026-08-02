@@ -1414,7 +1414,22 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
-              <div className="relative w-full shadow-sm rounded-2xl">
+              <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
+                {pageContext?.path?.startsWith("/docs") && (
+                  <div className="px-3 pt-3 pb-0">
+                    <div className="inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 shadow-sm max-w-[95%]">
+                      <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0.5">
+                        <span className="text-[12px] font-semibold text-foreground truncate leading-tight">
+                          {pageContext.title || "Introduction"}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/80 truncate leading-tight">
+                          https://classgrid.in{pageContext.path}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <textarea
                   id="ask-ai-input"
                   name="askAiQuestion"
@@ -1428,9 +1443,12 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                       if (canSubmit) void askQuestion(input);
                     }
                   }}
-                  placeholder="Ask a Classgrid question..."
+                  placeholder="Ask a question..."
                   autoComplete="off"
-                  className="min-h-[120px] max-h-[240px] w-full resize-none rounded-2xl border border-border bg-background pb-12 pl-4 pr-12 pt-4 text-sm text-foreground focus:outline-none focus:border-foreground/30 focus:ring-1 focus:ring-foreground/30 overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors"
+                  className={cn(
+                    "min-h-[120px] max-h-[240px] w-full resize-none bg-transparent pb-12 pl-4 pr-12 text-sm text-foreground focus:outline-none overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors",
+                    pageContext?.path?.startsWith("/docs") ? "pt-3" : "pt-4 rounded-2xl"
+                  )}
                 />
                 {isGenerating ? (
                   <Button
