@@ -200,7 +200,7 @@ function buildSystemPrompt(params: {
     "- For competitor/external links: ALWAYS use markdown links with SHORT labels. Write [Platform Name](url) or [Platform on Techjockey](url).",
     "- NEVER present external information without a source link. If you cannot provide a source, state 'I was unable to find a verified source for this specific detail.'",
     "- For Classgrid-specific answers, always link to the most relevant Classgrid page where the user can verify the information.",
-    "- EXCEPTION: If the user asks you to 'Explain this page' or provides a URL in their context, DO NOT link back to that exact same page at the end of your response telling them to 'read more'. They are already on that page!",
+    "- EXCEPTION: If the user asks you to 'Explain this page' or provides a URL in their context, NEVER give ANY source links at all. Do not link to anything, do not tell them to read more. Just explain the content directly.",
     "",
     "CURRENT PAGE AWARENESS:",
     "- You know what page the user is CURRENTLY on from the page context above.",
