@@ -1062,20 +1062,22 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   }
 
   async function askQuestion(question: string) {
-    let finalQuestion = question.trim();
+    let displayQuestion = question.trim();
+    let apiQuestion = question.trim();
     const isDocsContextActive = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
 
-    if (!finalQuestion && !isDocsContextActive) return;
+    if (!apiQuestion && !isDocsContextActive) return;
     if (submitting) return;
 
     if (isDocsContextActive && pageContext?.path) {
       const docsUrl = `https://classgrid.in${pageContext.path}`;
       setLastSentDocsPath(pageContext.path);
 
-      if (!finalQuestion) {
-        finalQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
+      if (!displayQuestion) {
+        displayQuestion = `Explain this page: ${pageContext.title || "Documentation"}`;
+        apiQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
       } else {
-        finalQuestion = `${finalQuestion}\n\n*(Context: ${docsUrl})*`;
+        apiQuestion = `${apiQuestion}\n\n*(Context: ${docsUrl})*`;
       }
     }
 
@@ -1091,7 +1093,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
       {
         id: createMessageId("user"),
         role: "user",
-        content: finalQuestion,
+        content: displayQuestion,
         createdAt: Date.now(),
       },
     ];
@@ -1110,7 +1112,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
-          question: finalQuestion,
+          question: apiQuestion,
           userName: session?.user?.name ?? undefined,
           userEmail: (session?.user as any)?.email || (session?.user as any)?.userEmail || undefined,
           sessionId: sessionId ?? undefined,
@@ -1482,7 +1484,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
               <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
                 {pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath && (
                   <div className="px-3 pt-3 pb-0">
-                    <div className="inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 shadow-sm max-w-[95%]">
+                    <div className="group relative inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 pr-8 shadow-sm max-w-[95%]">
                       <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0.5">
                         <span className="text-[12px] font-semibold text-foreground truncate leading-tight">
@@ -1492,6 +1494,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                           https://classgrid.in{pageContext.path}
                         </span>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setLastSentDocsPath(pageContext.path!)}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
+                        title="Remove page context"
+                      >
+                        <X className="h-3 w-3" />
+                        <span className="sr-only">Remove context</span>
+                      </button>
                     </div>
                   </div>
                 )}
