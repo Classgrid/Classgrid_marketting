@@ -56,6 +56,8 @@ type ChatMessage = {
   content: string;
   createdAt: number;
   typing?: boolean;
+  contextUrl?: string;
+  contextTitle?: string;
 };
 
 type ListItem = {
@@ -1093,6 +1095,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setThinkingLabel("Thinking");
     userScrolledUpRef.current = false; // Reset scroll lock for new question
 
+    const sentContextUrl = pageContext?.path?.startsWith("/docs")
+      ? `https://classgrid.in${pageContext.path}`
+      : undefined;
+    const sentContextTitle = pageContext?.path?.startsWith("/docs") && pageContext?.title
+      ? pageContext.title
+      : undefined;
+
     const nextMessages: ChatMessage[] = [
       ...messages,
       {
@@ -1100,6 +1109,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         role: "user",
         content: displayQuestion,
         createdAt: Date.now(),
+        contextUrl: sentContextUrl,
+        contextTitle: sentContextTitle,
       },
     ];
 
@@ -1432,7 +1443,22 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                           </svg>
                         )}
                         {isUser ? (
-                          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
+                          <>
+                            <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
+                            {message.contextUrl && (
+                              <a
+                                href={message.contextUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1.5 flex items-center gap-1.5 text-[11px] opacity-70 hover:opacity-100 transition-opacity relative z-10"
+                              >
+                                <FileText className="h-3 w-3" />
+                                <span className="underline underline-offset-2 truncate max-w-[200px]">
+                                  {message.contextTitle || message.contextUrl}
+                                </span>
+                              </a>
+                            )}
+                          </>
                         ) : (
                           <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
                         )}
