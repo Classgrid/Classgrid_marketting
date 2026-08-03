@@ -933,35 +933,6 @@
 .solution-html-content li {
   margin-bottom: 0.35rem;
 }
-/* Flexbox layout for AI code blocks */
-.code-line {
-  display: flex;
-  width: max-content;
-  min-width: 100%;
-}
-.code-line-num {
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  flex-shrink: 0;
-  width: 3.5rem;
-  padding-right: 1rem;
-  text-align: right;
-  user-select: none;
-  color: #9ca3af;
-  background: #fafbfc;
-  border-right: 1px solid rgba(0,0,0,0.05);
-}
-.dark .code-line-num {
-  color: #4b5563;
-  background: #111113;
-  border-right: 1px solid rgba(255,255,255,0.05);
-}
-.code-line-text {
-  padding-left: 1rem;
-  padding-right: 1rem;
-  white-space: pre;
-}
 /* Highlight.js Light Theme */
 pre code.hljs {
   display: block;
