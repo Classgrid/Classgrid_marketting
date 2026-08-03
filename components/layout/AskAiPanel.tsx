@@ -1450,7 +1450,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
                                 href={message.contextUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="mt-1.5 flex items-center gap-1.5 text-[11px] opacity-70 hover:opacity-100 transition-opacity relative z-10"
+                                className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-300 dark:text-sky-300 hover:text-sky-200 transition-opacity relative z-10"
                               >
                                 <FileText className="h-3 w-3" />
                                 <span className="underline underline-offset-2 truncate max-w-[200px]">
