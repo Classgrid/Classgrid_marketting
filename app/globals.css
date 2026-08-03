@@ -932,129 +932,128 @@
 
 .solution-html-content li {
   margin-bottom: 0.35rem;
-} 
- / *   H i g h l i g h t . j s   L i g h t   T h e m e   * /  
- p r e   c o d e . h l j s   {  
-     d i s p l a y :   b l o c k ;  
-     o v e r f l o w - x :   a u t o ;  
-     p a d d i n g :   1 e m  
- }  
- c o d e . h l j s   {  
-     p a d d i n g :   3 p x   5 p x  
- }  
- / * !  
-     T h e m e :   G i t H u b  
-     D e s c r i p t i o n :   L i g h t   t h e m e   a s   s e e n   o n   g i t h u b . c o m  
-     A u t h o r :   g i t h u b . c o m  
-     M a i n t a i n e r :   @ H i r s e  
-     U p d a t e d :   2 0 2 1 - 0 5 - 1 5  
-  
-     O u t d a t e d   b a s e   v e r s i o n :   h t t p s : / / g i t h u b . c o m / p r i m e r / g i t h u b - s y n t a x - l i g h t  
-     C u r r e n t   c o l o r s   t a k e n   f r o m   G i t H u b ' s   C S S  
- * /  
- . h l j s   {  
-     c o l o r :   # 2 4 2 9 2 e ;  
-     b a c k g r o u n d :   # f f f f f f  
- }  
- . h l j s - d o c t a g ,  
- . h l j s - k e y w o r d ,  
- . h l j s - m e t a   . h l j s - k e y w o r d ,  
- . h l j s - t e m p l a t e - t a g ,  
- . h l j s - t e m p l a t e - v a r i a b l e ,  
- . h l j s - t y p e ,  
- . h l j s - v a r i a b l e . l a n g u a g e _   {  
-     / *   p r e t t y l i g h t s - s y n t a x - k e y w o r d   * /  
-     c o l o r :   # d 7 3 a 4 9  
- }  
- . h l j s - t i t l e ,  
- . h l j s - t i t l e . c l a s s _ ,  
- . h l j s - t i t l e . c l a s s _ . i n h e r i t e d _ _ ,  
- . h l j s - t i t l e . f u n c t i o n _   {  
-     / *   p r e t t y l i g h t s - s y n t a x - e n t i t y   * /  
-     c o l o r :   # 6 f 4 2 c 1  
- }  
- . h l j s - a t t r ,  
- . h l j s - a t t r i b u t e ,  
- . h l j s - l i t e r a l ,  
- . h l j s - m e t a ,  
- . h l j s - n u m b e r ,  
- . h l j s - o p e r a t o r ,  
- . h l j s - v a r i a b l e ,  
- . h l j s - s e l e c t o r - a t t r ,  
- . h l j s - s e l e c t o r - c l a s s ,  
- . h l j s - s e l e c t o r - i d   {  
-     / *   p r e t t y l i g h t s - s y n t a x - c o n s t a n t   * /  
-     c o l o r :   # 0 0 5 c c 5  
- }  
- . h l j s - r e g e x p ,  
- . h l j s - s t r i n g ,  
- . h l j s - m e t a   . h l j s - s t r i n g   {  
-     / *   p r e t t y l i g h t s - s y n t a x - s t r i n g   * /  
-     c o l o r :   # 0 3 2 f 6 2  
- }  
- . h l j s - b u i l t _ i n ,  
- . h l j s - s y m b o l   {  
-     / *   p r e t t y l i g h t s - s y n t a x - v a r i a b l e   * /  
-     c o l o r :   # e 3 6 2 0 9  
- }  
- . h l j s - c o m m e n t ,  
- . h l j s - c o d e ,  
- . h l j s - f o r m u l a   {  
-     / *   p r e t t y l i g h t s - s y n t a x - c o m m e n t   * /  
-     c o l o r :   # 6 a 7 3 7 d  
- }  
- . h l j s - n a m e ,  
- . h l j s - q u o t e ,  
- . h l j s - s e l e c t o r - t a g ,  
- . h l j s - s e l e c t o r - p s e u d o   {  
-     / *   p r e t t y l i g h t s - s y n t a x - e n t i t y - t a g   * /  
-     c o l o r :   # 2 2 8 6 3 a  
- }  
- . h l j s - s u b s t   {  
-     / *   p r e t t y l i g h t s - s y n t a x - s t o r a g e - m o d i f i e r - i m p o r t   * /  
-     c o l o r :   # 2 4 2 9 2 e  
- }  
- . h l j s - s e c t i o n   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - h e a d i n g   * /  
-     c o l o r :   # 0 0 5 c c 5 ;  
-     f o n t - w e i g h t :   b o l d  
- }  
- . h l j s - b u l l e t   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - l i s t   * /  
-     c o l o r :   # 7 3 5 c 0 f  
- }  
- . h l j s - e m p h a s i s   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - i t a l i c   * /  
-     c o l o r :   # 2 4 2 9 2 e ;  
-     f o n t - s t y l e :   i t a l i c  
- }  
- . h l j s - s t r o n g   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - b o l d   * /  
-     c o l o r :   # 2 4 2 9 2 e ;  
-     f o n t - w e i g h t :   b o l d  
- }  
- . h l j s - a d d i t i o n   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - i n s e r t e d   * /  
-     c o l o r :   # 2 2 8 6 3 a ;  
-     b a c k g r o u n d - c o l o r :   # f 0 f f f 4  
- }  
- . h l j s - d e l e t i o n   {  
-     / *   p r e t t y l i g h t s - s y n t a x - m a r k u p - d e l e t e d   * /  
-     c o l o r :   # b 3 1 d 2 8 ;  
-     b a c k g r o u n d - c o l o r :   # f f e e f 0  
- }  
- . h l j s - c h a r . e s c a p e _ ,  
- . h l j s - l i n k ,  
- . h l j s - p a r a m s ,  
- . h l j s - p r o p e r t y ,  
- . h l j s - p u n c t u a t i o n ,  
- . h l j s - t a g   {  
-     / *   p u r p o s e l y   i g n o r e d   * /  
-      
- }  
-  
- / *   H i g h l i g h t . j s   D a r k   T h e m e   o v e r r i d e s   * /  
- pre code.hljs {
+}
+/* Highlight.js Light Theme */
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+code.hljs {
+  padding: 3px 5px
+}
+/*!
+  Theme: GitHub
+  Description: Light theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-light
+  Current colors taken from GitHub's CSS
+*/
+.hljs {
+  color: #24292e;
+  background: #ffffff
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #d73a49
+}
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #6f42c1
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #005cc5
+}
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #032f62
+}
+.hljs-built_in,
+.hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #e36209
+}
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #6a737d
+}
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #22863a
+}
+.hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #24292e
+}
+.hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #005cc5;
+  font-weight: bold
+}
+.hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #735c0f
+}
+.hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #24292e;
+  font-style: italic
+}
+.hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #24292e;
+  font-weight: bold
+}
+.hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #22863a;
+  background-color: #f0fff4
+}
+.hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #b31d28;
+  background-color: #ffeef0
+}
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+  /* purposely ignored */
+  
+}
+/* Highlight.js Dark Theme overrides */
+pre code.hljs {
   display: block;
   overflow-x: auto;
   padding: 1em
