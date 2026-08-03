@@ -669,7 +669,7 @@ function AssistantMessageContent({ content }: { content: string }) {
           const lineRows = highlightedLines.map((line, i) =>
             `<tr><td class="select-none text-right pr-4 text-slate-400 dark:text-zinc-600 w-[1%] whitespace-nowrap sticky left-0 bg-[#fafbfc] dark:bg-[#111113] z-10" style="user-select:none">${i + 1}</td><td class="pl-0 whitespace-pre">${line || " "}</td></tr>`
           ).join("");
-          const finalHtml = `<pre class="text-[13px] !p-0 !m-0"><code class="font-mono hljs"><table class="w-full border-collapse"><tbody class="align-top">${lineRows}</tbody></table></code></pre>`;
+          const finalHtml = `<pre class="text-[13px] !p-0 !m-0"><code class="font-mono hljs"><table class="border-collapse"><tbody class="align-top">${lineRows}</tbody></table></code></pre>`;
 
           return (
             <div key={`c-${index}`} className="w-full pb-2 overflow-hidden">
