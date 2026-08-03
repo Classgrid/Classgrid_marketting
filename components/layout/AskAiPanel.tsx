@@ -1095,10 +1095,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     setThinkingLabel("Thinking");
     userScrolledUpRef.current = false; // Reset scroll lock for new question
 
-    const sentContextUrl = pageContext?.path?.startsWith("/docs")
+    const sentContextUrl = isDocsContextActive && pageContext?.path
       ? `https://classgrid.in${pageContext.path}`
       : undefined;
-    const sentContextTitle = pageContext?.path?.startsWith("/docs") && pageContext?.title
+    const sentContextTitle = isDocsContextActive && pageContext?.title
       ? pageContext.title
       : undefined;
 
