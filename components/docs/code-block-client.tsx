@@ -62,7 +62,8 @@ export function CodeBlockClient({ rawCode, html, language = 'javascript' }: { ra
 
       {/* Code Content */}
       <div 
-        className="relative overflow-auto max-h-[32rem] text-sm code-block-wrapper custom-scrollbar p-4 bg-[#fafbfc] dark:bg-[#111113] [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0" 
+        className="relative max-h-[32rem] text-sm code-block-wrapper custom-scrollbar p-4 bg-[#fafbfc] dark:bg-[#111113] [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0" 
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
         dangerouslySetInnerHTML={{ __html: html }} 
       />
     </div>
