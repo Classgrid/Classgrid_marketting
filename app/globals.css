@@ -953,7 +953,7 @@ code.hljs {
   Current colors taken from GitHub's CSS
 */
 .hljs {
-  color: #1a1a2e;
+  color: #24292f;
   background: transparent !important;
 }
 .hljs-doctag,
@@ -963,16 +963,16 @@ code.hljs {
 .hljs-template-variable,
 .hljs-type,
 .hljs-variable.language_ {
-  /* keywords — bold purple */
-  color: #8b5cf6;
+  /* keywords — dark blue like VS Code */
+  color: #0550ae;
   font-weight: 600;
 }
 .hljs-title,
 .hljs-title.class_,
 .hljs-title.class_.inherited__,
 .hljs-title.function_ {
-  /* functions/classes — vivid blue */
-  color: #2563eb;
+  /* functions/classes — purple */
+  color: #6639ba;
 }
 .hljs-attr,
 .hljs-attribute,
@@ -984,59 +984,59 @@ code.hljs {
 .hljs-selector-attr,
 .hljs-selector-class,
 .hljs-selector-id {
-  /* constants/numbers — deep orange */
-  color: #c2410c;
+  /* attributes/numbers — teal */
+  color: #0550ae;
 }
 .hljs-regexp,
 .hljs-string,
 .hljs-meta .hljs-string {
-  /* strings — rich teal */
-  color: #0d9488;
+  /* strings — blue */
+  color: #0a3069;
 }
 .hljs-built_in,
 .hljs-symbol {
-  /* built-ins — warm amber */
-  color: #d97706;
+  /* built-ins — dark orange */
+  color: #953800;
 }
 .hljs-comment,
 .hljs-code,
 .hljs-formula {
-  /* comments — medium grey, italic */
-  color: #94a3b8;
+  /* comments — muted green */
+  color: #6e7781;
   font-style: italic;
 }
 .hljs-name,
 .hljs-quote,
 .hljs-selector-tag,
 .hljs-selector-pseudo {
-  /* tags — vivid green */
-  color: #16a34a;
+  /* HTML tags — dark red/maroon */
+  color: #8a3000;
 }
 .hljs-subst {
-  color: #1a1a2e;
+  color: #24292f;
 }
 .hljs-section {
-  color: #2563eb;
+  color: #0550ae;
   font-weight: bold;
 }
 .hljs-bullet {
-  color: #d97706;
+  color: #953800;
 }
 .hljs-emphasis {
-  color: #1a1a2e;
+  color: #24292f;
   font-style: italic;
 }
 .hljs-strong {
-  color: #1a1a2e;
+  color: #24292f;
   font-weight: bold;
 }
 .hljs-addition {
-  color: #16a34a;
-  background-color: #f0fdf4;
+  color: #116329;
+  background-color: #dafbe1;
 }
 .hljs-deletion {
-  color: #dc2626;
-  background-color: #fef2f2;
+  color: #82071e;
+  background-color: #ffebe9;
 }
 .hljs-char.escape_,
 .hljs-link,
