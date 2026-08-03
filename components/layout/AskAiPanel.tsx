@@ -41,6 +41,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
+import { CodeBlockClient } from "@/components/docs/code-block-client";
 
 type AskAiPanelProps = {
   open: boolean;
@@ -65,7 +66,8 @@ type StructuredBlock =
   | { type: "paragraph"; text: string }
   | { type: "list"; items: ListItem[] }
   | { type: "section"; title: string; paragraphs: string[]; items?: ListItem[] }
-  | { type: "table"; headers: string[]; rows: string[][] };
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "code"; code: string; language: string };
 
 const SUGGESTED_QUESTIONS = [
   "What is Classgrid?",
@@ -330,34 +332,55 @@ function parseTableBlock(block: string) {
 }
 
 function buildStructuredBlocks(text: string): StructuredBlock[] {
-  const cleaned = sanitizeAssistantText(text);
-  if (!cleaned) return [];
-
-  const rawBlocks = cleaned.split(/\n\n+/).map((block) => block.trim()).filter(Boolean);
   const blocks: StructuredBlock[] = [];
+  const parts = text.split(/(```[\s\S]*?```)/g);
 
-  for (const rawBlock of rawBlocks) {
-    const listItems = parseListBlock(rawBlock);
-    if (listItems) {
-      blocks.push({ type: "list", items: listItems });
+  for (const part of parts) {
+    if (part.startsWith("```") && part.endsWith("```")) {
+      const match = part.match(/^```([\w-]*)\n([\s\S]*?)```$/);
+      if (match) {
+        blocks.push({
+          type: "code",
+          language: match[1].trim(),
+          code: match[2].trim(),
+        });
+      } else {
+        blocks.push({
+          type: "code",
+          language: "",
+          code: part.replace(/```/g, "").trim(),
+        });
+      }
       continue;
     }
 
-    const sectionBlock = parseSectionBlock(rawBlock);
-    if (sectionBlock) {
-      blocks.push(sectionBlock);
-      continue;
-    }
+    const cleaned = sanitizeAssistantText(part);
+    if (!cleaned) continue;
 
-    const tableBlock = parseTableBlock(rawBlock);
-    if (tableBlock) {
-      blocks.push(tableBlock);
-      continue;
-    }
+    const rawBlocks = cleaned.split(/\n\n+/).map((b) => b.trim()).filter(Boolean);
+    for (const rawBlock of rawBlocks) {
+      const listItems = parseListBlock(rawBlock);
+      if (listItems) {
+        blocks.push({ type: "list", items: listItems });
+        continue;
+      }
 
-    for (const paragraph of splitLongParagraph(rawBlock.replace(/\s+/g, " ").trim())) {
-      if (paragraph) {
-        blocks.push({ type: "paragraph", text: paragraph });
+      const sectionBlock = parseSectionBlock(rawBlock);
+      if (sectionBlock) {
+        blocks.push(sectionBlock);
+        continue;
+      }
+
+      const tableBlock = parseTableBlock(rawBlock);
+      if (tableBlock) {
+        blocks.push(tableBlock);
+        continue;
+      }
+
+      for (const paragraph of splitLongParagraph(rawBlock.replace(/\s+/g, " ").trim())) {
+        if (paragraph) {
+          blocks.push({ type: "paragraph", text: paragraph });
+        }
       }
     }
   }
@@ -618,6 +641,14 @@ function AssistantMessageContent({ content }: { content: string }) {
                   </TableBody>
                 </Table>
               </div>
+            </div>
+          );
+        }
+
+        if (block.type === "code") {
+          return (
+            <div key={`c-${index}`} className="w-full pb-2 overflow-hidden">
+              <CodeBlockClient code={block.code} language={block.language} />
             </div>
           );
         }
