@@ -662,7 +662,12 @@ function AssistantMessageContent({ content }: { content: string }) {
               .replace(/>/g, "&gt;");
           }
 
-          const finalHtml = `<pre class="p-4 text-[13px]"><code class="font-mono hljs">${highlighted}</code></pre>`;
+          // Build line-numbered HTML
+          const highlightedLines = highlighted.split("\n");
+          const lineRows = highlightedLines.map((line, i) =>
+            `<tr><td class="select-none text-right pr-4 text-slate-400 dark:text-zinc-600 w-[1%] whitespace-nowrap" style="user-select:none">${i + 1}</td><td class="pl-0">${line || " "}</td></tr>`
+          ).join("");
+          const finalHtml = `<pre class="text-[13px] !p-0 !m-0"><code class="font-mono hljs"><table class="w-full border-collapse"><tbody class="align-top">${lineRows}</tbody></table></code></pre>`;
 
           return (
             <div key={`c-${index}`} className="w-full pb-2 overflow-hidden">

@@ -37,7 +37,7 @@ export function CodeBlockClient({ rawCode, html, language = 'javascript' }: { ra
   }
 
   return (
-    <div className="group relative my-6 rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-[#111113] overflow-hidden text-sm shadow-xl">
+    <div className="group relative my-6 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111113] overflow-hidden text-sm shadow-sm dark:shadow-xl">
       {/* Vercel-style Code Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#18181b]">
         <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export function CodeBlockClient({ rawCode, html, language = 'javascript' }: { ra
 
       {/* Code Content */}
       <div 
-        className="relative overflow-auto max-h-[32rem] text-sm code-block-wrapper custom-scrollbar [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0" 
+        className="relative overflow-auto max-h-[32rem] text-sm code-block-wrapper custom-scrollbar p-4 bg-white dark:bg-[#111113] [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0" 
         dangerouslySetInnerHTML={{ __html: html }} 
       />
     </div>
