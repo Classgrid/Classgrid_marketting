@@ -952,7 +952,9 @@ code.hljs {
   Outdated base version: https://github.com/primer/github-syntax-light
   Current colors taken from GitHub's CSS
 */
-.hljs {\n  color: #24292e;\n  background: transparent !important
+.hljs {
+  color: #24292e;
+  background: transparent !important;
 }
 .hljs-doctag,
 .hljs-keyword,
@@ -1069,7 +1071,9 @@ code.hljs {
   Outdated base version: https://github.com/primer/github-syntax-dark
   Current colors taken from GitHub's CSS
 */
-.dark .hljs {\n  color: #c9d1d9;\n  background: transparent !important
+.dark .hljs {
+  color: #c9d1d9;
+  background: transparent !important;
 }
 .dark .hljs-doctag,
 .dark .hljs-keyword,
