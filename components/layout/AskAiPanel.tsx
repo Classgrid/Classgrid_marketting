@@ -248,6 +248,7 @@ function parseListBlock(block: string) {
 function isLikelyHeading(title: string) {
   const trimmed = title.trim().replace(/:$/, "");
   if (!trimmed) return false;
+  if (trimmed.startsWith("|")) return false; // Never treat a table row as a heading
 
   if (SECTION_ICON_RULES.some((rule) => rule.match.test(trimmed))) return true;
 
@@ -366,15 +367,15 @@ function buildStructuredBlocks(text: string): StructuredBlock[] {
         continue;
       }
 
-      const sectionBlock = parseSectionBlock(rawBlock);
-      if (sectionBlock) {
-        blocks.push(sectionBlock);
-        continue;
-      }
-
       const tableBlock = parseTableBlock(rawBlock);
       if (tableBlock) {
         blocks.push(tableBlock);
+        continue;
+      }
+
+      const sectionBlock = parseSectionBlock(rawBlock);
+      if (sectionBlock) {
+        blocks.push(sectionBlock);
         continue;
       }
 
