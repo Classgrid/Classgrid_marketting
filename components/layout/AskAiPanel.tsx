@@ -662,9 +662,11 @@ function AssistantMessageContent({ content }: { content: string }) {
               .replace(/>/g, "&gt;");
           }
 
+          const finalHtml = `<pre class="p-4 text-[13px]"><code class="font-mono hljs">${highlighted}</code></pre>`;
+
           return (
             <div key={`c-${index}`} className="w-full pb-2 overflow-hidden">
-              <CodeBlockClient rawCode={block.code} html={highlighted} language={block.language} />
+              <CodeBlockClient rawCode={block.code} html={finalHtml} language={block.language} />
             </div>
           );
         }
