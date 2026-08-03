@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import hljs from "highlight.js";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUp,
@@ -333,16 +334,16 @@ function parseTableBlock(block: string) {
 
 function buildStructuredBlocks(text: string): StructuredBlock[] {
   const blocks: StructuredBlock[] = [];
-  const parts = text.split(/(```[\s\S]*?```)/g);
+  const parts = text.split(/(```[\s\S]*?(?:```|$))/g);
 
   for (const part of parts) {
-    if (part.startsWith("```") && part.endsWith("```")) {
-      const match = part.match(/^```([\w-]*)\n([\s\S]*?)```$/);
+    if (part.startsWith("```")) {
+      const match = part.match(/^```([\w-]*)\n([\s\S]*?)(?:```|$)/);
       if (match) {
         blocks.push({
           type: "code",
           language: match[1].trim(),
-          code: match[2].trim(),
+          code: match[2],
         });
       } else {
         blocks.push({
@@ -646,9 +647,23 @@ function AssistantMessageContent({ content }: { content: string }) {
         }
 
         if (block.type === "code") {
+          let highlighted = block.code;
+          try {
+            if (block.language && hljs.getLanguage(block.language)) {
+              highlighted = hljs.highlight(block.code, { language: block.language }).value;
+            } else {
+              highlighted = hljs.highlightAuto(block.code).value;
+            }
+          } catch (e) {
+            highlighted = block.code
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+          }
+
           return (
             <div key={`c-${index}`} className="w-full pb-2 overflow-hidden">
-              <CodeBlockClient code={block.code} language={block.language} />
+              <CodeBlockClient rawCode={block.code} html={highlighted} language={block.language} />
             </div>
           );
         }
