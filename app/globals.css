@@ -5,7 +5,7 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #FAFAFA;
+  --background: transparent !important;
   --foreground: #000000;
   --card: #FFFFFF;
   --card-foreground: #000000;
@@ -31,7 +31,7 @@
 }
 
 .dark {
-  --background: #0f0f0f;
+  --background: transparent !important;
   --foreground: #ffffff;
   --card: #111111;
   --card-foreground: #ffffff;
@@ -58,7 +58,7 @@
 
 .light {
   --radius: 0.75rem;
-  --background: #FAFAFA;
+  --background: transparent !important;
   --foreground: #000000;
   --card: #FFFFFF;
   --card-foreground: #000000;
@@ -216,7 +216,7 @@
   --plyr-menu-color: #f8fafc;
   --plyr-tooltip-background: rgba(10, 10, 10, 0.94);
   --plyr-tooltip-color: #f8fafc;
-  --plyr-range-fill-background: #4a90f5;
+  --plyr-range-fill-background: transparent !important;
 }
 
 .plyr {
@@ -229,7 +229,7 @@
 
 .plyr--video {
   height: 100%;
-  background: #000;
+  background: transparent !important;
   border-radius: 0.75rem;
 }
 
@@ -600,7 +600,7 @@
 
   .live-embed-frame {
     overflow: hidden;
-    background: #fff;
+    background: transparent !important;
   }
 
   .live-embed-frame iframe {
@@ -608,7 +608,7 @@
     width: 100%;
     height: 100%;
     border: 0;
-    background: #fff;
+    background: transparent !important;
   }
 
   .live-embed-desktop {
@@ -625,7 +625,7 @@
     height: 100%;
     overflow: hidden;
     border-radius: inherit;
-    background: #fff;
+    background: transparent !important;
   }
 
   .live-embed-scroll-mask {
@@ -635,7 +635,7 @@
     margin-right: -18px;
     margin-bottom: -18px;
     border: 0;
-    background: #fff;
+    background: transparent !important;
   }
 
   .marketing-shine {
@@ -954,7 +954,7 @@ code.hljs {
 */
 .hljs {
   color: #24292e;
-  background: #ffffff
+  background: transparent !important;
 }
 .hljs-doctag,
 .hljs-keyword,
@@ -1073,7 +1073,7 @@ code.hljs {
 */
 .dark .hljs {
   color: #c9d1d9;
-  background: #0d1117
+  background: transparent !important;
 }
 .dark .hljs-doctag,
 .dark .hljs-keyword,
