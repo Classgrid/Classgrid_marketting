@@ -13,6 +13,12 @@ export const clientLogoType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Short Name / Subtitle (Optional)',
+      type: 'string',
+      description: 'Optional short name to display below the main name (e.g. "PCCOE" or "Pune").',
+    }),
+    defineField({
       name: 'logo',
       title: 'College Logo (Crest / Icon)',
       type: 'image',

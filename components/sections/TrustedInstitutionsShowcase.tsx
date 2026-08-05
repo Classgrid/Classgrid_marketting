@@ -106,7 +106,7 @@ export function TrustedInstitutionsShowcase({
             const showName = !inst.hideName;
 
             const content = (
-              <div className="flex shrink-0 items-center gap-3 px-8 md:gap-5 md:px-14">
+              <div className="flex shrink-0 flex-col items-center justify-center gap-3 px-8 text-center md:gap-4 md:px-14">
                 {/* College logo (icon/crest) — rendered large, upscales small images */}
                 {hasLogo && (
                   <div className="flex items-center justify-center rounded-lg p-1.5">
@@ -153,12 +153,19 @@ export function TrustedInstitutionsShowcase({
                         )}
                       </div>
                     ) : (
-                      <span
-                        className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
-                        style={{ color: inst.nameColor || inst.color || undefined }}
-                      >
-                        {inst.name}
-                      </span>
+                      <div className="flex flex-col items-center justify-center gap-1">
+                        <span
+                          className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
+                          style={{ color: inst.nameColor || inst.color || undefined }}
+                        >
+                          {inst.name}
+                        </span>
+                        {inst.subtitle && (
+                          <span className="text-sm font-medium text-muted-foreground md:text-base">
+                            {inst.subtitle}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </>
                 )}
