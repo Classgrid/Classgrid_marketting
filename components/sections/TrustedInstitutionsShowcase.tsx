@@ -113,14 +113,14 @@ export function TrustedInstitutionsShowcase({
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
-                      className={`h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px] ${inst.imageUrlDark ? "dark:hidden" : ""}`}
+                      className={`h-auto max-h-[100px] w-auto max-w-[220px] shrink-0 object-contain md:max-h-[140px] md:max-w-[300px] ${inst.imageUrlDark ? "dark:hidden" : ""}`}
                       loading="lazy"
                     />
                     {inst.imageUrlDark && (
                       <img
                         src={inst.imageUrlDark}
                         alt={inst.imageAlt ?? inst.name}
-                        className="hidden h-[100px] w-[100px] shrink-0 object-contain dark:block md:h-[140px] md:w-[140px]"
+                        className="hidden h-auto max-h-[100px] w-auto max-w-[220px] shrink-0 object-contain dark:block md:max-h-[140px] md:max-w-[300px]"
                         loading="lazy"
                       />
                     )}
