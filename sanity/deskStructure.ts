@@ -1,6 +1,17 @@
-import type { StructureBuilder } from "sanity/structure";
+import type { StructureBuilder, DefaultDocumentNodeResolver } from "sanity/structure";
 import { FeedbackAnalytics } from "./tools/feedbackAnalytics/FeedbackAnalytics";
 import { WelcomeEmailTool } from "./tools/WelcomeEmailTool";
+import { ReviewEmailPreview } from "./components/ReviewEmailPreview";
+
+export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, { schemaType }) => {
+  if (schemaType === "communityReview") {
+    return S.document().views([
+      S.view.form(),
+      S.view.component(ReviewEmailPreview).title("Email Preview")
+    ]);
+  }
+  return S.document().views([S.view.form()]);
+};
 
 // Singleton document types - only one instance should exist.
 const singletonTypes = new Set(["homePage", "circularTimeline", "homeStats", "aboutPage", "compareHubPage", "changelogSettings", "turboClassgrid", "isometricStack", "appEcosystem"]);

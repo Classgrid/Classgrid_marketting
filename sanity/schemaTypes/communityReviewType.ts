@@ -127,10 +127,10 @@ export const communityReviewType = defineType({
     // ── Admin Response ────────────────────────────
     defineField({
       name: 'adminReply',
-      title: 'Admin Reply (Public)',
-      description: 'Official Classgrid team response. Displayed publicly on the Reviews page.',
+      title: 'Admin Reply (Public & Email)',
+      description: '⚠️ DO NOT START WITH "Hi [Name]"! The automated email already starts with a full greeting ("Hi [Reviewer], I personally wanted to...").\n\nStart your reply directly with your message (e.g. "We are so happy to hear..."). This reply is shown publicly on the Reviews page AND inserted directly into the automated Thank You email.',
       type: 'text',
-      rows: 3,
+      rows: 4,
     }),
 
     // ── System Flags ──────────────────────────────
