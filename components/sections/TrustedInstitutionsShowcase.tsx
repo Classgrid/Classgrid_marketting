@@ -23,6 +23,7 @@ type TrustedInstitutionsShowcaseProps = {
 };
 
 export function TrustedInstitutionsShowcase({
+  title,
   institutions,
 }: TrustedInstitutionsShowcaseProps) {
   if (!institutions.length) {
