@@ -49,9 +49,10 @@ function buildReviewThankYouContent(name: string, adminReply: string | null, cus
       <p style="margin-top: 8px; color: #374151; font-style: italic;">"${cleanReply}"</p>
     ` : '';
 
-  return `
-    <p>Hi <strong>${name}</strong>,</p>
+  const firstName = name.trim().split(/\s+/)[0] || 'there';
 
+  return `
+    <p>Hi <strong>${firstName}</strong>,</p>
     <p>I personally wanted to reach out and say — thank you so much for sharing your honest experience with Classgrid. It genuinely made our day at the team when we read your review.</p>
 
     <p>Feedback like yours is exactly what keeps us motivated to build something truly great for institutions across India. We are so glad to have you as part of the Classgrid community!</p>
