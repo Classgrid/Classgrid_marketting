@@ -13,6 +13,7 @@ type TrustedInstitution = {
   color?: string;
   hideName?: boolean;
   hideInDarkMode?: boolean;
+  nameColor?: string;
 };
 
 type TrustedInstitutionsShowcaseProps = {
@@ -154,7 +155,7 @@ export function TrustedInstitutionsShowcase({
                     ) : (
                       <span
                         className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
-                        style={{ color: inst.color || undefined }}
+                        style={{ color: inst.nameColor || inst.color || undefined }}
                       >
                         {inst.name}
                       </span>

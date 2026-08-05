@@ -92,6 +92,7 @@ type TrustLogo = {
   color?: string;
   hideName?: boolean;
   hideInDarkMode?: boolean;
+  nameColor?: string;
 };
 
 type TimelineTab = {
@@ -608,6 +609,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     wordmarkUrlDark: logo?.wordmarkUrlDark,
     wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
     color: logo?.color,
+    nameColor: logo?.nameColor,
     hideName: logo?.hideName === true,
     hideInDarkMode: logo?.hideInDarkMode === true,
   }));
