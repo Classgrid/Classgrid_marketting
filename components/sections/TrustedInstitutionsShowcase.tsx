@@ -99,17 +99,18 @@ export function TrustedInstitutionsShowcase({
             "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
         }}
       >
-        <div className="flex w-max items-center [transform:translate3d(0,0,0)] will-change-transform animate-[institution-marquee_30s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+        <div className="flex w-max items-start [transform:translate3d(0,0,0)] will-change-transform animate-[institution-marquee_30s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
           {looped.map((inst, i) => {
             const hasLogo = inst.imageUrl && inst.imageUrl.trim() !== "";
             const hasWordmark = inst.wordmarkUrl && inst.wordmarkUrl.trim() !== "";
             const showName = !inst.hideName;
 
             const content = (
-              <div className="flex shrink-0 flex-col items-center justify-center gap-3 px-8 text-center md:gap-4 md:px-14">
-                {/* College logo (icon/crest) — rendered large, upscales small images */}
-                {hasLogo && (
-                  <div className="flex items-center justify-center rounded-lg p-1.5">
+              <div className="flex w-[240px] shrink-0 flex-col items-center justify-start gap-3 px-4 text-center md:w-[320px] md:gap-4 md:px-8">
+                {/* College logo (icon/crest) — Fixed height container ensures horizontal alignment */
+                <div className="flex h-[110px] w-full items-center justify-center md:h-[150px]">
+                  {hasLogo && (
+                    <>
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
@@ -124,8 +125,9 @@ export function TrustedInstitutionsShowcase({
                         loading="lazy"
                       />
                     )}
-                  </div>
-                )}
+                    </>
+                  )}
+                </div>
 
                 {/*
                   College name — 3 modes:
@@ -134,9 +136,9 @@ export function TrustedInstitutionsShowcase({
                   3. Hidden if hideName is true
                 */}
                 {showName && (
-                  <>
+                  <div className="flex w-full flex-col items-center justify-start gap-1">
                     {hasWordmark ? (
-                      <div className="flex items-center justify-center rounded-lg p-1.5">
+                      <div className="flex h-[60px] w-full items-center justify-center md:h-[80px]">
                         <img
                           src={inst.wordmarkUrl}
                           alt={inst.wordmarkAlt ?? inst.name}
@@ -153,7 +155,7 @@ export function TrustedInstitutionsShowcase({
                         )}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center gap-1">
+                      <div className="flex w-full flex-col items-center justify-start gap-1">
                         <span
                           className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
                           style={{ color: inst.nameColor || inst.color || undefined }}
@@ -167,7 +169,7 @@ export function TrustedInstitutionsShowcase({
                         )}
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
               </div>
             );
