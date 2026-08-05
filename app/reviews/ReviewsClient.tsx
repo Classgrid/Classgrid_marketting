@@ -397,7 +397,6 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                   transition={{ duration: 0.5, delay: index * 0.07 }}
                 >
                   <MotionDiv
-                    whileHover={{ y: -6, scale: 1.01 }}
                     className="group p-8 rounded-[2rem] bg-card dark:bg-[#171717] border border-border dark:border-white/[0.05] hover:border-emerald-500/40 transition-all shadow-xl dark:shadow-2xl relative overflow-hidden"
                   >
                     {/* Header: Avatar, Name, Stats */}
@@ -405,12 +404,12 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                       <div className="flex items-center gap-4">
                         {/* System-color Avatar (Emerald/Teal variants only) */}
                         {rev.photoUrl ? (
-                          <img src={rev.photoUrl} alt={rev.name} className="w-12 h-12 rounded-2xl object-cover shrink-0 shadow-lg rotate-2 group-hover:rotate-0 transition-transform border border-border" />
+                          <img src={rev.photoUrl} alt={rev.name} className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg border border-border" />
                         ) : (() => {
                           const palette = ['bg-emerald-500', 'bg-teal-500', 'bg-emerald-600', 'bg-teal-600', 'bg-emerald-400'];
                           const colorClass = palette[rev.name.charCodeAt(0) % palette.length];
                           return (
-                            <div className={`w-12 h-12 rounded-2xl ${colorClass} flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg rotate-2 group-hover:rotate-0 transition-transform`}>
+                            <div className={`w-12 h-12 rounded-full ${colorClass} flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg`}>
                               {rev.name.charAt(0).toUpperCase()}
                             </div>
                           );
@@ -458,8 +457,8 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                       {rev.adminReply && (
                         <div className="pt-6 border-t border-border dark:border-white/[0.05]">
                           <div className="flex gap-4 items-start">
-                            <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
-                              <img src="/logo.png" alt="CG" className="w-6 h-6 object-contain grayscale group-hover:grayscale-0 transition-all" />
+                            <div className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-lg">
+                              <img src="/logo.png" alt="CG" className="w-6 h-6 object-contain" />
                             </div>
                             <div className="flex-1">
                               <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-2">Team Response</span>
