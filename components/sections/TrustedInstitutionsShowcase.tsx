@@ -5,8 +5,10 @@ type TrustedInstitution = {
   subtitle?: string;
   href?: string;
   imageUrl?: string;
+  imageUrlDark?: string;
   imageAlt?: string;
   wordmarkUrl?: string;
+  wordmarkUrlDark?: string;
   wordmarkAlt?: string;
   color?: string;
   hideName?: boolean;
@@ -109,9 +111,17 @@ export function TrustedInstitutionsShowcase({
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
-                      className="inst-logo-img h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px]"
+                      className={`h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px] ${inst.imageUrlDark ? "dark:hidden" : ""}`}
                       loading="lazy"
                     />
+                    {inst.imageUrlDark && (
+                      <img
+                        src={inst.imageUrlDark}
+                        alt={inst.imageAlt ?? inst.name}
+                        className="hidden h-[100px] w-[100px] shrink-0 object-contain dark:block md:h-[140px] md:w-[140px]"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                 )}
 
@@ -128,9 +138,17 @@ export function TrustedInstitutionsShowcase({
                         <img
                           src={inst.wordmarkUrl}
                           alt={inst.wordmarkAlt ?? inst.name}
-                          className="inst-logo-img h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
+                          className={`h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px] ${inst.wordmarkUrlDark ? "dark:hidden" : ""}`}
                           loading="lazy"
                         />
+                        {inst.wordmarkUrlDark && (
+                          <img
+                            src={inst.wordmarkUrlDark}
+                            alt={inst.wordmarkAlt ?? inst.name}
+                            className="hidden h-[40px] w-auto max-w-[200px] shrink-0 object-contain dark:block md:h-[64px] md:max-w-[300px]"
+                            loading="lazy"
+                          />
+                        )}
                       </div>
                     ) : (
                       <span

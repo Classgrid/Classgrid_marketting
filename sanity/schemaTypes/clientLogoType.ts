@@ -16,21 +16,35 @@ export const clientLogoType = defineType({
       name: 'logo',
       title: 'College Logo (Crest / Icon)',
       type: 'image',
-      description: 'Upload the college crest or icon logo here.',
+      description: 'Upload the college crest or icon logo here. (Used in Light Mode)',
       options: { hotspot: true },
       fields: [
         defineField({ name: 'alt', title: 'Alt text', type: 'string' }),
       ],
     }),
     defineField({
+      name: 'logoDark',
+      title: 'Dark Mode College Logo (Optional)',
+      type: 'image',
+      description: 'Upload a white or light-colored version of the crest/icon for Dark Mode. If left empty, the standard logo is used.',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'wordmark',
       title: 'Styled Name Image (Optional)',
       type: 'image',
-      description: 'Upload a PNG of the college name in their own font/style (e.g. "Bharati Vidyapeeth" in gothic). If uploaded, this replaces plain text name.',
+      description: 'Upload a PNG of the college name in their own font/style. If uploaded, this replaces plain text name. (Used in Light Mode)',
       options: { hotspot: true },
       fields: [
         defineField({ name: 'alt', title: 'Alt text', type: 'string' }),
       ],
+    }),
+    defineField({
+      name: 'wordmarkDark',
+      title: 'Dark Mode Styled Name Image (Optional)',
+      type: 'image',
+      description: 'Upload a white or light-colored version of the wordmark for Dark Mode. If left empty, the standard wordmark is used.',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'nameColor',

@@ -84,8 +84,10 @@ type TrustLogo = {
   subtitle?: string;
   href?: string;
   imageUrl?: string;
+  imageUrlDark?: string;
   imageAlt?: string;
   wordmarkUrl?: string;
+  wordmarkUrlDark?: string;
   wordmarkAlt?: string;
   color?: string;
   hideName?: boolean;
@@ -599,8 +601,10 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     subtitle: logo?.subtitle ?? "",
     href: logo?.href,
     imageUrl: logo?.imageUrl,
+    imageUrlDark: logo?.imageUrlDark,
     imageAlt: logo?.imageAlt ?? logo?.name,
     wordmarkUrl: logo?.wordmarkUrl,
+    wordmarkUrlDark: logo?.wordmarkUrlDark,
     wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
     color: logo?.color,
     hideName: logo?.hideName === true,
