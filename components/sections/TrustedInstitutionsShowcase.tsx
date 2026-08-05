@@ -110,7 +110,7 @@ export function TrustedInstitutionsShowcase({
             const showName = !inst.hideName;
 
             const content = (
-              <div className="flex w-[240px] shrink-0 flex-col items-center justify-start gap-3 px-4 text-center md:w-[320px] md:gap-4 md:px-8">
+              <div className="flex w-[240px] shrink-0 flex-col items-center justify-start gap-3 rounded-xl px-4 py-4 text-center dark:bg-white/95 dark:shadow-sm md:w-[320px] md:gap-4 md:px-8">
                 {/* College logo (icon/crest) — Fixed height container ensures horizontal alignment */}
                 <div className="flex h-[110px] w-full items-center justify-center md:h-[150px]">
                   {hasLogo && (
@@ -161,13 +161,13 @@ export function TrustedInstitutionsShowcase({
                     ) : (
                       <div className="flex w-full flex-col items-center justify-start gap-1">
                         <span
-                          className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
+                          className="max-w-[220px] text-lg font-semibold leading-snug text-foreground dark:text-slate-900 md:max-w-[260px] md:text-xl"
                           style={{ color: inst.nameColor || inst.color || undefined }}
                         >
                           {inst.name}
                         </span>
                         {inst.subtitle && (
-                          <span className="text-sm font-medium text-muted-foreground md:text-base">
+                          <span className="text-sm font-medium text-muted-foreground dark:text-slate-500 md:text-base">
                             {inst.subtitle}
                           </span>
                         )}
