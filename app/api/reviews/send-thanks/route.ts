@@ -25,7 +25,8 @@ const getTransporter = () => nodemailer.createTransport({
 
 function buildReviewThankYouContent(name: string, adminReply: string | null, customBody: string | null): string {
   if (customBody) {
-    return customBody;
+    // Convert plain text newlines to HTML line breaks so it looks exactly as they typed it in the box
+    return `<div style="white-space: pre-wrap; font-family: inherit; font-size: 15px; color: #374151; line-height: 1.6;">${customBody}</div>`;
   }
 
   const reviewsUrl = 'https://classgrid.in/reviews';

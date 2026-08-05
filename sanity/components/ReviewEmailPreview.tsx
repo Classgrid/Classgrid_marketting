@@ -52,7 +52,9 @@ export function ReviewEmailPreview(props: any) {
       </div>
     `;
 
-    const finalBody = customBody ? `<div class="content">${customBody}</div>` : generatedBody;
+    const finalBody = customBody 
+      ? `<div class="content" style="white-space: pre-wrap; font-family: inherit; font-size: 15px; color: #374151; line-height: 1.6;">${customBody}</div>` 
+      : generatedBody;
 
     const emailHtml = `
       <!DOCTYPE html>

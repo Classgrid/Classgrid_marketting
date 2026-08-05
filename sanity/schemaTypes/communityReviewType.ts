@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { EmailBodyInput } from '../components/EmailBodyInput';
 
 export const communityReviewType = defineType({
   name: 'communityReview',
@@ -149,10 +150,12 @@ export const communityReviewType = defineType({
     }),
     defineField({
       name: 'customEmailBody',
-      title: 'Full Email Body (Override)',
-      description: 'Optional: Leave blank to use the standard branded template. Type here (using HTML) to completely override the ENTIRE email content.',
+      title: 'Email Editor',
+      description: 'Review and tweak the exact email text before it gets sent.',
       type: 'text',
-      rows: 10,
+      components: {
+        input: EmailBodyInput,
+      },
     }),
 
     // ── System Flags ──────────────────────────────
