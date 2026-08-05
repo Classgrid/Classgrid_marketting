@@ -4,12 +4,13 @@ import { StringInputProps, set, unset, useFormValue } from 'sanity';
 
 export function EmailBodyInput(props: StringInputProps) {
   const name = (useFormValue(['name']) as string) || '[Reviewer Name]';
+  const firstName = name === '[Reviewer Name]' ? name : name.trim().split(/\s+/)[0];
   const adminReply = (useFormValue(['adminReply']) as string) || '';
 
   // Clean the greeting out of the admin reply just in case
   const cleanReply = adminReply.replace(/^Hi\s+[^!\.,\n]+[!,\.]?\s*/i, '');
 
-  const defaultEmailText = `Hi ${name},
+  const defaultEmailText = `Hi ${firstName},
 
 I personally wanted to reach out and say — thank you so much for sharing your honest experience with Classgrid. It genuinely made our day at the team when we read your review.
 
