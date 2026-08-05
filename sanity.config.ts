@@ -12,6 +12,7 @@ import {structureTool} from 'sanity/structure'
 import {apiVersion, dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
 import {structure} from './sanity/deskStructure'
+import {SendThankYouEmailAction} from './sanity/actions/sendThankYouEmailAction'
 
 export default defineConfig({
   basePath: '/studio',
@@ -25,4 +26,13 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),
   ],
+  document: {
+    // Add the Send Thank You Email button to the communityReview document actions
+    actions: (prev, { schemaType }) => {
+      if (schemaType === 'communityReview') {
+        return [...prev, SendThankYouEmailAction]
+      }
+      return prev
+    },
+  },
 })
