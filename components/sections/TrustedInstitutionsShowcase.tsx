@@ -21,7 +21,7 @@ export function TrustedInstitutionsShowcase({
 }: TrustedInstitutionsShowcaseProps) {
   if (!institutions.length) {
     return (
-      <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-10 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] md:py-14">
+      <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-10 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] dark:bg-[#022c22] dark:from-transparent dark:to-transparent dark:shadow-2xl md:py-14">
         <style>{`
           @keyframes cs-pulse-ring {
             0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -86,7 +86,7 @@ export function TrustedInstitutionsShowcase({
   ];
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-8 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] md:py-14">
+    <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-8 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] dark:bg-[#022c22] dark:from-transparent dark:to-transparent dark:shadow-2xl md:py-14">
       {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
       <style>{`
         .logo-wrap {
