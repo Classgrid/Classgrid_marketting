@@ -420,6 +420,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                             {rev.isVerified && <span title="Verified Classgrid User" className="cursor-default"><BadgeCheck className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5" /></span>}
                           </div>
                           <p title="User's Organization or Institution" className="text-[11px] text-muted-foreground font-bold truncate tracking-tight w-fit cursor-default">{rev.institution}</p>
+                          <p className="text-[11px] text-foreground/70 dark:text-foreground/80 font-semibold tracking-wide mt-1">{new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(rev._createdAt))}</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-center bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 gap-1 shrink-0">
