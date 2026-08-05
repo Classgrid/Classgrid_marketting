@@ -9,6 +9,7 @@ type TrustedInstitution = {
   wordmarkUrl?: string;
   wordmarkAlt?: string;
   color?: string;
+  hideName?: boolean;
 };
 
 type TrustedInstitutionsShowcaseProps = {
@@ -94,24 +95,29 @@ export function TrustedInstitutionsShowcase({
       {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
       <style>{`
         .logo-wrap {
-          padding: 4px 6px;
-          border-radius: 6px;
+          padding: 10px 12px;
+          border-radius: 12px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          /* NO background — it was showing as a visible white rectangle on transparent PNGs */
+          background: rgba(255, 255, 255, 0.92);
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .logo-wrap:hover {
+          transform: scale(1.04);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        }
+        .dark .logo-wrap {
+          background: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
         .logo-wrap img {
           object-fit: contain;
           mix-blend-mode: normal;
-          /* drop-shadow follows logo shape (not a box); subtle white halo helps dark logos pop */
-          filter: brightness(1.05) contrast(1.1) drop-shadow(0 0 6px rgba(255,255,255,0.18));
-        }
-        .dark .logo-wrap img {
-          filter: brightness(1.1) contrast(1.15) drop-shadow(0 0 8px rgba(255,255,255,0.22));
-        }
-        :not(.dark) .logo-wrap img {
-          filter: brightness(1.05) contrast(1.1) drop-shadow(0 0 5px rgba(255,255,255,0.15));
+          image-rendering: auto;
+          /* No extra filters needed — white bg gives natural contrast for any logo color */
+          filter: none;
         }
       `}</style>
 
@@ -128,16 +134,17 @@ export function TrustedInstitutionsShowcase({
           {looped.map((inst, i) => {
             const hasLogo = inst.imageUrl && inst.imageUrl.trim() !== "";
             const hasWordmark = inst.wordmarkUrl && inst.wordmarkUrl.trim() !== "";
+            const showName = !inst.hideName;
 
             const content = (
               <div className="flex shrink-0 items-center gap-3 px-8 md:gap-5 md:px-14">
-                {/* College logo (icon/crest) — wrapped for contrast */}
+                {/* College logo (icon/crest) — rendered large, upscales small images */}
                 {hasLogo && (
                   <div className="logo-wrap">
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
-                      className="h-[75px] w-[75px] shrink-0 object-contain md:h-[120px] md:w-[120px]"
+                      className="h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px]"
                       loading="lazy"
                     />
                   </div>
@@ -145,31 +152,50 @@ export function TrustedInstitutionsShowcase({
 
                 {/*
                   College name — 3 modes:
-                  1. Wordmark image → wrapped for contrast
-                  2. Plain text with custom brand color
-                  3. Plain white text default
+                  1. Wordmark image → wrapped for contrast (only if showName)
+                  2. Plain text with custom brand color (only if showName)
+                  3. Hidden if hideName is true
                 */}
-                {hasWordmark ? (
-                  <div className="logo-wrap">
-                    <img
-                      src={inst.wordmarkUrl}
-                      alt={inst.wordmarkAlt ?? inst.name}
-                      className="h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <span
-                    className="max-w-[220px] text-lg font-semibold leading-snug md:max-w-[260px] md:text-xl"
-                    style={{ color: inst.color || "#ffffff" }}
-                  >
-                    {inst.name}
-                  </span>
+                {showName && (
+                  <>
+                    {hasWordmark ? (
+                      <div className="logo-wrap">
+                        <img
+                          src={inst.wordmarkUrl}
+                          alt={inst.wordmarkAlt ?? inst.name}
+                          className="h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <span
+                        className="max-w-[220px] text-lg font-semibold leading-snug md:max-w-[260px] md:text-xl"
+                        style={{ color: inst.color || "#ffffff" }}
+                      >
+                        {inst.name}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             );
 
             if (inst.href) {
+              // External links (http/https) → open in new tab
+              const isExternal = inst.href.startsWith("http");
+              if (isExternal) {
+                return (
+                  <a
+                    key={`${inst.name}-${i}`}
+                    href={inst.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 outline-none transition-all duration-200 hover:opacity-90 hover:scale-[1.03] focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                  >
+                    {content}
+                  </a>
+                );
+              }
               return (
                 <Link
                   key={`${inst.name}-${i}`}

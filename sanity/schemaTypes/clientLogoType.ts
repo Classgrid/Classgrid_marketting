@@ -39,6 +39,13 @@ export const clientLogoType = defineType({
       description: 'Hex color for the college name text if they have a brand color. Example: #1a3fba for blue. Leave blank for default white.',
     }),
     defineField({
+      name: 'hideName',
+      title: 'Hide College Name',
+      type: 'boolean',
+      description: 'Toggle ON to hide the college name text and show only the logo in the marquee.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'href',
       title: 'Link (Optional)',
       type: 'string',
