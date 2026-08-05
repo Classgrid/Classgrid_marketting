@@ -17,7 +17,7 @@ export async function OPTIONS() {
 const getSanityClient = () => createClient({
   projectId: process.env.SANITY_PROJECT_ID!,
   dataset: process.env.SANITY_DATASET || 'production',
-  token: process.env.SANITY_API_TOKEN,
+  token: process.env.SANITY_API_TOKEN || process.env.SANITY_API_WRITE_TOKEN,
   apiVersion: '2023-01-01',
   useCdn: false,
 });
