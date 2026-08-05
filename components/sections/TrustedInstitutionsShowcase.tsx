@@ -36,6 +36,10 @@ export function TrustedInstitutionsShowcase({
             background-size: 400px 100%;
             animation: cs-shimmer 2.4s ease-in-out infinite;
           }
+          .dark .cs-shimmer-bar {
+            background: linear-gradient(90deg, rgba(52,211,153,0.05) 0%, rgba(52,211,153,0.18) 50%, rgba(52,211,153,0.05) 100%);
+            background-size: 400px 100%;
+          }
           .cs-dot { animation: cs-pulse-ring 2s ease-in-out infinite; }
           .cs-dot:nth-child(2) { animation-delay: 0.3s; }
           .cs-dot:nth-child(3) { animation-delay: 0.6s; }
@@ -43,19 +47,19 @@ export function TrustedInstitutionsShowcase({
 
         {/* Ambient glow */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 h-48 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-[80px]" />
+          <div className="absolute left-1/2 top-1/2 h-48 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-[80px] dark:bg-emerald-500/10" />
         </div>
 
         <div className="relative flex flex-col items-center gap-5 px-6 text-center">
           {/* Animated dots */}
           <div className="flex items-center gap-2">
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
           </div>
 
           {/* Badge */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
               <circle cx="12" cy="12" r="10" />
@@ -64,7 +68,7 @@ export function TrustedInstitutionsShowcase({
           </span>
 
           {/* Headline */}
-          <p className="max-w-lg text-base font-medium leading-relaxed text-white/80 md:text-lg">
+          <p className="max-w-lg text-base font-medium leading-relaxed text-white/80 dark:text-white/70 md:text-lg">
             We&rsquo;re onboarding our partner institutions. They&rsquo;ll appear right here once they&rsquo;re live on Classgrid.
           </p>
 
