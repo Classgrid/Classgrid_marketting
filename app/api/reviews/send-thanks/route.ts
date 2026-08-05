@@ -15,8 +15,8 @@ export async function OPTIONS() {
 
 // Sanity read client (lazy to avoid reading env at build time)
 const getSanityClient = () => createClient({
-  projectId: process.env.SANITY_PROJECT_ID!,
-  dataset: process.env.SANITY_DATASET || 'production',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   token: process.env.SANITY_API_TOKEN || process.env.SANITY_API_WRITE_TOKEN,
   apiVersion: '2023-01-01',
   useCdn: false,
