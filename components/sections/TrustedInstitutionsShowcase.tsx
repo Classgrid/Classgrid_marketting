@@ -169,7 +169,7 @@ export function TrustedInstitutionsShowcase({
                           {inst.name}
                         </span>
                         {inst.subtitle && (
-                          <span className="text-sm font-medium text-muted-foreground dark:text-slate-500 md:text-base">
+                          <span className="text-sm font-semibold text-muted-foreground dark:text-white md:text-base">
                             {inst.subtitle}
                           </span>
                         )}
