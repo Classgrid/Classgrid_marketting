@@ -18,7 +18,7 @@ Feedback like yours is exactly what keeps us motivated to build something truly 
 Your review is now live on our community page for everyone to see:
 👉 View Your Published Review → classgrid.in/reviews
 
-A note from me personally:
+A message from our team:
 "${cleanReply}"
 
 If you ever have more feedback, suggestions, or just want to talk — feel free to reply to this email directly. I read every single one.
