@@ -86,6 +86,13 @@ export function TrustedInstitutionsShowcase({
 
   return (
     <div className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-card py-8 md:py-14">
+      <style>{`
+        .dark .inst-logo-img {
+          /* Subtle white halo so dark blue and other dark colors remain visible against black backgrounds */
+          filter: drop-shadow(0 0 6px rgba(255,255,255,0.35)) brightness(1.1);
+        }
+      `}</style>
+
       <div
         className="group"
         style={{
@@ -109,7 +116,7 @@ export function TrustedInstitutionsShowcase({
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
-                      className="h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px]"
+                      className="inst-logo-img h-[100px] w-[100px] shrink-0 object-contain md:h-[140px] md:w-[140px]"
                       loading="lazy"
                     />
                   </div>
@@ -128,7 +135,7 @@ export function TrustedInstitutionsShowcase({
                         <img
                           src={inst.wordmarkUrl}
                           alt={inst.wordmarkAlt ?? inst.name}
-                          className="h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
+                          className="inst-logo-img h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px]"
                           loading="lazy"
                         />
                       </div>
