@@ -22,7 +22,7 @@ export function TrustedInstitutionsShowcase({
 }: TrustedInstitutionsShowcaseProps) {
   if (!institutions.length) {
     return (
-      <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-10 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] dark:bg-[#022c22] dark:from-transparent dark:to-transparent dark:shadow-2xl md:py-14">
+      <div className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-card py-10 md:py-14">
         <style>{`
           @keyframes cs-pulse-ring {
             0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -33,12 +33,12 @@ export function TrustedInstitutionsShowcase({
             100% { background-position: 400px 0; }
           }
           .cs-shimmer-bar {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.05) 100%);
+            background: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.03) 100%);
             background-size: 400px 100%;
             animation: cs-shimmer 2.4s ease-in-out infinite;
           }
           .dark .cs-shimmer-bar {
-            background: linear-gradient(90deg, rgba(52,211,153,0.05) 0%, rgba(52,211,153,0.18) 50%, rgba(52,211,153,0.05) 100%);
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
             background-size: 400px 100%;
           }
           .cs-dot { animation: cs-pulse-ring 2s ease-in-out infinite; }
@@ -46,21 +46,15 @@ export function TrustedInstitutionsShowcase({
           .cs-dot:nth-child(3) { animation-delay: 0.6s; }
         `}</style>
 
-        {/* Ambient glow */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 h-48 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-[80px] dark:bg-emerald-500/10" />
-        </div>
-
         <div className="relative flex flex-col items-center gap-5 px-6 text-center">
           {/* Animated dots */}
           <div className="flex items-center gap-2">
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-white/50 dark:bg-emerald-400/60" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-600" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-600" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-600" />
           </div>
 
-          {/* Badge */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
               <circle cx="12" cy="12" r="10" />
@@ -69,7 +63,7 @@ export function TrustedInstitutionsShowcase({
           </span>
 
           {/* Headline */}
-          <p className="max-w-lg text-base font-medium leading-relaxed text-white/80 dark:text-white/70 md:text-lg">
+          <p className="max-w-lg text-base font-medium leading-relaxed text-muted-foreground md:text-lg">
             We&rsquo;re onboarding our partner institutions. They&rsquo;ll appear right here once they&rsquo;re live on Classgrid.
           </p>
 
@@ -91,27 +85,7 @@ export function TrustedInstitutionsShowcase({
   ];
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-8 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] dark:bg-[#022c22] dark:from-transparent dark:to-transparent dark:shadow-2xl md:py-14">
-      {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
-      <style>{`
-        .logo-wrap {
-          padding: 4px 6px;
-          border-radius: 6px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .logo-wrap img {
-          object-fit: contain;
-          mix-blend-mode: normal;
-          image-rendering: auto;
-          filter: brightness(1.05) contrast(1.1) drop-shadow(0 0 6px rgba(255,255,255,0.18));
-        }
-        .dark .logo-wrap img {
-          filter: brightness(1.1) contrast(1.15) drop-shadow(0 0 8px rgba(255,255,255,0.22));
-        }
-      `}</style>
-
+    <div className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-card py-8 md:py-14">
       <div
         className="group"
         style={{
@@ -131,7 +105,7 @@ export function TrustedInstitutionsShowcase({
               <div className="flex shrink-0 items-center gap-3 px-8 md:gap-5 md:px-14">
                 {/* College logo (icon/crest) — rendered large, upscales small images */}
                 {hasLogo && (
-                  <div className="logo-wrap">
+                  <div className="flex items-center justify-center rounded-lg p-1.5">
                     <img
                       src={inst.imageUrl}
                       alt={inst.imageAlt ?? inst.name}
@@ -143,14 +117,14 @@ export function TrustedInstitutionsShowcase({
 
                 {/*
                   College name — 3 modes:
-                  1. Wordmark image → wrapped for contrast (only if showName)
+                  1. Wordmark image (only if showName)
                   2. Plain text with custom brand color (only if showName)
                   3. Hidden if hideName is true
                 */}
                 {showName && (
                   <>
                     {hasWordmark ? (
-                      <div className="logo-wrap">
+                      <div className="flex items-center justify-center rounded-lg p-1.5">
                         <img
                           src={inst.wordmarkUrl}
                           alt={inst.wordmarkAlt ?? inst.name}
@@ -160,8 +134,8 @@ export function TrustedInstitutionsShowcase({
                       </div>
                     ) : (
                       <span
-                        className="max-w-[220px] text-lg font-semibold leading-snug md:max-w-[260px] md:text-xl"
-                        style={{ color: inst.color || "#ffffff" }}
+                        className="max-w-[220px] text-lg font-semibold leading-snug text-foreground md:max-w-[260px] md:text-xl"
+                        style={{ color: inst.color || undefined }}
                       >
                         {inst.name}
                       </span>
