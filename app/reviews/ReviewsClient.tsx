@@ -400,8 +400,8 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                     className="group p-8 rounded-[2rem] bg-card dark:bg-[#171717] border border-border dark:border-white/[0.05] hover:border-emerald-500/40 transition-all shadow-xl dark:shadow-2xl relative overflow-hidden"
                   >
                     {/* Header: Avatar, Name, Stats */}
-                    <div className="flex items-start justify-between mb-8">
-                      <div className="flex items-center gap-4">
+                    <div className="flex items-start justify-between gap-4 mb-8">
+                      <div className="flex items-center gap-4 min-w-0 flex-1">
                         {/* System-color Avatar (Emerald/Teal variants only) */}
                         {rev.photoUrl ? (
                           <img src={rev.photoUrl} alt={rev.name} className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg border border-border" />
@@ -414,7 +414,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                             </div>
                           );
                         })()}
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-base text-foreground truncate">{rev.name}</h4>
                             {rev.isVerified && <span title="Verified Classgrid User" className="cursor-default"><BadgeCheck className="w-5 h-5 fill-[#1D9BF0] text-background shrink-0 -ml-0.5" /></span>}
@@ -422,10 +422,9 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                           <p title="User's Organization or Institution" className="text-[11px] text-muted-foreground font-bold truncate tracking-tight w-fit cursor-default">{rev.institution}</p>
                         </div>
                       </div>
-                      <div className="flex bg-muted/30 dark:bg-black/40 px-3 py-1.5 rounded-full border border-border dark:border-white/[0.03] gap-1 shrink-0 shadow-inner">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-3 h-3 ${i < rev.rating ? "fill-emerald-500 dark:fill-emerald-400 text-emerald-500 dark:text-emerald-400" : "text-muted/20 dark:text-neutral-800"}`} />
-                        ))}
+                      <div className="flex items-center justify-center bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 gap-1 shrink-0">
+                        <span className="font-bold text-sm leading-none">{rev.rating}</span>
+                        <Star className="w-3.5 h-3.5 fill-current leading-none mb-[1px]" />
                       </div>
                     </div>
 
