@@ -989,6 +989,7 @@ export const clientLogosQuery = `*[_type == "clientLogo"] | order(order asc){
   "wordmarkAlt": coalesce(wordmark.alt, name),
   color,
   hideName,
+  hideInDarkMode,
   order,
   statValue,
   statLabel,

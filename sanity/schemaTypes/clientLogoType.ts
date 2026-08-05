@@ -56,7 +56,14 @@ export const clientLogoType = defineType({
       name: 'hideName',
       title: 'Hide College Name',
       type: 'boolean',
-      description: 'Toggle ON to hide the college name text and show only the logo in the marquee.',
+      description: 'If turned on, only the logo will be displayed without the college name next to it.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'hideInDarkMode',
+      title: 'Hide Entirely in Dark Mode',
+      type: 'boolean',
+      description: 'If you do not have a white/dark-mode logo and the current one looks bad, turn this ON to completely hide this institution from the marquee when a user is in dark mode.',
       initialValue: false,
     }),
     defineField({

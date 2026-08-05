@@ -91,6 +91,7 @@ type TrustLogo = {
   wordmarkAlt?: string;
   color?: string;
   hideName?: boolean;
+  hideInDarkMode?: boolean;
 };
 
 type TimelineTab = {
@@ -608,6 +609,7 @@ async function LocalizedHomePage({ lang }: LocalizedPageProps) {
     wordmarkAlt: logo?.wordmarkAlt ?? logo?.name,
     color: logo?.color,
     hideName: logo?.hideName === true,
+    hideInDarkMode: logo?.hideInDarkMode === true,
   }));
 
   const organizationSectionTitle = withFallbackString(

@@ -12,6 +12,7 @@ type TrustedInstitution = {
   wordmarkAlt?: string;
   color?: string;
   hideName?: boolean;
+  hideInDarkMode?: boolean;
 };
 
 type TrustedInstitutionsShowcaseProps = {
@@ -173,7 +174,7 @@ export function TrustedInstitutionsShowcase({
                     href={inst.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="shrink-0 outline-none transition-opacity hover:opacity-80 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                    className={`shrink-0 outline-none transition-opacity hover:opacity-80 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${inst.hideInDarkMode ? "dark:hidden" : ""}`}
                   >
                     {content}
                   </a>
@@ -183,7 +184,7 @@ export function TrustedInstitutionsShowcase({
                 <Link
                   key={`${inst.name}-${i}`}
                   href={inst.href}
-                  className="shrink-0 outline-none transition-opacity hover:opacity-80 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                  className={`shrink-0 outline-none transition-opacity hover:opacity-80 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${inst.hideInDarkMode ? "dark:hidden" : ""}`}
                 >
                   {content}
                 </Link>
@@ -191,7 +192,7 @@ export function TrustedInstitutionsShowcase({
             }
 
             return (
-              <div key={`${inst.name}-${i}`} className="shrink-0">
+              <div key={`${inst.name}-${i}`} className={`shrink-0 ${inst.hideInDarkMode ? "dark:hidden" : ""}`}>
                 {content}
               </div>
             );
