@@ -3,6 +3,16 @@ import nodemailer from 'nodemailer';
 import { createClient } from '@sanity/client';
 import { baseTemplate } from '@/lib/email-templates';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 // Sanity read client (lazy to avoid reading env at build time)
 const getSanityClient = () => createClient({
   projectId: process.env.SANITY_PROJECT_ID!,
@@ -75,7 +85,7 @@ export async function POST(req: Request) {
     const { reviewId } = await req.json();
 
     if (!reviewId) {
-      return NextResponse.json({ message: 'Missing reviewId' }, { status: 400 });
+      return NextResponse.json({ message: 'Missing reviewId' }, { status: 400, headers: corsHeaders });
     }
 
     // Fetch review from Sanity
@@ -88,11 +98,11 @@ export async function POST(req: Request) {
     );
 
     if (!review) {
-      return NextResponse.json({ message: 'Review not found in Sanity' }, { status: 404 });
+      return NextResponse.json({ message: 'Review not found in Sanity' }, { status: 404, headers: corsHeaders });
     }
 
     if (!review.email) {
-      return NextResponse.json({ message: 'This review has no email address on file. Cannot send.' }, { status: 400 });
+      return NextResponse.json({ message: 'This review has no email address on file. Cannot send.' }, { status: 400, headers: corsHeaders });
     }
 
     const content = buildReviewThankYouContent(review.name, review.adminReply || null, review.customEmailBody || null);
@@ -111,9 +121,9 @@ export async function POST(req: Request) {
       html,
     });
 
-    return NextResponse.json({ message: `Thank you email sent to ${review.email}` }, { status: 200 });
+    return NextResponse.json({ message: `Thank you email sent to ${review.email}` }, { status: 200, headers: corsHeaders });
   } catch (error: any) {
     console.error('Error sending thank you email:', error);
-    return NextResponse.json({ message: 'Failed to send email', error: error.message }, { status: 500 });
+    return NextResponse.json({ message: 'Failed to send email', error: error.message }, { status: 500, headers: corsHeaders });
   }
 }
