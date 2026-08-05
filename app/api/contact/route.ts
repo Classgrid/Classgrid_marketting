@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSmtpTransporter, getNoReplyAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
+import { baseTemplate } from "@/lib/email-templates";
 
 /**
  * POST /api/contact — Handle Contact Us form submissions.
@@ -48,45 +49,34 @@ export async function POST(request: NextRequest) {
 
     const transporter = getSmtpTransporter();
 
+    const content = `
+      <p>You have received a new contact form submission.</p>
+      <p><strong>Name:</strong> ${sanitizedName}</p>
+      <p><strong>Email:</strong> <a href="mailto:${sanitizedEmail}" style="color: #10b981; text-decoration: none;">${sanitizedEmail}</a></p>
+      <p><strong>Phone:</strong> +91 ${sanitizedPhone}</p>
+      <br/>
+      <p><strong>Message:</strong></p>
+      <blockquote style="border-left: 4px solid #10b981; padding-left: 16px; margin-left: 0; color: #4b5563;">
+        ${formattedMessage}
+      </blockquote>
+      <br/>
+      <p>Submitted via <a href="https://classgrid.in/contact" style="color: #10b981; text-decoration: none; font-weight: bold;">classgrid.in/contact</a></p>
+    `;
+
+    const html = baseTemplate({
+      content,
+      title: 'New Contact Form Submission 📬',
+      ignoreText: 'Internal team notification for contact form submissions.',
+      hideSupportLink: true,
+    });
+
     await transporter.sendMail({
       from: getNoReplyAddress(),
       to: "Classgrid Team <team@classgrid.in>",
       replyTo: sanitizedEmail,
       subject: `📬 New Contact Form Submission from ${sanitizedName}`,
       text: `New Contact Form:\nName: ${sanitizedName}\nEmail: ${sanitizedEmail}\nPhone: +91 ${sanitizedPhone}\nMessage:\n${(message || "").trim()}`,
-      html: `<!DOCTYPE html>
-<html><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
-<div style="max-width:600px;margin:0 auto;padding:40px 24px;">
-  <div style="text-align:center;margin-bottom:32px;">
-    <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" style="height:40px;" />
-  </div>
-  <div style="background:#ffffff;border:1px solid #eaeaea;border-radius:16px;padding:32px;">
-    <h2 style="color:#111111;margin:0 0 24px;font-size:20px;">New Contact Form Submission</h2>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr>
-        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;width:100px;vertical-align:top;">Name</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;font-weight:600;">${sanitizedName}</td>
-      </tr>
-      <tr>
-        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Email</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;"><a href="mailto:${sanitizedEmail}" style="color:#10b981;text-decoration:none;">${sanitizedEmail}</a></td>
-      </tr>
-      <tr>
-        <td style="padding:12px 0;color:#666666;font-size:13px;border-bottom:1px solid #eaeaea;vertical-align:top;">Phone</td>
-        <td style="padding:12px 0;color:#111111;font-size:14px;border-bottom:1px solid #eaeaea;">+91 ${sanitizedPhone}</td>
-      </tr>
-    </table>
-    <div style="margin-top:24px;padding:20px;background:#f9f9f9;border:1px solid #eaeaea;border-radius:12px;">
-      <p style="color:#666666;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Message</p>
-      <div style="color:#111111;font-size:14px;line-height:1.8;margin:0;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;">${formattedMessage}</div>
-    </div>
-  </div>
-  <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #eaeaea;">
-    <p style="color:#888888;font-size:11px;margin:0;">Submitted via <a href="https://classgrid.in/contact" style="color:#10b981;text-decoration:none;">classgrid.in/contact</a></p>
-  </div>
-</div>
-</body></html>`,
+      html,
     });
 
     return NextResponse.json({
