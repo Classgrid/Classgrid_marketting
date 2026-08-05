@@ -140,41 +140,44 @@ export function TrustedInstitutionsShowcase({
                   3. Hidden if hideName is true
                 */}
                 {showName && (
-                  <div className="flex w-full flex-col items-center justify-start gap-1">
-                    {hasWordmark ? (
-                      <div className="flex h-[60px] w-full items-center justify-center md:h-[80px]">
+                  <div className="flex w-full flex-col items-center justify-start gap-1 md:gap-2">
+                    {/* ROW 2: Name or Wordmark (Fixed Height to ensure Subtitle alignment) */}
+                    <div className="flex h-[60px] w-full items-center justify-center md:h-[80px]">
+                      {hasWordmark ? (
                         <div className="flex h-full w-auto items-center justify-center rounded-lg dark:bg-white/95 dark:px-3 dark:py-1 dark:shadow-sm">
                           <img
                             src={inst.wordmarkUrl}
                             alt={inst.wordmarkAlt ?? inst.name}
-                            className={`h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:h-[64px] md:max-w-[300px] ${inst.wordmarkUrlDark ? "dark:hidden" : ""}`}
+                            className={`max-h-[40px] w-auto max-w-[200px] shrink-0 object-contain md:max-h-[64px] md:max-w-[300px] ${inst.wordmarkUrlDark ? "dark:hidden" : ""}`}
                             loading="lazy"
                           />
                           {inst.wordmarkUrlDark && (
                             <img
                               src={inst.wordmarkUrlDark}
                               alt={inst.wordmarkAlt ?? inst.name}
-                              className="hidden h-[40px] w-auto max-w-[200px] shrink-0 object-contain dark:block md:h-[64px] md:max-w-[300px]"
+                              className="hidden max-h-[40px] w-auto max-w-[200px] shrink-0 object-contain dark:block md:max-h-[64px] md:max-w-[300px]"
                               loading="lazy"
                             />
                           )}
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex w-full flex-col items-center justify-start gap-1">
+                      ) : (
                         <span
-                          className="max-w-[220px] rounded-lg px-2 py-0.5 text-lg font-semibold leading-snug text-foreground dark:bg-white/95 dark:text-slate-900 md:max-w-[260px] md:px-3 md:py-1 md:text-xl"
+                          className="max-w-[220px] rounded-lg px-2 py-0.5 text-lg font-semibold leading-snug text-foreground dark:bg-white/95 dark:text-slate-900 md:max-w-[260px] md:px-3 md:py-1 md:text-xl line-clamp-2"
                           style={{ color: inst.nameColor || inst.color || undefined }}
                         >
                           {inst.name}
                         </span>
-                        {inst.subtitle && (
-                          <span className="text-sm font-semibold text-muted-foreground dark:text-white md:text-base">
-                            {inst.subtitle}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                      )}
+                    </div>
+
+                    {/* ROW 3: Subtitle */}
+                    <div className="flex h-[24px] w-full items-start justify-center md:h-[28px]">
+                      {inst.subtitle && (
+                        <span className="text-sm font-semibold text-muted-foreground dark:text-white md:text-base">
+                          {inst.subtitle}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
