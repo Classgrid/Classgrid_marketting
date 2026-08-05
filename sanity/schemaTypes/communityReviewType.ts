@@ -133,6 +133,28 @@ export const communityReviewType = defineType({
       rows: 4,
     }),
 
+    // ── Email System ──────────────────────────────
+    defineField({
+      name: 'autoSendEmail',
+      title: 'Auto-Send Thank You Email',
+      description: 'If ON, the thank you email will automatically send to the reviewer exactly once when you hit "Publish".',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'customEmailSubject',
+      title: 'Email Subject (Override)',
+      description: 'Optional: Leave blank to use the standard subject. Type here to completely override the email subject.',
+      type: 'string',
+    }),
+    defineField({
+      name: 'customEmailBody',
+      title: 'Full Email Body (Override)',
+      description: 'Optional: Leave blank to use the standard branded template. Type here (using HTML) to completely override the ENTIRE email content.',
+      type: 'text',
+      rows: 10,
+    }),
+
     // ── System Flags ──────────────────────────────
     defineField({
       name: 'isFeatured',

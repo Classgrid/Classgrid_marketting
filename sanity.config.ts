@@ -13,6 +13,7 @@ import {apiVersion, dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
 import {structure, defaultDocumentNode} from './sanity/deskStructure'
 import {SendThankYouEmailAction} from './sanity/actions/sendThankYouEmailAction'
+import {createPublishWithEmailAction} from './sanity/actions/PublishWithEmailAction'
 
 export default defineConfig({
   basePath: '/studio',
@@ -27,10 +28,16 @@ export default defineConfig({
     visionTool({defaultApiVersion: apiVersion}),
   ],
   document: {
-    // Add the Send Thank You Email button to the communityReview document actions
+    // Add the Send Thank You Email button to the communityReview document actions, and wrap the publish action
     actions: (prev, { schemaType }) => {
       if (schemaType === 'communityReview') {
-        return [...prev, SendThankYouEmailAction]
+        const customizedActions = prev.map((originalAction) => {
+          if (originalAction.action === 'publish') {
+            return createPublishWithEmailAction(originalAction)
+          }
+          return originalAction
+        })
+        return [...customizedActions, SendThankYouEmailAction]
       }
       return prev
     },

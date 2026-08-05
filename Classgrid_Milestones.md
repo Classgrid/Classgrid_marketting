@@ -114,6 +114,14 @@ Classgrid applied to the **OpenAI Startup Community** to gain access to technica
 
 ---
 
+## 💳 Razorpay Live Production API Keys — Granted & Active
+**Date:** August 2, 2026 (Sunday)  
+**Status:** ✅ Confirmed & Active (Live Keys Granted)  
+
+Razorpay officially resolved the business category review and approved Classgrid for **Live Production Merchant API Access** for `https://billing.classgrid.in`. The account is fully set up, enabling automated fee collection, SaaS invoice settlements, and live Razorpay payment processing across all institutions.
+
+---
+
 ## ☁️ Microsoft for Startups Founders Hub
 **Status:** 📌 To Do (Upcoming)  
 
@@ -128,4 +136,4 @@ Classgrid plans to apply for the Google Cloud program to secure up to $100,000 i
 
 ---
 
-*Last updated: July 31, 2026*
+*Last updated: August 4, 2026*

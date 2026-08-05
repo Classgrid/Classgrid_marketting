@@ -23,38 +23,45 @@ const getTransporter = () => nodemailer.createTransport({
   },
 });
 
-function buildReviewThankYouContent(name: string, adminReply: string | null): string {
+function buildReviewThankYouContent(name: string, adminReply: string | null, customBody: string | null): string {
+  if (customBody) {
+    return customBody;
+  }
+
   const reviewsUrl = 'https://classgrid.in/reviews';
 
-  const adminReplyBlock = adminReply
+  const cleanReply = adminReply ? adminReply.replace(/^Hi\s+[^!\.,\n]+[!,\.]?\s*/i, '') : '';
+
+  const adminReplyBlock = cleanReply
     ? `
-      <div style="margin-top: 24px; padding: 20px 24px; background-color: #f0fdf4; border-left: 4px solid #10b981; border-radius: 0 8px 8px 0;">
-        <div class="meta">A note from me personally</div>
-        <p style="margin: 0; color: #374151; line-height: 1.7;">${adminReply}</p>
-      </div>
+      <p style="margin-top: 24px; color: #111111;"><strong>A note from me personally:</strong></p>
+      <p style="margin-top: 8px; color: #374151; font-style: italic;">"${cleanReply}"</p>
     ` : '';
 
   return `
     <p>Hi <strong>${name}</strong>,</p>
 
-    <p>I personally wanted to reach out and say <strong>thank you so much</strong> for sharing your experience with Classgrid. It genuinely made our day when our team read your review.</p>
+    <p>I personally wanted to reach out and say — thank you so much for sharing your honest experience with Classgrid. It genuinely made our day at the team when we read your review.</p>
 
-    <p>Feedback like yours is exactly what keeps us motivated to build something truly meaningful for educational institutions across India. We're incredibly grateful to have you as part of the Classgrid community.</p>
+    <p>Feedback like yours is exactly what keeps us motivated to build something truly great for institutions across India. We are so glad to have you as part of the Classgrid community!</p>
 
-    <p>Your review is now live on our community page:</p>
+    <p>Your review is now live on our community page for everyone to see:</p>
 
     <div style="text-align:center;margin:30px 0;">
       <a href="${reviewsUrl}" class="btn">👉 View Your Published Review →</a>
+      <div style="margin-top: 8px;">
+        <a href="${reviewsUrl}" style="color: #6b7280; font-size: 13px;">classgrid.in/reviews</a>
+      </div>
     </div>
 
     ${adminReplyBlock}
 
-    <p style="margin-top: 24px;">If you ever have more feedback, suggestions, or simply want to talk, feel free to reply directly to this email. <strong>I read every message personally.</strong></p>
+    <p style="margin-top: 24px;">If you ever have more feedback, suggestions, or just want to talk — feel free to reply to this email directly. I read every single one.</p>
 
-    <p>With gratitude,</p>
+    <p style="margin-bottom: 2px;">With gratitude,</p>
     <p style="margin-bottom: 2px;"><strong>Nikhil Shinde</strong></p>
     <p style="color: #6b7280; font-size: 13px; margin: 0;">CEO & Founder, Classgrid</p>
-    <p style="font-size: 13px; margin: 4px 0 0;">
+    <p style="font-size: 13px; margin: 16px 0 0;">
       <a href="mailto:nikhil.shinde@classgrid.in" style="color: #10b981;">nikhil.shinde@classgrid.in</a>
       &nbsp;|&nbsp;
       <a href="https://classgrid.in" style="color: #10b981;">classgrid.in</a>
@@ -74,7 +81,7 @@ export async function POST(req: Request) {
     const sanityClient = getSanityClient();
     const review = await sanityClient.fetch(
       `*[_type == "communityReview" && _id == $id][0]{
-        name, email, institution, adminReply, status
+        name, email, institution, adminReply, status, customEmailSubject, customEmailBody
       }`,
       { id: reviewId }
     );
@@ -87,10 +94,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'This review has no email address on file. Cannot send.' }, { status: 400 });
     }
 
-    const content = buildReviewThankYouContent(review.name, review.adminReply || null);
+    const content = buildReviewThankYouContent(review.name, review.adminReply || null, review.customEmailBody || null);
     const html = baseTemplate({
       content,
-      title: 'Your Review is Live!',
+      title: review.customEmailSubject || 'Thank you for sharing your Classgrid experience ❤️',
       ignoreText: 'You are receiving this because you submitted a review on classgrid.in.',
       hideSupportLink: true,
     });
@@ -99,7 +106,7 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: `"Nikhil Shinde | Classgrid" <nikhil.shinde@classgrid.in>`,
       to: review.email,
-      subject: `Thank you for sharing your Classgrid experience ❤️`,
+      subject: review.customEmailSubject || `Thank you for sharing your Classgrid experience ❤️`,
       html,
     });
 
