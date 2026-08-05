@@ -21,7 +21,7 @@ export function TrustedInstitutionsShowcase({
 }: TrustedInstitutionsShowcaseProps) {
   if (!institutions.length) {
     return (
-      <div className="relative mt-8 overflow-hidden rounded-2xl border border-emerald-900/40 bg-[linear-gradient(110deg,rgba(2,44,34,0.95),rgba(6,95,70,0.55),rgba(2,44,34,0.95))] py-10 md:py-14">
+      <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-10 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] md:py-14">
         <style>{`
           @keyframes cs-pulse-ring {
             0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -32,7 +32,7 @@ export function TrustedInstitutionsShowcase({
             100% { background-position: 400px 0; }
           }
           .cs-shimmer-bar {
-            background: linear-gradient(90deg, rgba(52,211,153,0.05) 0%, rgba(52,211,153,0.18) 50%, rgba(52,211,153,0.05) 100%);
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.05) 100%);
             background-size: 400px 100%;
             animation: cs-shimmer 2.4s ease-in-out infinite;
           }
@@ -43,19 +43,19 @@ export function TrustedInstitutionsShowcase({
 
         {/* Ambient glow */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 h-48 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[80px]" />
+          <div className="absolute left-1/2 top-1/2 h-48 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-[80px]" />
         </div>
 
         <div className="relative flex flex-col items-center gap-5 px-6 text-center">
           {/* Animated dots */}
           <div className="flex items-center gap-2">
-            <span className="cs-dot h-2 w-2 rounded-full bg-emerald-400/60" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-emerald-400/60" />
-            <span className="cs-dot h-2 w-2 rounded-full bg-emerald-400/60" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
+            <span className="cs-dot h-2 w-2 rounded-full bg-white/50" />
           </div>
 
           {/* Badge */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
               <circle cx="12" cy="12" r="10" />
@@ -64,7 +64,7 @@ export function TrustedInstitutionsShowcase({
           </span>
 
           {/* Headline */}
-          <p className="max-w-lg text-base font-medium leading-relaxed text-white/70 md:text-lg">
+          <p className="max-w-lg text-base font-medium leading-relaxed text-white/80 md:text-lg">
             We&rsquo;re onboarding our partner institutions. They&rsquo;ll appear right here once they&rsquo;re live on Classgrid.
           </p>
 
@@ -86,7 +86,7 @@ export function TrustedInstitutionsShowcase({
   ];
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-2xl border border-emerald-900/40 bg-[linear-gradient(110deg,rgba(2,44,34,0.95),rgba(6,95,70,0.55),rgba(2,44,34,0.95))] py-8 md:py-14">
+    <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 py-8 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] md:py-14">
       {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
       <style>{`
         .logo-wrap {
@@ -170,7 +170,7 @@ export function TrustedInstitutionsShowcase({
                 <Link
                   key={`${inst.name}-${i}`}
                   href={inst.href}
-                  className="shrink-0 outline-none transition-opacity hover:opacity-80 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                  className="shrink-0 outline-none transition-all duration-200 hover:opacity-90 hover:scale-[1.03] focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                 >
                   {content}
                 </Link>
