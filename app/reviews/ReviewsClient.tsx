@@ -247,7 +247,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: Revi
                       onMouseLeave={() => setHoveredStar(0)}
                       className="focus:outline-none group"
                     >
-                      <Star className={`w-6 h-6 transition-all ${star <= (hoveredStar || formData.rating) ? "fill-emerald-500 dark:fill-emerald-400 text-emerald-500 dark:text-emerald-400 scale-110" : "text-muted/20 dark:text-neutral-800 scale-100"}`} />
+                      <Star className={`w-6 h-6 transition-all ${star <= (hoveredStar || formData.rating) ? "fill-emerald-500 dark:fill-emerald-400 text-emerald-500 dark:text-emerald-400 scale-110" : "text-neutral-300 dark:text-neutral-800 scale-100"}`} />
                     </button>
                   ))}
                 </div>
