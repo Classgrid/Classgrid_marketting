@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { DocumentActionProps, useToast } from 'sanity';
+import { DocumentActionProps } from 'sanity';
+import { useToast } from '@sanity/ui';
 
 /**
  * Sanity Studio custom document action:

@@ -1,4 +1,4 @@
-import { useToast } from 'sanity';
+import { useToast } from '@sanity/ui';
 
 export function createPublishWithEmailAction(originalPublishAction: any) {
   return (props: any) => {
