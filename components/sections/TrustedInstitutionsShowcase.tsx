@@ -95,29 +95,20 @@ export function TrustedInstitutionsShowcase({
       {/* Logo contrast CSS — drop-shadow follows logo shape, no visible box */}
       <style>{`
         .logo-wrap {
-          padding: 10px 12px;
-          border-radius: 12px;
+          padding: 4px 6px;
+          border-radius: 6px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255, 255, 255, 0.92);
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .logo-wrap:hover {
-          transform: scale(1.04);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-        }
-        .dark .logo-wrap {
-          background: rgba(255, 255, 255, 0.95);
-          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
         .logo-wrap img {
           object-fit: contain;
           mix-blend-mode: normal;
           image-rendering: auto;
-          /* No extra filters needed — white bg gives natural contrast for any logo color */
-          filter: none;
+          filter: brightness(1.05) contrast(1.1) drop-shadow(0 0 6px rgba(255,255,255,0.18));
+        }
+        .dark .logo-wrap img {
+          filter: brightness(1.1) contrast(1.15) drop-shadow(0 0 8px rgba(255,255,255,0.22));
         }
       `}</style>
 
