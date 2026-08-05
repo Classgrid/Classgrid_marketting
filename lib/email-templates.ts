@@ -237,9 +237,10 @@ Join Discussions
 // ------------- LOGIN NOTIFICATION -------------
 export function getForumLoginNotificationHtml(user: { name: string; email: string }, provider: string = "manual"): string {
   const config = providerConfig[provider] || providerConfig.manual;
+  const firstName = user.name.trim().split(/\s+/)[0] || 'there';
   const content = `
     <h1>New login to your account</h1>
-    <p>Hi ${user.name},</p>
+    <p>Hi ${firstName},</p>
     <p>We noticed a new sign-in to your Classgrid Community account (${user.email}) on ${formatDate()} using ${config.name}.</p>
     <a href="${FRONTEND_URL}/login/reset-password" class="btn btn-danger">Secure My Account</a>
   `;
@@ -252,9 +253,10 @@ export function getForumLoginNotificationHtml(user: { name: string; email: strin
 
 // ------------- VERIFICATION EMAIL -------------
 export function getForumVerificationEmailHtml(name: string, verifyLink: string): string {
+  const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
     <h1>Verify your email</h1>
-    <p>Hi ${name},</p>
+    <p>Hi ${firstName},</p>
     <p>Please verify your email address to complete your setup. This link expires in 24 hours.</p>
     <a href="${verifyLink}" class="btn">Verify Email</a>
   `;
@@ -287,9 +289,10 @@ export function getForumOtpEmailHtml(otp: string): string {
 
 // ------------- DEMO OTP EMAIL -------------
 export function getDemoOtpEmailHtml(name: string, otp: string): string {
+  const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
     <h1>Verify your email</h1>
-    <p>Hi ${name},</p>
+    <p>Hi ${firstName},</p>
     <p>Use the following verification code to unlock the calendar and schedule your Classgrid demo. This code expires in <strong>60 seconds</strong>.</p>
     
     <div class="box">
@@ -310,9 +313,10 @@ export function getDemoOtpEmailHtml(name: string, otp: string): string {
 export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meetUrl: string, provider: string = "google_meet"): string {
   const platformName = provider === "zoom" ? "Zoom" : "Google Meet";
   const buttonText = provider === "zoom" ? "Join Zoom Meet" : "Join Google Meet";
+  const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
     <h1>Your Demo is Confirmed!</h1>
-    <p>Hi ${name},</p>
+    <p>Hi ${firstName},</p>
     <p>Your 30-minute Classgrid Platform demo has been successfully scheduled.</p>
     
     <div class="box">
