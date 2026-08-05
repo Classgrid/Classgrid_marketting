@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionHeader } from "./SectionHeader";
 
 type TrustedInstitution = {
   name: string;
@@ -89,7 +90,9 @@ export function TrustedInstitutionsShowcase({
   ];
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-card py-8 md:py-14">
+    <div className="mt-8 md:mt-12">
+      {title && <SectionHeader title={title} className="mb-6 md:mb-10" />}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card py-8 md:py-14">
       <div
         className="group"
         style={{
