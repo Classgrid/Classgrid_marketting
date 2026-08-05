@@ -210,6 +210,7 @@ export function TrustedInstitutionsShowcase({
               </div>
             );
           })}
+          </div>
         </div>
       </div>
     </div>
