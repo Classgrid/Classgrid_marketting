@@ -107,7 +107,7 @@ export function TrustedInstitutionsShowcase({
 
             const content = (
               <div className="flex w-[240px] shrink-0 flex-col items-center justify-start gap-3 px-4 text-center md:w-[320px] md:gap-4 md:px-8">
-                {/* College logo (icon/crest) — Fixed height container ensures horizontal alignment */
+                {/* College logo (icon/crest) — Fixed height container ensures horizontal alignment */}
                 <div className="flex h-[110px] w-full items-center justify-center md:h-[150px]">
                   {hasLogo && (
                     <>
