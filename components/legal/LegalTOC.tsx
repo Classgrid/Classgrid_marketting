@@ -97,7 +97,7 @@ export function LegalTOC({ sections }: LegalTOCProps) {
         <button
           type="button"
           onClick={() => setMobileMenuOpen(true)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-white/[0.06] dark:hover:text-white cursor-pointer"
         >
           <PanelLeft className="h-5 w-5" />
         </button>
