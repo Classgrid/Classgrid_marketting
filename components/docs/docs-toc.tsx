@@ -254,7 +254,7 @@ export function DocsToc() {
               )}
               <button 
                 onClick={() => setShowCommentForm(true)}
-                className="text-slate-500 dark:text-zinc-500 hover:text-white transition-colors underline decoration-white/20 underline-offset-2"
+                className="text-slate-500 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white transition-colors underline decoration-slate-300 dark:decoration-white/20 underline-offset-2 cursor-pointer"
               >
                 {votedValue ? 'What went well?' : 'What could we improve?'}
               </button>
