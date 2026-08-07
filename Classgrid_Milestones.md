@@ -4,6 +4,14 @@ A living record of every milestone in Classgrid's journey.
 
 ---
 
+## 🛡️ Cloudflare for Startups — $10,000 Credits & Enterprise
+**Date:** August 7, 2026  
+**Status:** ✅ Confirmed & Active  
+
+Classgrid was accepted into the **Cloudflare for Startups** program, unlocking **$10,000 in credits** and access to **three Enterprise Domains**. This provides Classgrid with enterprise-grade DDoS protection, WAF (Web Application Firewall), Argo Smart Routing, and a 100% Uptime SLA — giving the platform the same global infrastructure security used by top global enterprises.
+
+---
+
 ## ☁️ AWS Activate Founders — $1,000 Cloud Credits
 **Date:** July 21, 2026  
 **Status:** ✅ Confirmed & Active  
@@ -136,4 +144,4 @@ Classgrid plans to apply for the Google Cloud program to secure up to $100,000 i
 
 ---
 
-*Last updated: August 4, 2026*
+*Last updated: August 7, 2026*
