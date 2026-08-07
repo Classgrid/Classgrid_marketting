@@ -83,10 +83,18 @@ export function Footer({
 
   useEffect(() => {
     setMounted(true);
-    // Fetch live status from custom domain (Incident.io / Statuspage compatible)
-    fetchLiveStatus("status.classgrid.in").then((res) => {
-      if (res) setLiveStatus(res);
-    });
+
+    const updateStatus = () => {
+      fetchLiveStatus("status.classgrid.in").then((res) => {
+        if (res) setLiveStatus(res);
+      });
+    };
+
+    updateStatus();
+    
+    const intervalId = setInterval(updateStatus, 30000); // Poll every 30 seconds
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   let footerColumns = (Array.isArray(columns) ? [...columns] : [])
