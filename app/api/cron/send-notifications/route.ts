@@ -324,12 +324,8 @@ ${isLegalPage ? "" : `
 </tr>
 <tr>
 <td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#9ca3af;font-size:12px;">
-${isLegalPage ? `
-<p style="margin-bottom:12px;color:#9ca3af;font-size:11px;">This is a mandatory legal notice regarding updates to the policies of Classgrid Technologies Private Limited. You cannot opt out of critical regulatory or legal service communications.</p>
-` : `
 <p style="margin-bottom:8px;color:#9ca3af;font-size:12px;">You received this because you subscribed to Classgrid Updates.</p>
 <p style="margin-bottom:12px;"><a href="${escapeHtml(unsubscribeUrl)}" style="color:#6b7280;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
-`}
 &copy; ${currentYear} Classgrid. All rights reserved.
 </td>
 </tr>
