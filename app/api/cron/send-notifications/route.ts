@@ -530,7 +530,7 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
         try {
           await awsSesTransporter.sendMail({
             ...mailOptions,
-            from: `"Classgrid Platform" <${supportEmail}>`,
+            from: `"Classgrid Legal" <legal@classgrid.in>`,
           });
           sentCount++;
           console.log(`📨 Sent legal update to ${sub.email} via AWS SES`);
