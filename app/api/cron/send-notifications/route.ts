@@ -54,16 +54,6 @@ const awsSesTransporter = nodemailer.createTransport({
   },
 });
 
-// High-Priority Transactional: AWS SES (For Legal Pages)
-const awsSesTransporter = nodemailer.createTransport({
-  host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
-  port: Number(process.env.AWS_SES_SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.AWS_SES_SMTP_USER,
-    pass: process.env.AWS_SES_SMTP_PASS,
-  },
-});
 
 // Track which provider to use — starts with Brevo, falls back to Resend
 let useResendFallback = false;
