@@ -227,6 +227,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
     return <main className="min-h-screen">{children}</main>;
   }
 
+  // Only enable Ask AI on docs, blog, and changelog routes
+  const enableAskAi = isDocsRoute || pathname.startsWith("/blog") || pathname.startsWith("/changelog");
+
   return (
     <>
       <StructuredData
@@ -251,9 +254,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             primaryCtaHref={chromeContent?.navbarPrimaryCtaHref}
             mobileMenuTitle={chromeContent?.mobileMenuTitle}
             latestReleaseDate={latestReleaseDate}
-            onAskAiClick={() => setAskAiOpen(true)}
+            onAskAiClick={enableAskAi ? () => setAskAiOpen(true) : undefined}
             askAiPrompt={pagePrompt}
-            showAskAiPrompt={showPromptBubble && !askAiOpen}
+            showAskAiPrompt={enableAskAi && showPromptBubble && !askAiOpen}
             docsMode={isDocsRoute}
             docsUserLoggedIn={status === "authenticated"}
             isPlatformUser={!!(session?.user as any)?.isPlatformUser}
@@ -290,7 +293,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         </div>
 
         {/* ── AI Sidebar: sticky in-flow flex sibling (desktop only) ── */}
-        <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
+        {enableAskAi && (
+          <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
+        )}
       </div>
       {isDocsRoute && (
         <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
