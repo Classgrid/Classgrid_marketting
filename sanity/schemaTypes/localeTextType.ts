@@ -17,17 +17,5 @@ export const localeTextType = defineType({
       name: "en",
       type: "text",
     }),
-    defineField({
-      title: "Hindi (हिंदी)",
-      name: "hi",
-      type: "text",
-      fieldset: "translations",
-    }),
-    defineField({
-      title: "Marathi (मराठी)",
-      name: "mr",
-      type: "text",
-      fieldset: "translations",
-    }),
   ],
 });

@@ -116,7 +116,10 @@ export const postType = defineType({
     defineField({
       name: 'title',
       title: 'Title',
-      type: 'localeString',
+      type: 'object',
+      fields: [
+        defineField({ name: 'en', title: 'English', type: 'string' })
+      ],
       validation: (rule) =>
         rule.custom((value) => {
           if (!value || typeof value !== 'object' || !('en' in value) || !(value as { en?: string }).en) {
@@ -134,7 +137,10 @@ export const postType = defineType({
     defineField({
       name: 'excerpt',
       title: 'Excerpt',
-      type: 'localeText',
+      type: 'object',
+      fields: [
+        defineField({ name: 'en', title: 'English', type: 'text', rows: 3 })
+      ],
     }),
     defineField({
       name: 'coverImage',
@@ -243,8 +249,6 @@ export const postType = defineType({
       type: 'object',
       fields: [
         defineField({ name: 'en', title: 'English', type: 'array', of: createPostBodyOf() }),
-        defineField({ name: 'hi', title: 'Hindi', type: 'array', of: createPostBodyOf() }),
-        defineField({ name: 'mr', title: 'Marathi', type: 'array', of: createPostBodyOf() }),
       ],
     }),
     defineField({

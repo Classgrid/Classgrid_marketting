@@ -10,15 +10,5 @@ export const localeRichBodyType = defineType({
       title: 'English',
       type: 'richBody',
     }),
-    defineField({
-      name: 'hi',
-      title: 'Hindi',
-      type: 'richBody',
-    }),
-    defineField({
-      name: 'mr',
-      title: 'Marathi',
-      type: 'richBody',
-    }),
   ],
 })
