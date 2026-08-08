@@ -48,6 +48,7 @@ type AskAiPanelProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pageContext?: PageContext;
+  variant?: "in-flow" | "overlay";
 };
 
 type ChatMessage = {
@@ -712,7 +713,7 @@ function AssistantMessageContent({ content }: { content: string }) {
   );
 }
 
-export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps) {
+export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow" }: AskAiPanelProps) {
   const { data: session } = useSession();
   const prefersReducedMotion = useReducedMotion();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -1560,25 +1561,44 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   return (
     <>
       {/* ══════════════════════════════════════════════════════════
-          DESKTOP: Sticky in-flow sidebar (hidden on mobile)
+          DESKTOP: Panel Layout
           ══════════════════════════════════════════════════════════ */}
-      <div
-        className={cn(
-          "hidden sm:block shrink-0 overflow-hidden sticky top-0 h-[100dvh]",
-          "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          prefersReducedMotion && "!duration-0",
-          open ? "w-[400px]" : "w-0"
-        )}
-      >
-        <aside
-          className="h-[100dvh] w-[400px] flex flex-col border-l border-border bg-background"
-          aria-hidden={!open}
+      {variant === "in-flow" ? (
+        <div
+          className={cn(
+            "hidden sm:block shrink-0 overflow-hidden sticky top-0 h-[100dvh]",
+            "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            prefersReducedMotion && "!duration-0",
+            open ? "w-[400px]" : "w-0"
+          )}
         >
-          {panelHeader}
-          {panelChat}
-          {panelInput}
-        </aside>
-      </div>
+          <aside
+            className="h-[100dvh] w-[400px] flex flex-col border-l border-border bg-background"
+            aria-hidden={!open}
+          >
+            {panelHeader}
+            {panelChat}
+            {panelInput}
+          </aside>
+        </div>
+      ) : (
+        <AnimatePresence>
+          {!isMobile && open && (
+            <motion.aside
+              aria-hidden={!open}
+              className="fixed inset-y-0 right-0 z-[120] w-[400px] flex flex-col border-l border-border bg-background shadow-2xl hidden sm:flex"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={prefersReducedMotion ? { duration: 0 } : panelTransition}
+            >
+              {panelHeader}
+              {panelChat}
+              {panelInput}
+            </motion.aside>
+          )}
+        </AnimatePresence>
+      )}
 
       {/* ══════════════════════════════════════════════════════════
           MOBILE: Fixed bottom-sheet (unchanged from production)

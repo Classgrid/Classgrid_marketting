@@ -227,8 +227,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
     return <main className="min-h-screen">{children}</main>;
   }
 
-  // Only enable Ask AI on docs, blog, and changelog routes
-  const enableAskAi = isDocsRoute || pathname.startsWith("/blog") || pathname.startsWith("/changelog");
+  // Use new in-flow side-by-side layout for docs, blog, and changelog.
+  // Other pages (Home, Pricing, etc) will use the classic overlay drawer layout.
+  const useInFlowAskAi = isDocsRoute || pathname.startsWith("/blog") || pathname.startsWith("/changelog");
 
   return (
     <>
@@ -254,9 +255,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
             primaryCtaHref={chromeContent?.navbarPrimaryCtaHref}
             mobileMenuTitle={chromeContent?.mobileMenuTitle}
             latestReleaseDate={latestReleaseDate}
-            onAskAiClick={enableAskAi ? () => setAskAiOpen(true) : undefined}
+            onAskAiClick={() => setAskAiOpen(true)}
             askAiPrompt={pagePrompt}
-            showAskAiPrompt={enableAskAi && showPromptBubble && !askAiOpen}
+            showAskAiPrompt={showPromptBubble && !askAiOpen}
             docsMode={isDocsRoute}
             docsUserLoggedIn={status === "authenticated"}
             isPlatformUser={!!(session?.user as any)?.isPlatformUser}
@@ -292,10 +293,13 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         )}
         </div>
 
-        {/* ── AI Sidebar: sticky in-flow flex sibling (desktop only) ── */}
-        {enableAskAi && (
-          <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
-        )}
+        {/* ── AI Sidebar: conditional layout (in-flow or overlay) ── */}
+        <AskAiPanel 
+          open={askAiOpen} 
+          onOpenChange={setAskAiOpen} 
+          pageContext={pageContext} 
+          variant={useInFlowAskAi ? "in-flow" : "overlay"} 
+        />
       </div>
       {isDocsRoute && (
         <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
