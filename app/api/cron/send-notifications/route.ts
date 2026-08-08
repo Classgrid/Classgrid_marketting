@@ -302,7 +302,6 @@ ${metaLine && !isLegalPage ? `<p style="color:#6b7280;font-size:12px;margin:0 0 
 ${isLegalPage ? "" : renderRecentBlogs(recentBlogs, siteUrl)}
 ${isLegalPage ? "" : renderRecentChangelogs(recentChangelogs, siteUrl)}
 
-${isLegalPage ? "" : `
 <div style="margin-top:40px;padding-top:20px;border-top:1px solid #eaeaea;text-align:center;">
   <p style="color:#111111;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
   <div style="display:inline-block;">
@@ -317,7 +316,6 @@ ${isLegalPage ? "" : `
     </a>
   </div>
 </div>
-`}
 
 
 </td>
