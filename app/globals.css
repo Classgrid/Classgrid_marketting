@@ -1191,3 +1191,23 @@ body[data-ask-ai-open="true"] .hide-when-ask-ai-open {
   pointer-events: none;
   overflow: hidden !important;
 }
+
+/* ── Hide redundant navbar items when Ask AI panel is open to prevent header overflow ── */
+.hide-when-ask-ai-open {
+  transition: max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, padding 0.3s, margin 0.3s;
+  max-width: 200px;
+  opacity: 1;
+}
+
+body[data-ask-ai-open="true"] .hide-when-ask-ai-open {
+  max-width: 0 !important;
+  min-width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  opacity: 0 !important;
+  border-width: 0 !important;
+  pointer-events: none;
+  overflow: hidden !important;
+}
