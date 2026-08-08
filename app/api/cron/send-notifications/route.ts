@@ -218,7 +218,7 @@ function buildNotificationEmailHtml(
     summary = post.resolvedSummary || "We just published a new update. Click below to read the full entry.";
     ctaLabel = "View Product Update";
     eyebrow = "";
-  if (isLegalPage) {
+  } else if (isLegalPage) {
     const effectiveDateStr = post._updatedAt ? formatDate(post._updatedAt) : "immediately";
     const changeSummary = post.resolvedSummary || "Important updates to our legal terms and policies.";
 
