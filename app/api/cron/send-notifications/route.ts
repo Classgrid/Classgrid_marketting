@@ -218,45 +218,39 @@ function buildNotificationEmailHtml(
     summary = post.resolvedSummary || "We just published a new update. Click below to read the full entry.";
     ctaLabel = "View Product Update";
     eyebrow = "";
-  } else if (isLegalPage) {
+  if (isLegalPage) {
     const effectiveDateStr = post._updatedAt ? formatDate(post._updatedAt) : "immediately";
     const changeSummary = post.resolvedSummary || "Important updates to our legal terms and policies.";
 
     switch (post.slug) {
       case "privacy":
-        legalSubject = `Important update to our Privacy Policy — effective ${effectiveDateStr}`;
         eyebrow = "Notice of changes to our Privacy Policy";
-        summary = `We are writing to notify you that Classgrid Technologies has updated its Privacy Policy. The revised policy explains how personal information is collected, used, disclosed, retained, and protected in connection with the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The updated Privacy Policy will take effect on ${effectiveDateStr}. The update does not change any rights or choices that apply to you except as expressly described in the revised policy.`;
+        summary = `We are writing to notify you that Classgrid Technologies has updated its Privacy Policy. The revised policy explains how personal information is collected, used, disclosed, retained, and protected in connection with the Services.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>The updated Privacy Policy will take effect on ${effectiveDateStr}. The update does not change any rights or choices that apply to you except as expressly described in the revised policy. If the update affects a consent choice or legal right available in your jurisdiction, the relevant instructions are included in the policy.`;
         ctaLabel = "Review the updated Privacy Policy";
         break;
       case "terms":
-        legalSubject = `Notice of updates to our Terms of Service — effective ${effectiveDateStr}`;
         eyebrow = "Updates to the Terms of Service";
-        summary = `We are notifying you that Classgrid Technologies has updated its Terms of Service governing access to and use of the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Terms of Service will take effect on ${effectiveDateStr}. Please review the revised terms carefully, including provisions concerning permitted use, account responsibilities, fees, intellectual property, limitations of liability, and termination.`;
+        summary = `We are notifying you that Classgrid Technologies has updated its Terms of Service governing access to and use of the Services.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>The revised Terms of Service will take effect on ${effectiveDateStr}. Please review the revised terms carefully, including provisions concerning permitted use, account responsibilities, fees, intellectual property, limitations of liability, dispute resolution, and termination.`;
         ctaLabel = "Review the updated Terms of Service";
         break;
       case "security":
-        legalSubject = "Update to our Information Security Policy";
         eyebrow = "Information Security Policy update";
-        summary = `Classgrid Technologies has updated its Information Security Policy describing the technical, organizational, and administrative measures used to protect information and maintain the security of the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised policy is effective ${effectiveDateStr}. This notice does not disclose confidential security information or operational details that could increase security risk.`;
+        summary = `Classgrid Technologies has updated its Information Security Policy describing the technical, organizational, and administrative measures used to protect information and maintain the security of the Services.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>The revised policy is effective ${effectiveDateStr}. This notice does not disclose confidential security information, operational vulnerabilities, credentials, or details that could increase security risk.`;
         ctaLabel = "Review the updated Security Policy";
         break;
       case "cookies":
-        legalSubject = `Update to our Cookies Policy — effective ${effectiveDateStr}`;
         eyebrow = "Changes to our Cookies Policy";
-        summary = `We have updated our Cookies Policy to explain how Classgrid Technologies and approved service providers use cookies and similar technologies on the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Cookies Policy identifies the categories of technologies used, their purposes, retention periods, providers, and available controls. It takes effect on ${effectiveDateStr}.`;
+        summary = `We have updated our Cookies Policy to explain how Classgrid Technologies and approved service providers use cookies and similar technologies on the Services.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>The revised Cookies Policy identifies the categories of technologies used, their purposes, retention periods, providers, and available controls. It takes effect on ${effectiveDateStr}. Where consent is required, non-essential cookies will be used only after the applicable consent is obtained or as otherwise permitted by law.`;
         ctaLabel = "Review the updated Cookies Policy";
         break;
       case "disclaimer":
-        legalSubject = "Update to our Disclaimer";
         eyebrow = "Notice of changes to our Disclaimer";
-        summary = `Classgrid Technologies has updated its Disclaimer concerning the information, materials, content, and services made available through the platform.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Disclaimer is effective ${effectiveDateStr}. Please read the complete Disclaimer because this notice is only a summary of the principal changes.`;
+        summary = `Classgrid Technologies has updated its Disclaimer concerning the information, materials, content, and services made available through the platform.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>The revised Disclaimer is effective ${effectiveDateStr}. Please read the complete Disclaimer because this notice is only a summary of the principal changes. The Disclaimer does not exclude or limit any liability, warranty, or right that cannot lawfully be excluded or limited.`;
         ctaLabel = "Review the updated Disclaimer";
         break;
       default:
-        legalSubject = "Important Legal Update";
         eyebrow = "Important Legal Update";
-        summary = `We have updated our legal policies.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>Click below to review the changes.`;
+        summary = `We have updated our legal policies.<br><br><b>Changes included in this update:</b><br>${changeSummary}<br><br>Click below to review the changes.`;
         ctaLabel = "Review Policy";
     }
   } else {
@@ -265,12 +259,14 @@ function buildNotificationEmailHtml(
     eyebrow = "";
   }
 
+  const headerTitle = isLegalPage ? "Classgrid Legal Notice" : "New from Classgrid";
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New from Classgrid</title>
+  <title>${escapeHtml(headerTitle)}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body, html {
@@ -289,7 +285,7 @@ function buildNotificationEmailHtml(
 <tr>
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
-<h1 style="color:#111111;margin:0;font-size:22px;">New from Classgrid</h1>
+<h1 style="color:#111111;margin:0;font-size:22px;">${escapeHtml(headerTitle)}</h1>
 ${eyebrow ? `<p style="color:#6b7280;margin-top:8px;font-size:13px;">${escapeHtml(eyebrow)}</p>` : ""}
 </td>
 </tr>
@@ -297,7 +293,7 @@ ${eyebrow ? `<p style="color:#6b7280;margin-top:8px;font-size:13px;">${escapeHtm
 <td style="padding:30px;color:#374151;font-size:14px;line-height:1.7;">
 ${coverImageHtml}
 <h2 style="color:#111111;font-size:20px;margin:0 0 8px;line-height:1.3;">${escapeHtml(post.resolvedTitle)}</h2>
-${metaLine ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">${escapeHtml(metaLine)}</p>` : ""}
+${metaLine && !isLegalPage ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">${escapeHtml(metaLine)}</p>` : ""}
 <p style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 25px;">${isLegalPage ? summary : escapeHtml(summary)}</p>
 <div style="text-align:center;margin:30px 0;">
 <a href="${escapeHtml(itemUrl)}" style="background:#34d399;color:#000;padding:14px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;">${escapeHtml(ctaLabel)}</a>
@@ -329,7 +325,7 @@ ${isLegalPage ? "" : `
 <tr>
 <td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#9ca3af;font-size:12px;">
 ${isLegalPage ? `
-<p style="margin-bottom:12px;color:#9ca3af;font-size:11px;">This is a mandatory legal notice. You cannot unsubscribe from important policy updates regarding your use of the Services.</p>
+<p style="margin-bottom:12px;color:#9ca3af;font-size:11px;">This is a mandatory legal notice regarding updates to the policies of Classgrid Technologies Private Limited. You cannot opt out of critical regulatory or legal service communications.</p>
 ` : `
 <p style="margin-bottom:8px;color:#9ca3af;font-size:12px;">You received this because you subscribed to Classgrid Updates.</p>
 <p style="margin-bottom:12px;"><a href="${escapeHtml(unsubscribeUrl)}" style="color:#6b7280;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
@@ -477,7 +473,7 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   // 5. Build subject and send to a BATCH of subscribers
   // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts.
   // Legal pages through AWS SES can go much faster (14/sec), so we give them a larger batch.
-  const BATCH_SIZE = item.document_type === "legalPage" ? 100 : 25;
+  const BATCH_SIZE = item.document_type === "legalPage" ? 30 : 25;
   const startIndex = alreadySent;
   const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 
