@@ -434,38 +434,26 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
     targetEmails.push(...subscribers);
   }
 
-  // If it's a legal page update, also fetch admin users from MongoDB
-  if (item.document_type === "legalPage") {
-    try {
-      await connectMongo();
-      if (mongoose.connection.db) {
-        const usersCollection = mongoose.connection.db.collection('users');
-        const TARGET_ROLES = [
-          "org_admin",
-          "fee_manager",
-          "admission_head",
-          "admission_verifier",
-          "admission_counselor",
-          "admission_clerk"
-        ];
-        
-        const adminUsers = await usersCollection.find(
-          {
-            $or: [
-              { role: { $in: TARGET_ROLES } },
-              { additional_roles: { $in: TARGET_ROLES } }
-            ],
-            status: "active"
-          },
-          { projection: { email: 1 } }
-        ).toArray();
-        
-        targetEmails.push(...adminUsers.map(u => ({ email: u.email })));
-      }
-    } catch (dbErr) {
-      console.error("Failed to fetch admins from MongoDB:", dbErr);
+  // Fetch admin users from MongoDB for ALL updates (Blog, Changelog, and Legal)
+  try {
+    await connectMongo();
+    if (mongoose.connection.db) {
+      const usersCollection = mongoose.connection.db.collection('users');
+      // Fetch ALL users regardless of role
+      const allUsers = await usersCollection.find(
+        {},
+        { projection: { email: 1 } }
+      ).toArray();
+      
+      targetEmails.push(...allUsers.map(u => ({ email: u.email })));
     }
+  } catch (dbErr) {
+    console.error("Failed to fetch admins from MongoDB:", dbErr);
   }
+
+  // Fallback: Always ensure the core founder team receives these notifications,
+  // even if MongoDB Atlas blocks the connection due to IP whitelisting.
+  targetEmails.push({ email: "support@classgrid.in" });
 
   // Deduplicate emails
   const uniqueEmails = Array.from(
