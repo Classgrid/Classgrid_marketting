@@ -2,7 +2,7 @@
 
 **Title (English):** Big Milestone for Classgrid: AWS Activate, Amazon SES Production Access & MongoDB for Startups
 **Slug:** `aws-mongodb-milestone`
-**Category:** App Updates
+**Category:** Milestone
 **Tags:** #AWS #MongoDB #EdTech #SaaS #BuildInPublic #StartupJourney #AWSActivate #MongoDBStartups #Classgrid
 **Send Subscriber Notification:** ON 
 

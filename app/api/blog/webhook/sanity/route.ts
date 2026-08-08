@@ -25,7 +25,7 @@ type WebhookPayload = {
   versionLabel?: string;
 };
 
-type NotificationDocumentType = "post" | "changelogEntry";
+type NotificationDocumentType = "post" | "changelogEntry" | "legalPage";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function resolveSlug(value: unknown): string | null {
@@ -50,7 +50,7 @@ function getLocalizedString(value: unknown, fallback = ""): string {
 
 function resolveDocumentType(payload: WebhookPayload): NotificationDocumentType | null {
   const rawType = payload._type || payload.result?._type;
-  if (rawType === "post" || rawType === "changelogEntry") return rawType;
+  if (rawType === "post" || rawType === "changelogEntry" || rawType === "legalPage") return rawType;
   if (payload.updateType || payload.releaseDate || payload.versionLabel) return "changelogEntry";
   if (payload.slug || payload.title || payload._id || payload.documentId) return "post";
   return null;

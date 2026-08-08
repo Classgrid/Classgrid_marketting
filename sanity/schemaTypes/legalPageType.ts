@@ -25,6 +25,20 @@ export const legalPageType = defineType({
       type: "datetime",
     }),
     defineField({
+      name: "sendSubscriberNotification",
+      title: "📧 Send Subscriber Notification",
+      description: "Turn this ON to send an email to all subscribers and admins when you publish. After the email is sent, this will automatically reset. If OFF, publishing will NOT trigger any email.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "summary",
+      title: "Email Summary",
+      description: "A short summary of the legal updates to include in the email notification.",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
       name: "effectiveDate",
       title: "Effective Date",
       type: "datetime",

@@ -5,11 +5,13 @@ import { NextResponse } from "next/server";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { supabaseAdmin } from "@/lib/supabase";
+import { connectMongo } from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type QueueItem = {
   id: string;
-  document_type: "post" | "changelogEntry";
+  document_type: "post" | "changelogEntry" | "legalPage";
   document_id: string;
   slug: string;
   title: string | null;
@@ -38,6 +40,17 @@ const resendTransporter = nodemailer.createTransport({
   auth: {
     user: "resend",
     pass: process.env.RESEND_API_KEY,
+  },
+});
+
+// High-Priority Transactional: AWS SES (For Legal Pages)
+const awsSesTransporter = nodemailer.createTransport({
+  host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
+  port: Number(process.env.AWS_SES_SMTP_PORT) || 587,
+  secure: false,
+  auth: {
+    user: process.env.AWS_SES_SMTP_USER,
+    pass: process.env.AWS_SES_SMTP_PASS,
   },
 });
 
@@ -178,7 +191,12 @@ function buildNotificationEmailHtml(
   const currentYear = new Date().getFullYear();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
   const isChangelog = post._type === "changelogEntry";
-  const itemUrl = isChangelog ? `${siteUrl}/changelog/${post.slug}` : `${siteUrl}/blog/${post.slug}`;
+  const isLegalPage = post._type === "legalPage";
+  
+  let itemUrl = `${siteUrl}/blog/${post.slug}`;
+  if (isChangelog) itemUrl = `${siteUrl}/changelog/${post.slug}`;
+  if (isLegalPage) itemUrl = `${siteUrl}/${post.slug}`; // Assuming legal pages live at /privacy, /terms, etc.
+  
   const coverImageHtml = post.coverImage
     ? `<img src="${escapeHtml(post.coverImage)}" alt="${escapeHtml(post.resolvedTitle)}" width="600" style="width:100%;max-width:600px;border-radius:8px;display:block;margin:0 auto 20px;" />`
     : "";
@@ -191,11 +209,61 @@ function buildNotificationEmailHtml(
           : (post.author || 'Classgrid Team');
         return [`By ${names}`, formatDate(post.publishedAt)].filter(Boolean).join(' | ');
       })();
-  const summary = post.resolvedSummary || (isChangelog
-    ? "We just published a new product update. Click below to view the full changelog entry."
-    : "We just published a new article on our blog. Click below to read the full post.");
-  const ctaLabel = isChangelog ? "View Product Update" : "Read Blog";
-  const eyebrow = isChangelog ? "New product update from Classgrid" : "A new insight from Classgrid";
+  let summary = post.resolvedSummary;
+  let ctaLabel = "Read Blog";
+  let eyebrow = "A new insight from Classgrid";
+  let legalSubject = "";
+  
+  if (isChangelog) {
+    summary = post.resolvedSummary || "We just published a new product update. Click below to view the full changelog entry.";
+    ctaLabel = "View Product Update";
+    eyebrow = "New product update from Classgrid";
+  } else if (isLegalPage) {
+    const effectiveDateStr = post._updatedAt ? formatDate(post._updatedAt) : "immediately";
+    const changeSummary = post.resolvedSummary || "Important updates to our legal terms and policies.";
+
+    switch (post.slug) {
+      case "privacy":
+        legalSubject = `Important update to our Privacy Policy — effective ${effectiveDateStr}`;
+        eyebrow = "Notice of changes to our Privacy Policy";
+        summary = `We are writing to notify you that Classgrid Technologies has updated its Privacy Policy. The revised policy explains how personal information is collected, used, disclosed, retained, and protected in connection with the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The updated Privacy Policy will take effect on ${effectiveDateStr}. The update does not change any rights or choices that apply to you except as expressly described in the revised policy.`;
+        ctaLabel = "Review the updated Privacy Policy";
+        break;
+      case "terms":
+        legalSubject = `Notice of updates to our Terms of Service — effective ${effectiveDateStr}`;
+        eyebrow = "Updates to the Terms of Service";
+        summary = `We are notifying you that Classgrid Technologies has updated its Terms of Service governing access to and use of the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Terms of Service will take effect on ${effectiveDateStr}. Please review the revised terms carefully, including provisions concerning permitted use, account responsibilities, fees, intellectual property, limitations of liability, and termination.`;
+        ctaLabel = "Review the updated Terms of Service";
+        break;
+      case "security":
+        legalSubject = "Update to our Information Security Policy";
+        eyebrow = "Information Security Policy update";
+        summary = `Classgrid Technologies has updated its Information Security Policy describing the technical, organizational, and administrative measures used to protect information and maintain the security of the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised policy is effective ${effectiveDateStr}. This notice does not disclose confidential security information or operational details that could increase security risk.`;
+        ctaLabel = "Review the updated Security Policy";
+        break;
+      case "cookies":
+        legalSubject = `Update to our Cookies Policy — effective ${effectiveDateStr}`;
+        eyebrow = "Changes to our Cookies Policy";
+        summary = `We have updated our Cookies Policy to explain how Classgrid Technologies and approved service providers use cookies and similar technologies on the Services.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Cookies Policy identifies the categories of technologies used, their purposes, retention periods, providers, and available controls. It takes effect on ${effectiveDateStr}.`;
+        ctaLabel = "Review the updated Cookies Policy";
+        break;
+      case "disclaimer":
+        legalSubject = "Update to our Disclaimer";
+        eyebrow = "Notice of changes to our Disclaimer";
+        summary = `Classgrid Technologies has updated its Disclaimer concerning the information, materials, content, and services made available through the platform.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>The revised Disclaimer is effective ${effectiveDateStr}. Please read the complete Disclaimer because this notice is only a summary of the principal changes.`;
+        ctaLabel = "Review the updated Disclaimer";
+        break;
+      default:
+        legalSubject = "Important Legal Update";
+        eyebrow = "Important Legal Update";
+        summary = `We have updated our legal policies.<br><br><b>Changes included in this update:</b> ${changeSummary}<br><br>Click below to review the changes.`;
+        ctaLabel = "Review Policy";
+    }
+  } else {
+    summary = post.resolvedSummary || "We just published a new article on our blog. Click below to read the full post.";
+    ctaLabel = "Read Blog";
+    eyebrow = "A new insight from Classgrid";
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -230,7 +298,7 @@ function buildNotificationEmailHtml(
 ${coverImageHtml}
 <h2 style="color:#111111;font-size:20px;margin:0 0 8px;line-height:1.3;">${escapeHtml(post.resolvedTitle)}</h2>
 ${metaLine ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">${escapeHtml(metaLine)}</p>` : ""}
-<p style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 25px;">${escapeHtml(summary)}</p>
+<p style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 25px;">${isLegalPage ? summary : escapeHtml(summary)}</p>
 <div style="text-align:center;margin:30px 0;">
 <a href="${escapeHtml(itemUrl)}" style="background:#34d399;color:#000;padding:14px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;">${escapeHtml(ctaLabel)}</a>
 </div>
@@ -289,9 +357,16 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
           }`,
           { documentId: item.document_id }
         )
-      : client.fetch(
+      : item.document_type === "changelogEntry"
+      ? client.fetch(
           `*[_type == "changelogEntry" && _id == $documentId][0]{
             _id, _type, title, "slug": slug.current, summary, releaseDate, updateType, versionLabel, image
+          }`,
+          { documentId: item.document_id }
+        )
+      : client.fetch(
+          `*[_type == "legalPage" && _id == $documentId][0]{
+            _id, _type, title, "slug": slug.current, summary, _updatedAt
           }`,
           { documentId: item.document_id }
         ),
@@ -308,19 +383,20 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   }
 
   // 2. Resolve the main post
-  const resolvedPost = item.document_type === "post"
-    ? {
-        ...publishedDocument,
-        resolvedTitle: getLocalizedString(publishedDocument.title, "Blog Post"),
-        resolvedSummary: truncateText(getLocalizedString(publishedDocument.excerpt, "New article from Classgrid."), 220),
-        coverImage: resolveImageUrl(publishedDocument.coverImage, 600),
-      }
-    : {
-        ...publishedDocument,
-        resolvedTitle: getLocalizedString(publishedDocument.title, "Product Update"),
-        resolvedSummary: truncateText(getLocalizedString(publishedDocument.summary, "New Classgrid product update."), 220),
-        coverImage: resolveImageUrl(publishedDocument.image, 600),
-      };
+  let resolvedPost: any = { ...publishedDocument };
+  if (item.document_type === "post") {
+    resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Blog Post");
+    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.excerpt, "New article from Classgrid."), 220);
+    resolvedPost.coverImage = resolveImageUrl(publishedDocument.coverImage, 600);
+  } else if (item.document_type === "changelogEntry") {
+    resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Product Update");
+    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.summary, "New Classgrid product update."), 220);
+    resolvedPost.coverImage = resolveImageUrl(publishedDocument.image, 600);
+  } else if (item.document_type === "legalPage") {
+    resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Legal Update");
+    resolvedPost.resolvedSummary = getLocalizedString(publishedDocument.summary, "Important updates to our legal terms and policies.");
+    resolvedPost.legalSubject = ""; // Set by buildNotificationEmailHtml but we need it here for the Subject line of the email.
+  }
 
   // 3. Resolve recent items (exclude current)
   const blogsWithImages = ((recentBlogs as any[]) || [])
@@ -345,14 +421,62 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
     .filter((c) => c.slug && c.resolvedTitle)
     .slice(0, 3);
 
-  // 4. Fetch all active subscribers
+  // 4. Fetch audiences
+  let targetEmails: { email: string }[] = [];
+  
+  // Fetch active subscribers
   const { data: subscribers, error: subError } = await supabaseAdmin
     .from("blog_subscribers")
     .select("email")
     .eq("is_active", true);
 
-  if (subError) throw subError;
-  if (!subscribers || subscribers.length === 0) {
+  if (subscribers) {
+    targetEmails.push(...subscribers);
+  }
+
+  // If it's a legal page update, also fetch admin users from MongoDB
+  if (item.document_type === "legalPage") {
+    try {
+      await connectMongo();
+      if (mongoose.connection.db) {
+        const usersCollection = mongoose.connection.db.collection('users');
+        const TARGET_ROLES = [
+          "org_admin",
+          "fee_manager",
+          "admission_head",
+          "admission_verifier",
+          "admission_counselor",
+          "admission_clerk"
+        ];
+        
+        const adminUsers = await usersCollection.find(
+          {
+            $or: [
+              { role: { $in: TARGET_ROLES } },
+              { additional_roles: { $in: TARGET_ROLES } }
+            ],
+            status: "active"
+          },
+          { projection: { email: 1 } }
+        ).toArray();
+        
+        targetEmails.push(...adminUsers.map(u => ({ email: u.email })));
+      }
+    } catch (dbErr) {
+      console.error("Failed to fetch admins from MongoDB:", dbErr);
+    }
+  }
+
+  // Deduplicate emails
+  const uniqueEmails = Array.from(
+    new Map(
+      targetEmails
+        .filter(u => u.email)
+        .map(u => [u.email.toLowerCase(), u])
+    ).values()
+  );
+
+  if (uniqueEmails.length === 0) {
     return { sent: 0, failed: 0, done: true };
   }
 
@@ -361,16 +485,29 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   // The `alreadySent` offset tells us where to resume from the previous cron run.
   const BATCH_SIZE = 3;
   const startIndex = alreadySent;
-  const batch = subscribers.slice(startIndex, startIndex + BATCH_SIZE);
+  const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 
   if (batch.length === 0) {
     // All subscribers already emailed
     return { sent: 0, failed: 0, done: true };
   }
 
-  const subject = item.document_type === "changelogEntry"
+  let subject = item.document_type === "changelogEntry"
     ? `Product Update: ${resolvedPost.resolvedTitle}`
     : `New Post: ${resolvedPost.resolvedTitle}`;
+
+  // If it's a legal page, we generate the specific subject here again so it perfectly matches the HTML.
+  if (item.document_type === "legalPage") {
+    const effectiveDateStr = resolvedPost._updatedAt ? formatDate(resolvedPost._updatedAt) : "immediately";
+    switch (item.slug) {
+      case "privacy": subject = `Important update to our Privacy Policy — effective ${effectiveDateStr}`; break;
+      case "terms": subject = `Notice of updates to our Terms of Service — effective ${effectiveDateStr}`; break;
+      case "security": subject = "Update to our Information Security Policy"; break;
+      case "cookies": subject = `Update to our Cookies Policy — effective ${effectiveDateStr}`; break;
+      case "disclaimer": subject = "Update to our Disclaimer"; break;
+      default: subject = "Important Legal Update";
+    }
+  }
 
   let sentCount = 0;
   let failCount = 0;
@@ -388,41 +525,57 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
         html: buildNotificationEmailHtml(resolvedPost, unsubscribeUrl, blogsWithImages, changelogsWithImages),
       };
 
-      if (!useResendFallback) {
-        // Try Brevo first
+      if (item.document_type === "legalPage") {
+        // Legal Pages MUST go through AWS SES
         try {
-          await brevoTransporter.sendMail({
+          await awsSesTransporter.sendMail({
             ...mailOptions,
-            from: `"${senderName}" <${brevoSenderEmail}>`,
+            from: `"Classgrid Platform" <${supportEmail}>`,
           });
           sentCount++;
-          continue;
-        } catch (brevoErr: any) {
-          const errMsg = brevoErr?.message || "";
-          // If Brevo hit daily limit (421/529), switch to Resend for remaining emails
-          if (errMsg.includes("421") || errMsg.includes("429") || errMsg.includes("limit") || errMsg.includes("Too many")) {
-            console.log(`⚡ Brevo daily limit reached. Switching to Resend fallback...`);
-            useResendFallback = true;
-          } else {
-            // Non-rate-limit error — log and count as failure
-            console.error(`Failed to send to ${sub.email} via Brevo:`, errMsg);
-            failCount++;
+          console.log(`📨 Sent legal update to ${sub.email} via AWS SES`);
+        } catch (sesErr: any) {
+          console.error(`Failed to send legal update to ${sub.email} via AWS SES:`, sesErr?.message);
+          failCount++;
+        }
+      } else {
+        // Blog/Changelog Promotional emails use Brevo/Resend
+        if (!useResendFallback) {
+          // Try Brevo first
+          try {
+            await brevoTransporter.sendMail({
+              ...mailOptions,
+              from: `"${senderName}" <${brevoSenderEmail}>`,
+            });
+            sentCount++;
             continue;
+          } catch (brevoErr: any) {
+            const errMsg = brevoErr?.message || "";
+            // If Brevo hit daily limit (421/529), switch to Resend for remaining emails
+            if (errMsg.includes("421") || errMsg.includes("429") || errMsg.includes("limit") || errMsg.includes("Too many")) {
+              console.log(`⚡ Brevo daily limit reached. Switching to Resend fallback...`);
+              useResendFallback = true;
+            } else {
+              // Non-rate-limit error — log and count as failure
+              console.error(`Failed to send to ${sub.email} via Brevo:`, errMsg);
+              failCount++;
+              continue;
+            }
           }
         }
-      }
 
-      // Resend fallback
-      try {
-        await resendTransporter.sendMail({
-          ...mailOptions,
-          from: `"${senderName}" <${resendSenderEmail}>`,
-        });
-        sentCount++;
-        console.log(`📨 Sent to ${sub.email} via Resend fallback`);
-      } catch (resendErr: any) {
-        console.error(`Failed to send to ${sub.email} via Resend:`, resendErr?.message);
-        failCount++;
+        // Resend fallback
+        try {
+          await resendTransporter.sendMail({
+            ...mailOptions,
+            from: `"${senderName}" <${resendSenderEmail}>`,
+          });
+          sentCount++;
+          console.log(`📨 Sent to ${sub.email} via Resend fallback`);
+        } catch (resendErr: any) {
+          console.error(`Failed to send to ${sub.email} via Resend:`, resendErr?.message);
+          failCount++;
+        }
       }
     } catch (emailErr) {
       console.error(`Failed to send to ${sub.email}:`, emailErr);
@@ -431,7 +584,7 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   }
 
   const totalProcessed = startIndex + sentCount + failCount;
-  const allDone = totalProcessed >= subscribers.length;
+  const allDone = totalProcessed >= uniqueEmails.length;
 
   return { sent: sentCount, failed: failCount, done: allDone, totalProcessed };
 }
@@ -462,7 +615,7 @@ export async function GET(req: Request) {
   // 2. Parse type filter
   const typeFilter = searchParams.get("type") || "all";
 
-  const validTypes = ["all", "post", "changelogEntry"];
+  const validTypes = ["all", "post", "changelogEntry", "legalPage"];
   if (!validTypes.includes(typeFilter)) {
     return NextResponse.json({ error: `Invalid type. Use: ${validTypes.join(", ")}` }, { status: 400 });
   }

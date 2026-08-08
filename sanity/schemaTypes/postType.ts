@@ -163,6 +163,7 @@ export const postType = defineType({
           { title: 'Education', value: 'Education' },
           { title: 'Software', value: 'Software' },
           { title: 'App Updates', value: 'App Updates' },
+          { title: 'Milestone', value: 'Milestone' },
           { title: 'Academic', value: 'Academic' },
           { title: 'AI', value: 'AI' },
           { title: 'ERP', value: 'ERP' },
