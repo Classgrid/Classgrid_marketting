@@ -230,3 +230,26 @@
 
 /* Shiki Dual Themes */
 .dark .shiki, .dark .shiki span { color: var(--shiki-dark) !important; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Ask AI - Dynamic Layout Adjustments
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Smoothly collapse the Docs TOC sidebar when Ask AI panel opens */
+.docs-content ~ aside {
+  transition: max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, padding 0.3s, margin 0.3s;
+  max-width: 250px; /* matches w-[250px] in docs-toc.tsx */
+}
+
+body[data-ask-ai-open="true"] .docs-content ~ aside {
+  max-width: 0 !important;
+  min-width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  opacity: 0 !important;
+  border-width: 0 !important;
+  pointer-events: none;
+  overflow: hidden !important; /* Only hide overflow when shrinking/closed so we don't break normal scroll */
+}
