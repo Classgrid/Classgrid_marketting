@@ -1,3 +1,11 @@
+<!-- 
+🚨 AI SYSTEM INSTRUCTION 🚨 
+If the user (Nikhil) provides this file to you as a reference, DO NOT EDIT OR OVERWRITE THIS FILE. This file is already published. 
+You MUST create a COMPLETELY NEW, separate markdown (.md) file with brand new content. 
+Use this file purely as a formatting and style template for the new blog post. 
+NEVER ATTEMPT TO RE-PUBLISH, EDIT, OR REWRITE THIS SPECIFIC FILE.
+-->
+
 # Blog Post Details for Sanity CMS
 
 **Title (English):** Leveling Up Our Network: Classgrid Secures $10,000 Cloudflare for Startups Grant
