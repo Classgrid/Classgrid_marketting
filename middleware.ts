@@ -14,6 +14,11 @@ export async function middleware(request: NextRequest) {
     hostname.startsWith("studio.classgrid.in:");
 
   if (isStudioSubdomain) {
+    // Do not rewrite API routes so NextAuth and webhooks continue to work natively
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.next();
+    }
+
     // studio.classgrid.in/         → /studio
     // studio.classgrid.in/vision   → /studio/vision
     const studioPath = pathname === "/" ? "/studio" : `/studio${pathname}`;

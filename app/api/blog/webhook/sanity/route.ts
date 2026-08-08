@@ -154,6 +154,11 @@ export async function POST(req: Request) {
         token: process.env.SANITY_API_WRITE_TOKEN,
         useCdn: false,
       });
+
+      // Give Sanity Studio UI 2 seconds to finish its "Publishing..." animation 
+      // before we mutate the document behind its back, which avoids the UI freezing.
+      await new Promise(r => setTimeout(r, 2000));
+
       await writeClient.patch(documentId).set({ 
         sendSubscriberNotification: false,
         lastNotificationSentAt: new Date().toISOString()
