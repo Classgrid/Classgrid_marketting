@@ -113,6 +113,7 @@ export const legalPageType = defineType({
                     ],
                   },
                 },
+                { type: "legalTable" },
               ],
               validation: (rule) => rule.required(),
             }),

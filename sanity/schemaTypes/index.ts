@@ -50,6 +50,7 @@ import {
 } from './homePageType'
 import { classgridIntegrationType } from './classgridIntegrationType'
 import { legalPageType } from './legalPageType'
+import { legalTableType } from './legalTableType'
 import { clientLogoType } from './clientLogoType'
 import { homeStatsType } from './homeStatsType'
 
@@ -128,6 +129,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     pricingPageType,
     classgridIntegrationType,
     legalPageType,
+    legalTableType,
 
     aboutValueType,
     aboutTimelineItemType,
