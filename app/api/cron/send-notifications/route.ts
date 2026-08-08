@@ -430,21 +430,26 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
     targetEmails.push(...subscribers);
   }
 
-  // Fetch admin users from MongoDB for ALL updates (Blog, Changelog, and Legal)
-  try {
-    await connectMongo();
-    if (mongoose.connection.db) {
-      const usersCollection = mongoose.connection.db.collection('users');
-      // Fetch ALL users regardless of role
-      const allUsers = await usersCollection.find(
-        {},
-        { projection: { email: 1 } }
-      ).toArray();
-      
-      targetEmails.push(...allUsers.map(u => ({ email: u.email })));
+  // Fetch admin users from MongoDB ONLY for Legal updates
+  if (item.document_type === "legalPage") {
+    try {
+      await connectMongo();
+      if (mongoose.connection.db) {
+        const usersCollection = mongoose.connection.db.collection('users');
+        const forumUsersCollection = mongoose.connection.db.collection('forumusers');
+        
+        // Fetch ALL users from both collections regardless of role
+        const [allUsers, allForumUsers] = await Promise.all([
+          usersCollection.find({}, { projection: { email: 1 } }).toArray(),
+          forumUsersCollection.find({}, { projection: { email: 1 } }).toArray()
+        ]);
+        
+        targetEmails.push(...allUsers.map(u => ({ email: u.email })));
+        targetEmails.push(...allForumUsers.map(u => ({ email: u.email })));
+      }
+    } catch (dbErr) {
+      console.error("Failed to fetch admins from MongoDB:", dbErr);
     }
-  } catch (dbErr) {
-    console.error("Failed to fetch admins from MongoDB:", dbErr);
   }
 
   // Fallback: Always ensure the core founder team receives these notifications,
