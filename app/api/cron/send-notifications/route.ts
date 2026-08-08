@@ -472,8 +472,8 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
 
   // 5. Build subject and send to a BATCH of subscribers
   // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts.
-  // Legal pages through AWS SES can go much faster (14/sec), so we give them a larger batch.
-  const BATCH_SIZE = item.document_type === "legalPage" ? 30 : 25;
+  // With concurrent sending, we can process a much larger batch safely.
+  const BATCH_SIZE = item.document_type === "legalPage" ? 150 : 25;
   const startIndex = alreadySent;
   const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 
@@ -502,79 +502,69 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   let sentCount = 0;
   let failCount = 0;
 
-  for (const sub of batch) {
-    try {
-      const hash = generateUnsubscribeHash(sub.email);
-      const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(sub.email)}&token=${hash}`;
-
-      const mailOptions = {
-        replyTo: supportEmail,
-        to: sub.email,
-        subject,
-        text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
-        html: buildNotificationEmailHtml(resolvedPost, unsubscribeUrl, blogsWithImages, changelogsWithImages),
-      };
-
-      if (item.document_type === "legalPage") {
-        // Legal Pages MUST go through AWS SES
+  // Process the batch in parallel chunks of 10 to stay within rate limits but maximize throughput
+  const CONCURRENCY_LIMIT = 10;
+  for (let i = 0; i < batch.length; i += CONCURRENCY_LIMIT) {
+    const chunk = batch.slice(i, i + CONCURRENCY_LIMIT);
+    await Promise.all(
+      chunk.map(async (sub) => {
         try {
-          await awsSesTransporter.sendMail({
-            ...mailOptions,
-            from: `"Classgrid Legal" <legal@classgrid.in>`,
-          });
-          sentCount++;
-          console.log(`📨 Sent legal update to ${sub.email} via AWS SES`);
-          
-          // AWS SES Rate Limit: 14 emails per second.
-          // 1000ms / 14 = ~71.4ms delay between each email to strictly enforce this.
-          await new Promise(r => setTimeout(r, 72));
-        } catch (sesErr: any) {
-          console.error(`Failed to send legal update to ${sub.email} via AWS SES:`, sesErr?.message);
-          failCount++;
-        }
-      } else {
-        // Blog/Changelog Promotional emails use Brevo/Resend
-        if (!useResendFallback) {
-          // Try Brevo first
-          try {
-            await brevoTransporter.sendMail({
+          const hash = generateUnsubscribeHash(sub.email);
+          const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(sub.email)}&token=${hash}`;
+
+          const mailOptions = {
+            replyTo: supportEmail,
+            to: sub.email,
+            subject,
+            text: `${resolvedPost.resolvedTitle}\n${resolvedPost.resolvedSummary}\n\nRead: ${siteUrl}/${item.document_type === "changelogEntry" ? "changelog" : "blog"}/${resolvedPost.slug}`,
+            html: buildNotificationEmailHtml(resolvedPost, unsubscribeUrl, blogsWithImages, changelogsWithImages),
+          };
+
+          if (item.document_type === "legalPage") {
+            // Legal Pages MUST go through AWS SES
+            await awsSesTransporter.sendMail({
               ...mailOptions,
-              from: `"${senderName}" <${brevoSenderEmail}>`,
+              from: `"Classgrid Legal" <legal@classgrid.in>`,
             });
             sentCount++;
-            continue;
-          } catch (brevoErr: any) {
-            const errMsg = brevoErr?.message || "";
-            // If Brevo hit daily limit (421/529), switch to Resend for remaining emails
-            if (errMsg.includes("421") || errMsg.includes("429") || errMsg.includes("limit") || errMsg.includes("Too many")) {
-              console.log(`⚡ Brevo daily limit reached. Switching to Resend fallback...`);
-              useResendFallback = true;
-            } else {
-              // Non-rate-limit error — log and count as failure
-              console.error(`Failed to send to ${sub.email} via Brevo:`, errMsg);
-              failCount++;
-              continue;
+            console.log(`📨 Sent legal update to ${sub.email} via AWS SES`);
+          } else {
+            // Blog/Changelog Promotional emails use Brevo/Resend
+            if (!useResendFallback) {
+              try {
+                await brevoTransporter.sendMail({
+                  ...mailOptions,
+                  from: `"${senderName}" <${brevoSenderEmail}>`,
+                });
+                sentCount++;
+                return;
+              } catch (brevoErr: any) {
+                const errMsg = brevoErr?.message || "";
+                if (errMsg.includes("421") || errMsg.includes("429") || errMsg.includes("limit") || errMsg.includes("Too many")) {
+                  console.log(`⚡ Brevo daily limit reached. Switching to Resend fallback...`);
+                  useResendFallback = true;
+                } else {
+                  console.error(`Failed to send to ${sub.email} via Brevo:`, errMsg);
+                  failCount++;
+                  return;
+                }
+              }
             }
-          }
-        }
 
-        // Resend fallback
-        try {
-          await resendTransporter.sendMail({
-            ...mailOptions,
-            from: `"${senderName}" <${resendSenderEmail}>`,
-          });
-          sentCount++;
-          console.log(`📨 Sent to ${sub.email} via Resend fallback`);
-        } catch (resendErr: any) {
-          console.error(`Failed to send to ${sub.email} via Resend:`, resendErr?.message);
+            // Resend fallback
+            await resendTransporter.sendMail({
+              ...mailOptions,
+              from: `"${senderName}" <${resendSenderEmail}>`,
+            });
+            sentCount++;
+            console.log(`📨 Sent to ${sub.email} via Resend fallback`);
+          }
+        } catch (err: any) {
+          console.error(`Failed to send to ${sub.email}:`, err?.message || err);
           failCount++;
         }
-      }
-    } catch (emailErr) {
-      console.error(`Failed to send to ${sub.email}:`, emailErr);
-      failCount++;
-    }
+      })
+    );
   }
 
   const totalProcessed = startIndex + sentCount + failCount;
