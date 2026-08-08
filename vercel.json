@@ -6,9 +6,6 @@
     "app/api/sync-embeddings/route.ts": {
       "maxDuration": 10
     },
-    "app/api/cron/send-notifications/route.ts": {
-      "maxDuration": 10
-    },
     "app/api/blog/subscribe/route.ts": {
       "maxDuration": 10
     },
