@@ -275,6 +275,37 @@ export function DocsToc() {
         <div className="shrink-0 mb-6 border-b border-slate-200 dark:border-white/10 pb-6 hidden xl:block">
           <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-3">AI Tools</h4>
           <ul className="space-y-1.5 text-[13px]">
+            <li className="relative group/nav z-[100]">
+              <button className="flex justify-between items-center hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 text-slate-600 cursor-pointer">
+                <div className="flex items-center gap-2.5">
+                  <Copy className="w-4 h-4" />
+                  <span>Copy as Markdown</span>
+                </div>
+                <svg className="w-3.5 h-3.5 text-slate-400 mr-2 opacity-50 group-hover/nav:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div className="absolute right-0 top-full mt-1 w-[260px] rounded-[10px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-200 p-1.5 text-left flex flex-col z-[110]">
+                <button onClick={handleCopyMarkdown} className="flex flex-col text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group/btn">
+                  <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-900 dark:text-white mb-0.5">
+                    {copiedMarkdown ? <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> : <Copy className="w-4 h-4 text-slate-400 group-hover/btn:text-emerald-500" />}
+                    Copy page
+                  </div>
+                  <div className="text-[13px] text-slate-500 pl-6 leading-relaxed">Copy page as Markdown for LLMs</div>
+                </button>
+                <button onClick={() => {
+                  const el = document.getElementById('markdown-content-wrapper');
+                  const content = el?.getAttribute('data-markdown') || el?.textContent || 'No content found.';
+                  const blob = new Blob([content], { type: 'text/markdown' });
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, '_blank');
+                }} className="flex flex-col text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group/btn mt-1">
+                  <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-900 dark:text-white mb-0.5">
+                    <div className="w-4 h-4 rounded-[3px] border border-slate-400 group-hover/btn:border-emerald-500 flex items-center justify-center text-[8px] font-bold text-slate-400 group-hover/btn:text-emerald-500">M↓</div>
+                    View as Markdown
+                  </div>
+                  <div className="text-[13px] text-slate-500 pl-6 leading-relaxed">Open this page as plain text</div>
+                </button>
+              </div>
+            </li>
             <li>
               <button onClick={() => handleCopyAI('ChatGPT')} className="flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors w-full text-left px-2 py-1.5 rounded-md -ml-2 text-slate-600 cursor-pointer">
                 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/images.jpg" alt="ChatGPT" className="w-4 h-4 rounded-full object-cover" />
@@ -292,43 +323,9 @@ export function DocsToc() {
 
         {/* On this page */}
         {headings.length > 0 && (
-          <div className="flex flex-col flex-1 min-h-0 relative">
-            <div className="flex items-center justify-between mb-3 shrink-0 pr-2 relative z-10">
-              <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500">On this page</h4>
-              
-              {/* Copy Page Dropdown */}
-              <div className="relative group">
-                <button className="flex items-center gap-1.5 rounded-[6px] border border-slate-300 dark:border-white/10 px-2 py-1 text-xs font-medium text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                  <Copy className="w-3.5 h-3.5 mr-0.5 text-slate-600 dark:text-zinc-400" />
-                  Copy page
-                  <svg className="w-3 h-3 ml-0.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </button>
-                <div className="absolute right-0 top-full mt-1.5 w-[260px] rounded-[10px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-1.5 text-left flex flex-col z-[100]">
-                  <button onClick={handleCopyMarkdown} className="flex flex-col text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group/btn">
-                    <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-900 dark:text-white mb-0.5">
-                      {copiedMarkdown ? <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> : <Copy className="w-4 h-4 text-slate-400 group-hover/btn:text-emerald-500" />}
-                      Copy page
-                    </div>
-                    <div className="text-[13px] text-slate-500 pl-6 leading-relaxed">Copy page as Markdown for LLMs</div>
-                  </button>
-                  <button onClick={() => {
-                    const el = document.getElementById('markdown-content-wrapper');
-                    const content = el?.getAttribute('data-markdown') || el?.textContent || 'No content found.';
-                    const blob = new Blob([content], { type: 'text/markdown' });
-                    const url = URL.createObjectURL(blob);
-                    window.open(url, '_blank');
-                  }} className="flex flex-col text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group/btn mt-1">
-                    <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-900 dark:text-white mb-0.5">
-                      <div className="w-4 h-4 rounded-[3px] border border-slate-400 group-hover/btn:border-emerald-500 flex items-center justify-center text-[8px] font-bold text-slate-400 group-hover/btn:text-emerald-500">M↓</div>
-                      View as Markdown
-                    </div>
-                    <div className="text-[13px] text-slate-500 pl-6 leading-relaxed">Open this page as plain text</div>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <ul className="space-y-2.5 overflow-y-auto custom-scrollbar pr-2 pb-4 -ml-6 pl-6 relative z-0">
+          <div className="flex flex-col flex-1 min-h-0">
+            <h4 className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-3 shrink-0">On this page</h4>
+            <ul className="space-y-2.5 overflow-y-auto custom-scrollbar pr-2 pb-4 -ml-6 pl-6">
               {headings.map((heading) => (
                 <li id={`toc-item-${heading.id}`} key={heading.id} className={`relative shrink-0 ${heading.level === 3 ? 'pl-4' : ''}`}>
                   {activeId === heading.id && (
