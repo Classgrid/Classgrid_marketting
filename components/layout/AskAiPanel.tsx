@@ -1288,41 +1288,35 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       <div className="flex items-center gap-1">
         {messages.length > 0 && (
           <>
-            <Button
+            <button
               type="button"
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground"
               onClick={handleCopyAll}
               title="Copy entire chat"
             >
               {copiedAll ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
               <span className="sr-only">Copy chat</span>
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-muted-foreground hover:text-red-500"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground"
               onClick={handleClearChat}
               title="Clear chat"
             >
               <Trash2 className="h-4 w-4" />
               <span className="sr-only">Clear chat</span>
-            </Button>
+            </button>
             <div className="mx-1 h-4 w-[1px] bg-border" />
           </>
         )}
-        <Button
+        <button
           type="button"
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-foreground"
           onClick={() => onOpenChange(false)}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close panel</span>
-        </Button>
+        </button>
       </div>
     </div>
   );
