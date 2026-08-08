@@ -10,6 +10,7 @@ NEVER ATTEMPT TO RE-PUBLISH, EDIT, OR REWRITE THIS SPECIFIC FILE.
 
 **Title (English):** Leveling Up Our Network: Classgrid Secures $10,000 Cloudflare for Startups Grant
 **Slug:** `cloudflare-startups-grant-2026`
+**Excerpt:** Classgrid has been awarded $10,000 in infrastructure credits from Cloudflare for Startups, unlocking Enterprise-grade security, routing, and DDoS protection for our schools.
 **Category:** Milestone
 **Tags:** #Cloudflare #Startups #Security #EdTech #Classgrid
 **Send Subscriber Notification:** ON 
@@ -25,7 +26,7 @@ Today, we are thrilled to announce a major leap forward in our infrastructure: *
 
 As part of this highly competitive program, Cloudflare has awarded us a massive **$10,000 in infrastructure credits**, valid for the next 12 months. This grant gives our engineering team the runway to deploy enterprise-grade security and performance features to every single school that uses Classgrid.
 
-> "Subject: 10k in Cloudflare credits! Welcome to Cloudflare for Startups! We're very excited to have you join the program and are here to support you as you rapidly build, deploy, and scale. You have been granted $10,000 in Cloudflare credits, valid for 12 months. You have access to three Enterprise domains. To get more information on product usage, what's included, and more frequently asked questions, please visit our Startups portal. Best, The Cloudflare for Startups Team"
+> "Congratulations! Welcome to Cloudflare for Startups! We're very excited to have you join the program and are here to support you as you rapidly build, deploy, and scale. You have been awarded a $10,000 infrastructure grant to your Cloudflare account. Keep an eye out for more communications from the team including community events, program updates, and more! We can't wait to see what you build. — The Cloudflare for Startups Team"
 
 ### What exactly did we get?
 
