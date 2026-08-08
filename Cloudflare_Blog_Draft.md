@@ -17,18 +17,7 @@ Today, we are thrilled to announce a major leap forward in our infrastructure: *
 
 As part of this highly competitive program, Cloudflare has awarded us a massive **$10,000 in infrastructure credits**, valid for the next 12 months. This grant gives our engineering team the runway to deploy enterprise-grade security and performance features to every single school that uses Classgrid.
 
-> ✉️ **Official Communication from Cloudflare**
-> 
-> **Subject:** 10k in Cloudflare credits!
-> 
-> Welcome to Cloudflare for Startups! We're very excited to have you join the program and are here to support you as you rapidly build, deploy, and scale. 
-> 
-> You have been granted **$10,000 in Cloudflare credits**, valid for 12 months...
-> 
-> You have access to **three Enterprise domains**. To get more information on product usage, what's included, and more frequently asked questions, please visit our Startups portal.
-> 
-> *Best,*
-> *The Cloudflare for Startups Team*
+> "Subject: 10k in Cloudflare credits! Welcome to Cloudflare for Startups! We're very excited to have you join the program and are here to support you as you rapidly build, deploy, and scale. You have been granted $10,000 in Cloudflare credits, valid for 12 months. You have access to three Enterprise domains. To get more information on product usage, what's included, and more frequently asked questions, please visit our Startups portal. Best, The Cloudflare for Startups Team"
 
 ### What exactly did we get?
 

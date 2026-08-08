@@ -158,17 +158,7 @@ export const postType = defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Education', value: 'Education' },
-          { title: 'Software', value: 'Software' },
-          { title: 'App Updates', value: 'App Updates' },
-          { title: 'Milestone', value: 'Milestone' },
-          { title: 'Academic', value: 'Academic' },
-          { title: 'AI', value: 'AI' },
-          { title: 'ERP', value: 'ERP' },
-        ],
-      }
+      description: 'Type any category name you want (e.g., Milestone, App Updates, Funding).'
     }),
     defineField({
       name: 'tags',
