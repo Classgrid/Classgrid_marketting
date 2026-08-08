@@ -103,10 +103,19 @@ export async function POST(req: Request) {
       );
     }
 
-    // 4. Check if sendSubscriberNotification is enabled
     //    Only queue the email if the author explicitly turned the toggle ON
-    const { client: sanityWriteClient } = await import("@/sanity/lib/client");
-    const fullDoc = await sanityWriteClient.fetch(
+    //    We MUST use a fresh client with useCdn: false, otherwise the CDN 
+    //    might return a cached version where the toggle is still OFF!
+    const { createClient } = await import("@sanity/client");
+    const writeClient = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "a4wk6kp5",
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+      apiVersion: "2026-05-01",
+      token: process.env.SANITY_API_WRITE_TOKEN,
+      useCdn: false,
+    });
+
+    const fullDoc = await writeClient.fetch(
       `*[_id == $docId || _id == "drafts." + $docId][0]{ sendSubscriberNotification }`,
       { docId: documentId }
     );
@@ -146,15 +155,6 @@ export async function POST(req: Request) {
 
     // 7. Reset the toggle so it doesn't fire again on next publish
     try {
-      const { createClient } = await import("@sanity/client");
-      const writeClient = createClient({
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "a4wk6kp5",
-        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-        apiVersion: "2026-05-01",
-        token: process.env.SANITY_API_WRITE_TOKEN,
-        useCdn: false,
-      });
-
       // Give Sanity Studio UI 2 seconds to finish its "Publishing..." animation 
       // before we mutate the document behind its back, which avoids the UI freezing.
       await new Promise(r => setTimeout(r, 2000));
