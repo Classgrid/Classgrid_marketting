@@ -544,7 +544,7 @@ export function Navbar({
           ) : (
             <>
               {!isPlatformUser && secondaryLinkLabel?.trim() && secondaryLinkHref?.trim() ? (
-                <Button asChild variant="outline" className="hidden h-9 rounded-lg border-border bg-accent px-4 text-[13px] font-medium tracking-tight text-foreground/90 shadow-sm transition-all duration-200 hover:border-border hover:bg-accent/80 hover:text-foreground lg:inline-flex">
+                <Button asChild variant="outline" className="hidden h-9 rounded-lg border-border bg-accent px-4 text-[13px] font-medium tracking-tight text-foreground/90 shadow-sm transition-all duration-200 hover:border-border hover:bg-accent/80 hover:text-foreground lg:inline-flex hide-when-ask-ai-open">
                   <Link
                     href={secondaryLinkHref}
                     prefetch={false}
