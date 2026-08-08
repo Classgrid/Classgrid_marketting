@@ -1290,7 +1290,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           <>
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground cursor-pointer"
               onClick={handleCopyAll}
               title="Copy entire chat"
             >
@@ -1299,7 +1299,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
             </button>
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground cursor-pointer"
               onClick={handleClearChat}
               title="Clear chat"
             >
@@ -1311,7 +1311,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         )}
         <button
           type="button"
-          className="flex h-8 w-8 items-center justify-center rounded-md text-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-foreground cursor-pointer"
           onClick={() => onOpenChange(false)}
         >
           <X className="h-4 w-4" />
