@@ -238,7 +238,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                     className={`flex items-center transition-colors ${isCopied ? 'text-emerald-500' : 'hover:text-emerald-500'}`}
                   >
                     <Link2 className="w-4 h-4 mr-1.5 shrink-0" />
-                    <span className="w-[65px] text-left block">{isCopied ? "Copied" : "Copy Link"}</span>
+                    <span className="min-w-[75px] whitespace-nowrap text-left block">{isCopied ? "Copied" : "Copy Link"}</span>
                   </button>
                 </div>
               </div>
