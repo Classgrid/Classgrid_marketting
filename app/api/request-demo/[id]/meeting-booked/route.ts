@@ -140,7 +140,7 @@ export async function POST(
     await lead.save();
 
     // Send custom Classgrid confirmation email
-    if (process.env.BREVO_SMTP_HOST) {
+    if (process.env.AWS_SES_SMTP_HOST) {
       try {
         const { getSmtpTransporter, getNoReplyAddress, getSupportEmail } = await import("@/lib/smtp-mailer");
         const { getDemoConfirmationEmailHtml, getAdminDemoNotificationHtml } = await import("@/lib/email-templates");

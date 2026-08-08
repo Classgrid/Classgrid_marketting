@@ -1,9 +1,8 @@
 import nodemailer from "nodemailer";
 
 const REQUIRED_SMTP_ENV = [
-  "BREVO_SMTP_HOST",
-  "BREVO_SMTP_USER",
-  "BREVO_SMTP_PASS",
+  "AWS_SES_SMTP_USER",
+  "AWS_SES_SMTP_PASS",
 ] as const;
 
 function redact(value: string, message: string) {
@@ -16,14 +15,14 @@ export function getSmtpConfig() {
     throw new Error(`Missing SMTP environment variables: ${missing.join(", ")}`);
   }
 
-  const port = Number(process.env.BREVO_SMTP_PORT || 587);
+  const port = Number(process.env.AWS_SES_SMTP_PORT || 587);
 
   return {
-    host: process.env.BREVO_SMTP_HOST!,
+    host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
     port,
     secure: port === 465,
-    user: process.env.BREVO_SMTP_USER!,
-    pass: process.env.BREVO_SMTP_PASS!,
+    user: process.env.AWS_SES_SMTP_USER!,
+    pass: process.env.AWS_SES_SMTP_PASS!,
     senderName: process.env.BREVO_SENDER_NAME || "Classgrid",
     senderEmail: process.env.BREVO_SENDER_EMAIL || "support@classgrid.in",
   };
@@ -85,8 +84,8 @@ export function sanitizeMailerError(error: unknown) {
   };
 
   let message = err?.message || String(error);
-  message = redact(process.env.BREVO_SMTP_PASS || "", message);
-  message = redact(process.env.BREVO_SMTP_USER || "", message);
+  message = redact(process.env.AWS_SES_SMTP_PASS || "", message);
+  message = redact(process.env.AWS_SES_SMTP_USER || "", message);
 
   return {
     code: err?.code,

@@ -19,15 +19,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400, headers: corsHeaders });
     }
 
-    const port = Number(process.env.BREVO_SMTP_PORT || 587);
+    const port = Number(process.env.AWS_SES_SMTP_PORT || 587);
     const transporter = nodemailer.createTransport({
-      host: process.env.BREVO_SMTP_HOST,
+      host: process.env.AWS_SES_SMTP_HOST,
       port,
       secure: port === 465,
       requireTLS: port === 587,
       auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: process.env.BREVO_SMTP_PASS,
+        user: process.env.AWS_SES_SMTP_USER,
+        pass: process.env.AWS_SES_SMTP_PASS,
       },
     });
 

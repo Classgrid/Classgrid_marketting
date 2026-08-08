@@ -54,6 +54,17 @@ const awsSesTransporter = nodemailer.createTransport({
   },
 });
 
+// High-Priority Transactional: AWS SES (For Legal Pages)
+const awsSesTransporter = nodemailer.createTransport({
+  host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
+  port: Number(process.env.AWS_SES_SMTP_PORT) || 587,
+  secure: false,
+  auth: {
+    user: process.env.AWS_SES_SMTP_USER,
+    pass: process.env.AWS_SES_SMTP_PASS,
+  },
+});
+
 // Track which provider to use — starts with Brevo, falls back to Resend
 let useResendFallback = false;
 
@@ -470,9 +481,9 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   }
 
   // 5. Build subject and send to a BATCH of subscribers
-  // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts.
-  // 14 emails/sec * 6.5 seconds = ~90 emails safely per Vercel run.
-  const BATCH_SIZE = item.document_type === "legalPage" ? 90 : 25;
+  // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts (10s max).
+  // Reduced to 40 because fetching from MongoDB adds 2-3 seconds of overhead.
+  const BATCH_SIZE = item.document_type === "legalPage" ? 40 : 25;
   const startIndex = alreadySent;
   const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 

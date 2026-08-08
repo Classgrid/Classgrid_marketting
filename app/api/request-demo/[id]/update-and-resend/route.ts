@@ -62,8 +62,8 @@ export async function PUT(
 
     const lead = updatedLead;
 
-    // Send new OTP via Brevo using existing Classgrid SMTP Mailer
-    if (process.env.BREVO_SMTP_HOST) {
+    // Send new OTP via SES using existing Classgrid SMTP Mailer
+    if (process.env.AWS_SES_SMTP_HOST) {
       try {
         const { getSmtpTransporter, getNoReplyAddress, getSupportEmail } = await import("@/lib/smtp-mailer");
         const { getDemoOtpEmailHtml } = await import("@/lib/email-templates");
