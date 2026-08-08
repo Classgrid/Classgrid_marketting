@@ -472,8 +472,8 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
 
   // 5. Build subject and send to a BATCH of subscribers
   // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts.
-  // With concurrent sending, we can process a much larger batch safely.
-  const BATCH_SIZE = item.document_type === "legalPage" ? 150 : 25;
+  // 14 emails/sec * 6.5 seconds = ~90 emails safely per Vercel run.
+  const BATCH_SIZE = item.document_type === "legalPage" ? 90 : 25;
   const startIndex = alreadySent;
   const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 
@@ -502,8 +502,8 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   let sentCount = 0;
   let failCount = 0;
 
-  // Process the batch in parallel chunks of 10 to stay within rate limits but maximize throughput
-  const CONCURRENCY_LIMIT = 10;
+  // Process the batch in parallel chunks of 7 (for legal) to strictly obey the 14/sec SES limit
+  const CONCURRENCY_LIMIT = item.document_type === "legalPage" ? 7 : 10;
   for (let i = 0; i < batch.length; i += CONCURRENCY_LIMIT) {
     const chunk = batch.slice(i, i + CONCURRENCY_LIMIT);
     await Promise.all(
@@ -565,6 +565,11 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
         }
       })
     );
+
+    // If sending legal updates via SES, pause for 500ms to guarantee we stay under the 14/sec limit
+    if (item.document_type === "legalPage" && i + CONCURRENCY_LIMIT < batch.length) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
   }
 
   const totalProcessed = startIndex + sentCount + failCount;
