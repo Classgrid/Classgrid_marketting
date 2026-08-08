@@ -481,9 +481,9 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   }
 
   // 5. Build subject and send to a BATCH of subscribers
-  // We only send BATCH_SIZE emails per cron invocation to stay under the 10s timeout.
-  // The `alreadySent` offset tells us where to resume from the previous cron run.
-  const BATCH_SIZE = 3;
+  // We only send BATCH_SIZE emails per cron invocation to stay under Vercel timeouts.
+  // Legal pages through AWS SES can go much faster (14/sec), so we give them a larger batch.
+  const BATCH_SIZE = item.document_type === "legalPage" ? 100 : 25;
   const startIndex = alreadySent;
   const batch = uniqueEmails.slice(startIndex, startIndex + BATCH_SIZE);
 
@@ -534,6 +534,10 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
           });
           sentCount++;
           console.log(`📨 Sent legal update to ${sub.email} via AWS SES`);
+          
+          // AWS SES Rate Limit: 14 emails per second.
+          // 1000ms / 14 = ~71.4ms delay between each email to strictly enforce this.
+          await new Promise(r => setTimeout(r, 72));
         } catch (sesErr: any) {
           console.error(`Failed to send legal update to ${sub.email} via AWS SES:`, sesErr?.message);
           failCount++;
