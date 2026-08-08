@@ -14,6 +14,7 @@ import {schema} from './sanity/schemaTypes'
 import {structure, defaultDocumentNode} from './sanity/deskStructure'
 import {SendThankYouEmailAction} from './sanity/actions/sendThankYouEmailAction'
 import {createPublishWithEmailAction} from './sanity/actions/PublishWithEmailAction'
+import {createPublishWithNotificationToast} from './sanity/actions/PublishWithNotificationToast'
 
 export default defineConfig({
   basePath: '/studio',
@@ -30,6 +31,7 @@ export default defineConfig({
   document: {
     // Add the Send Thank You Email button to the communityReview document actions, and wrap the publish action
     actions: (prev, { schemaType }) => {
+      // 1. Community Review Action
       if (schemaType === 'communityReview') {
         const customizedActions = prev.map((originalAction) => {
           if (originalAction.action === 'publish') {
@@ -39,6 +41,17 @@ export default defineConfig({
         })
         return [...customizedActions, SendThankYouEmailAction]
       }
+
+      // 2. Email Notification Toast Action for Blogs, Changelogs, Legal Pages
+      if (['post', 'changelogEntry', 'legalPage'].includes(schemaType)) {
+        return prev.map((originalAction) => {
+          if (originalAction.action === 'publish') {
+            return createPublishWithNotificationToast(originalAction)
+          }
+          return originalAction
+        })
+      }
+
       return prev
     },
   },

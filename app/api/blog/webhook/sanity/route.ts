@@ -160,10 +160,9 @@ export async function POST(req: Request) {
       await new Promise(r => setTimeout(r, 2000));
 
       await writeClient.patch(documentId).set({ 
-        sendSubscriberNotification: false,
-        lastNotificationSentAt: new Date().toISOString()
+        sendSubscriberNotification: false
       }).commit();
-      console.log(`🔄 Reset sendSubscriberNotification and updated lastNotificationSentAt for "${slug}"`);
+      console.log(`🔄 Reset sendSubscriberNotification for "${slug}"`);
     } catch (resetErr) {
       console.warn("⚠️ Could not reset notification toggle:", resetErr);
     }
