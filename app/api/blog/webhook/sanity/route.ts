@@ -161,6 +161,7 @@ export async function POST(req: Request) {
 
       await writeClient.patch(documentId).set({ 
         sendSubscriberNotification: false,
+        emailSentSuccessfully: true,
         lastNotificationSentAt: new Date().toISOString()
       }).commit();
       console.log(`🔄 Reset sendSubscriberNotification and updated lastNotificationSentAt for "${slug}"`);

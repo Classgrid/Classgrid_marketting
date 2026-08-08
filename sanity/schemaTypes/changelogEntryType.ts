@@ -56,10 +56,18 @@ export const changelogEntryType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'sendSubscriberNotification',
-      title: '📧 Send Subscriber Notification',
-      description: 'Turn this ON to send an email to all subscribers when you publish. After the email is sent, this resets automatically. If OFF, publishing will NOT trigger any email.',
-      type: 'boolean',
+      name: "sendSubscriberNotification",
+      title: "📧 Send Subscriber Notification",
+      description: "Turn this ON to send an email to all subscribers when you publish. After the email is queued, this will automatically reset.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "emailSentSuccessfully",
+      title: "Email Sent Successfully",
+      description: "Automatically turns ON when the webhook successfully queues the email.",
+      type: "boolean",
+      readOnly: true,
       initialValue: false,
     }),
     defineField({
