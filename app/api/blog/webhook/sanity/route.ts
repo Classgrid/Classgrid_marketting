@@ -154,8 +154,11 @@ export async function POST(req: Request) {
         token: process.env.SANITY_API_WRITE_TOKEN,
         useCdn: false,
       });
-      await writeClient.patch(documentId).set({ sendSubscriberNotification: false }).commit();
-      console.log(`🔄 Reset sendSubscriberNotification for "${slug}"`);
+      await writeClient.patch(documentId).set({ 
+        sendSubscriberNotification: false,
+        lastNotificationSentAt: new Date().toISOString()
+      }).commit();
+      console.log(`🔄 Reset sendSubscriberNotification and updated lastNotificationSentAt for "${slug}"`);
     } catch (resetErr) {
       console.warn("⚠️ Could not reset notification toggle:", resetErr);
     }

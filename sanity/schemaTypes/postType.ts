@@ -161,6 +161,13 @@ export const postType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'lastNotificationSentAt',
+      title: 'Last Email Notification Sent',
+      description: 'Automatically updated when an email is successfully queued to be sent to subscribers.',
+      type: 'datetime',
+      readOnly: true,
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',

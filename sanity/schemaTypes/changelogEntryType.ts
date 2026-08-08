@@ -63,6 +63,13 @@ export const changelogEntryType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'lastNotificationSentAt',
+      title: 'Last Email Notification Sent',
+      description: 'Automatically updated when an email is successfully queued to be sent to subscribers.',
+      type: 'datetime',
+      readOnly: true,
+    }),
+    defineField({
       name: "updateType",
       title: "Update Type",
       type: "string",
