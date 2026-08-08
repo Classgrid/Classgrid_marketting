@@ -303,8 +303,8 @@ ${metaLine ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transf
 <a href="${escapeHtml(itemUrl)}" style="background:#34d399;color:#000;padding:14px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;">${escapeHtml(ctaLabel)}</a>
 </div>
 
-${renderRecentBlogs(recentBlogs, siteUrl)}
-${renderRecentChangelogs(recentChangelogs, siteUrl)}
+${isLegalPage ? "" : renderRecentBlogs(recentBlogs, siteUrl)}
+${isLegalPage ? "" : renderRecentChangelogs(recentChangelogs, siteUrl)}
 
 <div style="margin-top:40px;padding-top:20px;border-top:1px solid #eaeaea;text-align:center;">
   <p style="color:#111111;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
