@@ -306,6 +306,7 @@ ${metaLine ? `<p style="color:#6b7280;font-size:12px;margin:0 0 20px;text-transf
 ${isLegalPage ? "" : renderRecentBlogs(recentBlogs, siteUrl)}
 ${isLegalPage ? "" : renderRecentChangelogs(recentChangelogs, siteUrl)}
 
+${isLegalPage ? "" : `
 <div style="margin-top:40px;padding-top:20px;border-top:1px solid #eaeaea;text-align:center;">
   <p style="color:#111111;font-size:14px;font-weight:600;margin-bottom:16px;">Follow us for more updates</p>
   <div style="display:inline-block;">
@@ -320,14 +321,19 @@ ${isLegalPage ? "" : renderRecentChangelogs(recentChangelogs, siteUrl)}
     </a>
   </div>
 </div>
+`}
 
 
 </td>
 </tr>
 <tr>
 <td style="padding:20px;text-align:center;border-top:1px solid #eaeaea;color:#9ca3af;font-size:12px;">
+${isLegalPage ? `
+<p style="margin-bottom:12px;color:#9ca3af;font-size:11px;">This is a mandatory legal notice. You cannot unsubscribe from important policy updates regarding your use of the Services.</p>
+` : `
 <p style="margin-bottom:8px;color:#9ca3af;font-size:12px;">You received this because you subscribed to Classgrid Updates.</p>
 <p style="margin-bottom:12px;"><a href="${escapeHtml(unsubscribeUrl)}" style="color:#6b7280;text-decoration:underline;font-size:11px;">Unsubscribe from these emails</a></p>
+`}
 &copy; ${currentYear} Classgrid. All rights reserved.
 </td>
 </tr>
