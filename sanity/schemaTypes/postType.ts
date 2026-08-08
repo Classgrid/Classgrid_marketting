@@ -161,14 +161,6 @@ export const postType = defineType({
       initialValue: false,
     }),
     defineField({
-      name: "emailSentSuccessfully",
-      title: "Email Sent Successfully",
-      description: "Automatically turns ON when the webhook successfully queues the email.",
-      type: "boolean",
-      readOnly: true,
-      initialValue: false,
-    }),
-    defineField({
       name: "lastNotificationSentAt",
       title: 'Last Email Notification Sent',
       description: 'Automatically updated when an email is successfully queued to be sent to subscribers.',
