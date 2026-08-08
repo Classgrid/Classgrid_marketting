@@ -211,13 +211,13 @@ function buildNotificationEmailHtml(
       })();
   let summary = post.resolvedSummary;
   let ctaLabel = "Read Blog";
-  let eyebrow = "A new insight from Classgrid";
+  let eyebrow = "";
   let legalSubject = "";
   
   if (isChangelog) {
-    summary = post.resolvedSummary || "We just published a new product update. Click below to view the full changelog entry.";
+    summary = post.resolvedSummary || "We just published a new update. Click below to read the full entry.";
     ctaLabel = "View Product Update";
-    eyebrow = "New product update from Classgrid";
+    eyebrow = "";
   } else if (isLegalPage) {
     const effectiveDateStr = post._updatedAt ? formatDate(post._updatedAt) : "immediately";
     const changeSummary = post.resolvedSummary || "Important updates to our legal terms and policies.";
@@ -260,9 +260,9 @@ function buildNotificationEmailHtml(
         ctaLabel = "Review Policy";
     }
   } else {
-    summary = post.resolvedSummary || "We just published a new article on our blog. Click below to read the full post.";
+    summary = post.resolvedSummary || "We just published a new update. Click below to read the full post.";
     ctaLabel = "Read Blog";
-    eyebrow = "A new insight from Classgrid";
+    eyebrow = "";
   }
 
   return `<!DOCTYPE html>
@@ -290,7 +290,7 @@ function buildNotificationEmailHtml(
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
 <h1 style="color:#111111;margin:0;font-size:22px;">New from Classgrid</h1>
-<p style="color:#6b7280;margin-top:8px;font-size:13px;">${escapeHtml(eyebrow)}</p>
+${eyebrow ? `<p style="color:#6b7280;margin-top:8px;font-size:13px;">${escapeHtml(eyebrow)}</p>` : ""}
 </td>
 </tr>
 <tr>
@@ -386,11 +386,11 @@ async function processQueueItem(item: QueueItem, alreadySent: number = 0): Promi
   let resolvedPost: any = { ...publishedDocument };
   if (item.document_type === "post") {
     resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Blog Post");
-    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.excerpt, "New article from Classgrid."), 220);
+    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.excerpt, "New from Classgrid."), 220);
     resolvedPost.coverImage = resolveImageUrl(publishedDocument.coverImage, 600);
   } else if (item.document_type === "changelogEntry") {
     resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Product Update");
-    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.summary, "New Classgrid product update."), 220);
+    resolvedPost.resolvedSummary = truncateText(getLocalizedString(publishedDocument.summary, "New from Classgrid."), 220);
     resolvedPost.coverImage = resolveImageUrl(publishedDocument.image, 600);
   } else if (item.document_type === "legalPage") {
     resolvedPost.resolvedTitle = getLocalizedString(publishedDocument.title, "Legal Update");
