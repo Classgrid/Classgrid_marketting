@@ -9,3 +9,8 @@
 - **CRITICAL:** The tenant/institutional application (student portals, admin dashboards, college templates) lives in a completely separate repository. 
 - Do not attempt to build core tenant platform features in this repository.
 - Legacy tenant pages (e.g., `college_website`) MUST remain strictly blocked from public access via the `redirects` configuration in `next.config.ts`.
+
+## 3. Blog Post Creation Rules
+- **CRITICAL:** If Nikhil shows you an old/published blog draft file (like `AWS_Blog_Draft.md` or `Cloudflare_Blog_Draft.md`), he is doing so **ONLY** as a style/formatting reference.
+- **NEVER** edit, overwrite, or rewrite the old blog post files. 
+- You MUST create a completely separate, new Markdown (`.md`) file for the new blog draft. Use the old file *only* as a template for structure and CMS formatting. Write highly original content inside the new `.md` file.
