@@ -7,6 +7,7 @@ import ForumUser from "@/lib/models/ForumUser";
 import ForumOTP from "@/lib/models/ForumOTP";
 import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
+import { Resend } from "resend";
 import { getNoAccountSignInAttemptHtml } from "./email-templates";
 import { headers } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
@@ -211,19 +212,18 @@ export const authOptions: NextAuthOptions = {
 
           const html = getNoAccountSignInAttemptHtml(user.email, { device });
           
-          // Fire and forget using AWS SES
-          if (process.env.AWS_SES_SMTP_HOST) {
-            import("@/lib/smtp-mailer").then(({ getSmtpTransporter }) => {
-              getSmtpTransporter().sendMail({
-                from: '"Classgrid Notifications" <notification@updates.classgrid.in>',
-                to: user.email,
-                bcc: "nikhilsubsun123@gmail.com",
-                subject: "Login attempt",
-                html,
-              }).catch(err => console.error("[NextAuth] Failed to send no-account email via SES:", err));
-            });
+          // Fire and forget using Resend (only if API key is provided)
+          if (process.env.RESEND_API_KEY) {
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            resend.emails.send({
+              from: "Classgrid Notifications <notification@updates.classgrid.in>",
+              to: user.email,
+              bcc: "nikhilsubsun123@gmail.com",
+              subject: "Login attempt",
+              html,
+            }).catch(err => console.error("[NextAuth] Failed to send no-account email via Resend:", err));
           } else {
-            console.warn("[NextAuth] AWS_SES_SMTP_HOST is missing. Skipping no-account email for:", user.email);
+            console.warn("[NextAuth] RESEND_API_KEY is missing. Skipping no-account email for:", user.email);
           }
         }
       }
