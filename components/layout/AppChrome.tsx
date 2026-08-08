@@ -235,7 +235,9 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         contactEmail={chromeContent?.contactEmail}
         socialLinks={chromeContent?.footerSocialLinks}
       />
-      <div className="relative flex min-h-screen flex-col">
+      <div className="flex min-h-screen">
+        {/* ── Page column: normal document flow, shrinks when AI sidebar opens ── */}
+        <div className="relative flex min-w-0 flex-1 flex-col">
         <GlobalScrollProgress />
         <Suspense fallback={null}>
           <Navbar
@@ -285,11 +287,14 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
           />
         </Suspense>
         )}
+        </div>
+
+        {/* ── AI Sidebar: sticky in-flow flex sibling (desktop only) ── */}
         <AskAiPanel open={askAiOpen} onOpenChange={setAskAiOpen} pageContext={pageContext} />
-        {isDocsRoute && (
-          <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
-        )}
       </div>
+      {isDocsRoute && (
+        <DocsSearchPalette open={docsSearchOpen} onOpenChange={setDocsSearchOpen} />
+      )}
     </>
   );
 }

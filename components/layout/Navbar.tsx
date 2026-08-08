@@ -291,7 +291,7 @@ export function Navbar({
                     />
                   ) : null}
                   {brandName ? (
-                    <span className="hidden sm:inline text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-foreground/80">
+                    <span className="hidden sm:inline text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-foreground/80 hide-when-ask-ai-open">
                       {brandName}
                     </span>
                   ) : null}
@@ -344,7 +344,8 @@ export function Navbar({
                     className={cn(
                       'h-9 inline-flex items-center rounded-lg px-3 text-sm font-medium tracking-tight transition-all duration-200',
                       'text-foreground/70 hover:bg-accent hover:text-foreground',
-                      isActive && 'bg-accent text-foreground shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]'
+                      isActive && 'bg-accent text-foreground shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]',
+                      (item.label === 'API Reference' || item.label === 'Changelog') && 'hide-when-ask-ai-open'
                     )}
                   >
                     {item.label}
@@ -452,8 +453,12 @@ export function Navbar({
 
                     if (!item.href?.trim()) return null;
 
+                    if (item.label === 'API Reference') return null;
+
                     return (
-                      <NavigationMenuItem key={`${item.label}-${idx}`}>
+                      <NavigationMenuItem 
+                        key={`${item.label}-${idx}`}
+                      >
                         <NavigationMenuLink
                           className={cn(
                             navigationMenuTriggerStyle(),
@@ -508,7 +513,7 @@ export function Navbar({
             <>
           {/* Ask AI button */}
           {typeof onAskAiClick === "function" ? (
-            <div className="relative inline-flex">
+            <div className="relative inline-flex hide-when-ask-ai-open">
               <Button
                 type="button"
                 variant="outline"

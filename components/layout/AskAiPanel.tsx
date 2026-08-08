@@ -918,7 +918,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !isMobile) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -926,7 +926,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     return () => {
       document.body.style.overflow = previousOverflow || "auto";
     };
-  }, [open]);
+  }, [open, isMobile]);
 
   const userScrolledUpRef = useRef(false);
   const prevMessageCountRef = useRef(0);
@@ -1277,10 +1277,314 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
     void askQuestion(input);
   }
 
+  // ─── Panel content (shared between desktop sidebar and mobile bottom-sheet) ───
+  const panelHeader = (
+    <div className="flex items-center justify-between border-b border-border px-4 py-4">
+      <div className="flex items-center gap-2">
+        <Bot className="h-4 w-4 text-emerald-500" />
+        <p className="text-sm font-semibold text-foreground">Ask AI</p>
+      </div>
+      <div className="flex items-center gap-1">
+        {messages.length > 0 && (
+          <>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              onClick={handleCopyAll}
+              title="Copy entire chat"
+            >
+              {copiedAll ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+              <span className="sr-only">Copy chat</span>
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-muted-foreground hover:text-red-500"
+              onClick={handleClearChat}
+              title="Clear chat"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">Clear chat</span>
+            </Button>
+            <div className="mx-1 h-4 w-[1px] bg-border" />
+          </>
+        )}
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8"
+          onClick={() => onOpenChange(false)}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close panel</span>
+        </Button>
+      </div>
+    </div>
+  );
+
+  const panelChat = (
+    <div ref={chatScrollRef} className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:thin]">
+      <div className="flex flex-col gap-4 px-4 py-4">
+        {emptyState ? (
+          <>
+            <div className="rounded-2xl border border-border bg-card px-4 py-3">
+              <p className="text-sm text-muted-foreground">
+                {session?.user?.name ? (
+                  <span className="mb-1 block font-medium text-foreground">
+                    Hi, {session.user.name.split(" ")[0]} 👋
+                  </span>
+                ) : null}
+                {pageContext?.title
+                  ? `Ask about ${pageContext.title}, Classgrid features, pricing, demos, or support.`
+                  : "Ask anything about Classgrid features, pricing, website capabilities, demo process, or support."}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {suggestedQuestions.map((question) => (
+                <Button
+                  key={question}
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start rounded-2xl border-border bg-card/40 px-4 py-3 text-left text-sm text-muted-foreground hover:text-foreground"
+                  onClick={() => void askQuestion(question)}
+                >
+                  <Sparkles className="mr-2 h-4 w-4 text-emerald-500" />
+                  {question}
+                </Button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            {messages.map((message) => {
+              const isUser = message.role === "user";
+
+              return (
+                <motion.div
+                  key={message.id}
+                  initial={prefersReducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.16 }}
+                  className={cn(
+                    "flex items-end gap-2",
+                    isUser ? "justify-end" : "justify-start"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex h-8 w-8 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                      isUser
+                        ? "order-2 bg-muted text-muted-foreground"
+                        : "hidden"
+                    )}
+                  >
+                    {isUser ? (
+                      (session?.user as any)?.image ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={(session.user as any).image} alt="User" className="h-full w-full object-cover" />
+                      ) : userInitial ? userInitial : <UserRound className="h-4 w-4" />
+                    ) : null}
+                  </div>
+
+                  <div
+                    className={cn(
+                      "relative transition-colors",
+                      isUser
+                        ? "order-1 max-w-[75%] rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
+                        : "order-2 w-full max-w-full bg-transparent text-foreground"
+                    )}
+                  >
+                    {isUser && (
+                      <svg
+                        width="8"
+                        height="12"
+                        viewBox="0 0 8 12"
+                        fill="currentColor"
+                        className="absolute bottom-0 -right-1.5 text-foreground"
+                      >
+                        <path d="M0 0V12H8C5 12 2 9 0 0Z" />
+                      </svg>
+                    )}
+                    {isUser ? (
+                      <>
+                        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
+                        {message.contextUrl && (
+                          <a
+                            href={message.contextUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-300 dark:text-sky-300 hover:text-sky-200 transition-opacity relative z-10"
+                          >
+                            <FileText className="h-3 w-3" />
+                            <span className="underline underline-offset-2 truncate max-w-[200px]">
+                              {message.contextTitle || message.contextUrl}
+                            </span>
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
+                    )}
+                    {!isUser && !message.typing && message.content.length > 0 && (
+                      <div className="pl-1 mt-3">
+                        <MessageActions content={message.content} messageId={message.id} />
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+
+            <AnimatePresence>
+              {thinking ? (
+                <motion.div
+                  key="thinking-state"
+                  initial={prefersReducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2 }}
+                  className="flex items-end gap-2"
+                >
+                  <div className="pl-1">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{thinkingLabel}</span>
+                      {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
+                        <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
+                      ) : (
+                        <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  const panelInput = (
+    <div className="border-t border-border px-4 py-4">
+      {isTerminated ? (
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-sm font-medium text-red-500">
+          <p>This conversation has been terminated.</p>
+          {countdown && (
+            <p className="mt-1 text-xs text-red-400">
+              Access resumes in: <span className="font-mono font-bold">{countdown}</span>
+            </p>
+          )}
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
+            {pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath && (
+              <div className="px-3 pt-3 pb-0">
+                <div className="group relative inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 pr-8 shadow-sm max-w-[95%]">
+                  <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0.5">
+                    <span className="text-[12px] font-semibold text-foreground truncate leading-tight">
+                      {pageContext.title || "Introduction"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/80 truncate leading-tight">
+                      https://classgrid.in{pageContext.path}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setLastSentDocsPath(pageContext.path!)}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
+                    title="Remove page context"
+                  >
+                    <X className="h-3 w-3" />
+                    <span className="sr-only">Remove context</span>
+                  </button>
+                </div>
+              </div>
+            )}
+            <textarea
+              id="ask-ai-input"
+              name="askAiQuestion"
+              suppressHydrationWarning
+              ref={inputRef as any}
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (canSubmit) void askQuestion(input);
+                }
+              }}
+              placeholder="Ask a question..."
+              autoComplete="off"
+              className={cn(
+                "min-h-[120px] max-h-[240px] w-full resize-none bg-transparent pb-12 pl-4 pr-12 text-sm text-foreground focus:outline-none overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors",
+                pageContext?.path?.startsWith("/docs") ? "pt-3" : "pt-4 rounded-2xl"
+              )}
+            />
+            {isGenerating ? (
+              <Button
+                type="button"
+                variant="primary"
+                onClick={handleStop}
+                className="!absolute !bottom-3 !right-3 !top-auto h-8 rounded-full bg-foreground text-background hover:bg-foreground/90 px-3 text-[11px] font-medium shadow-sm transition-all active:scale-95"
+                title="Stop generating"
+              >
+                <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
+                Stop
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant="primary"
+                size="icon"
+                disabled={!canSubmit}
+                className="!absolute !bottom-3 !right-3 !top-auto h-8 w-8 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-all shadow-sm"
+              >
+                <ArrowUp className="h-4 w-4" />
+                <span className="sr-only">Send question</span>
+              </Button>
+            )}
+          </div>
+        </form>
+      )}
+
+    </div>
+  );
+
   return (
     <>
+      {/* ══════════════════════════════════════════════════════════
+          DESKTOP: Sticky in-flow sidebar (hidden on mobile)
+          ══════════════════════════════════════════════════════════ */}
+      <div
+        className={cn(
+          "hidden sm:block shrink-0 overflow-hidden sticky top-0 h-[100dvh]",
+          "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          prefersReducedMotion && "!duration-0",
+          open ? "w-[400px]" : "w-0"
+        )}
+      >
+        <aside
+          className="h-[100dvh] w-[400px] flex flex-col border-l border-border bg-background"
+          aria-hidden={!open}
+        >
+          {panelHeader}
+          {panelChat}
+          {panelInput}
+        </aside>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
+          MOBILE: Fixed bottom-sheet (unchanged from production)
+          ══════════════════════════════════════════════════════════ */}
       <AnimatePresence>
-        {open ? (
+        {open && isMobile ? (
           <motion.button
             key="ask-ai-overlay"
             type="button"
@@ -1295,297 +1599,28 @@ export function AskAiPanel({ open, onOpenChange, pageContext }: AskAiPanelProps)
         ) : null}
       </AnimatePresence>
 
-      <motion.aside
-        aria-hidden={!open}
-        className={cn(
-          "fixed z-[120] flex flex-col border-border bg-background shadow-2xl",
-          // Mobile: full-screen bottom sheet
-          "inset-x-0 bottom-0 h-[100dvh] w-full border-t sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:h-full sm:w-[400px] sm:border-l sm:border-t-0",
-          open ? "pointer-events-auto" : "pointer-events-none"
-        )}
-        initial={false}
-        animate={
-          open
-            ? { y: 0, x: 0, opacity: 1 }
-            : isMobile
-              ? { y: "100%", x: 0, opacity: 0 }
-              : { y: 0, x: "100%", opacity: 0 }
-        }
-        transition={prefersReducedMotion ? { duration: 0 } : panelTransition}
-      >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4">
-          <div className="flex items-center gap-2">
-            <Bot className="h-4 w-4 text-emerald-500" />
-            <p className="text-sm font-semibold text-foreground">Ask AI</p>
-          </div>
-          <div className="flex items-center gap-1">
-            {messages.length > 0 && (
-              <>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  onClick={handleCopyAll}
-                  title="Copy entire chat"
-                >
-                  {copiedAll ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                  <span className="sr-only">Copy chat</span>
-                </Button>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8 text-muted-foreground hover:text-red-500"
-                  onClick={handleClearChat}
-                  title="Clear chat"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Clear chat</span>
-                </Button>
-                <div className="mx-1 h-4 w-[1px] bg-border" />
-              </>
-            )}
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close panel</span>
-            </Button>
-          </div>
-        </div>
-
-        <div ref={chatScrollRef} className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:thin]">
-          <div className="flex flex-col gap-4 px-4 py-4">
-            {emptyState ? (
-              <>
-                <div className="rounded-2xl border border-border bg-card px-4 py-3">
-                  <p className="text-sm text-muted-foreground">
-                    {session?.user?.name ? (
-                      <span className="mb-1 block font-medium text-foreground">
-                        Hi, {session.user.name.split(" ")[0]} 👋
-                      </span>
-                    ) : null}
-                    {pageContext?.title
-                      ? `Ask about ${pageContext.title}, Classgrid features, pricing, demos, or support.`
-                      : "Ask anything about Classgrid features, pricing, website capabilities, demo process, or support."}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  {suggestedQuestions.map((question) => (
-                    <Button
-                      key={question}
-                      type="button"
-                      variant="outline"
-                      className="w-full justify-start rounded-2xl border-border bg-card/40 px-4 py-3 text-left text-sm text-muted-foreground hover:text-foreground"
-                      onClick={() => void askQuestion(question)}
-                    >
-                      <Sparkles className="mr-2 h-4 w-4 text-emerald-500" />
-                      {question}
-                    </Button>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                {messages.map((message) => {
-                  const isUser = message.role === "user";
-
-                  return (
-                    <motion.div
-                      key={message.id}
-                      initial={prefersReducedMotion ? false : { opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.16 }}
-                      className={cn(
-                        "flex items-end gap-2",
-                        isUser ? "justify-end" : "justify-start"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "flex h-8 w-8 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                          isUser
-                            ? "order-2 bg-muted text-muted-foreground"
-                            : "hidden"
-                        )}
-                      >
-                        {isUser ? (
-                          (session?.user as any)?.image ? (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={(session.user as any).image} alt="User" className="h-full w-full object-cover" />
-                          ) : userInitial ? userInitial : <UserRound className="h-4 w-4" />
-                        ) : null}
-                      </div>
-
-                      <div
-                        className={cn(
-                          "relative transition-colors",
-                          isUser
-                            ? "order-1 max-w-[75%] rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
-                            : "order-2 w-full max-w-full bg-transparent text-foreground"
-                        )}
-                      >
-                        {isUser && (
-                          <svg
-                            width="8"
-                            height="12"
-                            viewBox="0 0 8 12"
-                            fill="currentColor"
-                            className="absolute bottom-0 -right-1.5 text-foreground"
-                          >
-                            <path d="M0 0V12H8C5 12 2 9 0 0Z" />
-                          </svg>
-                        )}
-                        {isUser ? (
-                          <>
-                            <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
-                            {message.contextUrl && (
-                              <a
-                                href={message.contextUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-300 dark:text-sky-300 hover:text-sky-200 transition-opacity relative z-10"
-                              >
-                                <FileText className="h-3 w-3" />
-                                <span className="underline underline-offset-2 truncate max-w-[200px]">
-                                  {message.contextTitle || message.contextUrl}
-                                </span>
-                              </a>
-                            )}
-                          </>
-                        ) : (
-                          <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
-                        )}
-                        {!isUser && !message.typing && message.content.length > 0 && (
-                          <div className="pl-1 mt-3">
-                            <MessageActions content={message.content} messageId={message.id} />
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-
-                <AnimatePresence>
-                  {thinking ? (
-                    <motion.div
-                      key="thinking-state"
-                      initial={prefersReducedMotion ? false : { opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2 }}
-                      className="flex items-end gap-2"
-                    >
-                      <div className="pl-1">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{thinkingLabel}</span>
-                          {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
-                            <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
-                          ) : (
-                            <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="border-t border-border px-4 py-4">
-          {isTerminated ? (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-sm font-medium text-red-500">
-              <p>This conversation has been terminated.</p>
-              {countdown && (
-                <p className="mt-1 text-xs text-red-400">
-                  Access resumes in: <span className="font-mono font-bold">{countdown}</span>
-                </p>
-              )}
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-2">
-              <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
-                {pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath && (
-                  <div className="px-3 pt-3 pb-0">
-                    <div className="group relative inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 pr-8 shadow-sm max-w-[95%]">
-                      <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0.5">
-                        <span className="text-[12px] font-semibold text-foreground truncate leading-tight">
-                          {pageContext.title || "Introduction"}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground/80 truncate leading-tight">
-                          https://classgrid.in{pageContext.path}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setLastSentDocsPath(pageContext.path!)}
-                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
-                        title="Remove page context"
-                      >
-                        <X className="h-3 w-3" />
-                        <span className="sr-only">Remove context</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <textarea
-                  id="ask-ai-input"
-                  name="askAiQuestion"
-                  suppressHydrationWarning
-                  ref={inputRef as any}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      if (canSubmit) void askQuestion(input);
-                    }
-                  }}
-                  placeholder="Ask a question..."
-                  autoComplete="off"
-                  className={cn(
-                    "min-h-[120px] max-h-[240px] w-full resize-none bg-transparent pb-12 pl-4 pr-12 text-sm text-foreground focus:outline-none overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors",
-                    pageContext?.path?.startsWith("/docs") ? "pt-3" : "pt-4 rounded-2xl"
-                  )}
-                />
-                {isGenerating ? (
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={handleStop}
-                    className="!absolute !bottom-3 !right-3 !top-auto h-8 rounded-full bg-foreground text-background hover:bg-foreground/90 px-3 text-[11px] font-medium shadow-sm transition-all active:scale-95"
-                    title="Stop generating"
-                  >
-                    <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
-                    Stop
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="icon"
-                    disabled={!canSubmit}
-                    className="!absolute !bottom-3 !right-3 !top-auto h-8 w-8 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-all shadow-sm"
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                    <span className="sr-only">Send question</span>
-                  </Button>
-                )}
-              </div>
-            </form>
+      {isMobile && (
+        <motion.aside
+          aria-hidden={!open}
+          className={cn(
+            "fixed z-[120] flex flex-col border-border bg-background shadow-2xl sm:hidden",
+            "inset-x-0 bottom-0 h-[100dvh] w-full border-t",
+            open ? "pointer-events-auto" : "pointer-events-none"
           )}
-
-        </div>
-      </motion.aside>
+          initial={false}
+          animate={
+            open
+              ? { y: 0, opacity: 1 }
+              : { y: "100%", opacity: 0 }
+          }
+          transition={prefersReducedMotion ? { duration: 0 } : panelTransition}
+        >
+          {panelHeader}
+          {panelChat}
+          {panelInput}
+        </motion.aside>
+      )}
     </>
   );
 }
+
