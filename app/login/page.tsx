@@ -13,7 +13,7 @@ const OTP_TTL_SECONDS = 60;
 /** Map NextAuth URL error codes to user-friendly messages */
 const OAUTH_ERROR_MAP: Record<string, string> = {
   OAuthCallback: "Sign-in was interrupted. Please try again.",
-  OAuthAccountNotLinked: "Access Denied: You must log in with the exact email address that you are trying to unsubscribe.",
+  OAuthAccountNotLinked: "Access Denied: You must log in with the exact email address associated with the unsubscribe link you clicked.",
   OAuthSignin: "Could not start the sign-in flow. Please try again.",
   OAuthCreateAccount: "Could not create your account. Please try again.",
   Callback: "Something went wrong during sign-in. Please try again.",
