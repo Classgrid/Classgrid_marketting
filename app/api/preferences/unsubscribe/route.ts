@@ -20,11 +20,10 @@
 // This flow took 15+ hours to design and build. Do not break it.
 // ⚠️ ============================================================
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { decryptEmail } from "@/lib/crypto";
 
 
 export async function GET(req: NextRequest) {
@@ -36,7 +35,14 @@ export async function GET(req: NextRequest) {
     const token = req.nextUrl.searchParams.get("token");
     let targetEmail = "";
     if (token) {
-      targetEmail = decryptEmail(token) || "";
+      const { data: subscriber } = await supabaseAdmin
+        .from("blog_subscribers")
+        .select("email")
+        .eq("unsubscribe_token", token)
+        .maybeSingle();
+      if (subscriber && subscriber.email) {
+        targetEmail = subscriber.email;
+      }
     }
 
     if (!email) {

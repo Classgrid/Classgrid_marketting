@@ -262,8 +262,14 @@ export async function POST(req: Request) {
         .maybeSingle();
   
       let isExistingSubscriberUpgrade = false;
+      let unsubscribeToken = "";
 
       if (existingSub) {
+        unsubscribeToken = existingSub.unsubscribe_token;
+        if (!unsubscribeToken) {
+           unsubscribeToken = crypto.randomBytes(16).toString('hex');
+        }
+
         const isSubscribedToType = type === "changelog" ? existingSub.receives_changelog !== false : existingSub.receives_blog !== false;
         if (isSubscribedToType) {
           return NextResponse.json(
@@ -274,7 +280,8 @@ export async function POST(req: Request) {
         
         let updatePayload: Record<string, any> = { 
           updated_at: new Date().toISOString(),
-          receives_legal: true // Legal is mandatory/implied for active subscribers
+          receives_legal: true,
+          unsubscribe_token: unsubscribeToken
         };
         if (type === "changelog") {
           updatePayload.receives_changelog = true;
@@ -292,6 +299,7 @@ export async function POST(req: Request) {
         // Mark as existing so we don't send a duplicate welcome email
         isExistingSubscriberUpgrade = true;
       } else {
+        unsubscribeToken = crypto.randomBytes(16).toString('hex');
         const { error: insertError } = await supabaseAdmin
           .from("blog_subscribers")
           .insert([{ 
@@ -299,7 +307,8 @@ export async function POST(req: Request) {
               name: firstName,
               receives_blog: type !== "changelog",
               receives_changelog: type === "changelog",
-              receives_legal: true
+              receives_legal: true,
+              unsubscribe_token: unsubscribeToken
           }]);
   
         if (insertError) {
@@ -321,8 +330,7 @@ export async function POST(req: Request) {
     const senderEmail = "noreply@classgrid.in";
     const supportEmail = "support@classgrid.in";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const token = encryptEmail(email);
-    const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}&token=${token}`;
+    const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}&token=${unsubscribeToken}`;
 
     // Date cutoff: 7 days ago
     const sevenDaysAgo = new Date();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decryptEmail } from "@/lib/crypto";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,13 +9,17 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Missing token" }, { status: 400 });
     }
 
-    const email = decryptEmail(token);
-    
-    if (!email) {
+    const { data: subscriber } = await supabaseAdmin
+      .from("blog_subscribers")
+      .select("email")
+      .eq("unsubscribe_token", token)
+      .maybeSingle();
+      
+    if (!subscriber || !subscriber.email) {
       return NextResponse.json({ error: "Invalid token" }, { status: 400 });
     }
 
-    return NextResponse.json({ email }, { status: 200 });
+    return NextResponse.json({ email: subscriber.email }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
