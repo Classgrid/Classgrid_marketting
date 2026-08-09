@@ -176,30 +176,39 @@ export async function POST(req: Request) {
 
     const { data: existingSub } = await supabaseAdmin
       .from("blog_subscribers")
-      .select("email, is_active")
+      .select("*")
       .eq("email", email)
       .maybeSingle();
 
     if (existingSub) {
-      if (existingSub.is_active) {
+      if (existingSub.receives_blog !== false && existingSub.receives_changelog !== false && existingSub.receives_legal !== false) {
         return NextResponse.json(
-          { message: "You are already subscribed to our updates!" },
-          { status: 409 }
+          { message: "You are already subscribed!" },
+          { status: 200 }
         );
-      } else {
-        // User exists but is unsubscribed. Resubscribe them!
-        const { error: updateError } = await supabaseAdmin
-          .from("blog_subscribers")
-          .update({ is_active: true, name: firstName, updated_at: null })
-          .eq("email", email);
-          
-        if (updateError) throw updateError;
       }
+      
+      const { error: updateError } = await supabaseAdmin
+        .from("blog_subscribers")
+        .update({ 
+            receives_blog: true,
+            receives_changelog: true,
+            receives_legal: true,
+            updated_at: new Date().toISOString() 
+        })
+        .eq("email", email);
+        
+      if (updateError) throw updateError;
     } else {
-      // New user, insert them
       const { error: insertError } = await supabaseAdmin
         .from("blog_subscribers")
-        .insert({ email, name: firstName });
+        .insert([{ 
+            email, 
+            name: firstName,
+            receives_blog: true,
+            receives_changelog: true,
+            receives_legal: true
+        }]);
 
       if (insertError) {
         if (insertError.code === "23505") {

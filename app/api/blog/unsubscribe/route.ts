@@ -44,10 +44,15 @@ export async function GET(req: Request) {
       );
     }
 
-    // Soft-delete: set is_active to false (don't remove the row)
+    // Soft-delete: set all preferences to false
     const { error: updateError } = await supabaseAdmin
       .from("blog_subscribers")
-      .update({ is_active: false, updated_at: new Date().toISOString() })
+      .update({ 
+          receives_blog: false, 
+          receives_changelog: false, 
+          receives_legal: false, 
+          updated_at: new Date().toISOString() 
+      })
       .eq("email", email);
 
     if (updateError) {
