@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
 import { Resend } from "resend";
 import { getNoAccountSignInAttemptHtml } from "./email-templates";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
 export const authOptions: NextAuthOptions = {
@@ -194,10 +194,18 @@ export const authOptions: NextAuthOptions = {
           isPlatformUser = !!platformUser;
         }
 
-        // Only send "no account" email if the user is logging in from the Docs page
+        // Check headers and cookies to see if they originated from the Docs page
         const reqHeaders = await headers();
+        const reqCookies = await cookies();
         const referer = reqHeaders.get("referer") || "";
-        const isDocsLogin = referer.includes("/docs") || referer.includes("intent=docs") || referer.includes("callbackUrl=%2Fdocs");
+        const callbackUrl = reqCookies.get("next-auth.callback-url")?.value || reqCookies.get("__Secure-next-auth.callback-url")?.value || "";
+        
+        const isDocsLogin = 
+          referer.includes("/docs") || 
+          referer.includes("intent=docs") || 
+          referer.includes("callbackUrl=%2Fdocs") ||
+          callbackUrl.includes("/docs") || 
+          callbackUrl.includes("intent=docs");
 
         if (!isPlatformUser && user.email && isDocsLogin) {
           // Parse user agent for device info
