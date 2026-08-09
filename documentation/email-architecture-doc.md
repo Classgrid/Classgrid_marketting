@@ -4,7 +4,7 @@ The Classgrid platform sends exactly **9 distinct emails**. To ensure maximum de
 
 ---
 
-## 🟢 Category 1: Marketing & Updates (4 Emails)
+## 🟢 Category 1: Marketing & Updates
 **Provider:** Brevo SMTP (with Resend as fallback)
 **Purpose:** Keep subscribers engaged with product updates and company news.
 **Audience:** Users who explicitly opted-in via the Blog or Changelog subscribe forms.
@@ -27,12 +27,12 @@ The Classgrid platform sends exactly **9 distinct emails**. To ensure maximum de
 
 ---
 
-## ⚖️ Category 2: Legal & Compliance (5 Emails)
+## ⚖️ Category 2: Legal & Compliance
 **Provider:** AWS SES (Amazon Simple Email Service)
 **Purpose:** Mandatory legal notifications required by law or compliance standards.
 **Audience:** ALL active subscribers and platform users (users cannot opt-out of these while their account is active).
 
-AWS SES is used exclusively for these 5 emails because transactional/legal emails require the highest possible deliverability rate and should not be mixed with marketing email infrastructure.
+AWS SES is used exclusively for these emails because transactional/legal emails require the highest possible deliverability rate and should not be mixed with marketing email infrastructure.
 
 5. **Privacy Policy Update**
    - **Triggered when:** The Privacy Policy is modified in Sanity CMS.
@@ -59,4 +59,4 @@ AWS SES is used exclusively for these 5 emails because transactional/legal email
 ## Summary
 
 > **Why are there two different sending systems?** 
-> By keeping the Marketing emails (Group 1) on **Brevo** and the Legal emails (Group 2) on **AWS SES**, you protect your main domain's reputation. If marketing emails ever get marked as spam, it will never affect the delivery of critical legal notifications or platform password resets.
+> By keeping the Marketing emails on **Brevo** and the Legal emails on **AWS SES**, you protect your main domain's reputation. If marketing emails ever get marked as spam, it will never affect the delivery of critical legal notifications or platform password resets.
