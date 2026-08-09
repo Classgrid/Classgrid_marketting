@@ -381,12 +381,12 @@ function generateUnsubscribeHash(email: string): string {
       contentBlockText = `\nWe are actively building content. Check our blog at: ${siteUrl}/blog and changelog at: ${siteUrl}/changelog\nWe will keep updating — stay tuned!\n`;
     }
 
-    const emailHtml = \`<!DOCTYPE html>
+    const emailHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>\${escapeHtml(headerTitle)}</title>
+  <title>${escapeHtml(headerTitle)}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body, html {
@@ -405,22 +405,22 @@ function generateUnsubscribeHash(email: string): string {
 <tr>
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
-<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">\${escapeHtml(headerTitle)}</h1>
-<p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">\${escapeHtml(subheaderText)}</p>
+<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">${escapeHtml(headerTitle)}</h1>
+<p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">${escapeHtml(subheaderText)}</p>
 </td>
 </tr>
 <tr>
 <td style="padding:32px 30px;color:#374151;font-size:14px;line-height:1.8;">
-<p style="color:#111111;font-size:16px;font-weight:600;margin:0 0 20px;">Hi \${escapeHtml(greetingName)},</p>
-<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">\${contentIntro1}</p>
-<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">\${escapeHtml(contentIntro2)}</p>
-<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 20px;">\${legalNotice}</p>
+<p style="color:#111111;font-size:16px;font-weight:600;margin:0 0 20px;">Hi ${escapeHtml(greetingName)},</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">${contentIntro1}</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">${escapeHtml(contentIntro2)}</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 20px;">${legalNotice}</p>
 
-\${contentBlockHtml}
+${contentBlockHtml}
 
 <div style="margin-top:40px;padding-top:30px;border-top:1px solid #eaeaea;">
   <p style="color:#374151;font-size:14px;margin:0 0 8px;">Build smarter academic workflows</p>
-  <a href="\${siteUrl}" style="color:#6b7280;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
+  <a href="${siteUrl}" style="color:#6b7280;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
 
   <div style="margin-bottom:24px;">
     <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;border:1px solid #eaeaea;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
@@ -437,10 +437,10 @@ function generateUnsubscribeHash(email: string): string {
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td style="color:#9ca3af;font-size:12px;text-align:left;">
-        &copy; \${new Date().getFullYear()} Classgrid. All rights reserved.
+        &copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
       </td>
       <td style="color:#9ca3af;font-size:12px;text-align:right;">
-        <a href="\${unsubscribeUrl}" style="color:#9ca3af;text-decoration:none;">Unsubscribe</a>
+        <a href="${unsubscribeUrl}" style="color:#9ca3af;text-decoration:none;">Unsubscribe</a>
       </td>
     </tr>
   </table>
@@ -452,22 +452,22 @@ function generateUnsubscribeHash(email: string): string {
 </tr>
 </table>
 </body>
-</html>\`;
+</html>`;
 
     const emailText = [
-      \`\${headerTitle}\`,
-      \`\${subheaderText}\`,
+      `${headerTitle}`,
+      `${subheaderText}`,
       "",
-      \`Hi \${greetingName},\`,
-      \`You're now subscribed to \${subscribeSubject}.\`,
-      \`\${contentIntro2}\`,
-      \`You'll also receive important Legal and Security notices when we need to communicate changes that may affect your account, privacy, security, or use of Classgrid.\`,
+      `Hi ${greetingName},`,
+      `You're now subscribed to ${subscribeSubject}.`,
+      `${contentIntro2}`,
+      `You'll also receive important Legal and Security notices when we need to communicate changes that may affect your account, privacy, security, or use of Classgrid.`,
       "",
-      \`\${contentBlockText}\`,
+      `${contentBlockText}`,
       "",
       "Build smarter academic workflows",
-      \`\${siteUrl} ->\`,
-    ].join("\\n");
+      `${siteUrl} ->`,
+    ].join("\n");
 
 
     await transporter.sendMail({
