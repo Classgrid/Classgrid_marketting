@@ -303,13 +303,90 @@ function generateUnsubscribeHash(email: string): string {
     // Priority 3: if still nothing at all → hasContent stays false → show "stay tuned" message
     const hasContent = blogsWithImages.length > 0 || changelogsWithImages.length > 0;
 
+    // --- DYNAMIC CONTENT BASED ON SUBSCRIPTION TYPE ---
+    const isBlog = type !== "changelog";
+    
+    // Dynamic text strings
+    const greetingName = firstName ? firstName : "there";
+    const headerTitle = "You're Subscribed!";
+    const subheaderText = isBlog ? "Thanks for joining us." : "Stay up to date with what's changing in Classgrid.";
+    const subscribeSubject = isBlog ? "the Classgrid Blog" : "the Classgrid Changelog";
+    const contentIntro1 = isBlog 
+      ? "You're now subscribed to the <strong style=\"color:#111111;\">Classgrid Blog</strong>." 
+      : "You're now subscribed to the <strong style=\"color:#111111;\">Classgrid Changelog</strong>.";
+    const contentIntro2 = isBlog
+      ? "We'll keep you in the loop whenever we publish new insights, practical guides, company news, and perspectives on building better technology for modern educational institutions."
+      : "We'll let you know whenever we release new features, improvements, fixes, platform changes, and other important product updates across Classgrid.";
+    
+    const legalNotice = "You'll also receive <strong style=\"color:#111111;\">important Legal and Security notices</strong> when we need to communicate changes that may affect your account, privacy, security, or use of Classgrid.";
+    
+    // Dynamic content blocks
+    let contentBlockHtml = "";
+    let contentBlockText = "";
+    let emailSubject = `You're subscribed to ${subscribeSubject}, ${greetingName}!`;
 
-    const emailHtml = `<!DOCTYPE html>
+    if (isBlog && blogsWithImages.length > 0) {
+      const blog = blogsWithImages[0];
+      const blogUrl = `${siteUrl}/blog/${blog.slug}`;
+      const imageHtml = blog.imageUrl
+        ? `<img src="${escapeHtml(blog.imageUrl)}" alt="${escapeHtml(blog.resolvedTitle)}" width="520" style="width:100%;max-width:520px;border-radius:6px;display:block;margin:0 0 12px;" />`
+        : "";
+      contentBlockHtml = `
+<div style="margin-top:30px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">Latest from Our Blog</h3>
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+    <tr>
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
+        ${imageHtml}
+        <h4 style="color:#111111;font-size:16px;margin:0 0 8px;">${escapeHtml(blog.resolvedTitle)}</h4>
+        <p style="color:#374151;font-size:14px;margin:0 0 20px;line-height:1.6;">${escapeHtml(blog.resolvedExcerpt)}</p>
+        <a href="${escapeHtml(blogUrl)}" style="background:#34d399;color:#000;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">Read the Latest Insights</a>
+      </td>
+    </tr>
+  </table>
+</div>`;
+      contentBlockText = `\nLatest from Our Blog\n${blog.resolvedTitle}\n${blog.resolvedExcerpt}\n\nRead the Latest Insights: ${blogUrl}\n`;
+    } else if (!isBlog && changelogsWithImages.length > 0) {
+      const entry = changelogsWithImages[0];
+      const changelogUrl = `${siteUrl}/changelog/${entry.slug}`;
+      const imageHtml = entry.imageUrl
+        ? `<img src="${escapeHtml(entry.imageUrl)}" alt="${escapeHtml(entry.resolvedTitle)}" width="520" style="width:100%;max-width:520px;border-radius:6px;display:block;margin:0 0 12px;" />`
+        : "";
+      contentBlockHtml = `
+<div style="margin-top:30px;padding-top:30px;border-top:1px solid #eaeaea;">
+  <h3 style="color:#111111;font-size:16px;margin:0 0 20px;font-weight:700;">What's New in Classgrid</h3>
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+    <tr>
+      <td style="padding:16px;background:#f9f9f9;border-radius:10px;border:1px solid #eaeaea;">
+        ${imageHtml}
+        <div style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;background:#34d399;color:#000;">
+          ${escapeHtml(formatUpdateType(entry.updateType))}
+        </div>
+        <h4 style="color:#111111;font-size:16px;margin:0 0 8px;">${escapeHtml(entry.resolvedTitle)}</h4>
+        <p style="color:#374151;font-size:14px;margin:0 0 20px;line-height:1.6;">${escapeHtml(entry.resolvedSummary)}</p>
+        <a href="${escapeHtml(changelogUrl)}" style="background:#34d399;color:#000;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">View Latest Product Update</a>
+      </td>
+    </tr>
+  </table>
+</div>`;
+      contentBlockText = `\nWhat's New in Classgrid\n[${formatUpdateType(entry.updateType)}] ${entry.resolvedTitle}\n${entry.resolvedSummary}\n\nView Latest Product Update: ${changelogUrl}\n`;
+    }
+
+    if (!hasContent) {
+      contentBlockHtml = `
+<div style="margin-top:30px;padding-top:20px;border-top:1px solid #eaeaea;background:#f9f9f9;border-radius:10px;padding:24px;text-align:center;">
+  <p style="color:#34d399;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Stay Tuned</p>
+  <p style="color:#374151;font-size:14px;margin:0 0 20px;line-height:1.7;">We are actively building new content and product updates. Check our blog and changelog regularly — we will keep updating!</p>
+</div>`;
+      contentBlockText = `\nWe are actively building content. Check our blog at: ${siteUrl}/blog and changelog at: ${siteUrl}/changelog\nWe will keep updating — stay tuned!\n`;
+    }
+
+    const emailHtml = \`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Classgrid Updates</title>
+  <title>\${escapeHtml(headerTitle)}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body, html {
@@ -317,24 +394,6 @@ function generateUnsubscribeHash(email: string): string {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: #f5f5f5;
       -webkit-font-smoothing: antialiased;
-    }
-    h1 { color: #111111; margin-top: 0; margin-bottom: 16px; font-size: 20px;}
-    p { margin: 0 0 20px; color: #374151; font-size: 14px; line-height: 1.7; }
-    ul { margin: 0 0 20px 20px; color: #374151; font-size: 14px; padding: 0; line-height: 1.7; }
-    li { margin-bottom: 8px; }
-    strong { color: #111111; }
-    a { color: #111111; text-decoration: underline; }
-    .btn {
-      display: inline-block;
-      background-color: #34d399;
-      color: #000000 !important;
-      text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: bold;
-      margin: 20px 0;
-      text-align: center;
     }
   </style>
 </head>
@@ -346,36 +405,22 @@ function generateUnsubscribeHash(email: string): string {
 <tr>
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
-<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">You're Subscribed!</h1>
-<p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">Thanks for joining us.</p>
+<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">\${escapeHtml(headerTitle)}</h1>
+<p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">\${escapeHtml(subheaderText)}</p>
 </td>
 </tr>
 <tr>
 <td style="padding:32px 30px;color:#374151;font-size:14px;line-height:1.8;">
-<p style="color:#111111;font-size:16px;font-weight:600;margin:0 0 20px;">${firstName ? `Hi ${escapeHtml(firstName)},` : `Hi there,`}</p>
-<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">You are now subscribed to receive the latest updates from the <strong style="color:#111111;">Classgrid Blog</strong> and <strong style="color:#111111;">Changelog</strong>.</p>
-<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 20px;">We'll keep you in the loop whenever we publish new product features, platform improvements, or practical insights on modern campus administration.</p>
+<p style="color:#111111;font-size:16px;font-weight:600;margin:0 0 20px;">Hi \${escapeHtml(greetingName)},</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">\${contentIntro1}</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 16px;">\${escapeHtml(contentIntro2)}</p>
+<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 20px;">\${legalNotice}</p>
 
-${renderRecentBlogs(blogsWithImages, siteUrl)}
-${renderRecentChangelogs(changelogsWithImages, siteUrl)}
-
-${!hasContent ? `
-<div style="margin-top:30px;padding-top:20px;border-top:1px solid #eaeaea;background:#f9f9f9;border-radius:10px;padding:24px;text-align:center;">
-  <p style="color:#34d399;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Stay Tuned</p>
-  <p style="color:#374151;font-size:14px;margin:0 0 20px;line-height:1.7;">We are actively building new content and product updates. Check our blog and changelog regularly — we will keep updating!</p>
-  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-    <a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">Visit Our Blog</a>
-    <a href="${siteUrl}/changelog" style="background:#000000;color:#ffffff;padding:10px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;font-size:13px;">View Changelog</a>
-  </div>
-</div>` : `
-<div style="text-align:center;margin:30px 0;">
-<a href="${siteUrl}/blog" style="background:#34d399;color:#000;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Read the Latest Insights</a>
-</div>`}
-
+\${contentBlockHtml}
 
 <div style="margin-top:40px;padding-top:30px;border-top:1px solid #eaeaea;">
   <p style="color:#374151;font-size:14px;margin:0 0 8px;">Build smarter academic workflows</p>
-  <a href="${siteUrl}" style="color:#6b7280;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
+  <a href="\${siteUrl}" style="color:#6b7280;text-decoration:underline;font-size:13px;margin-bottom:24px;display:inline-block;">classgrid.in &rarr;</a>
 
   <div style="margin-bottom:24px;">
     <a href="https://www.instagram.com/classgridedu/" target="_blank" style="display:inline-block;border:1px solid #eaeaea;border-radius:6px;padding:8px;margin-right:8px;text-decoration:none;">
@@ -392,10 +437,10 @@ ${!hasContent ? `
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td style="color:#9ca3af;font-size:12px;text-align:left;">
-        &copy; ${new Date().getFullYear()} Classgrid. All rights reserved.
+        &copy; \${new Date().getFullYear()} Classgrid. All rights reserved.
       </td>
       <td style="color:#9ca3af;font-size:12px;text-align:right;">
-        <a href="${unsubscribeUrl}" style="color:#9ca3af;text-decoration:none;">Unsubscribe</a>
+        <a href="\${unsubscribeUrl}" style="color:#9ca3af;text-decoration:none;">Unsubscribe</a>
       </td>
     </tr>
   </table>
@@ -407,31 +452,22 @@ ${!hasContent ? `
 </tr>
 </table>
 </body>
-</html>`;
+</html>\`;
 
     const emailText = [
-      "Thanks for subscribing to the Classgrid Blog & Changelog.",
+      \`\${headerTitle}\`,
+      \`\${subheaderText}\`,
       "",
-      ...(blogsWithImages.length > 0 ? [
-        "Recent blog posts:",
-        ...blogsWithImages.map((blog) => `- ${blog.resolvedTitle}: ${siteUrl}/blog/${blog.slug}`),
-        "",
-      ] : []),
-      ...(changelogsWithImages.length > 0 ? [
-        "Recent product updates:",
-        ...changelogsWithImages.map((entry) => `- ${entry.resolvedTitle}: ${siteUrl}/changelog/${entry.slug}`),
-        "",
-      ] : []),
-      ...(!hasContent ? [
-        "We are actively building content. Check our blog at: " + siteUrl + "/blog",
-        "And our changelog at: " + siteUrl + "/changelog",
-        "We will keep updating — stay tuned!",
-      ] : []),
-    ].join("\n");
-
-    const emailSubject = firstName
-      ? `You're subscribed to Classgrid Updates, ${firstName}!`
-      : "You're subscribed to Classgrid Updates!";
+      \`Hi \${greetingName},\`,
+      \`You're now subscribed to \${subscribeSubject}.\`,
+      \`\${contentIntro2}\`,
+      \`You'll also receive important Legal and Security notices when we need to communicate changes that may affect your account, privacy, security, or use of Classgrid.\`,
+      "",
+      \`\${contentBlockText}\`,
+      "",
+      "Build smarter academic workflows",
+      \`\${siteUrl} ->\`,
+    ].join("\\n");
 
 
     await transporter.sendMail({
