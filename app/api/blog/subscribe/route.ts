@@ -160,66 +160,72 @@ function generateUnsubscribeHash(email: string): string {
   return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
 }
 
-export async function POST(req: Request) {
-  try {
-    const { email, name } = await req.json();
-    // Clean the name: trim whitespace, take just the first word as first name
-    const firstName = (name || "").trim().split(/\s+/)[0] || "";
-
-    if (!firstName) {
-      return NextResponse.json({ error: "Please enter your name to subscribe." }, { status: 400 });
-    }
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "Invalid email address. Please enter a valid email." }, { status: 400 });
-    }
-
-    const { data: existingSub } = await supabaseAdmin
-      .from("blog_subscribers")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (existingSub) {
-      if (existingSub.receives_blog !== false && existingSub.receives_changelog !== false && existingSub.receives_legal !== false) {
-        return NextResponse.json(
-          { message: "You are already subscribed!" },
-          { status: 200 }
-        );
+  export async function POST(req: Request) {
+    try {
+      const { email, name, type = "blog" } = await req.json();
+      // Clean the name: trim whitespace, take just the first word as first name
+      const firstName = (name || "").trim().split(/\s+/)[0] || "";
+  
+      if (!firstName) {
+        return NextResponse.json({ error: "Please enter your name to subscribe." }, { status: 400 });
       }
-      
-      const { error: updateError } = await supabaseAdmin
+  
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return NextResponse.json({ error: "Invalid email address. Please enter a valid email." }, { status: 400 });
+      }
+  
+      const { data: existingSub } = await supabaseAdmin
         .from("blog_subscribers")
-        .update({ 
-            receives_blog: true,
-            receives_changelog: true,
-            receives_legal: true,
-            updated_at: new Date().toISOString() 
-        })
-        .eq("email", email);
-        
-      if (updateError) throw updateError;
-    } else {
-      const { error: insertError } = await supabaseAdmin
-        .from("blog_subscribers")
-        .insert([{ 
-            email, 
-            name: firstName,
-            receives_blog: true,
-            receives_changelog: true,
-            receives_legal: true
-        }]);
-
-      if (insertError) {
-        if (insertError.code === "23505") {
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+  
+      if (existingSub) {
+        const isSubscribedToType = type === "changelog" ? existingSub.receives_changelog !== false : existingSub.receives_blog !== false;
+        if (isSubscribedToType) {
           return NextResponse.json(
-            { message: "You are already subscribed to our updates!" },
-            { status: 409 }
+            { message: "You are already subscribed!" },
+            { status: 200 }
           );
         }
-        throw insertError;
+        
+        let updatePayload: Record<string, any> = { 
+          updated_at: new Date().toISOString(),
+          receives_legal: true // Legal is mandatory/implied for active subscribers
+        };
+        if (type === "changelog") {
+          updatePayload.receives_changelog = true;
+        } else {
+          updatePayload.receives_blog = true;
+        }
+
+        const { error: updateError } = await supabaseAdmin
+          .from("blog_subscribers")
+          .update(updatePayload)
+          .eq("email", email);
+          
+        if (updateError) throw updateError;
+      } else {
+        const { error: insertError } = await supabaseAdmin
+          .from("blog_subscribers")
+          .insert([{ 
+              email, 
+              name: firstName,
+              receives_blog: true,
+              receives_changelog: true,
+              receives_legal: true
+          }]);
+  
+        if (insertError) {
+          if (insertError.code === "23505") {
+            return NextResponse.json(
+              { message: "You are already subscribed to our updates!" },
+              { status: 409 }
+            );
+          }
+          throw insertError;
+        }
       }
-    }
 
     const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
     const senderEmail = "noreply@classgrid.in";

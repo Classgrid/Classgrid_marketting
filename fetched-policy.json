@@ -1,0 +1,5822 @@
+{
+  "_createdAt": "2026-04-20T20:08:26Z",
+  "_id": "legal-security",
+  "_rev": "gtu5GbgWFmPyh6rWLJvnDi",
+  "_system": {
+    "base": {
+      "id": "legal-security",
+      "rev": "Lr2L4V22G1FLjwXKI9Qdg2"
+    }
+  },
+  "_type": "legalPage",
+  "_updatedAt": "2026-07-17T05:07:29Z",
+  "effectiveDate": "2026-04-20T00:00:00.000Z",
+  "intro": {
+    "introductionBody": "Classgrid — Educational Management Platform Operated by: Classgrid Technologies, Pune, Maharashtra, India Registered Address: Akurdi Railway Station Road, Sector No. 26, Pradhikaran, Nigdi, Pimpri-Chinchwad, Maharashtra 411044, India\n\nAt Classgrid Technologies (\"Company\", \"We\", \"Us\", \"Our\"), the security of Your data is Our highest priority. This Security Policy describes the technical and organizational measures We implement to protect the Classgrid Platform, its infrastructure, and all data processed through it.\n\nThis Policy covers all components of the Platform including the website (classgrid.in), tenant websites (*.classgrid.in), the ERP system, mobile applications, APIs, and backend infrastructure.\n\n1. Our Security Commitment 2. Infrastructure Security 3. Application Security 4. Data Encryption 5. Authentication and Access Control 6. API Security 7. Mobile Application Security 8. Database Security 9. File Storage Security 10. Network Security 11. Organizational Security 12. Data Backup and Recovery 13. Incident Response 14. Vulnerability Management 15. Compliance 16. Tenant Data Isolation 17. Third-Party Security 18. User Security Best Practices 19. Responsible Disclosure 20. Contact",
+    "introductionHeading": "Introduction",
+    "scopeBody": "",
+    "scopeHeading": "Scope"
+  },
+  "lastUpdated": "2026-07-17T00:00:00.000Z",
+  "sections": [
+    {
+      "_key": "section-1",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "We are committed to protecting the confidentiality, integrity, and availability (CIA) of all data entrusted to Us. Given that Our Platform handles sensitive educational data — including data of minor students — We apply security measures that meet or exceed industry standards for EdTech platforms."
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Security Principles:"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Defense in Depth"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " — Multiple layers of security controls at every level"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Least Privilege"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " — Users and systems are granted only the minimum access required"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Zero Trust"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " — Every request is authenticated and authorized, regardless of origin"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Data Minimization"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " — We collect and retain only the data necessary for Platform functionality"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Transparency"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " — This document openly describes Our security practices"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "our-security-commitment",
+      "title": "1. OUR SECURITY COMMITMENT"
+    },
+    {
+      "_key": "section-2",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "2.1 Cloud Infrastructure"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "The Platform is hosted on enterprise-grade cloud infrastructure:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "table-12",
+          "_type": "legalTable",
+          "headers": [
+            "Component",
+            "Provider",
+            "Security Certifications"
+          ],
+          "rows": [
+            {
+              "_key": "row-5",
+              "cells": [
+                "Frontend & ERP Hosting",
+                "Vercel",
+                "SOC 2 Type II, ISO 27001"
+              ]
+            },
+            {
+              "_key": "row-6",
+              "cells": [
+                "API & Auth Management",
+                "Google Cloud Platform",
+                "SOC 1/2/3, ISO 27001, ISO 27017, ISO 27018, PCI DSS"
+              ]
+            },
+            {
+              "_key": "row-7",
+              "cells": [
+                "Primary Database",
+                "MongoDB Atlas",
+                "SOC 2 Type II, ISO 27001, HIPAA"
+              ]
+            },
+            {
+              "_key": "row-8",
+              "cells": [
+                "File & Media Storage",
+                "AWS (via Supabase)",
+                "SOC 2 Type II, ISO 27001"
+              ]
+            },
+            {
+              "_key": "row-9",
+              "cells": [
+                "Google Authentication",
+                "Google Identity",
+                "SOC 2, ISO 27001"
+              ]
+            },
+            {
+              "_key": "row-10",
+              "cells": [
+                "Push Notifications",
+                "Firebase (Google)",
+                "SOC 1/2/3, ISO 27001"
+              ]
+            },
+            {
+              "_key": "row-11",
+              "cells": [
+                "Payment Processing",
+                "Razorpay",
+                "PCI DSS Level 1"
+              ]
+            }
+          ]
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "2.2 Server Hardening"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "All servers run on managed, auto-patched cloud infrastructure"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "No direct SSH access to production servers from the public internet"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "All administrative access is through secure, authenticated cloud consoles with MFA"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "Unused ports and services are disabled"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "Operating system and runtime environments are kept up-to-date"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "2.3 Environment Isolation"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-33",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Production"
+            },
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": ", "
+            },
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Staging"
+            },
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": ", and "
+            },
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Development"
+            },
+            {
+              "_key": "span-32",
+              "_type": "span",
+              "marks": [],
+              "text": " environments are strictly isolated"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-35",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-34",
+              "_type": "span",
+              "marks": [],
+              "text": "Production credentials and API keys are never used in non-production environments"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-37",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-36",
+              "_type": "span",
+              "marks": [],
+              "text": "Environment variables and secrets are managed through secure secret management services, never committed to source code"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "infrastructure-security",
+      "title": "2. INFRASTRUCTURE SECURITY"
+    },
+    {
+      "_key": "section-3",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "3.1 Secure Development Practices"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Code reviews are required for all changes to the main codebase"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Security-sensitive code undergoes additional review"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Dependencies are regularly audited for known vulnerabilities using automated tools (npm audit, Snyk)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "We follow the OWASP Top 10 guidelines for web application security"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "3.2 Protection Against Common Attacks"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "table-23",
+          "_type": "legalTable",
+          "headers": [
+            "Attack Vector",
+            "Protection Measure"
+          ],
+          "rows": [
+            {
+              "_key": "row-13",
+              "cells": [
+                "SQL/NoSQL Injection",
+                "Parameterized queries, Mongoose ODM with schema validation, input sanitization"
+              ]
+            },
+            {
+              "_key": "row-14",
+              "cells": [
+                "Cross-Site Scripting (XSS)",
+                "Output encoding, Content Security Policy (CSP) headers, React's built-in XSS protection"
+              ]
+            },
+            {
+              "_key": "row-15",
+              "cells": [
+                "Cross-Site Request Forgery (CSRF)",
+                "CSRF tokens for state-changing operations, SameSite cookie attributes"
+              ]
+            },
+            {
+              "_key": "row-16",
+              "cells": [
+                "Broken Authentication",
+                "JWT with expiration, secure password hashing (bcrypt), rate-limited login attempts"
+              ]
+            },
+            {
+              "_key": "row-17",
+              "cells": [
+                "Security Misconfiguration",
+                "Automated security header checks, Helmet.js middleware, no default credentials"
+              ]
+            },
+            {
+              "_key": "row-18",
+              "cells": [
+                "Sensitive Data Exposure",
+                "HTTPS everywhere, encrypted storage, no sensitive data in URLs or logs"
+              ]
+            },
+            {
+              "_key": "row-19",
+              "cells": [
+                "Broken Access Control",
+                "Role-based access control (RBAC) at API and UI level, server-side authorization checks"
+              ]
+            },
+            {
+              "_key": "row-20",
+              "cells": [
+                "Server-Side Request Forgery (SSRF)",
+                "URL validation, allowlist-based external requests"
+              ]
+            },
+            {
+              "_key": "row-21",
+              "cells": [
+                "Denial of Service (DoS)",
+                "Rate limiting, request size limits, DDoS protection via CDN"
+              ]
+            },
+            {
+              "_key": "row-22",
+              "cells": [
+                "Insecure Deserialization",
+                "Input validation, schema-based data parsing"
+              ]
+            }
+          ]
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": "3.3 Security Headers"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-27",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [],
+              "text": "All web responses include the following security headers:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "code-28",
+          "_type": "code",
+          "code": "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload\nX-Content-Type-Options: nosniff\nX-Frame-Options: DENY\nX-XSS-Protection: 1; mode=block\nReferrer-Policy: strict-origin-when-cross-origin\nContent-Security-Policy: [configured per deployment]\nPermissions-Policy: camera=(), microphone=(), geolocation=()",
+          "language": "text"
+        }
+      ],
+      "id": "application-security",
+      "title": "3. APPLICATION SECURITY"
+    },
+    {
+      "_key": "section-4",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "4.1 Encryption in Transit"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-5",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "All data transmitted between Users and the Platform is encrypted using "
+            },
+            {
+              "_key": "span-4",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "TLS 1.2 or higher"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": "HTTPS is enforced across all domains and sub-domains (classgrid.in, *.classgrid.in)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-9",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [],
+              "text": "HTTP Strict Transport Security (HSTS) is enabled with preloading"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-11",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-10",
+              "_type": "span",
+              "marks": [],
+              "text": "API-to-database connections use encrypted TLS connections"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": "Internal service-to-service communication uses encrypted channels"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-15",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [],
+              "text": "4.2 Encryption at Rest"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-16",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Database (MongoDB Atlas):"
+            },
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": " All data is encrypted at rest using AES-256 encryption"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-21",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "File Storage (Supabase):"
+            },
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [],
+              "text": " All uploaded files are encrypted at rest using server-side encryption (AES-256)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Backups:"
+            },
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": " All database backups are encrypted at rest"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "4.3 Password Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "User passwords are never stored in plain text"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [],
+              "text": "Passwords are hashed using "
+            },
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "bcrypt"
+            },
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": " with a minimum of 10 salt rounds"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "We enforce minimum password complexity requirements"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-36",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": "Password reset tokens are cryptographically random, single-use, and expire within 1 hour"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "data-encryption",
+      "title": "4. DATA ENCRYPTION"
+    },
+    {
+      "_key": "section-5",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "5.1 Authentication Methods"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-5",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Email + Password"
+            },
+            {
+              "_key": "span-4",
+              "_type": "span",
+              "marks": [],
+              "text": " — Standard authentication with bcrypt-hashed passwords"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Google Sign-In"
+            },
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": " — OAuth 2.0 based authentication via Google Identity"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-11",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "JWT Tokens"
+            },
+            {
+              "_key": "span-10",
+              "_type": "span",
+              "marks": [],
+              "text": " — Stateless authentication tokens with configurable expiration"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": "5.2 Token Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Access Tokens (JWT):"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " Short-lived (1 hour default), signed with a secure secret"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Refresh Tokens:"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " Longer-lived (30 days), stored as HTTP-only cookies, rotated on use"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-21",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [],
+              "text": "Tokens contain only the minimum claims necessary (user ID, role, organization ID)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-23",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [],
+              "text": "Token secrets are rotated periodically"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": "Revoked tokens are blacklisted"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-27",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [],
+              "text": "5.3 Role-Based Access Control (RBAC)"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": "The Platform enforces strict RBAC at both the API and UI levels:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "table-37",
+          "_type": "legalTable",
+          "headers": [
+            "Action",
+            "Org Admin",
+            "Faculty",
+            "Student",
+            "Parent"
+          ],
+          "rows": [
+            {
+              "_key": "row-31",
+              "cells": [
+                "Manage own organization",
+                "✅",
+                "❌",
+                "❌",
+                "❌"
+              ]
+            },
+            {
+              "_key": "row-32",
+              "cells": [
+                "Create/delete user accounts",
+                "✅ (own org)",
+                "❌",
+                "❌",
+                "❌"
+              ]
+            },
+            {
+              "_key": "row-33",
+              "cells": [
+                "Enter grades/attendance",
+                "✅",
+                "✅ (own classes)",
+                "❌",
+                "❌"
+              ]
+            },
+            {
+              "_key": "row-34",
+              "cells": [
+                "View own academic data",
+                "❌",
+                "❌",
+                "✅",
+                "✅ (ward only)"
+              ]
+            },
+            {
+              "_key": "row-35",
+              "cells": [
+                "Manage tenant website",
+                "✅",
+                "❌",
+                "❌",
+                "❌"
+              ]
+            }
+          ]
+        },
+        {
+          "_key": "block-39",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-38",
+              "_type": "span",
+              "marks": [],
+              "text": "All API endpoints validate the requesting User's role before executing"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-41",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [],
+              "text": "Role escalation is not possible through the API"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-43",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-42",
+              "_type": "span",
+              "marks": [],
+              "text": "Org Admins can only access data within their own organization"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-45",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-44",
+              "_type": "span",
+              "marks": [],
+              "text": "5.4 Brute Force Protection"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-47",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-46",
+              "_type": "span",
+              "marks": [],
+              "text": "Login attempts are rate-limited (maximum 5 failed attempts per 15-minute window)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-49",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-48",
+              "_type": "span",
+              "marks": [],
+              "text": "After exceeding the limit, the account is temporarily locked for 15 minutes"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-51",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-50",
+              "_type": "span",
+              "marks": [],
+              "text": "Repeated lockouts trigger security notifications via email"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-53",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-52",
+              "_type": "span",
+              "marks": [],
+              "text": "CAPTCHA may be presented after multiple failed login attempts"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-55",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-54",
+              "_type": "span",
+              "marks": [],
+              "text": "5.5 Session Management"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-57",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-56",
+              "_type": "span",
+              "marks": [],
+              "text": "Sessions are invalidated upon password change"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-59",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-58",
+              "_type": "span",
+              "marks": [],
+              "text": "Users can view and revoke active sessions"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-61",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-60",
+              "_type": "span",
+              "marks": [],
+              "text": "Inactive sessions expire automatically"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-63",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-62",
+              "_type": "span",
+              "marks": [],
+              "text": "Logout clears all tokens and session data from the client"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "authentication-and-access-control",
+      "title": "5. AUTHENTICATION AND ACCESS CONTROL"
+    },
+    {
+      "_key": "section-6",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "6.1 API Authentication"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "All API endpoints (except public tenant resolution) require a valid JWT token"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Tokens are validated on every request, checking expiration, signature, and claims"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Public endpoints (tenant website resolution) are read-only and do not expose sensitive data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "6.2 Rate Limiting"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "API requests are rate-limited per user and per IP address"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Standard limits: 100 requests per minute per authenticated user"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "Public endpoints: 30 requests per minute per IP address"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "File upload endpoints: 10 requests per minute per user"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "Rate-limited responses return HTTP 429 with appropriate retry-after headers"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "6.3 Input Validation"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "All API inputs are validated against predefined schemas (using Joi/Zod or Mongoose validation)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "Request body size limits are enforced (default: 10MB for standard requests, 50MB for file uploads)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "File uploads are validated for type (MIME type checking), size, and content"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-30",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [],
+              "text": "URL parameters and query strings are sanitized"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": "6.4 API Versioning"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "APIs are versioned to ensure backward compatibility"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-36",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": "Deprecated API endpoints are announced with at least 90 days notice"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "api-security",
+      "title": "6. API SECURITY"
+    },
+    {
+      "_key": "section-7",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "7.1 Secure Storage"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Authentication tokens are stored in platform-native secure storage:"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Android:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " Android Keystore System"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "iOS:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " iOS Keychain Services"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "Sensitive data is never stored in plain text on the device"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "7.2 Network Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "The mobile app communicates exclusively over HTTPS"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "Certificate pinning is implemented to prevent man-in-the-middle attacks"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "The app validates server certificates before transmitting data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "7.3 App Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "The app does not log sensitive information (tokens, passwords, personal data) to device logs"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "Debug features are disabled in production builds"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "The app enforces minimum OS version requirements to ensure availability of security patches"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-30",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [],
+              "text": "ProGuard/R8 obfuscation is applied to Android builds"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": "7.4 Permissions"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "The app requests only the minimum permissions necessary for its features"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-36",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": "Permissions are requested at the time of use, not at install time"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-38",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-37",
+              "_type": "span",
+              "marks": [],
+              "text": "The app functions with reduced capability if optional permissions are denied"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "mobile-application-security",
+      "title": "7. MOBILE APPLICATION SECURITY"
+    },
+    {
+      "_key": "section-8",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "8.1 MongoDB Atlas Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Hosted on MongoDB Atlas with enterprise-grade security"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Network Access:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " Database access is restricted to known, allowlisted IP addresses and VPCs"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Authentication:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " Database access requires authenticated credentials (not default admin accounts)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Encryption:"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " AES-256 encryption at rest, TLS encryption in transit"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Audit Logging:"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " All database access and operations are logged"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Automatic Patching:"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " MongoDB Atlas automatically applies security patches"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-21",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [],
+              "text": "8.2 Data Validation"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-23",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [],
+              "text": "All data is validated at the application layer (Mongoose schemas) before being written to the database"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": "Database queries use parameterized inputs to prevent NoSQL injection"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-27",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [],
+              "text": "Indexes are used to optimize query performance and prevent denial-of-service through slow queries"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": "8.3 Access Controls"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-31",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": "Database credentials are stored in environment variables, never in source code"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-33",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-32",
+              "_type": "span",
+              "marks": [],
+              "text": "Application-level database users have the minimum required permissions"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-35",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-34",
+              "_type": "span",
+              "marks": [],
+              "text": "Direct database access is restricted to authorized DevOps personnel only, with full audit logging"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "database-security",
+      "title": "8. DATABASE SECURITY"
+    },
+    {
+      "_key": "section-9",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "9.1 Supabase Storage"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Files are stored in Supabase Storage (backed by AWS S3)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Access Control:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " Storage buckets use row-level security (RLS) policies"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Public Buckets:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " Only tenant website assets (gallery images, hero images) are in public buckets"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Private Buckets:"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " Student documents, PDFs, assignments, and institutional files are in private, authenticated buckets"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Encryption:"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " Server-side encryption (AES-256) for all stored files"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "9.2 File Upload Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "Uploaded files are validated for:"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-23",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "File type:"
+            },
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [],
+              "text": " Only allowed MIME types are accepted (images: jpg/png/webp, documents: pdf/doc/docx, video: mp4)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "File size:"
+            },
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": " Maximum limits enforced (images: 5MB, documents: 25MB, hero video: 20MB)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "File content:"
+            },
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": " Magic byte validation to prevent disguised malicious files"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-31",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": "Uploaded files are scanned for malware where feasible"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-33",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-32",
+              "_type": "span",
+              "marks": [],
+              "text": "File names are sanitized and stored with generated UUIDs to prevent path traversal attacks"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-35",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-34",
+              "_type": "span",
+              "marks": [],
+              "text": "9.3 Download Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-37",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-36",
+              "_type": "span",
+              "marks": [],
+              "text": "Private files require valid authentication to download"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-39",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-38",
+              "_type": "span",
+              "marks": [],
+              "text": "Signed URLs with expiration times are used for temporary access to private files"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-41",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [],
+              "text": "Download links cannot be shared or used after expiration"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "file-storage-security",
+      "title": "9. FILE STORAGE SECURITY"
+    },
+    {
+      "_key": "section-10",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "10.1 DDoS Protection"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "The Platform is served through CDN (Vercel Edge Network / Cloudflare) with built-in DDoS mitigation"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Layer 3/4 attacks are automatically mitigated by the CDN provider"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Layer 7 attacks are mitigated through rate limiting and request filtering"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "10.2 Firewall and Network Controls"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "Web Application Firewall (WAF) rules are configured to block common attack patterns"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Geolocation-based blocking is available if needed"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "All inbound traffic is filtered and monitored"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "10.3 DNS Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "DNS is managed through providers with DNSSEC support"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "DNS records are monitored for unauthorized changes"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "network-security",
+      "title": "10. NETWORK SECURITY"
+    },
+    {
+      "_key": "section-11",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "11.1 Personnel Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "All team members undergo security awareness training"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Access to production systems is granted based on job responsibility and revoked upon role change or departure"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "All team members are bound by Non-Disclosure Agreements (NDAs) and confidentiality clauses"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "The principle of least privilege is enforced for all internal access"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "11.2 Access Management"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Multi-Factor Authentication (MFA) is mandatory for all team members accessing production systems"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "Access reviews are conducted periodically to ensure ongoing necessity"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "Privileged access (database, cloud console) is limited to designated DevOps personnel"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "All administrative actions are logged and auditable"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "11.3 Physical Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "We do not operate our own data centers; physical security is managed by Our cloud providers (Google Cloud, MongoDB Atlas, AWS)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "All cloud providers maintain SOC 2 Type II compliance, which includes physical security controls"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "Company devices used for production access have full-disk encryption enabled"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "organizational-security",
+      "title": "11. ORGANIZATIONAL SECURITY"
+    },
+    {
+      "_key": "section-12",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "12.1 Backup Strategy"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-5",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Continuous Backups:"
+            },
+            {
+              "_key": "span-4",
+              "_type": "span",
+              "marks": [],
+              "text": " MongoDB Atlas provides continuous backups with point-in-time recovery"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Snapshot Frequency:"
+            },
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": " Full database snapshots every 6 hours"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-11",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Retention:"
+            },
+            {
+              "_key": "span-10",
+              "_type": "span",
+              "marks": [],
+              "text": " Backups retained for 30 days (rolling)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Backup Encryption:"
+            },
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": " All backups are encrypted at rest using AES-256"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "12.2 Disaster Recovery"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Recovery Point Objective (RPO):"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " Maximum 1 hour of data loss in worst-case scenario"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Recovery Time Objective (RTO):"
+            },
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": " Platform restoration within 4 hours of a critical incident"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Geographic Redundancy:"
+            },
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": " Database replicas are maintained across multiple availability zones"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Regular Testing:"
+            },
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": " Disaster recovery procedures are tested periodically"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-30",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [],
+              "text": "12.3 Data Restoration"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": "In the event of accidental data deletion by a Tenant Organization, restoration from backup may be possible within the backup retention window"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "Data restoration requests should be submitted to support@classgrid.in immediately upon discovery of data loss"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "data-backup-and-recovery",
+      "title": "12. DATA BACKUP AND RECOVERY"
+    },
+    {
+      "_key": "section-13",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "13.1 Incident Response Plan"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "We maintain a documented incident response plan that covers:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Detection:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " Automated monitoring and alerting for security events"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Triage:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " Classification of incidents by severity (Critical, High, Medium, Low)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Containment:"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " Immediate actions to prevent further damage"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Eradication:"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " Removal of the root cause"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Recovery:"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " Restoration of affected services and data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Post-Incident Review:"
+            },
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": " Analysis and documentation of lessons learned"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "13.2 Incident Severity Levels"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "table-29",
+          "_type": "legalTable",
+          "headers": [
+            "Severity",
+            "Description",
+            "Response Time"
+          ],
+          "rows": [
+            {
+              "_key": "row-25",
+              "cells": [
+                "Critical",
+                "Active data breach, complete service outage, active exploitation",
+                "Immediate (within 1 hour)"
+              ]
+            },
+            {
+              "_key": "row-26",
+              "cells": [
+                "High",
+                "Potential data exposure, significant service degradation, vulnerability under active exploit",
+                "Within 4 hours"
+              ]
+            },
+            {
+              "_key": "row-27",
+              "cells": [
+                "Medium",
+                "Minor data inconsistency, non-critical service disruption",
+                "Within 24 hours"
+              ]
+            },
+            {
+              "_key": "row-28",
+              "cells": [
+                "Low",
+                "Informational security event, minor configuration issue",
+                "Within 72 hours"
+              ]
+            }
+          ]
+        },
+        {
+          "_key": "block-31",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": "13.3 Breach Notification"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-33",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-32",
+              "_type": "span",
+              "marks": [],
+              "text": "In the event of a confirmed data breach:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-36",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-34",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Affected Users:"
+            },
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": " Notified within 72 hours of confirmation, with details of what data was affected and recommended actions"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-39",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-37",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Data Protection Board of India:"
+            },
+            {
+              "_key": "span-38",
+              "_type": "span",
+              "marks": [],
+              "text": " Notified as required under the DPDP Act, 2023"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-42",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Tenant Organizations:"
+            },
+            {
+              "_key": "span-41",
+              "_type": "span",
+              "marks": [],
+              "text": " Notified immediately if institutional data is involved"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-45",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-43",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Law Enforcement:"
+            },
+            {
+              "_key": "span-44",
+              "_type": "span",
+              "marks": [],
+              "text": " Notified if criminal activity is suspected"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-47",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-46",
+              "_type": "span",
+              "marks": [],
+              "text": "13.4 Communication"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-49",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-48",
+              "_type": "span",
+              "marks": [],
+              "text": "Security incidents are communicated transparently"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-51",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-50",
+              "_type": "span",
+              "marks": [],
+              "text": "A public status page will display real-time Platform availability and incident updates"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-53",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-52",
+              "_type": "span",
+              "marks": [],
+              "text": "Post-incident reports are shared with affected Tenant Organizations"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "incident-response",
+      "title": "13. INCIDENT RESPONSE"
+    },
+    {
+      "_key": "section-14",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "14.1 Dependency Scanning"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Automated dependency scanning is performed regularly using tools like `npm audit`"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Critical and high-severity vulnerabilities in dependencies are patched within 72 hours"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Dependencies are kept up-to-date with automated update monitoring"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "14.2 Code Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "Static Application Security Testing (SAST) is integrated into the development workflow"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Security-focused code reviews for sensitive modules (authentication, authorization, data access)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "Regular manual security reviews of critical Platform components"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "14.3 Penetration Testing"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "The Company plans to conduct annual penetration testing by qualified third-party security firms"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "Critical findings are remediated before the next release"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "Results are used to continuously improve security posture"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "14.4 Patch Management"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "Security patches for operating systems and libraries are applied within defined SLAs:"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-31",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Critical vulnerabilities:"
+            },
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": " Within 24 hours"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-32",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "High vulnerabilities:"
+            },
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": " Within 72 hours"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-37",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Medium vulnerabilities:"
+            },
+            {
+              "_key": "span-36",
+              "_type": "span",
+              "marks": [],
+              "text": " Within 7 days"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-40",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-38",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Low vulnerabilities:"
+            },
+            {
+              "_key": "span-39",
+              "_type": "span",
+              "marks": [],
+              "text": " Within 30 days"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "vulnerability-management",
+      "title": "14. VULNERABILITY MANAGEMENT"
+    },
+    {
+      "_key": "section-15",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "15.1 Regulatory Compliance"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "The Platform is designed to comply with:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Information Technology Act, 2000"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " — India's primary cyber law"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "IT (Reasonable Security Practices) Rules, 2011"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " — Standards for handling sensitive personal data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Digital Personal Data Protection Act, 2023 (DPDP Act)"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " — India's comprehensive data protection law"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Google Play Developer Program Policies"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " — For mobile app distribution"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Apple App Store Guidelines"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " — For iOS app distribution"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "PCI DSS"
+            },
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": " — Payment card data is handled by PCI DSS Level 1 certified Razorpay; the Platform never stores card data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "15.2 Educational Regulatory Support"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "The Platform helps Tenant Organizations comply with:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "NAAC / AICTE disclosure requirements"
+            },
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": " — Through mandatory disclosure pages on tenant websites"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "State Board requirements"
+            },
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": " — Through structured data management and reporting"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-35",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "RTI-related obligations"
+            },
+            {
+              "_key": "span-34",
+              "_type": "span",
+              "marks": [],
+              "text": " — Through publicly accessible institutional information on tenant websites"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-37",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-36",
+              "_type": "span",
+              "marks": [],
+              "text": "15.3 Audit Readiness"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-39",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-38",
+              "_type": "span",
+              "marks": [],
+              "text": "All security-relevant events are logged and retained for audit purposes"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-41",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [],
+              "text": "Access logs, authentication events, and data modification events are maintained"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-43",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-42",
+              "_type": "span",
+              "marks": [],
+              "text": "Logs are stored in tamper-evident storage with controlled access"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "compliance",
+      "title": "15. COMPLIANCE"
+    },
+    {
+      "_key": "section-16",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "16.1 Logical Isolation"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "Each Tenant Organization's data is logically isolated using Organization IDs in all database queries"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "API endpoints enforce organization-level access control — a User from Organization A cannot access Organization B's data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Tenant website content is isolated by `org_slug` in the database"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "16.2 Access Boundaries"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "Faculty can only access data for classes/sections they are assigned to"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Students can only access their own academic records"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "Parents can only access their ward's data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "Org Admins can only manage data within their own organization"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "16.3 Testing"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "Data isolation is tested as part of the development process"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "Access control tests verify that cross-tenant data access is not possible through any API endpoint"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "tenant-data-isolation",
+      "title": "16. TENANT DATA ISOLATION"
+    },
+    {
+      "_key": "section-17",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "17.1 Vendor Assessment"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "We evaluate the security posture of all third-party service providers before integration. Key criteria include:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-6",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "SOC 2 Type II or equivalent certification"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": "Data encryption capabilities (at rest and in transit)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "Access control and authentication mechanisms"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "Incident response capabilities"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "Data processing agreements and privacy commitments"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "17.2 Current Third-Party Security Status"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "table-23",
+          "_type": "legalTable",
+          "headers": [
+            "Provider",
+            "Certification",
+            "Data Processing Agreement"
+          ],
+          "rows": [
+            {
+              "_key": "row-17",
+              "cells": [
+                "MongoDB Atlas",
+                "SOC 2 Type II, ISO 27001",
+                "Yes"
+              ]
+            },
+            {
+              "_key": "row-18",
+              "cells": [
+                "Google Cloud Platform",
+                "SOC 1/2/3, ISO 27001/27017/27018",
+                "Yes (Google DPA)"
+              ]
+            },
+            {
+              "_key": "row-19",
+              "cells": [
+                "Supabase",
+                "SOC 2 Type II",
+                "Yes"
+              ]
+            },
+            {
+              "_key": "row-20",
+              "cells": [
+                "Vercel",
+                "SOC 2 Type II",
+                "Yes"
+              ]
+            },
+            {
+              "_key": "row-21",
+              "cells": [
+                "Razorpay",
+                "PCI DSS Level 1",
+                "Yes"
+              ]
+            },
+            {
+              "_key": "row-22",
+              "cells": [
+                "Firebase",
+                "SOC 1/2/3, ISO 27001",
+                "Yes (Google DPA)"
+              ]
+            }
+          ]
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": "17.3 Supply Chain Security"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-27",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [],
+              "text": "Third-party libraries and packages are sourced from official registries (npm)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": "Package integrity is verified using lockfiles and checksums"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-31",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [],
+              "text": "Critical dependencies are pinned to specific versions"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "third-party-security",
+      "title": "17. THIRD-PARTY SECURITY"
+    },
+    {
+      "_key": "section-18",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "We recommend all Users follow these security best practices:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "18.1 For All Users"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-8",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [],
+              "text": "Use a "
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "strong, unique password"
+            },
+            {
+              "_key": "span-7",
+              "_type": "span",
+              "marks": [],
+              "text": " (minimum 8 characters, mix of uppercase, lowercase, numbers, and symbols)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-10",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not share"
+            },
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": " Your login credentials with anyone"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-15",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Log out"
+            },
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [],
+              "text": " after each session, especially on shared devices"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-17",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-16",
+              "_type": "span",
+              "marks": [],
+              "text": "Report suspicious activity to Your Org Admin or support@classgrid.in immediately"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": "Keep Your device's operating system and browser updated"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-21",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [],
+              "text": "18.2 For Org Admins"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-25",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [],
+              "text": "Regularly "
+            },
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "review user accounts"
+            },
+            {
+              "_key": "span-24",
+              "_type": "span",
+              "marks": [],
+              "text": " and deactivate accounts of users who have left the institution"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-29",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-26",
+              "_type": "span",
+              "marks": [],
+              "text": "Use "
+            },
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "strong admin passwords"
+            },
+            {
+              "_key": "span-28",
+              "_type": "span",
+              "marks": [],
+              "text": " and change them periodically"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-30",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Limit Org Admin access"
+            },
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": " to trusted personnel only"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "Review and audit faculty access to student data"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-36",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": "Ensure institutional devices used to access the Platform have up-to-date antivirus software"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-38",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-37",
+              "_type": "span",
+              "marks": [],
+              "text": "18.3 For Faculty"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-42",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-39",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not access"
+            },
+            {
+              "_key": "span-41",
+              "_type": "span",
+              "marks": [],
+              "text": " student data on unsecured or public Wi-Fi networks without a VPN"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-44",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-43",
+              "_type": "span",
+              "marks": [],
+              "text": "Lock Your device when stepping away from it"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-46",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-45",
+              "_type": "span",
+              "marks": [],
+              "text": "Do not download student personal data to personal devices"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-48",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-47",
+              "_type": "span",
+              "marks": [],
+              "text": "Report any suspected data breach or unauthorized access immediately"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "user-security-best-practices",
+      "title": "18. USER SECURITY BEST PRACTICES"
+    },
+    {
+      "_key": "section-19",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "19.1 Reporting Security Vulnerabilities"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [],
+              "text": "We welcome responsible disclosure of security vulnerabilities. If You discover a security issue in the Platform, please report it to Us:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Email:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " security@classgrid.in"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Subject Line:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " \"Security Vulnerability Report — [Brief Description]\""
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-12",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [],
+              "text": "19.2 What to Include"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-14",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-13",
+              "_type": "span",
+              "marks": [],
+              "text": "A description of the vulnerability"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": "Steps to reproduce the issue"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-18",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [],
+              "text": "Potential impact assessment"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-20",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-19",
+              "_type": "span",
+              "marks": [],
+              "text": "Your contact information (optional but appreciated)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-22",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-21",
+              "_type": "span",
+              "marks": [],
+              "text": "19.3 Our Commitment"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-24",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-23",
+              "_type": "span",
+              "marks": [],
+              "text": "We will acknowledge receipt of Your report within 48 hours"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-26",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-25",
+              "_type": "span",
+              "marks": [],
+              "text": "We will investigate the vulnerability within 7 days"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-28",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-27",
+              "_type": "span",
+              "marks": [],
+              "text": "We will provide updates on remediation progress"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-30",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-29",
+              "_type": "span",
+              "marks": [],
+              "text": "We will credit You (if desired) in Our security acknowledgments"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-32",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-31",
+              "_type": "span",
+              "marks": [],
+              "text": "We will not take legal action against researchers who follow responsible disclosure guidelines"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-34",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-33",
+              "_type": "span",
+              "marks": [],
+              "text": "19.4 Rules of Engagement"
+            }
+          ],
+          "markDefs": [],
+          "style": "h3"
+        },
+        {
+          "_key": "block-38",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-35",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-36",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not"
+            },
+            {
+              "_key": "span-37",
+              "_type": "span",
+              "marks": [],
+              "text": " access or modify data belonging to other Users"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-42",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-39",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-40",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not"
+            },
+            {
+              "_key": "span-41",
+              "_type": "span",
+              "marks": [],
+              "text": " perform denial-of-service testing"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-46",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-43",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-44",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not"
+            },
+            {
+              "_key": "span-45",
+              "_type": "span",
+              "marks": [],
+              "text": " use social engineering or phishing attacks"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-50",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-47",
+              "_type": "span",
+              "marks": [],
+              "text": "Do "
+            },
+            {
+              "_key": "span-48",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "not"
+            },
+            {
+              "_key": "span-49",
+              "_type": "span",
+              "marks": [],
+              "text": " publicly disclose the vulnerability before We have had a reasonable time to address it (90 days)"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "responsible-disclosure",
+      "title": "19. RESPONSIBLE DISCLOSURE"
+    },
+    {
+      "_key": "section-20",
+      "content": [
+        {
+          "_key": "block-2",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-1",
+              "_type": "span",
+              "marks": [],
+              "text": "For security-related inquiries, vulnerability reports, or concerns:"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-4",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-3",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Classgrid Technologies — Security Team"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-7",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-5",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Security Reports:"
+            },
+            {
+              "_key": "span-6",
+              "_type": "span",
+              "marks": [],
+              "text": " security@classgrid.in"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-10",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-8",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "General Support:"
+            },
+            {
+              "_key": "span-9",
+              "_type": "span",
+              "marks": [],
+              "text": " support@classgrid.in"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-13",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-11",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Privacy Inquiries:"
+            },
+            {
+              "_key": "span-12",
+              "_type": "span",
+              "marks": [],
+              "text": " privacy@classgrid.in"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-16",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-14",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Phone:"
+            },
+            {
+              "_key": "span-15",
+              "_type": "span",
+              "marks": [],
+              "text": " +91 8623947038 / +91 8149277038"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-19",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-17",
+              "_type": "span",
+              "marks": [
+                "strong"
+              ],
+              "text": "Address:"
+            },
+            {
+              "_key": "span-18",
+              "_type": "span",
+              "marks": [],
+              "text": " Akurdi Railway Station Road, Sector No. 26, Pradhikaran, Nigdi, Pimpri-Chinchwad, Maharashtra 411044, India"
+            }
+          ],
+          "level": 1,
+          "listItem": "bullet",
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-21",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-20",
+              "_type": "span",
+              "marks": [],
+              "text": "*This Security Policy is reviewed and updated periodically. The Company reserves the right to modify this Policy at any time.*"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        },
+        {
+          "_key": "block-23",
+          "_type": "block",
+          "children": [
+            {
+              "_key": "span-22",
+              "_type": "span",
+              "marks": [],
+              "text": "*© 2026 Classgrid Technologies. All rights reserved.*"
+            }
+          ],
+          "markDefs": [],
+          "style": "normal"
+        }
+      ],
+      "id": "contact",
+      "title": "20. CONTACT"
+    }
+  ],
+  "slug": {
+    "_type": "slug",
+    "current": "security"
+  },
+  "title": "SECURITY POLICY"
+}

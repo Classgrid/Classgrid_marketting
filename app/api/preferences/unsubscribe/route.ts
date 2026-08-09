@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     // Redirect to the success confirmation page
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed`);
+    const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed?type=${type}`);
     
     // Set a short-lived cookie so the user can view the success screen just once
     response.cookies.set("unsubscribed_session", "true", {

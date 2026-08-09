@@ -44,15 +44,21 @@ export async function GET(req: Request) {
       );
     }
 
-    // Soft-delete: set all preferences to false
+    const type = searchParams.get("type") || "blog";
+    let updatePayload: Record<string, any> = { updated_at: new Date().toISOString() };
+
+    if (type === "legal") {
+      updatePayload.receives_legal = false;
+    } else if (type === "changelog") {
+      updatePayload.receives_changelog = false;
+    } else {
+      updatePayload.receives_blog = false;
+    }
+
+    // Soft-delete: set the specific preference to false
     const { error: updateError } = await supabaseAdmin
       .from("blog_subscribers")
-      .update({ 
-          receives_blog: false, 
-          receives_changelog: false, 
-          receives_legal: false, 
-          updated_at: new Date().toISOString() 
-      })
+      .update(updatePayload)
       .eq("email", email);
 
     if (updateError) {
@@ -65,7 +71,7 @@ export async function GET(req: Request) {
 
     // Redirect to the confirmation page
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed`);
+    const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed?type=${type}`);
     
     // Set a short-lived cookie so the user can view the success screen just once
     response.cookies.set("unsubscribed_session", "true", {

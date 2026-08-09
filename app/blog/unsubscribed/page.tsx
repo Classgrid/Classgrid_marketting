@@ -14,8 +14,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function UnsubscribedPage() {
+export default async function UnsubscribedPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const cookieStore = await cookies();
+  const searchParams = await props.searchParams;
+  const type = (searchParams?.type as string) || "blog";
   
   // Protect route: Only allow if they just unsubscribed
   if (!cookieStore.has("unsubscribed_session")) {
@@ -100,11 +102,23 @@ export default async function UnsubscribedPage() {
               <div className="mt-4 space-y-4 text-sm text-muted-foreground">
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <p>No more blog broadcast emails will be sent to your inbox.</p>
+                  <p>
+                    {type === "legal" 
+                      ? "No more legal and security policy updates will be sent to your inbox." 
+                      : type === "changelog"
+                      ? "No more product changelog updates will be sent to your inbox."
+                      : "No more blog broadcast emails will be sent to your inbox."}
+                  </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <p>You can re-subscribe anytime from the subscription block on any blog article.</p>
+                  <p>
+                    {type === "legal" 
+                      ? "You can re-subscribe anytime from your profile settings." 
+                      : type === "changelog"
+                      ? "You can re-subscribe anytime from the subscription block on the changelog page."
+                      : "You can re-subscribe anytime from the subscription block on any blog article."}
+                  </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
