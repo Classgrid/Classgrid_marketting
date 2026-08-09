@@ -1,64 +1,84 @@
-# Classgrid Email Architecture & Providers
+# Classgrid Marketing & Legal Email Sending Logic
 
-The Classgrid platform sends exactly 19 distinct emails across the Marketing site and Platform backend. To ensure maximum deliverability and protect sender reputation, these emails are strictly segregated into categories based on their purpose and the infrastructure used to send them.
+This document details the exact technical implementation of the bulk email sending logic, specifically how limits, daily quotas, and providers are handled in the `marketing-email-blast.worker.js` background worker.
+
+## 1. Marketing & Product Updates (Blog & Changelog)
+
+**Providers Used:** Brevo SMTP (Primary) + Resend SMTP (Fallback)
+**Use Case:** Sending newsletters, product updates, and changelog announcements.
+
+### The "Waterfall" Quota System
+Since these emails are sent using free-tier consumer products, they are subject to strict daily sending limits (e.g., Brevo = 300/day, Resend = 100/day). The worker handles this seamlessly:
+
+1. **Primary Provider (Brevo):** The server begins iterating through the subscriber list and attempts to send via Brevo.
+2. **Instant Fallback (Resend):** If Brevo hits its daily quota and throws an error, the worker catches the error and instantly switches to the Resend transporter without interrupting the loop.
+3. **Limit Detection & Pausing:** If Resend *also* hits its quota (e.g., throws a 429 Too Many Requests error), the worker detects this global rate limit. 
+4. **State Persistence:** The worker immediately pauses the loop, saves the exact number of successfully sent emails (`sent_count`) in the database, and flags the batch as `rate_limited`.
+
+### The 24-Hour Resumption Cycle
+If a broadcast requires 1,000 emails, and the combined daily limit is 400, the system automatically stretches the broadcast across multiple days:
+*   **Day 1:** Sends emails 1 to 400. Hits the limit. Pauses.
+*   **Day 2:** Exactly 24 hours later, the cron job wakes up, checks the database, finds the paused batch, and resumes sending **exactly from subscriber #401**. It sends emails 401 to 800.
+*   **Day 3:** Resumes from 801 to 1,000. Marks the broadcast as `completed`.
+
+This allows Classgrid to blast thousands of marketing emails on free tiers without any manual intervention.
 
 ---
 
-## 🟢 Category 1: Marketing & Updates (4 Emails)
+## 2. Legal & Compliance Updates
+
+**Provider Used:** AWS SES (Amazon Simple Email Service)
+**Use Case:** Sending mandatory legal notices (Privacy Policy updates, Terms of Service changes, etc.) to all users and subscribers.
+
+### Infinite Daily Limits
+Unlike marketing emails, legal updates are sent using AWS SES. Because SES is a professional cloud infrastructure service, it does **not** have a small daily limit (typically starting at 50,000/day and scaling to millions). 
+Therefore, if you need to blast 10,000 users about a Privacy Policy update, the system will deliver all 10,000 emails on the exact same day.
+
+### The "Per-Second" Throttle
+While AWS SES has a massive daily limit, it strictly enforces a *per-second* speed limit (e.g., 14 emails per second). 
+
+To prevent crashing the SES connection and getting blocked, the worker script includes a built-in throttle specifically for legal emails:
+```javascript
+// Slight delay to respect SES 14/sec rate limits
+if (item.document_type === "legalPage") {
+  await new Promise(res => setTimeout(res, 100)); // 10 per sec
+}
+```
+By forcing a tiny 100-millisecond delay between each email, the worker reliably streams out exactly 10 emails per second. This ensures 100% deliverability for critical legal notices while staying safely under the AWS SES speed limit.
+
+---
+
+## 3. The 19-Email Architecture Map
+
+The Classgrid platform sends exactly 19 distinct emails across the Marketing site and Platform backend. They are strictly segregated into categories based on their purpose and infrastructure.
+
+### 🟢 Category 1: Marketing & Updates (4 Emails)
 **Provider:** Brevo SMTP (with Resend as fallback)  
-**Purpose:** Keep subscribers engaged with product updates and company news.  
-**Audience:** Users who explicitly opted-in via the Blog or Changelog subscribe forms.
+**Purpose:** Keep subscribers engaged with product updates and company news.
 
-1. **Blog Welcome Email**
-   * Triggered when: A user submits the subscribe form on the `/blog` page.
-   * Content: Welcomes them to the blog, sets expectations on content, and shares the most recent blog post.
-2. **Changelog Welcome Email**
-   * Triggered when: A user submits the subscribe form on the `/changelog` page.
-   * Content: Welcomes them to the changelog, sets expectations on product updates, and shares the most recent changelog entry.
-3. **Blog Broadcast**
-   * Triggered when: A new blog post is published in the Sanity CMS.
-   * Content: A summary of the new blog post with a link to read the full article.
-4. **Changelog Broadcast**
-   * Triggered when: A new changelog entry is published in the Sanity CMS.
-   * Content: A summary of the new feature, bugfix, or improvement with a link to view the update.
+1. **Blog Welcome Email** (`/api/blog/subscribe`)
+2. **Changelog Welcome Email** (`/api/blog/subscribe`)
+3. **Blog Broadcast** (`marketing-email-blast.worker.js`)
+4. **Changelog Broadcast** (`marketing-email-blast.worker.js`)
 
----
-
-## ⚖️ Category 2: Legal & Compliance (5 Emails)
+### ⚖️ Category 2: Legal & Compliance (5 Emails)
 **Provider:** AWS SES (Amazon Simple Email Service)  
-**Purpose:** Mandatory legal notifications required by law or compliance standards.  
-**Audience:** ALL active subscribers and platform users (users cannot opt-out of these while their account is active).
+**Purpose:** Mandatory legal notifications.
 
-*AWS SES is used exclusively for these 5 emails because transactional/legal emails require the highest possible deliverability rate and should not be mixed with marketing email infrastructure.*
-
-5. **Privacy Policy Update**
-   * Triggered when: The Privacy Policy is modified in Sanity CMS.
-   * Subject: "Important update to our Privacy Policy — effective [Date]"
+5. **Privacy Policy Update** 
 6. **Terms of Service Update**
-   * Triggered when: The Terms of Service are modified in Sanity CMS.
-   * Subject: "Notice of updates to our Terms of Service — effective [Date]"
 7. **Security Policy Update**
-   * Triggered when: The Information Security Policy is modified in Sanity CMS.
-   * Subject: "Update to our Information Security Policy"
 8. **Cookies Policy Update**
-   * Triggered when: The Cookies Policy is modified in Sanity CMS.
-   * Subject: "Update to our Cookies Policy — effective [Date]"
 9. **Disclaimer Update**
-   * Triggered when: The Disclaimer page is modified in Sanity CMS.
-   * Subject: "Update to our Disclaimer"
 
----
-
-## 🔒 Category 3: Authentication & Security (2 Emails)
+### 🔒 Category 3: Authentication & Security (2 Emails)
 **Provider:** AWS SES & Resend  
 **Purpose:** Critical security infrastructure for the Community/Docs portals.
 
 10. **Login OTP Codes (6-digits)** (AWS SES)
 11. **"No Account Found" Alert** (Resend)
 
----
-
-## 🏢 Category 4: Transactional & Internal Operations (8 Emails)
+### 🏢 Category 4: Transactional & Internal Operations (8 Emails)
 **Provider:** AWS SES  
 **Purpose:** Direct communication between leads, users, and the Classgrid internal team.
 
@@ -96,6 +116,3 @@ The Classgrid platform sends exactly 19 distinct emails across the Marketing sit
 | **Careers App Submitted** | Website (`/api/careers`) | **AWS SES** | None |
 | **New Career Notification** | Website (`/api/careers`) | **AWS SES** | None |
 | **Team Welcome Email** | Website (`/api/team/welcome`) | **AWS SES** | None |
-
-> [!TIP]
-> **Why separate them?** By keeping marketing emails on Brevo (with Resend fallbacks) and transactional/legal emails strictly on AWS SES, you protect your main domain's reputation. If marketing emails ever get marked as spam or hit a rate limit, it will automatically fail over to Resend, and it will never affect the delivery of critical legal notifications or platform password resets because they use an entirely different AWS SES infrastructure.
