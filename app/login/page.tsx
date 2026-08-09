@@ -93,15 +93,15 @@ function LoginContent() {
       // Non-platform (community) users → Classgrid Talk
       router.replace("/support/inquiry");
     }
-  }, [status, session, router, ssoReturnTo, explicitNext]);
+  }, [status, session, router, ssoReturnTo, explicitNext, unsubscribeReturnTo]);
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "otp">("email");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const intent = searchParams.get("intent");
-  const unsubscribeType = searchParams.get("type");
+  // (Variables declared above)
+
   const typeDisplay = unsubscribeType ? unsubscribeType.charAt(0).toUpperCase() + unsubscribeType.slice(1) : "";
 
   // Show OAuth error from URL (e.g. OAuthCallback)
