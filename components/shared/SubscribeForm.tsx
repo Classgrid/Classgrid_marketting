@@ -144,8 +144,8 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
         </div>
       )}
 
-      {/* Cloudflare Turnstile */}
-      <div className="pt-2" data-action="turnstile-spin-v2">
+      {/* Cloudflare Turnstile — invisible for most visitors */}
+      <div data-action="turnstile-spin-v2">
         <Turnstile
           ref={turnstileRef}
           siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAELIHhXQqcev5Im7"}
@@ -154,6 +154,7 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
           onExpire={() => setTurnstileToken(null)}
           options={{
              theme: 'auto',
+             appearance: 'interaction-only',
           }}
         />
       </div>
