@@ -81,15 +81,7 @@ export const changelogEntryType = defineType({
       type: "array",
       of: [defineArrayMember({ type: "string" })],
       options: {
-        list: [
-          { title: "Finance", value: "finance" },
-          { title: "Academics", value: "academics" },
-          { title: "Admissions", value: "admissions" },
-          { title: "Exams", value: "exams" },
-          { title: "Support & Helpdesk", value: "support" },
-          { title: "Websites CMS", value: "websites" },
-          { title: "Canteen & Operations", value: "canteen" },
-        ],
+        layout: "tags",
       },
     }),
     defineField({
