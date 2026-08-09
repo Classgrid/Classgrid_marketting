@@ -417,7 +417,7 @@ function LoginContent() {
             </form>
           )}
 
-          {step === "email" && searchParams.get("next") !== "/support/ticket" && (
+          {step === "email" && searchParams.get("next") !== "/support/ticket" && intent !== "unsubscribe" && (
             <div className="mt-8 text-center text-[13px]">
               {mode === "signin" ? (
                 <span className="text-slate-500 dark:text-[#888888]">
