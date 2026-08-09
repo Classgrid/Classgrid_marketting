@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
  * Connects to /api/blog/subscribe (Brevo SMTP + Supabase).
  * Used on: Changelog page, Blog detail page, and any future pages.
  */
-export function SubscribeForm() {
+export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" } = {}) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ export function SubscribeForm() {
       const response = await fetch("/api/blog/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: name.trim() }),
+        body: JSON.stringify({ email, name: name.trim(), type }),
       });
 
       const data = await response.json();
