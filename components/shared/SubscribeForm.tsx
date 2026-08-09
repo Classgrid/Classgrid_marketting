@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useRef } from "react";
 import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,12 +16,22 @@ import { Input } from "@/components/ui/input";
 export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" } = {}) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState(""); // Honeypot field
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    
+    if (!turnstileToken) {
+      setError("Please complete the security check.");
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
     setError(null);
@@ -29,7 +40,13 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
       const response = await fetch("/api/blog/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: name.trim(), type }),
+        body: JSON.stringify({ 
+          email, 
+          name: name.trim(), 
+          type,
+          "cf-turnstile-response": turnstileToken,
+          website_url: websiteUrl
+        }),
       });
 
       const data = await response.json();
@@ -49,10 +66,14 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
       setMessage(data?.message ?? "Subscribed! You'll receive the latest updates in your inbox.");
       setEmail("");
       setName("");
+      setWebsiteUrl("");
     } catch {
       setError("Could not subscribe right now. Please try again.");
     } finally {
       setLoading(false);
+      // Always reset Turnstile token so a new one is generated for retries
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     }
   }
 
@@ -63,6 +84,18 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
         className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-2xl"
         onSubmit={handleSubmit}
       >
+        {/* Honeypot field - visually hidden from actual users */}
+        <input 
+          type="text" 
+          name="website_url" 
+          tabIndex={-1} 
+          autoComplete="off" 
+          value={websiteUrl}
+          onChange={(e) => setWebsiteUrl(e.target.value)}
+          style={{ display: "none" }} 
+          aria-hidden="true" 
+        />
+
         <Input
           type="text"
           required
@@ -110,6 +143,20 @@ export function SubscribeForm({ type = "blog" }: { type?: "blog" | "changelog" }
           <p className="text-sm text-rose-300 leading-5">{error}</p>
         </div>
       )}
+
+      {/* Cloudflare Turnstile */}
+      <div className="pt-2" data-action="turnstile-spin-v2">
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAELIHhXQqcev5Im7"}
+          onSuccess={(token) => setTurnstileToken(token)}
+          onError={() => setError("Security check failed. Please refresh and try again.")}
+          onExpire={() => setTurnstileToken(null)}
+          options={{
+             theme: 'auto',
+          }}
+        />
+      </div>
     </div>
   );
 }

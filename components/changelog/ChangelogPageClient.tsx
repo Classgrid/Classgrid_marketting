@@ -262,7 +262,7 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
         )}
       </div>
 
-      <SubscribeStrip />
+      <SubscribeStrip type="changelog" />
     </main>
   );
 }

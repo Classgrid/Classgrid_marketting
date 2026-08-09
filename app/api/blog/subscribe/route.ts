@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import dns from "dns";
 import { NextResponse } from "next/server";
 
 import { client } from "@/sanity/lib/client";
@@ -160,9 +161,75 @@ function generateUnsubscribeHash(email: string): string {
   return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
 }
 
-  export async function POST(req: Request) {
-    try {
-      const { email, name, type = "blog" } = await req.json();
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const limit = 5; // max 5 per 15 minutes
+  const windowMs = 15 * 60 * 1000;
+  
+  const record = rateLimitMap.get(ip);
+  if (!record) {
+    rateLimitMap.set(ip, { count: 1, timestamp: now });
+    return true;
+  }
+  
+  if (now - record.timestamp > windowMs) {
+    rateLimitMap.set(ip, { count: 1, timestamp: now });
+    return true;
+  }
+  
+  if (record.count >= limit) return false;
+  
+  record.count++;
+  return true;
+}
+
+export async function POST(req: Request) {
+  try {
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
+    const { 
+      email, 
+      name, 
+      type = "blog", 
+      "cf-turnstile-response": turnstileToken,
+      website_url 
+    } = await req.json();
+
+    // 1. Honeypot Check
+    if (website_url) {
+      // Silently accept bots filling the honeypot
+      return NextResponse.json(
+        { message: "Successfully subscribed! Please check your inbox." },
+        { status: 200 }
+      );
+    }
+
+    // 2. Turnstile Verification
+    const turnstileSecret = process.env.TURNSTILE_SECRET;
+    if (turnstileSecret && turnstileToken) {
+      const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: turnstileToken,
+          remoteip: ip,
+        }),
+      });
+      
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        return NextResponse.json({ error: "Security verification failed." }, { status: 403 });
+      }
+    } else if (!turnstileToken) {
+      return NextResponse.json({ error: "Security token missing." }, { status: 400 });
+    }
       // Clean the name: trim whitespace, take just the first word as first name
       const firstName = (name || "").trim().split(/\s+/)[0] || "";
   
@@ -173,6 +240,17 @@ function generateUnsubscribeHash(email: string): string {
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return NextResponse.json({ error: "Invalid email address. Please enter a valid email." }, { status: 400 });
       }
+
+      // 3. MX Record Validation
+      const domain = email.split('@')[1];
+      try {
+        const mxRecords = await dns.promises.resolveMx(domain);
+        if (!mxRecords || mxRecords.length === 0) {
+          return NextResponse.json({ error: "Invalid email domain. Please use a valid email." }, { status: 400 });
+        }
+      } catch (err) {
+        return NextResponse.json({ error: "Could not verify email domain. Please use a valid email." }, { status: 400 });
+      }
   
       const { data: existingSub } = await supabaseAdmin
         .from("blog_subscribers")
@@ -180,6 +258,8 @@ function generateUnsubscribeHash(email: string): string {
         .eq("email", email)
         .maybeSingle();
   
+      let isExistingSubscriberUpgrade = false;
+
       if (existingSub) {
         const isSubscribedToType = type === "changelog" ? existingSub.receives_changelog !== false : existingSub.receives_blog !== false;
         if (isSubscribedToType) {
@@ -205,6 +285,9 @@ function generateUnsubscribeHash(email: string): string {
           .eq("email", email);
           
         if (updateError) throw updateError;
+        
+        // Mark as existing so we don't send a duplicate welcome email
+        isExistingSubscriberUpgrade = true;
       } else {
         const { error: insertError } = await supabaseAdmin
           .from("blog_subscribers")
@@ -226,6 +309,15 @@ function generateUnsubscribeHash(email: string): string {
           throw insertError;
         }
       }
+
+    // 4. Duplicate Email Prevention
+    // If they already existed but we just updated their preferences, don't send the welcome email again.
+    if (isExistingSubscriberUpgrade) {
+       return NextResponse.json(
+          { message: "Successfully updated your subscription preferences!" },
+          { status: 200 }
+       );
+    }
 
     const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
     const senderEmail = "noreply@classgrid.in";

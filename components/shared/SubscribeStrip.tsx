@@ -7,11 +7,13 @@ import { SubscribeForm } from "@/components/shared/SubscribeForm";
 interface SubscribeStripProps {
   heading?: string;
   subtext?: string;
+  type?: "blog" | "changelog";
 }
 
 export function SubscribeStrip({
   heading = "Sign up for updates on our latest innovations",
   subtext = "Get the latest Classgrid product updates, blog posts and platform news. No spam. Unsubscribe anytime.",
+  type = "blog",
 }: SubscribeStripProps) {
   return (
     <section className="w-full border-t border-slate-300 dark:border-border bg-slate-50 dark:bg-card/50">
@@ -23,7 +25,7 @@ export function SubscribeStrip({
           {subtext}
         </p>
         <div className="mx-auto mt-8 flex justify-center">
-          <SubscribeForm />
+          <SubscribeForm type={type} />
         </div>
       </div>
     </section>
