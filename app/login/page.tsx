@@ -88,7 +88,11 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ── Show friendly error from URL params (e.g. ?error=OAuthCallback) ──
+  const intent = searchParams.get("intent");
+  const unsubscribeType = searchParams.get("type");
+  const typeDisplay = unsubscribeType ? unsubscribeType.charAt(0).toUpperCase() + unsubscribeType.slice(1) : "";
+
+  // Show OAuth error from URL (e.g. OAuthCallback)
   const urlError = searchParams.get("error");
   const friendlyUrlError = urlError
     ? OAUTH_ERROR_MAP[urlError] || OAUTH_ERROR_MAP.default
@@ -100,6 +104,10 @@ function LoginContent() {
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [otpExpired, setOtpExpired] = useState(false);
+
+  // ... (keeping existing handlers up to the return statement)
+
+  // Fast-forwarding down to the return JSX...
 
   const startCountdown = () => {
     setCountdown(OTP_TTL_SECONDS);
@@ -180,7 +188,6 @@ function LoginContent() {
 
       if (res.error) {
         if (res.error === "Account does not exist. Please sign up instead.") {
-          // Gracefully handle new users who tried to "Log In" instead of "Sign Up"
           setMode("signup");
           setStep("email");
           setError("Account not found. Please enter your name to create an account.");
@@ -188,7 +195,6 @@ function LoginContent() {
           return;
         }
 
-        // Map NextAuth error codes to human-readable messages
         const errorMap: Record<string, string> = {
           "OTP has expired": "Your code has expired. Please resend.",
           "Invalid OTP": "Incorrect code. Please try again.",
@@ -200,7 +206,6 @@ function LoginContent() {
         return;
       }
 
-      // Success — navigate (go to /login so role-based redirect kicks in)
       isRedirecting.current = true;
       window.location.href = otpSuccessUrl;
     } catch (err: any) {
@@ -209,7 +214,6 @@ function LoginContent() {
     }
   };
 
-  // While checking session or redirecting, show spinner
   if (status === "loading" || status === "authenticated") {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
@@ -239,6 +243,13 @@ function LoginContent() {
           {friendlyUrlError && (
             <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400">
               {friendlyUrlError}
+            </div>
+          )}
+
+          {/* Custom Unsubscribe Banner */}
+          {intent === "unsubscribe" && typeDisplay && (
+            <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-center text-[13.5px] text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-400 font-medium">
+              You need to log in to unsubscribe from {typeDisplay} updates.
             </div>
           )}
 
