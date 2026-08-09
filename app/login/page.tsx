@@ -195,6 +195,12 @@ function LoginContent() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.error === "Account not found. Please sign up instead.") {
+          setMode("signup");
+          setError("Account not found. Please enter your name to create an account.");
+          setLoading(false);
+          return;
+        }
         throw new Error(data.error || "Failed to send OTP");
       }
 
@@ -232,14 +238,6 @@ function LoginContent() {
       }
 
       if (res.error) {
-        if (res.error === "Account does not exist. Please sign up instead.") {
-          setMode("signup");
-          setStep("email");
-          setError("Account not found. Please enter your name to create an account.");
-          setLoading(false);
-          return;
-        }
-
         const errorMap: Record<string, string> = {
           "OTP has expired": "Your code has expired. Please resend.",
           "Invalid OTP": "Incorrect code. Please try again.",
