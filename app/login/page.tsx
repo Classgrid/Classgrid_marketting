@@ -292,7 +292,7 @@ function LoginContent() {
           )}
 
           {/* Custom Unsubscribe Banner */}
-          {intent === "unsubscribe" && typeDisplay && (
+          {intent === "unsubscribe" && typeDisplay && !friendlyUrlError && (
             <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-center text-[13.5px] text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-400 font-medium">
               You need to log in to unsubscribe from {typeDisplay} updates.
             </div>
