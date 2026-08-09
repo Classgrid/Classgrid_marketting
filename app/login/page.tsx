@@ -13,7 +13,7 @@ const OTP_TTL_SECONDS = 60;
 /** Map NextAuth URL error codes to user-friendly messages */
 const OAUTH_ERROR_MAP: Record<string, string> = {
   OAuthCallback: "Sign-in was interrupted. Please try again.",
-  OAuthAccountNotLinked: "This email is already linked to another sign-in method.",
+  OAuthAccountNotLinked: "Access Denied: You must log in with the exact email address that received this link.",
   OAuthSignin: "Could not start the sign-in flow. Please try again.",
   OAuthCreateAccount: "Could not create your account. Please try again.",
   Callback: "Something went wrong during sign-in. Please try again.",
@@ -74,6 +74,12 @@ function LoginContent() {
   // ── Redirect already-logged-in users ──
   useEffect(() => {
     if (status !== "authenticated" || !session?.user || isRedirecting.current) return;
+    
+    // If they were kicked back with an error (like wrong unsubscribe account),
+    // we must kill their session and let them see the error, not redirect them again!
+    if (searchParams.get("error")) {
+      return;
+    }
 
     const user = session.user as any;
 
@@ -135,6 +141,14 @@ function LoginContent() {
         .catch(err => console.error("Failed to fetch email from token:", err));
     }
   }, [targetToken]);
+
+  // If there's an error in the URL but they are still authenticated, sign them out
+  // so they can see the error message and log in with the correct account.
+  useEffect(() => {
+    if (urlError && status === "authenticated") {
+      import("next-auth/react").then(({ signOut }) => signOut({ redirect: false }));
+    }
+  }, [urlError, status]);
 
   // ... (keeping existing handlers up to the return statement)
 
@@ -245,7 +259,7 @@ function LoginContent() {
     }
   };
 
-  if (status === "loading" || status === "authenticated") {
+  if (status === "loading" || (status === "authenticated" && !urlError)) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <Spinner className="w-6 h-6 text-muted-foreground" />
