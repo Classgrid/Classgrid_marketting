@@ -194,10 +194,10 @@ export const authOptions: NextAuthOptions = {
           isPlatformUser = !!platformUser;
         }
 
-        // Only send "no account" email if the user is logging in from the Docs (/docs) page
+        // Only send "no account" email if the user is logging in from the Docs page
         const reqHeaders = await headers();
         const referer = reqHeaders.get("referer") || "";
-        const isDocsLogin = referer.includes("/docs");
+        const isDocsLogin = referer.includes("/docs") || referer.includes("intent=docs") || referer.includes("callbackUrl=%2Fdocs");
 
         if (!isPlatformUser && user.email && isDocsLogin) {
           // Parse user agent for device info
