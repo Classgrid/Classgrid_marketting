@@ -207,6 +207,10 @@ export const authOptions: NextAuthOptions = {
           callbackUrl.includes("/docs") || 
           callbackUrl.includes("intent=docs");
 
+        console.log(`[NextAuth signIn] isPlatformUser=${isPlatformUser}, user.email=${user.email}`);
+        console.log(`[NextAuth signIn] referer=${referer}, callbackUrl=${callbackUrl}`);
+        console.log(`[NextAuth signIn] isDocsLogin=${isDocsLogin}`);
+
         if (!isPlatformUser && user.email && isDocsLogin) {
           // Parse user agent for device info
           const userAgent = reqHeaders.get("user-agent") || "";
