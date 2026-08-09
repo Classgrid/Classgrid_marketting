@@ -1,7 +1,30 @@
+// ⚠️ ============================================================
+// ⚠️  AI WARNING — DO NOT MODIFY THIS FILE
+// ⚠️ ============================================================
+// This route handles the email unsubscribe flow WITH mandatory login.
+// The login requirement (getServerSession check) is INTENTIONAL and
+// MUST NEVER be removed. This is by design — users must log in to
+// confirm their identity before their subscription preferences are changed.
+//
+// FLOW:
+//   Email link → /api/preferences/unsubscribe?type=blog|changelog|legal
+//   → If NOT logged in → redirect to /login?intent=unsubscribe&type=...
+//   → After login → update the specific preference → redirect to /blog/unsubscribed
+//
+// DO NOT:
+//   - Remove the getServerSession check
+//   - Bypass login with a token
+//   - Change the redirect to /login
+//   - Make this route publicly accessible without a session
+//
+// This flow took 15+ hours to design and build. Do not break it.
+// ⚠️ ============================================================
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
+
 
 export async function GET(req: NextRequest) {
   try {
