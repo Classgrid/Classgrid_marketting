@@ -310,14 +310,9 @@ export async function POST(req: Request) {
         }
       }
 
-    // 4. Duplicate Email Prevention
-    // If they already existed but we just updated their preferences, don't send the welcome email again.
-    if (isExistingSubscriberUpgrade) {
-       return NextResponse.json(
-          { message: "Successfully updated your subscription preferences!" },
-          { status: 200 }
-       );
-    }
+    // 4. Always send the welcome email — even if they already had a record in the DB.
+    // If they are subscribing to Changelog for the first time (even as an existing Blog
+    // subscriber), they should still receive the Changelog welcome email.
 
     const senderName = process.env.BREVO_SENDER_NAME || "Classgrid";
     const senderEmail = "noreply@classgrid.in";
