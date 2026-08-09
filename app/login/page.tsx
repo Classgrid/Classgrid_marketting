@@ -43,9 +43,15 @@ function LoginContent() {
 
   const intent = searchParams.get("intent");
   const unsubscribeType = searchParams.get("type");
-  const unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
+  const targetEmail = searchParams.get("e");
+  
+  let unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
     ? `/api/preferences/unsubscribe?type=${unsubscribeType}` 
     : null;
+    
+  if (unsubscribeReturnTo && targetEmail) {
+    unsubscribeReturnTo += `&e=${encodeURIComponent(targetEmail)}`;
+  }
 
   // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
   const oauthCallbackUrl = ssoReturnTo || unsubscribeReturnTo || explicitNext || "/api/auth/post-login";
@@ -110,7 +116,7 @@ function LoginContent() {
     ? OAUTH_ERROR_MAP[urlError] || OAUTH_ERROR_MAP.default
     : "";
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(targetEmail || "");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [otp, setOtp] = useState("");

@@ -31,17 +31,25 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     const email = session?.user?.email;
 
+    const type = req.nextUrl.searchParams.get("type") || "blog";
+    const targetEmail = req.nextUrl.searchParams.get("e");
+
     if (!email) {
       // If they somehow hit this without a session, bounce them back to login
-      const type = req.nextUrl.searchParams.get("type") || "blog";
-      return NextResponse.redirect(new URL(`/login?intent=unsubscribe&type=${type}`, req.url));
+      let loginUrl = `/login?intent=unsubscribe&type=${type}`;
+      if (targetEmail) loginUrl += `&e=${encodeURIComponent(targetEmail)}`;
+      return NextResponse.redirect(new URL(loginUrl, req.url));
     }
 
-    const type = req.nextUrl.searchParams.get("type");
+    // Strict validation: They must log in with the exact email that received the link
+    if (targetEmail && email.toLowerCase() !== targetEmail.toLowerCase()) {
+      return NextResponse.redirect(new URL(`/login?intent=unsubscribe&type=${type}&e=${encodeURIComponent(targetEmail)}&error=OAuthAccountNotLinked`, req.url));
+    }
 
-    if (!type || !["blog", "changelog", "legal"].includes(type)) {
+    if (!req.nextUrl.searchParams.get("type") || !["blog", "changelog", "legal"].includes(req.nextUrl.searchParams.get("type")!)) {
       return NextResponse.json({ error: "Invalid unsubscribe type." }, { status: 400 });
     }
+
 
     // Determine which field to update
     let updateData: Record<string, boolean> = {};
