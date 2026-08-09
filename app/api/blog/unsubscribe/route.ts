@@ -19,7 +19,9 @@ function generateLegacyHash(email: string): string {
 function isTokenValid(email: string, token: string): boolean {
   const hmacHash = generateUnsubscribeHash(email);
   const md5Hash = generateLegacyHash(email);
-  return token === hmacHash || token === md5Hash;
+  const fallbackHash = crypto.createHmac("sha256", "classgrid_fallback").update(email).digest("hex").slice(0, 32);
+  
+  return token === hmacHash || token === md5Hash || token === fallbackHash;
 }
 
 // ─── Route ───────────────────────────────────────────────────────────────────
