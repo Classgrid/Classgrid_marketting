@@ -323,8 +323,7 @@ export async function POST(req: Request) {
     const senderEmail = "noreply@classgrid.in";
     const supportEmail = "support@classgrid.in";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const unsubHash = generateUnsubscribeHash(email);
-    const unsubscribeUrl = `${siteUrl}/api/blog/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubHash}`;
+    const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}`;
 
     // Date cutoff: 7 days ago
     const sevenDaysAgo = new Date();
