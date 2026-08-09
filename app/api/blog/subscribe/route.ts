@@ -294,8 +294,8 @@ export async function POST(req: Request) {
           .insert([{ 
               email, 
               name: firstName,
-              receives_blog: true,
-              receives_changelog: true,
+              receives_blog: type !== "changelog",
+              receives_changelog: type === "changelog",
               receives_legal: true
           }]);
   
