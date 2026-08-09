@@ -6,8 +6,31 @@ import { cookies } from "next/headers";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const { turnstileToken } = body;
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
 
-    // 1. Connect to MongoDB Atlas
+    // 1. Turnstile Verification
+    const turnstileSecret = process.env.TURNSTILE_SECRET;
+    if (turnstileSecret && turnstileToken) {
+      const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: turnstileToken,
+          remoteip: ip,
+        }),
+      });
+      
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        return NextResponse.json({ ok: false, message: "Security verification failed." }, { status: 403 });
+      }
+    } else if (turnstileSecret && !turnstileToken) {
+      return NextResponse.json({ ok: false, message: "Security token missing." }, { status: 400 });
+    }
+
+    // 2. Connect to MongoDB Atlas
     await connectMongo();
 
     // Prevent duplicate demo requests for the same email
