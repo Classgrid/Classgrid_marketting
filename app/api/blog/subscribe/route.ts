@@ -320,7 +320,8 @@ export async function POST(req: Request) {
     const senderEmail = "noreply@classgrid.in";
     const supportEmail = "support@classgrid.in";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}&e=${encodeURIComponent(email)}`;
+    const token = btoa(email);
+    const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}&token=${token}`;
 
     // Date cutoff: 7 days ago
     const sevenDaysAgo = new Date();
