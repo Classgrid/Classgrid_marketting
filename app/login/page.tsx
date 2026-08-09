@@ -45,14 +45,7 @@ function LoginContent() {
   const unsubscribeType = searchParams.get("type");
   const targetToken = searchParams.get("token");
   
-  let targetEmail = "";
-  if (targetToken) {
-    try {
-      targetEmail = atob(targetToken);
-    } catch (e) {
-      console.error("Failed to decode targetToken", e);
-    }
-  }
+
   
   let unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
     ? `/api/preferences/unsubscribe?type=${unsubscribeType}` 
@@ -125,12 +118,23 @@ function LoginContent() {
     ? OAUTH_ERROR_MAP[urlError] || OAUTH_ERROR_MAP.default
     : "";
 
-  const [email, setEmail] = useState(targetEmail || "");
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [otpExpired, setOtpExpired] = useState(false);
+
+  useEffect(() => {
+    if (targetToken) {
+      fetch(`/api/preferences/get-email?token=${targetToken}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.email) setEmail(data.email);
+        })
+        .catch(err => console.error("Failed to fetch email from token:", err));
+    }
+  }, [targetToken]);
 
   // ... (keeping existing handlers up to the return statement)
 

@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { supabaseAdmin } from "@/lib/supabase";
+import { encryptEmail } from "@/lib/crypto";
 
 const transporter = nodemailer.createTransport({
   host: process.env.BREVO_SMTP_HOST,
@@ -320,7 +321,7 @@ export async function POST(req: Request) {
     const senderEmail = "noreply@classgrid.in";
     const supportEmail = "support@classgrid.in";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
-    const token = btoa(email);
+    const token = encryptEmail(email);
     const unsubscribeUrl = `${siteUrl}/api/preferences/unsubscribe?type=${type}&token=${token}`;
 
     // Date cutoff: 7 days ago

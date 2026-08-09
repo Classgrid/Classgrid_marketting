@@ -24,6 +24,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
+import { decryptEmail } from "@/lib/crypto";
 
 
 export async function GET(req: NextRequest) {
@@ -35,11 +36,7 @@ export async function GET(req: NextRequest) {
     const token = req.nextUrl.searchParams.get("token");
     let targetEmail = "";
     if (token) {
-      try {
-        targetEmail = atob(token);
-      } catch (e) {
-        console.error("Failed to decode unsubscribe token", e);
-      }
+      targetEmail = decryptEmail(token) || "";
     }
 
     if (!email) {
