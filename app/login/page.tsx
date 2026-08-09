@@ -41,9 +41,16 @@ function LoginContent() {
     : null;
   const explicitNext = searchParams.get("next") || searchParams.get("callbackUrl");
 
+  const intent = searchParams.get("intent");
+  const unsubscribeType = searchParams.get("type");
+  const unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
+    ? `/api/preferences/unsubscribe?type=${unsubscribeType}` 
+    : null;
+
   // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
-  const oauthCallbackUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
-  const otpSuccessUrl = ssoReturnTo || explicitNext || "/api/auth/post-login";
+  const oauthCallbackUrl = ssoReturnTo || unsubscribeReturnTo || explicitNext || "/api/auth/post-login";
+  const otpSuccessUrl = ssoReturnTo || unsubscribeReturnTo || explicitNext || "/api/auth/post-login";
+
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isRedirecting = useRef(false);
@@ -66,6 +73,11 @@ function LoginContent() {
     if (ssoReturnTo) {
       isRedirecting.current = true;
       window.location.href = ssoReturnTo;
+      return;
+    }
+    if (unsubscribeReturnTo) {
+      isRedirecting.current = true;
+      window.location.href = unsubscribeReturnTo;
       return;
     }
     if (explicitNext) {
