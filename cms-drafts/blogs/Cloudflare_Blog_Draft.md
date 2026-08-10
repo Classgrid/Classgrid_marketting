@@ -24,7 +24,7 @@ Building an educational platform for the masses comes with a unique set of chall
 
 Today, we are thrilled to announce a major leap forward in our infrastructure: **Classgrid has been officially selected for the Cloudflare for Startups program!**
 
-As part of this highly competitive program, Cloudflare has awarded us a massive **$10,000 in infrastructure credits**, valid for the next 12 months. This grant gives our engineering team the runway to deploy enterprise-grade security and performance features to every single school that uses Classgrid.
+As part of this highly competitive program, Cloudflare has awarded us a massive **$10,000 in infrastructure credits**. This grant gives our engineering team the runway to deploy enterprise-grade security and performance features to every single school that uses Classgrid.
 
 > "Congratulations! Welcome to Cloudflare for Startups! We're very excited to have you join the program and are here to support you as you rapidly build, deploy, and scale. You have been awarded a $10,000 infrastructure grant to your Cloudflare account. Keep an eye out for more communications from the team including community events, program updates, and more! We can't wait to see what you build. — The Cloudflare for Startups Team"
 
@@ -41,7 +41,7 @@ This is the biggest win. Upgrading to Enterprise domain status means Classgrid n
 When you are managing critical infrastructure for schools, you cannot wait in line for support. As part of the Startups program, Classgrid has been granted a **prioritized ticket queue**, meaning we have direct, expedited access to Cloudflare's engineering teams if we ever need architectural guidance or troubleshooting.
 
 #### ⚡ Massive Compute Runway
-The $10,000 in credits covers a vast array of Cloudflare's ecosystem, allowing us to leverage heavy-duty caching and edge computing for the next 12 months without worrying about immediate infrastructure costs. While high-intensity products like Workers AI and R2 have reasonable caps, the core network delivery that powers Classgrid is now heavily subsidized by Cloudflare themselves.
+The $10,000 in credits covers a vast array of Cloudflare's ecosystem, allowing us to leverage heavy-duty caching and edge computing without worrying about immediate infrastructure costs. While high-intensity products like Workers AI and R2 have reasonable caps, the core network delivery that powers Classgrid is now heavily subsidized by Cloudflare themselves.
 
 ### Moving Forward
 

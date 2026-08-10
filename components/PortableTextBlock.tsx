@@ -105,17 +105,14 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
     types: {
       image: ({ value }) => {
         if (!value?.asset?._ref) return null;
+        const imgSrc = urlFor(value).url();
         return (
           <figure className="my-10 mx-auto max-w-[750px]">
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
-              <Image
-                src={urlFor(value).url()}
-                alt={value.alt || 'Blog image'}
-                fill
-                className="object-contain hover:scale-105 transition-transform duration-700"
-                sizes="750px"
-              />
-            </div>
+            <img
+              src={imgSrc}
+              alt={value.alt || 'Blog image'}
+              className="w-full h-auto rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg object-contain"
+            />
             {value.caption && (
               <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
                 {value.caption}
@@ -133,9 +130,11 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         if (layout === 'center') {
           return (
             <figure className="my-10 mx-auto max-w-[750px]">
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
-                <Image src={imgSrc} alt={value.caption || 'Image'} fill className="object-contain hover:scale-105 transition-transform duration-700" sizes="750px" />
-              </div>
+              <img 
+                src={imgSrc} 
+                alt={value.caption || 'Image'} 
+                className="w-full h-auto rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg object-contain" 
+              />
               {value.caption && <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">{value.caption}</figcaption>}
             </figure>
           );
@@ -145,9 +144,11 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         return (
           <div className={`my-10 mx-auto max-w-[900px] flex flex-col ${layout === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 items-center`}>
             <div className="w-full md:w-[55%]">
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-muted shadow-2xl ring-1 ring-white/10">
-                <Image src={imgSrc} alt={value.caption || 'Image'} fill className="object-cover hover:scale-105 transition-transform duration-700" sizes="500px" />
-              </div>
+              <img 
+                src={imgSrc} 
+                alt={value.caption || 'Image'} 
+                className="w-full h-auto rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg object-contain" 
+              />
             </div>
             {value.caption && (
               <div className="w-full md:w-[45%]">

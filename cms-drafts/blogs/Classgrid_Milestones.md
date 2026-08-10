@@ -40,11 +40,11 @@ This gives Classgrid official government recognition as a registered business en
 
 ---
 
-## 🍃 MongoDB for Startups — $1,000 Atlas Credits
-**Date:** Applied July 2026 (Awaiting confirmation)  
-**Status:** ⏳ Pending  
+## 🍃 MongoDB for Startups — $500 Atlas Credits
+**Date:** August 10, 2026  
+**Status:** ✅ Confirmed & Active  
 
-Classgrid applied to the **MongoDB for Startups** program for **$1,000 (~₹96,000)** in MongoDB Atlas credits, plus access to 1:1 technical advisors and 24/7 support. The entire platform backend runs on MongoDB Atlas, making this a critical infrastructure partnership.
+Classgrid was accepted into the **MongoDB for Startups** program, receiving **$500 (~₹42,000)** in MongoDB Atlas credits, plus access to 1:1 technical advisors and 24/7 support. The entire platform backend runs on MongoDB Atlas, making this a critical infrastructure partnership.
 
 ---
 
