@@ -594,7 +594,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 <MotionDiv key={relatedPage} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease: "easeInOut" }} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full">
                   {relatedPosts.slice(relatedPage * RELATED_PAGE_SIZE, (relatedPage + 1) * RELATED_PAGE_SIZE).map((relatedPost: any, i: number) => (
                     <Link key={relatedPost._id || i} href={buildLangHref(`/blog/${getSlug(relatedPost.slug)}`, lang)}>
-                      <MotionDiv variants={slideUp} whileHover={{ scale: 1.02, y: -4 }} className="group h-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-300 dark:border-white/10 hover:border-emerald-500/30 flex flex-col isolate">
+                      <MotionDiv variants={slideUp} className="group h-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-300 dark:border-white/10 hover:border-emerald-500/30 flex flex-col isolate">
                         <div className="w-full h-56 bg-surface-container-lowest relative overflow-hidden rounded-t-2xl">
                           {relatedPost.coverImage ? (
                             <Image src={urlFor(relatedPost.coverImage).url()} alt={extractLocaleString(relatedPost.title, lang)} fill className="object-cover" />

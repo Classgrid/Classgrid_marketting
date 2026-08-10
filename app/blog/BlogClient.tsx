@@ -292,7 +292,7 @@ export function BlogClient({
     <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
       {/* Reusable Google One Tap Login Popup */}
       {/* <GoogleOneTap /> */}
-      
+
       <section className="mt-0 flex flex-col items-center space-y-4 pb-10 pt-0 text-center">
         <SectionAccentBar align="center" />
         <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
@@ -433,11 +433,10 @@ export function BlogClient({
               key={cat}
               variant="outline"
               onClick={() => setActiveTab(cat)}
-              className={`rounded-full border px-4 py-2 font-medium shadow-none transition ${
-                activeTab === cat
+              className={`rounded-full border px-4 py-2 font-medium shadow-none transition ${activeTab === cat
                   ? "border-emerald-500 bg-emerald-500 text-black hover:bg-emerald-500 hover:text-black"
                   : "border-border bg-card text-muted-foreground hover:border-emerald-400 hover:bg-emerald-500/10 hover:text-foreground"
-              }`}
+                }`}
             >
               {cat}
             </Button>
@@ -602,9 +601,8 @@ export function BlogClient({
                   setCurrentPage(activePage - 1);
                 }}
                 aria-disabled={activePage <= 1}
-                className={`rounded-lg text-muted-foreground transition hover:bg-accent ${
-                  activePage <= 1 ? "pointer-events-none opacity-50" : ""
-                }`}
+                className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage <= 1 ? "pointer-events-none opacity-50" : ""
+                  }`}
               />
             </PaginationItem>
 
@@ -619,11 +617,10 @@ export function BlogClient({
                       if (token === activePage) return;
                       setCurrentPage(token);
                     }}
-                    className={`h-10 min-w-10 rounded-lg ${
-                      token === activePage
+                    className={`h-10 min-w-10 rounded-lg ${token === activePage
                         ? "border-emerald-500 bg-emerald-500 text-black hover:bg-emerald-500"
                         : "text-muted-foreground hover:bg-accent"
-                    }`}
+                      }`}
                   >
                     {token}
                   </PaginationLink>
@@ -642,9 +639,8 @@ export function BlogClient({
                   setCurrentPage(activePage + 1);
                 }}
                 aria-disabled={activePage >= totalPages}
-                className={`rounded-lg text-muted-foreground transition hover:bg-accent ${
-                  activePage >= totalPages ? "pointer-events-none opacity-50" : ""
-                }`}
+                className={`rounded-lg text-muted-foreground transition hover:bg-accent ${activePage >= totalPages ? "pointer-events-none opacity-50" : ""
+                  }`}
               />
             </PaginationItem>
           </PaginationContent>
