@@ -262,7 +262,11 @@ export function ChangelogPageClient({ settings, entries, lang }: ChangelogPageCl
         )}
       </div>
 
-      <SubscribeStrip type="changelog" />
+      <SubscribeStrip
+        type="changelog"
+        heading="Never miss a product update"
+        subtext="Get the latest Classgrid feature releases, improvements and bug fixes delivered to your inbox. No spam. Unsubscribe anytime."
+      />
     </main>
   );
 }

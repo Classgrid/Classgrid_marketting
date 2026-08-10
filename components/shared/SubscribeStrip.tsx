@@ -2,7 +2,9 @@ import { SubscribeForm } from "@/components/shared/SubscribeForm";
 
 /**
  * Reusable full-width subscribe strip section.
- * Place at the bottom of any page: Changelog, Blog detail, etc.
+ * Blog and Changelog are separate subscription lists — always pass
+ * the correct `type` and page-specific `heading`/`subtext` props.
+ * Defaults are blog-specific (type="blog" is the default).
  */
 interface SubscribeStripProps {
   heading?: string;
@@ -11,8 +13,8 @@ interface SubscribeStripProps {
 }
 
 export function SubscribeStrip({
-  heading = "Sign up for updates on our latest innovations",
-  subtext = "Get the latest Classgrid product updates, blog posts and platform news. No spam. Unsubscribe anytime.",
+  heading = "Stay in the loop with Classgrid",
+  subtext = "Get the latest Classgrid blog posts, insights and product stories delivered to your inbox. No spam. Unsubscribe anytime.",
   type = "blog",
 }: SubscribeStripProps) {
   return (
