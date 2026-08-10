@@ -178,10 +178,11 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
               alt={img.alt}
               fill
               className={cn(
-                "object-cover transition-transform duration-700 ease-out",
+                "transition-transform duration-700 ease-out",
+                images.length === 1 ? "object-contain" : "object-cover",
                 !disableHoverZoom && "group-hover:scale-105"
               )}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes={images.length === 1 ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
             />
             <div className={cn(
               "absolute inset-0 bg-black/0 transition-colors duration-300 z-10",
