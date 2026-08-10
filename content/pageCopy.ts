@@ -2,7 +2,7 @@ export const homeCopy = {
   headline: "The Operating System for Educational Institutions",
   subheadline:
     "One platform to manage academics, operations, and growth—ClassGrid helps institutions run smarter, faster, and without the chaos of disconnected systems.",
-  trustedBy: "Trusted by institutions across India",
+  trustedBy: "Built for educational institutions across India",
   machineShowcase:
     "Web dashboard and Android app — both powered by the same live data layer for classroom, attendance, assignments, and analytics.",
   footerCta: "Ready to transform your institution?",
