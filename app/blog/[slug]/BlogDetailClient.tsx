@@ -453,8 +453,8 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             </div>
           </MotionDiv>
 
-          {/* ---------------- 7. AUTHOR FOOTER ---------------- */}
-          {(() => {
+          {/* ---------------- 7. AUTHOR FOOTER (disabled for now) ---------------- */}
+          {false && (() => {
             // Build authors list: prefer new multi-author array, fallback to legacy single author
             const authorsList = (post.authors && post.authors.length > 0)
               ? post.authors.slice(0, 3)
