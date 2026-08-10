@@ -162,7 +162,6 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
         {images.map((img, index) => (
           <motion.div
             key={img.id}
-            layoutId={`gallery-image-${img.id}`}
             className={cn(
               "group relative overflow-hidden rounded-2xl bg-card border border-border cursor-pointer",
               img.className
@@ -247,11 +246,15 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
               <div className="w-full h-full flex items-center justify-center px-4 sm:px-24 py-16">
                 {isOnClickedImage && !hasNavigatedRef.current ? (
                   <motion.img
-                    layoutId={`gallery-image-${selectedImage.id}`}
+                    key={`initial-${selectedImage.id}`}
                     src={selectedImage.src}
                     alt={selectedImage.alt}
                     className="block max-w-full max-h-full w-auto rounded-xl shadow-2xl ring-1 ring-white/10 object-contain"
                     style={{ touchAction: "pinch-zoom" }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     onClick={(e) => e.stopPropagation()}
                   />
                 ) : (
