@@ -186,7 +186,7 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
   const authorName = post?.author || "ClassGrid Team";
   const categoryName = extractLocaleString(post?.category, lang) || "Insight";
   const canonicalUrl = currentUrl || "https://classgrid.in/blog";
-  
+
   const getSlug = (slugData: any) => {
     if (typeof slugData === 'object' && slugData?.current) return slugData.current;
     return typeof slugData === 'string' ? slugData : "";
@@ -210,162 +210,162 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
         {/* Blueprint-framed article body */}
         <div className="relative mx-auto max-w-4xl">
 
-      <BlueprintBox maxWidth="max-w-4xl" className="pt-2 pb-16">
-        <article id="blog-intro" className="mt-0 w-full px-4 sm:px-8 md:px-12">
-          {/* Hero */}
-          <div className="mb-8 mt-8">
-            <DocumentHero
-              badgeLabel={categoryName}
-              title={post.title}
-              lang={lang}
-              showAccentBar={false}
-            >
-              <div className="flex flex-wrap items-center justify-center text-sm text-muted-foreground gap-4 md:gap-6 w-full">
-                <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-5 gap-y-2 text-xs md:text-sm">
-                  <div className="flex items-center" title="Approximate Views">
-                    <Eye className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
-                    <span>{Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(viewCount)} views</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
-                    <span>{getReadingTime(post, lang)}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="font-medium">{pubDate}</span>
-                  </div>
-                  <button
-                    onClick={() => { navigator.clipboard.writeText(canonicalUrl); setIsCopied(true); }}
-                    className={`flex items-center transition-colors ${isCopied ? 'text-emerald-500' : 'hover:text-emerald-500'}`}
-                  >
-                    <Link2 className="w-4 h-4 mr-1.5 shrink-0" />
-                    <span className="min-w-[75px] whitespace-nowrap text-left block">{isCopied ? "Copied" : "Copy Link"}</span>
-                  </button>
-                </div>
-              </div>
-            </DocumentHero>
-
-            {post.excerpt && (
-              <div className="mt-8 mb-8">
-                <div className="relative px-6 py-5 sm:px-8 sm:py-6 bg-slate-50/50 dark:bg-white/[0.02] border border-slate-300 dark:border-white/[0.05] rounded-3xl shadow-sm backdrop-blur-md text-left">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gradient-to-r from-emerald-400/0 via-emerald-500 to-emerald-400/0 rounded-full" />
-                  <p className="text-[1.05rem] sm:text-[1.1rem] leading-relaxed text-foreground/80 font-medium">
-                    {extractLocaleString(post.excerpt, lang)}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* ── FULL-WIDTH COVER IMAGE ── */}
-            {post.coverImage && (
-              <div className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden shadow-lg border border-border mt-8 mb-12">
-                <Image
-                  src={urlFor(post.coverImage).url()}
-                  alt={post.title || 'Blog cover image'}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 1024px"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* ---------------- 3. BLOG CONTENT ---------------- */}
-          <div id="blog-content" className="my-8">
-            <PortableTextBlock value={post.body} showAccentBars={false} />
-          </div>
-        </article>
-
-        {/* ── VISUAL CONTENT SECTIONS (inside BlueprintBox) ── */}
-        {post.contentSections && post.contentSections.length > 0 && (
-          <div className="py-12 px-4 sm:px-6 space-y-16 md:space-y-20">
-            {post.contentSections.map((section: any, i: number) => {
-              const layout = section.layout || 'left';
-              const mediaType = section.mediaType || 'image';
-              const imageFirst = layout === 'left';
-
-              const mediaElement = mediaType === 'video' && section.videoUrl ? (
-                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
-                  <video
-                    src={section.videoUrl}
-                    controls
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : section.imageUrl ? (
-                <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
-                  <ImageGallery
-                    images={[{
-                      id: `blog-section-${i}`,
-                      src: section.imageUrl,
-                      alt: section.imageAlt || section.heading || 'Blog section media',
-                      className: "absolute inset-0 w-full h-full border-none rounded-none"
-                    }]}
-                    className="!grid-cols-1 !auto-rows-auto !gap-0 w-full h-full"
-                    disableHoverZoom={true}
-                  />
-                </div>
-              ) : null;
-
-              const textElement = (
-                <div>
-                  {section.heading && (
-                    <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>
-                  )}
-                  {section.text && (
-                    <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>
-                  )}
-                </div>
-              );
-
-              const sectionId = section.heading
-                ? `section-${i}-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`
-                : `section-${i}`;
-
-              const topTextElement = section.topText ? (
-                <p className="text-base text-muted-foreground leading-7 antialiased mb-4 md:mb-6">{section.topText}</p>
-              ) : null;
-              
-              const bottomTextElement = section.bottomText ? (
-                <p className="text-base text-muted-foreground leading-7 antialiased mt-4 md:mt-6">{section.bottomText}</p>
-              ) : null;
-
-              if (layout === 'center') {
-                return (
-                  <MotionDiv id={sectionId} key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
-                    {topTextElement}
-                    {mediaElement}
-                    <div className="text-center max-w-2xl mx-auto">
-                      {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
-                      {section.text && <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>}
+          <BlueprintBox maxWidth="max-w-4xl" className="pt-2 pb-16">
+            <article id="blog-intro" className="mt-0 w-full px-4 sm:px-8 md:px-12">
+              {/* Hero */}
+              <div className="mb-8 mt-8">
+                <DocumentHero
+                  badgeLabel={categoryName}
+                  title={post.title}
+                  lang={lang}
+                  showAccentBar={false}
+                >
+                  <div className="flex flex-wrap items-center justify-center text-sm text-muted-foreground gap-4 md:gap-6 w-full">
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-5 gap-y-2 text-xs md:text-sm">
+                      <div className="flex items-center" title="Approximate Views">
+                        <Eye className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
+                        <span>{Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(viewCount)} views</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1.5 text-emerald-500 shrink-0" />
+                        <span>{getReadingTime(post, lang)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="font-medium">{pubDate}</span>
+                      </div>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(canonicalUrl); setIsCopied(true); }}
+                        className={`flex items-center transition-colors ${isCopied ? 'text-emerald-500' : 'hover:text-emerald-500'}`}
+                      >
+                        <Link2 className="w-4 h-4 mr-1.5 shrink-0" />
+                        <span className="min-w-[75px] whitespace-nowrap text-left block">{isCopied ? "Copied" : "Copy Link"}</span>
+                      </button>
                     </div>
-                    {bottomTextElement}
-                  </MotionDiv>
-                );
-              }
-
-              return (
-                <MotionDiv id={sectionId} key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className="flex flex-col gap-6 md:gap-8">
-                  {topTextElement}
-                  <div className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
-                    <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
-                      {mediaElement || (
-                        <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
-                          <p className="text-zinc-500">No media</p>
-                        </div>
-                      )}
-                    </MotionDiv>
-                    <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
-                      {textElement}
-                    </MotionDiv>
                   </div>
-                  {bottomTextElement}
-                </MotionDiv>
-              );
-            })}
-          </div>
-        )}
-      </BlueprintBox>
+                </DocumentHero>
+
+                {post.excerpt && (
+                  <div className="mt-8 mb-8">
+                    <div className="relative px-6 py-5 sm:px-8 sm:py-6 bg-slate-50/50 dark:bg-white/[0.02] border border-slate-300 dark:border-white/[0.05] rounded-3xl shadow-sm backdrop-blur-md text-left">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gradient-to-r from-emerald-400/0 via-emerald-500 to-emerald-400/0 rounded-full" />
+                      <p className="text-[1.05rem] sm:text-[1.1rem] leading-relaxed text-foreground/80 font-medium">
+                        {extractLocaleString(post.excerpt, lang)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── FULL-WIDTH COVER IMAGE ── */}
+                {post.coverImage && (
+                  <div className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden shadow-lg border border-border mt-8 mb-12">
+                    <Image
+                      src={urlFor(post.coverImage).url()}
+                      alt={post.title || 'Blog cover image'}
+                      fill
+                      priority
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 1024px"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* ---------------- 3. BLOG CONTENT ---------------- */}
+              <div id="blog-content" className="my-8">
+                <PortableTextBlock value={post.body} showAccentBars={false} />
+              </div>
+            </article>
+
+            {/* ── VISUAL CONTENT SECTIONS (inside BlueprintBox) ── */}
+            {post.contentSections && post.contentSections.length > 0 && (
+              <div className="py-12 px-4 sm:px-6 space-y-16 md:space-y-20">
+                {post.contentSections.map((section: any, i: number) => {
+                  const layout = section.layout || 'left';
+                  const mediaType = section.mediaType || 'image';
+                  const imageFirst = layout === 'left';
+
+                  const mediaElement = mediaType === 'video' && section.videoUrl ? (
+                    <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
+                      <video
+                        src={section.videoUrl}
+                        controls
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : section.imageUrl ? (
+                    <div className={`relative ${layout === 'center' ? 'aspect-video' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-100 dark:bg-muted shadow-2xl ring-1 ring-slate-300 dark:ring-white/10`}>
+                      <ImageGallery
+                        images={[{
+                          id: `blog-section-${i}`,
+                          src: section.imageUrl,
+                          alt: section.imageAlt || section.heading || 'Blog section media',
+                          className: "absolute inset-0 w-full h-full border-none rounded-none"
+                        }]}
+                        className="!grid-cols-1 !auto-rows-auto !gap-0 w-full h-full"
+                        disableHoverZoom={true}
+                      />
+                    </div>
+                  ) : null;
+
+                  const textElement = (
+                    <div>
+                      {section.heading && (
+                        <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>
+                      )}
+                      {section.text && (
+                        <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>
+                      )}
+                    </div>
+                  );
+
+                  const sectionId = section.heading
+                    ? `section-${i}-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`
+                    : `section-${i}`;
+
+                  const topTextElement = section.topText ? (
+                    <p className="text-base text-muted-foreground leading-7 antialiased mb-4 md:mb-6">{section.topText}</p>
+                  ) : null;
+
+                  const bottomTextElement = section.bottomText ? (
+                    <p className="text-base text-muted-foreground leading-7 antialiased mt-4 md:mt-6">{section.bottomText}</p>
+                  ) : null;
+
+                  if (layout === 'center') {
+                    return (
+                      <MotionDiv id={sectionId} key={`center-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={slideUp} className="space-y-6">
+                        {topTextElement}
+                        {mediaElement}
+                        <div className="text-center max-w-2xl mx-auto">
+                          {section.heading && <h3 className="text-2xl font-semibold mb-4 text-foreground leading-snug">{(section.heading || "").replace(/\.\s*$/, "")}</h3>}
+                          {section.text && <p className="text-base text-muted-foreground leading-7 antialiased">{section.text}</p>}
+                        </div>
+                        {bottomTextElement}
+                      </MotionDiv>
+                    );
+                  }
+
+                  return (
+                    <MotionDiv id={sectionId} key={`split-${i}-${isMobile}`} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className="flex flex-col gap-6 md:gap-8">
+                      {topTextElement}
+                      <div className={`flex flex-col ${imageFirst ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-12 items-center`}>
+                        <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(imageFirst)} className="w-full md:w-[55%]">
+                          {mediaElement || (
+                            <div className="w-full aspect-[4/3] rounded-xl bg-card border border-border flex items-center justify-center">
+                              <p className="text-zinc-500">No media</p>
+                            </div>
+                          )}
+                        </MotionDiv>
+                        <MotionDiv variants={isMobile ? mobileSlide : fadeSlide(!imageFirst)} className="w-full md:w-[45%] flex flex-col">
+                          {textElement}
+                        </MotionDiv>
+                      </div>
+                      {bottomTextElement}
+                    </MotionDiv>
+                  );
+                })}
+              </div>
+            )}
+          </BlueprintBox>
         </div> {/* close max-w-4xl */}
       </div> {/* <-- CLOSE RELATIVE WRAPPER FOR STICKY TOC HERE SO IT STOPS BEFORE REFERENCES */}
 
@@ -432,24 +432,25 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             </MotionDiv>
           )}
 
-          {/* Feedback Widget */}
-          <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 border-t border-border pt-8">
-            <FeedbackWidget pageTitle={extractLocaleString(post.title, lang)} pageType="blog" />
-          </MotionDiv>
+          {/* ---------------- POST FOOTER (Feedback & Share) ---------------- */}
+          <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-16 border-t border-border pt-10 pb-4 flex flex-col items-center gap-10">
+            <div className="w-full flex justify-center">
+              <FeedbackWidget pageTitle={extractLocaleString(post.title, lang)} pageType="blog" />
+            </div>
 
-          {/* Share Buttons */}
-          <MotionDiv initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 flex flex-col items-center justify-center gap-4 border-t border-border pt-8 sm:flex-row">
-            <span className="text-sm font-semibold text-muted-foreground sm:mr-2">Share this post:</span>
-            <div className="flex flex-wrap items-center justify-center gap-3 w-full sm:w-auto">
-              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(extractLocaleString(post.title, lang) || "Check out this post")}&url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 dark:border-slate-700/50 dark:bg-slate-800/20 dark:hover:bg-slate-800/40 px-4 py-2 text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 flex-1 sm:flex-auto justify-center">
-                <Twitter className="w-4 h-4" /> <span className="hidden xs:inline">Twitter</span>
-              </a>
-              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-sky-300 bg-sky-50 hover:bg-sky-100 dark:border-sky-600/30 dark:bg-sky-600/10 dark:hover:bg-sky-600/20 px-4 py-2 text-sm font-medium transition-colors text-sky-700 dark:text-sky-500 flex-1 sm:flex-auto justify-center">
-                <Linkedin className="w-4 h-4" /> <span className="hidden xs:inline">LinkedIn</span>
-              </a>
-              <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this blog post from Classgrid:\n${canonicalUrl}`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:border-emerald-600/30 dark:bg-emerald-600/10 dark:hover:bg-emerald-600/20 px-4 py-2 text-sm font-medium transition-colors text-emerald-700 dark:text-emerald-500 flex-1 sm:flex-auto justify-center">
-                <WhatsappIcon className="w-4 h-4" /> <span className="hidden xs:inline">WhatsApp</span>
-              </a>
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <span className="text-sm font-semibold text-muted-foreground sm:mr-2">Share this post:</span>
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full sm:w-auto">
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(extractLocaleString(post.title, lang) || "Check out this post")}&url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 dark:border-slate-700/50 dark:bg-slate-800/20 dark:hover:bg-slate-800/40 px-4 py-2 text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 flex-1 sm:flex-auto justify-center">
+                  <Twitter className="w-4 h-4" /> <span className="hidden xs:inline">Twitter</span>
+                </a>
+                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-sky-300 bg-sky-50 hover:bg-sky-100 dark:border-sky-600/30 dark:bg-sky-600/10 dark:hover:bg-sky-600/20 px-4 py-2 text-sm font-medium transition-colors text-sky-700 dark:text-sky-500 flex-1 sm:flex-auto justify-center">
+                  <Linkedin className="w-4 h-4" /> <span className="hidden xs:inline">LinkedIn</span>
+                </a>
+                <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this blog post from Classgrid:\n${canonicalUrl}`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:border-emerald-600/30 dark:bg-emerald-600/10 dark:hover:bg-emerald-600/20 px-4 py-2 text-sm font-medium transition-colors text-emerald-700 dark:text-emerald-500 flex-1 sm:flex-auto justify-center">
+                  <WhatsappIcon className="w-4 h-4" /> <span className="hidden xs:inline">WhatsApp</span>
+                </a>
+              </div>
             </div>
           </MotionDiv>
 
@@ -459,11 +460,11 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
             const authorsList = (post.authors && post.authors.length > 0)
               ? post.authors.slice(0, 3)
               : [{
-                  name: post.author || 'ClassGrid Team',
-                  image: post.authorImage,
-                  profileLink: post.authorProfileLink,
-                  bio: post.authorBio,
-                }];
+                name: post.author || 'ClassGrid Team',
+                image: post.authorImage,
+                profileLink: post.authorProfileLink,
+                bio: post.authorBio,
+              }];
 
             return (
               <MotionDiv id="blog-author" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={slideUp} className="mt-12 border-t border-border pt-10 pb-6">
@@ -593,10 +594,10 @@ export function BlogDetailClient({ post, relatedPosts, lang }: BlogDetailClientP
                 <MotionDiv key={relatedPage} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease: "easeInOut" }} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full">
                   {relatedPosts.slice(relatedPage * RELATED_PAGE_SIZE, (relatedPage + 1) * RELATED_PAGE_SIZE).map((relatedPost: any, i: number) => (
                     <Link key={relatedPost._id || i} href={buildLangHref(`/blog/${getSlug(relatedPost.slug)}`, lang)}>
-                      <MotionDiv variants={slideUp} whileHover={{ scale: 1.02, y: -4 }} className="group h-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-300 dark:border-white/10 hover:border-emerald-500/30 flex flex-col">
-                        <div className="w-full h-56 bg-surface-container-lowest relative overflow-hidden">
+                      <MotionDiv variants={slideUp} whileHover={{ scale: 1.02, y: -4 }} className="group h-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-300 dark:border-white/10 hover:border-emerald-500/30 flex flex-col isolate">
+                        <div className="w-full h-56 bg-surface-container-lowest relative overflow-hidden rounded-t-2xl">
                           {relatedPost.coverImage ? (
-                            <Image src={urlFor(relatedPost.coverImage).url()} alt={extractLocaleString(relatedPost.title, lang)} fill className="object-contain p-1" />
+                            <Image src={urlFor(relatedPost.coverImage).url()} alt={extractLocaleString(relatedPost.title, lang)} fill className="object-cover" />
                           ) : (
                             <div className="w-full h-full bg-emerald-500/5 flex items-center justify-center group-hover:bg-emerald-500/10 transition-colors duration-500"><span className="text-emerald-500/30 text-3xl font-bold">BLOG</span></div>
                           )}

@@ -383,12 +383,18 @@
 .legal-hero-frame {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border);
   border-radius: 0.75rem;
   background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
 }
 
-.legal-hero-frame::before {
+.dark .legal-hero-frame {
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.dark .legal-hero-frame::before {
   content: "";
   position: absolute;
   inset: 0;
