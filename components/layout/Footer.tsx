@@ -353,7 +353,7 @@ export function Footer({
 
             {/* RIGHT — legal links */}
             {legalItems.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-y-3 sm:gap-y-1 sm:gap-x-3">
                 {legalItems.map((link, idx) => {
                   const isSitemap = link.label?.toLowerCase() === 'sitemap';
                   return (
@@ -368,7 +368,7 @@ export function Footer({
                         {link.label}
                       </Link>
                       {idx < legalItems.length - 1 && (
-                        <span className={`select-none text-border ${isSitemap ? "hidden sm:inline" : ""}`}>|</span>
+                        <span className="select-none text-border hidden sm:inline">|</span>
                       )}
                     </React.Fragment>
                   );
