@@ -282,12 +282,7 @@ export const placeholderHomePage = {
     value: String(stat.value),
     suffix: stat.suffix ?? "",
   })),
-  trustedLogos: [
-    { name: "Vishwakarma University, Pune", imageUrl: "https://placehold.co/120x120/022c22/34d399?text=VU" },
-    { name: "Deccan Education Society (DESPU)", imageUrl: "https://placehold.co/120x120/022c22/34d399?text=DES" },
-    { name: "Pimpri Chinchwad College of Engineering", imageUrl: "https://placehold.co/120x120/022c22/34d399?text=PCCOE" },
-    { name: "Vishwakarma Institute of Technology, Pune", imageUrl: "https://placehold.co/120x120/022c22/34d399?text=VIT" },
-  ],
+  trustedLogos: [],
   organizationSectionTitle: "Built for every type of institution",
   organizationCardCtaLabel: "Explore Use Case",
   organizationCards: orgTypes,
@@ -334,22 +329,7 @@ export const placeholderHomePage = {
   videoSectionTitle: "See Classgrid in action",
   videoSectionDescription:
     "Watch how Classgrid simplifies operations across your institution.",
-  testimonialVideos: [
-    {
-      url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-      name: "Dr. Sharma",
-      role: "Principal, Vishwakarma Institute of Technology",
-      subtitle:
-        "Classgrid completely eliminated our administrative chaos. Managing 3,000 students across 40 divisions now runs on total autopilot.",
-    },
-    {
-      url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-      name: "Anita Kulkarni",
-      role: "Director, Deccan Junior College",
-      subtitle:
-        "We replaced 6 scattered tools with one platform. Student and parent adoption went up immediately because everything became predictable.",
-    },
-  ],
+  testimonialVideos: [],
   productVideo: {
     videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
     posterUrl: "/dashboards/admin-overview.png",

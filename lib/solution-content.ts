@@ -2,14 +2,7 @@ import type { IndustrySlug, RoleSlug } from "@/lib/route-maps";
 
 export const solutionTrustBadges = ["ISO 27001 Ready", "GDPR Aware", "Role-Based Access", "AWS Infrastructure"];
 
-export const solutionClientLogos = [
-  "PCCOE",
-  "VIT Pune",
-  "DES",
-  "Apex Engineering",
-  "Greenwood School",
-  "Nexus Coaching",
-];
+export const solutionClientLogos = [];
 
 export const solutionImpactMetrics = [
   { label: "Platform Uptime", value: "99.9%" },
