@@ -46,7 +46,7 @@ function normalizeLegalSlug(slug: string) {
 }
 
 function isValidLegalSlug(slug: string) {
-  return slug === "privacy" || slug === "terms" || slug === "security" || slug === "cookies" || slug === "disclaimer" || slug === "ip-protection";
+  return slug === "privacy" || slug === "terms" || slug === "security" || slug === "cookies" || slug === "disclaimer";
 }
 
 function toSectionId(input: string, fallbackIndex: number) {
@@ -216,7 +216,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  return [{ slug: "privacy" }, { slug: "terms" }, { slug: "security" }, { slug: "cookies" }, { slug: "cookie" }, { slug: "disclaimer" }, { slug: "ip-protection" }];
+  return [{ slug: "privacy" }, { slug: "terms" }, { slug: "security" }, { slug: "cookies" }, { slug: "cookie" }, { slug: "disclaimer" }];
 }
 
 import { notFound } from "next/navigation";
