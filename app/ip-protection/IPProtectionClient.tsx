@@ -450,7 +450,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           </section>
 
           {/* Section 7: Contact */}
-          <section id="contact" className="mb-0 scroll-mt-24 pb-[60vh]">
+          <section id="contact" className="mb-16 scroll-mt-24">
             <SectionHeading icon={ExternalLink} title={sections[6]?.title ?? ""} />
             <p className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
               {s.footerContact}
@@ -474,7 +474,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           </section>
 
           {/* Footer Note */}
-          <div className="border-t border-slate-200/80 pt-6 dark:border-white/5">
+          <div className="border-t border-slate-200/80 pt-6 pb-[60vh] dark:border-white/5">
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {s.footerNote1}
               <Link href="/ip-protection" className="text-emerald-500 hover:underline">
