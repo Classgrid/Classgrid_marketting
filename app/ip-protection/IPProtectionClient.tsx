@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Shield,
@@ -65,6 +65,12 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
   const [activeSection, setActiveSection] = useState("purpose");
   const [lang, setLang] = useState<Language>("en");
 
+  const pdfLinks: Record<Language, string> = {
+    en: "https://cdn.classgrid.in/our_ip_policy/Classgrid-IP-Protection-Policy-EN.pdf",
+    hi: "https://cdn.classgrid.in/our_ip_policy/Classgrid-IP-Protection-Policy-HI.pdf",
+    mr: "https://cdn.classgrid.in/our_ip_policy/Classgrid-IP-Protection-Policy-MR.pdf",
+  };
+
   const currentDoc = dataByLang[lang];
   if (!currentDoc) return null;
 
@@ -84,6 +90,28 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
+  useEffect(() => {
+    function onScroll() {
+      const sectionIds = sections.map((s) => s.id);
+      let current = sectionIds[0];
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // Mark as active when the top of the section is above 40% of the viewport
+          if (rect.top <= window.innerHeight * 0.4) {
+            current = id;
+          }
+        }
+      }
+      setActiveSection(current);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // Run once on mount
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [sections]);
 
   return (
     <div className="min-h-screen bg-[#fafbfc] text-slate-800 dark:bg-[#0a0a0b] dark:text-slate-200">
@@ -129,11 +157,13 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.print()}
+              asChild
               className="hidden sm:flex items-center gap-1.5"
             >
-              <Printer className="h-3.5 w-3.5" />
-              {s.print}
+              <a href={pdfLinks[lang]} target="_blank" rel="noopener noreferrer">
+                <Printer className="h-3.5 w-3.5" />
+                {s.print}
+              </a>
             </Button>
           </div>
         </div>
@@ -198,7 +228,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
 
           {/* Section 1: Purpose */}
           <section id="purpose" className="mb-12 scroll-mt-24">
-            <SectionHeading icon={BookOpen} title={`1. ${sections[0]?.title ?? ""}`} />
+            <SectionHeading icon={BookOpen} title={sections[0]?.title ?? ""} />
             <p className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
               {s.p1}
             </p>
@@ -206,7 +236,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
 
           {/* Section 2: What Is Classgrid */}
           <section id="what-is-classgrid" className="mb-12 scroll-mt-24">
-            <SectionHeading icon={Shield} title={`2. ${sections[1]?.title ?? ""}`} />
+            <SectionHeading icon={Shield} title={sections[1]?.title ?? ""} />
             <p className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
               {s.p2}
             </p>
@@ -219,7 +249,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
 
           {/* Section 3: Why No Patent */}
           <section id="why-no-patent" className="mb-12 scroll-mt-24">
-            <SectionHeading icon={FileText} title={`3. ${sections[2]?.title ?? ""}`} />
+            <SectionHeading icon={FileText} title={sections[2]?.title ?? ""} />
 
             <h3 className="mb-3 mt-6 text-base font-semibold text-slate-800 dark:text-white">
               {s.p3_1}
@@ -296,7 +326,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
 
           {/* Section 4: How Protected */}
           <section id="how-protected" className="mb-12 scroll-mt-24">
-            <SectionHeading icon={Lock} title={`4. ${sections[3]?.title ?? ""}`} />
+            <SectionHeading icon={Lock} title={sections[3]?.title ?? ""} />
             <div className="mt-2 space-y-4">
               {protectionMethods.map((item) => {
                 const Icon = item.icon;
@@ -359,7 +389,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           <section id="summary-students" className="mb-12 scroll-mt-24">
             <SectionHeading
               icon={Landmark}
-              title={`5. ${sections[4]?.title ?? ""}`}
+              title={sections[4]?.title ?? ""}
             />
             <div className="rounded-xl border border-emerald-200/60 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 dark:border-emerald-500/10 dark:from-emerald-500/5 dark:to-teal-500/5">
               <p className="text-sm font-medium leading-relaxed text-emerald-900 dark:text-emerald-100">
@@ -373,7 +403,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
 
           {/* Section 6: For Investors & Partners */}
           <section id="summary-investors" className="mb-12 scroll-mt-24">
-            <SectionHeading icon={Copyright} title={`6. ${sections[5]?.title ?? ""}`} />
+            <SectionHeading icon={Copyright} title={sections[5]?.title ?? ""} />
             <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white dark:border-white/5 dark:bg-transparent">
               <Table>
                 <TableHeader>
@@ -420,8 +450,8 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           </section>
 
           {/* Section 7: Contact */}
-          <section id="contact" className="mb-16 scroll-mt-24">
-            <SectionHeading icon={ExternalLink} title={`7. ${sections[6]?.title ?? ""}`} />
+          <section id="contact" className="mb-0 scroll-mt-24 pb-[60vh]">
+            <SectionHeading icon={ExternalLink} title={sections[6]?.title ?? ""} />
             <p className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
               {s.footerContact}
             </p>

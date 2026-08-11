@@ -133,11 +133,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (asChild) {
       return (
         <motion.div
-          onMouseMove={handleMouseMove}
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className={cn("inline-block group relative overflow-hidden", radiusClass)}
+        onMouseMove={handleMouseMove}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className={cn("inline-block group relative overflow-hidden", radiusClass)}
         >
           <Slot
             className={cn(buttonVariants({ variant, size, className }))}
@@ -156,8 +154,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <motion.button
         onMouseMove={handleMouseMove}
-        whileHover={{ y: -2, scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
         className={cn("group relative", buttonVariants({ variant, size, className }))}
         ref={ref}
