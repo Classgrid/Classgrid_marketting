@@ -17,7 +17,11 @@ import {
   Printer,
   Globe,
   LucideIcon,
+  Menu,
+  X,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -94,12 +98,20 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
   useEffect(() => {
     function onScroll() {
       const sectionIds = sections.map((s) => s.id);
+      if (sectionIds.length === 0) return;
+
+      // Check if we're at the very bottom of the page
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+      if (isAtBottom) {
+        setActiveSection(sectionIds[sectionIds.length - 1]);
+        return;
+      }
+
       let current = sectionIds[0];
       for (const id of sectionIds) {
         const el = document.getElementById(id);
         if (el) {
           const rect = el.getBoundingClientRect();
-          // Mark as active when the top of the section is above 40% of the viewport
           if (rect.top <= window.innerHeight * 0.4) {
             current = id;
           }
@@ -112,6 +124,8 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
     onScroll(); // Run once on mount
     return () => window.removeEventListener("scroll", onScroll);
   }, [sections]);
+
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#fafbfc] text-slate-800 dark:bg-[#0a0a0b] dark:text-slate-200">
@@ -168,6 +182,81 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           </div>
         </div>
       </header>
+
+      {/* ── Mobile Nav Bar (only visible below lg) ── */}
+      <div className="sticky top-14 z-40 flex items-center justify-end border-b border-slate-200/80 bg-white/95 px-4 py-3 backdrop-blur-sm dark:border-white/5 dark:bg-[#111113]/95 lg:hidden print:hidden">
+        {/* Right: On this page button */}
+        {sections.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setMobileTocOpen((o) => !o)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+            aria-label="On this page"
+          >
+            <FileText className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* ── Mobile TOC Drawer (On this page) ── */}
+      <AnimatePresence>
+        {mobileTocOpen && sections.length > 0 && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="mobile-toc-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden print:hidden"
+              onClick={() => setMobileTocOpen(false)}
+            />
+            {/* Drawer panel */}
+            <motion.div
+              key="mobile-toc-drawer"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 right-0 z-50 flex h-full w-[280px] flex-col bg-white border-l border-slate-200 shadow-2xl dark:bg-[#0a0a0b] dark:border-white/5 lg:hidden print:hidden"
+            >
+              {/* Drawer header */}
+              <div className="flex h-14 items-center justify-between border-b border-slate-200/80 px-4 dark:border-white/5">
+                <span className="text-sm font-semibold text-slate-900 dark:text-white">On this page</span>
+                <button
+                  type="button"
+                  onClick={() => setMobileTocOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 transition-colors dark:border-white/10 dark:bg-white/5 dark:text-slate-400 dark:hover:text-white"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-4 [scrollbar-width:thin]">
+                <ul className="space-y-0.5">
+                  {sections.map((section) => (
+                    <li key={section.id}>
+                      <a
+                        href={`#${section.id}`}
+                        onClick={() => setMobileTocOpen(false)}
+                        className={cn(
+                          "block rounded-md px-3 py-2.5 text-[13px] leading-snug transition-colors",
+                          activeSection === section.id
+                            ? "bg-emerald-500/10 font-semibold text-emerald-600 dark:text-emerald-400"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                        )}
+                      >
+                        <span className="line-clamp-2">{section.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <div className="mx-auto flex max-w-6xl gap-8 px-6 py-10">
         {/* Sidebar Table of Contents */}
@@ -474,7 +563,7 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
           </section>
 
           {/* Footer Note */}
-          <div className="border-t border-slate-200/80 pt-6 pb-[60vh] dark:border-white/5">
+          <div className="border-t border-slate-200/80 pt-6 dark:border-white/5">
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {s.footerNote1}
               <Link href="/ip-protection" className="text-emerald-500 hover:underline">
