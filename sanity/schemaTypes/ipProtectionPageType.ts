@@ -103,10 +103,6 @@ export const ipProtectionPageType = defineType({
           ]
         }
       ]
-    }),
-  ],
-  // Investor summary table (Section 6) — separate from protectionMethods
-  ...[
     defineField({
       name: "investorTable",
       title: "Investor Table (Section 6)",

@@ -368,16 +368,32 @@ const mrDoc = {
   ],
 };
 
+function addKeys(doc) {
+  if (Array.isArray(doc.sections)) {
+    doc.sections = doc.sections.map((item, idx) => ({ ...item, _key: `sec-${idx}` }));
+  }
+  if (Array.isArray(doc.industryExamples)) {
+    doc.industryExamples = doc.industryExamples.map((item, idx) => ({ ...item, _key: `ind-${idx}` }));
+  }
+  if (Array.isArray(doc.protectionMethods)) {
+    doc.protectionMethods = doc.protectionMethods.map((item, idx) => ({ ...item, _key: `pm-${idx}` }));
+  }
+  if (Array.isArray(doc.investorTable)) {
+    doc.investorTable = doc.investorTable.map((item, idx) => ({ ...item, _key: `inv-${idx}` }));
+  }
+  return doc;
+}
+
 async function upload() {
   try {
     console.log("Uploading EN doc...");
-    await writeClient.createOrReplace(enDoc);
+    await writeClient.createOrReplace(addKeys(enDoc));
 
     console.log("Uploading HI doc...");
-    await writeClient.createOrReplace(hiDoc);
+    await writeClient.createOrReplace(addKeys(hiDoc));
 
     console.log("Uploading MR doc...");
-    await writeClient.createOrReplace(mrDoc);
+    await writeClient.createOrReplace(addKeys(mrDoc));
 
     console.log("✅ Successfully uploaded all 3 IP Protection docs to Sanity!");
   } catch (error) {
