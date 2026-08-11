@@ -32,19 +32,18 @@ export const ipProtectionPageType = defineType({
         defineField({ name: "p2_highlight", type: "text", title: "Paragraph 2 Highlight" }),
         defineField({ name: "p3_1", type: "string", title: "Paragraph 3.1 Title" }),
         defineField({ name: "p3_1_desc", type: "text", title: "Paragraph 3.1 Description" }),
+        defineField({ name: "p3_1_outro", type: "text", title: "Paragraph 3.1 Outro (after table)" }),
         defineField({ name: "p3_2", type: "string", title: "Paragraph 3.2 Title" }),
         defineField({ name: "p3_2_desc", type: "text", title: "Paragraph 3.2 Description" }),
         defineField({ name: "p3_3", type: "string", title: "Paragraph 3.3 Title" }),
         defineField({ name: "p3_3_desc", type: "text", title: "Paragraph 3.3 Description" }),
-        defineField({ name: "p3_4", type: "string", title: "Paragraph 3.4 Title" }),
-        defineField({ name: "p3_4_desc", type: "text", title: "Paragraph 3.4 Description" }),
         defineField({
           name: "executionList",
           title: "Execution List",
           type: "array",
           of: [{ type: "string" }],
         }),
-        defineField({ name: "p3_4_outro", type: "text", title: "Paragraph 3.4 Outro" }),
+        defineField({ name: "p3_3_outro", type: "text", title: "Paragraph 3.3 Outro" }),
         defineField({ name: "p5_desc", type: "text", title: "Paragraph 5 Description" }),
         defineField({ name: "p5_quote", type: "text", title: "Paragraph 5 Quote" }),
         defineField({ name: "statusActive", type: "string", title: "Status: Active" }),
@@ -101,6 +100,24 @@ export const ipProtectionPageType = defineType({
             { name: "basis", type: "string", title: "Legal Basis" },
             { name: "description", type: "text", title: "Description" },
             { name: "iconName", type: "string", title: "Icon Name" },
+          ]
+        }
+      ]
+    }),
+  ],
+  // Investor summary table (Section 6) — separate from protectionMethods
+  ...[
+    defineField({
+      name: "investorTable",
+      title: "Investor Table (Section 6)",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "method", type: "string", title: "Method" },
+            { name: "status", type: "string", title: "Status" },
+            { name: "basis", type: "string", title: "Legal Basis" },
           ]
         }
       ]
