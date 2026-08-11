@@ -86,6 +86,7 @@ import {
 } from './circularTimelineType'
 import { classgridVideoType } from './classgridVideoType'
 import { classgridTeamVisionType } from './classgridTeamVisionType'
+import { ipProtectionPageType } from './ipProtectionPageType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -171,5 +172,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     apiDocType,
     safetyIncidentType,
     aiEscalationType,
+    ipProtectionPageType,
   ],
 }

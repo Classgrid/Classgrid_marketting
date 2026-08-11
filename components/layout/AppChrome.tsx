@@ -103,7 +103,7 @@ function pagePromptForPath(pathname: string, hash?: string) {
 export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChromeProps) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith("/studio");
-  const isAuthRoute = pathname === "/login" || pathname === "/logout" || pathname === "/onboarding";
+  const isAuthRoute = pathname === "/login" || pathname === "/logout" || pathname === "/onboarding" || pathname === "/ip-protection";
   const [askAiOpen, setAskAiOpen] = useState(false);
   const [docsSearchOpen, setDocsSearchOpen] = useState(false);
   const [pageTitle, setPageTitle] = useState(chromeContent?.brandName || "Classgrid");

@@ -170,6 +170,7 @@ export const placeholderChromeContent: ChromeContent = {
     { label: "Security", href: "/security" },
     { label: "Cookies", href: "/cookies" },
     { label: "Disclaimer", href: "/disclaimer" },
+    { label: "IP Protection", href: "/ip-protection" },
     { label: "Sitemap", href: "/sitemap.xml" },
   ],
   footerSocialLinks: [

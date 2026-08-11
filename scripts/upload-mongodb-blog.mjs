@@ -112,22 +112,6 @@ const blogDocument = {
     },
   ],
   body: { en: blogBody },
-  contentSections: [
-    {
-      _key: 'section-1',
-      _type: 'blogSection',
-      heading: 'MongoDB Atlas Credits and Voyage AI Tokens',
-      mediaType: 'image',
-      image: {
-        _type: 'image',
-        asset: {
-          _type: 'reference',
-          _ref: '<REPLACE_ME_ASSET_ID>'
-        }
-      },
-      layout: 'center'
-    }
-  ]
 };
 
 async function main() {
@@ -135,7 +119,7 @@ async function main() {
   try {
     const imgRes = await fetch('https://cdn.classgrid.in/svg__logo_collection/Screenshot_2026-08-10_235744.png');
     const buffer = await imgRes.arrayBuffer();
-    
+
     console.log('⏳ Uploading image to Sanity...');
     const asset = await client.assets.upload('image', Buffer.from(buffer), {
       filename: 'mongodb-credits-screenshot.png'

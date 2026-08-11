@@ -23,6 +23,8 @@ const hiddenTypes = new Set([
   "helpArticle",
   "articleQuestion",
   "websiteFeedback",
+  "legalPage",
+  "ipProtectionPage",
 ]);
 
 export const structure = (S: StructureBuilder) =>
@@ -136,6 +138,24 @@ export const structure = (S: StructureBuilder) =>
                 .title("Article Questions (Feedback)")
                 .icon(() => "🙋")
                 .child(S.documentTypeList("articleQuestion").title("Article Questions")),
+            ])
+        ),
+
+      S.divider(),
+
+      S.listItem()
+        .title("Legal Pages")
+        .id("legalPagesFolder")
+        .child(
+          S.list()
+            .title("Legal Pages")
+            .items([
+              S.listItem()
+                .title("Standard Legal Pages")
+                .child(S.documentTypeList("legalPage").title("Standard Legal Pages")),
+              S.listItem()
+                .title("IP Protection Policy")
+                .child(S.documentTypeList("ipProtectionPage").title("IP Protection Policies")),
             ])
         ),
 

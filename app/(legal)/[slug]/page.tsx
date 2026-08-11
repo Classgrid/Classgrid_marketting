@@ -13,6 +13,7 @@ const LEGAL_DESCRIPTIONS: Record<string, string> = {
   security: "Infrastructure and application security controls powering tenant-safe operations.",
   cookies: "Cookie and local-storage usage policy with strict privacy safeguards.",
   disclaimer: "Legal disclaimer covering liability boundaries, service limitations, and usage responsibility.",
+  "ip-protection": "How Classgrid protects its intellectual property through copyright, trade secrets, trademark, and MSME registration.",
 };
 
 const LEGAL_HEADLINES: Record<string, string> = {
@@ -21,6 +22,7 @@ const LEGAL_HEADLINES: Record<string, string> = {
   security: "Security Policy",
   cookies: "Cookie Policy",
   disclaimer: "Disclaimer",
+  "ip-protection": "Intellectual Property Protection Policy",
 };
 
 const LEGAL_LABELS: Record<string, string> = {
@@ -29,6 +31,7 @@ const LEGAL_LABELS: Record<string, string> = {
   security: "Security",
   cookies: "Cookies",
   disclaimer: "Disclaimer",
+  "ip-protection": "IP Protection",
 };
 
 const DEFAULT_LEGAL_INTRO: LegalIntroContent = {
@@ -43,7 +46,7 @@ function normalizeLegalSlug(slug: string) {
 }
 
 function isValidLegalSlug(slug: string) {
-  return slug === "privacy" || slug === "terms" || slug === "security" || slug === "cookies" || slug === "disclaimer";
+  return slug === "privacy" || slug === "terms" || slug === "security" || slug === "cookies" || slug === "disclaimer" || slug === "ip-protection";
 }
 
 function toSectionId(input: string, fallbackIndex: number) {
@@ -213,7 +216,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  return [{ slug: "privacy" }, { slug: "terms" }, { slug: "security" }, { slug: "cookies" }, { slug: "cookie" }, { slug: "disclaimer" }];
+  return [{ slug: "privacy" }, { slug: "terms" }, { slug: "security" }, { slug: "cookies" }, { slug: "cookie" }, { slug: "disclaimer" }, { slug: "ip-protection" }];
 }
 
 import { notFound } from "next/navigation";
