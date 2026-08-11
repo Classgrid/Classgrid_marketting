@@ -103,6 +103,7 @@ export const ipProtectionPageType = defineType({
           ]
         }
       ]
+    }),
     defineField({
       name: "investorTable",
       title: "Investor Table (Section 6)",
