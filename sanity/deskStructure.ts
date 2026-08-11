@@ -154,8 +154,8 @@ export const structure = (S: StructureBuilder) =>
                 .title("Standard Legal Pages")
                 .child(S.documentTypeList("legalPage").title("Standard Legal Pages")),
               S.listItem()
-                .title("IP Protection Policy")
-                .child(S.documentTypeList("ipProtectionPage").title("IP Protection Policies")),
+                .title("Classgrid Patent Law")
+                .child(S.documentTypeList("ipProtectionPage").title("Classgrid Patent Law")),
             ])
         ),
 
