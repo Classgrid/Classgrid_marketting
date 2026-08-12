@@ -527,7 +527,7 @@ export function TurboComparisonNew({
 
     return (
         <section
-            className="relative overflow-x-clip py-10 pb-44 md:py-24 lg:py-32 bg-muted"
+            className="hidden md:block relative overflow-x-clip py-10 pb-44 md:py-24 lg:py-32 bg-muted"
         >
             <div className="relative mx-auto max-w-[1400px] px-6">
 
