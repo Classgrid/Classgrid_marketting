@@ -21,8 +21,8 @@ export function getRedisClient(): Redis | null {
       connectTimeout: 5000,
       lazyConnect: true,
       retryStrategy(times) {
-        if (times > 3) return null; // Stop retrying after 3 attempts
-        return Math.min(times * 200, 2000);
+        // Keep retrying indefinitely with a capped delay
+        return Math.min(times * 500, 5000);
       },
     });
 
