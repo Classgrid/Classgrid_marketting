@@ -82,32 +82,6 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  const mistralKey = process.env.MISTRAL_API_KEY?.trim();
-  if (mistralKey) {
-    providers.push({
-      name: "mistral",
-      url: "https://api.mistral.ai/v1/chat/completions",
-      apiKey: mistralKey,
-      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
-    });
-  }
-
-  // Groq disabled: system prompt now exceeds Groq's free tier 6000 TPM limit (needs ~7000+ tokens).
-  // Keep code for future re-enabling if Groq plan is upgraded or prompt is trimmed.
-  // const groqKey = process.env.GROQ_API_KEY?.trim();
-  // if (groqKey) {
-  //   const groqModel =
-  //     channel === "whatsapp" || channel === "telegram"
-  //       ? process.env.WHATSAPP_GROQ_MODEL?.trim() || process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant"
-  //       : process.env.GROQ_MODEL?.trim() || "llama-3.1-8b-instant";
-  //   providers.push({
-  //     name: "groq",
-  //     url: "https://api.groq.com/openai/v1/chat/completions",
-  //     apiKey: groqKey,
-  //     model: groqModel,
-  //   });
-  // }
-
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   if (geminiKey) {
     providers.push({
@@ -115,6 +89,16 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       apiKey: geminiKey,
       model: process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash",
+    });
+  }
+
+  const mistralKey = process.env.MISTRAL_API_KEY?.trim();
+  if (mistralKey) {
+    providers.push({
+      name: "mistral",
+      url: "https://api.mistral.ai/v1/chat/completions",
+      apiKey: mistralKey,
+      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
     });
   }
 
