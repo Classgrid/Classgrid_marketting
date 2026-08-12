@@ -34,6 +34,7 @@ interface DocsImageViewerProps {
 export function DocsImageViewer({ images, renderThumbnails, defaultOpenIndex, onClose }: DocsImageViewerProps) {
   const [selectedImage, setSelectedImage] = useState<DocsViewerImage | null>(null);
   const thumbnailRectRef = useRef<DOMRect | null>(null);
+  const [zoom, setZoom] = useState(1);
 
   // Auto-open if defaultOpenIndex is provided
   useEffect(() => {
@@ -51,6 +52,7 @@ export function DocsImageViewer({ images, renderThumbnails, defaultOpenIndex, on
 
   const closeImage = useCallback(() => {
     setSelectedImage(null);
+    setZoom(1);
     onClose?.();
   }, [onClose]);
 
@@ -74,13 +76,19 @@ export function DocsImageViewer({ images, renderThumbnails, defaultOpenIndex, on
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImage, closeImage]);
 
-  // ── Close on scroll (incident.io behavior) ──
+  // ── Zoom with mouse scroll ──
   useEffect(() => {
     if (!selectedImage) return;
-    const handleScroll = () => closeImage();
-    window.addEventListener("wheel", handleScroll, { passive: true });
-    return () => window.removeEventListener("wheel", handleScroll);
-  }, [selectedImage, closeImage]);
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setZoom(prev => {
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        return Math.min(Math.max(0.5, prev + delta), 4);
+      });
+    };
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [selectedImage]);
 
   // ── Compute origin-point offset for the scale animation ──
   const getOriginOffset = useCallback(() => {
@@ -130,8 +138,8 @@ export function DocsImageViewer({ images, renderThumbnails, defaultOpenIndex, on
                     key={selectedImage.id}
                     src={selectedImage.src}
                     alt={selectedImage.alt}
-                    className="block max-w-full max-h-full w-auto object-contain rounded-lg shadow-2xl cursor-zoom-out"
-                    style={{ touchAction: "pinch-zoom" }}
+                    className="block max-w-full max-h-full w-auto object-contain rounded-lg shadow-2xl cursor-zoom-in"
+                    style={{ touchAction: "pinch-zoom", transform: `scale(${zoom})`, transition: "transform 0.15s ease-out" }}
                     initial={{
                       opacity: 0,
                       scale: 0.12,
@@ -154,6 +162,7 @@ export function DocsImageViewer({ images, renderThumbnails, defaultOpenIndex, on
                       duration: 0.28,
                       ease: [0.4, 0, 0.2, 1],
                     }}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
 
