@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 /**
- * Uses Gemini 1.5 Flash as an advanced Vision and OCR preprocessor for PDF documents.
+ * Uses Gemini 3.5 Flash as an advanced Vision and OCR preprocessor for PDF documents.
  * It extracts text and describes charts/images flawlessly.
  */
 export async function extractPdfWithGemini(pdfBuffer: Buffer, mimeType: string = "application/pdf"): Promise<string | null> {
@@ -13,7 +13,7 @@ export async function extractPdfWithGemini(pdfBuffer: Buffer, mimeType: string =
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are a highly advanced Document OCR and Vision Preprocessor.
 Your job is to read this document and convert it into clean, structured Markdown text.
@@ -40,7 +40,7 @@ CRITICAL INSTRUCTIONS:
 }
 
 /**
- * Uses Gemini 1.5 Flash Vision to describe an uploaded image.
+ * Uses Gemini 3.5 Flash Vision to describe an uploaded image.
  * Downloads the image from URL, sends it to Gemini, and returns a text description.
  */
 export async function describeImageWithGemini(imageUrl: string, mimeType: string): Promise<string | null> {
@@ -62,7 +62,7 @@ export async function describeImageWithGemini(imageUrl: string, mimeType: string
     const buffer = Buffer.from(arrayBuffer);
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are an advanced image analysis assistant. 
 Describe EXACTLY what you see in this image in detail. Be accurate and factual.
