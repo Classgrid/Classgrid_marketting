@@ -18,13 +18,11 @@ import { PostHogProvider } from "@/components/providers/PostHogProvider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["400", "500", "600", "700", "800"],
 });
 
 const interBody = Inter({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
 });
 
 
