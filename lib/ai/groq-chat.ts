@@ -174,7 +174,7 @@ async function tryProvider(
         model: provider.model,
         messages,
         temperature,
-        max_tokens: maxTokens,
+        ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
         tools: TOOLS,
       }),
     });
