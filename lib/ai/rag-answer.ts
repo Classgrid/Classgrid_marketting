@@ -366,33 +366,20 @@ export async function generateClassgridRagAnswer(
   });
 
   // Prepare the user's final message
-  let userMessageContent: any = question;
+  let userMessageContent: string = question;
 
   if (options.attachments && options.attachments.length > 0) {
-    userMessageContent = [
-      { type: "text", text: question }
-    ];
-
     for (const att of options.attachments) {
       if (att.mimeType.startsWith("image/")) {
-        userMessageContent.push({
-          type: "image_url",
-          image_url: { url: att.url }
-        });
+        userMessageContent += `\n\n[User attached an image: ${att.name}. Note: I cannot currently process raw image pixels in this specific chat mode unless you provide a description, but I acknowledge the upload.]`;
       } else {
         // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
         const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
         
         if (extractedText) {
-          userMessageContent.push({
-            type: "text",
-            text: `[Attached Document: ${att.name}]\n\n--- DOCUMENT CONTENT ---\n${extractedText.slice(0, 4000)}\n--- END CONTENT ---`
-          });
+          userMessageContent += `\n\n[Attached Document: ${att.name}]\n\n--- DOCUMENT CONTENT ---\n${extractedText.slice(0, 4000)}\n--- END CONTENT ---`;
         } else {
-          userMessageContent.push({
-            type: "text",
-            text: `[Attached Document: ${att.name} — Note: I am unable to read the contents of this file format directly. Please summarize it or download it from: ${att.url}]`
-          });
+          userMessageContent += `\n\n[Attached Document: ${att.name} — Note: I am unable to read the contents of this file format directly. Please summarize it or download it from: ${att.url}]`;
         }
       }
     }

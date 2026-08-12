@@ -1207,7 +1207,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     if (!apiQuestion && !isDocsContextActive && filesToUpload.length === 0) return;
     if (submitting) return;
 
-    if (isDocsContextActive && pageContext?.path) {
+    if (isDocsContextActive && pageContext?.path && filesToUpload.length === 0) {
       const docsUrl = `https://classgrid.in${pageContext.path}`;
       setLastSentDocsPath(pageContext.path);
 
