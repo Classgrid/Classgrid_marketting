@@ -89,3 +89,61 @@ CRITICAL RULES:
     return null;
   }
 }
+
+/**
+ * Natively answers a chat using Gemini 3.5 Flash when an image is attached.
+ * Bypasses Mistral completely to prevent hallucination and provide native vision capabilities.
+ */
+export async function answerChatWithGeminiNatively(
+  systemPrompt: string,
+  history: { role: string; content: string }[],
+  userMessage: string,
+  imageUrl: string,
+  mimeType: string
+): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    console.warn("GEMINI_API_KEY is not set. Cannot use native Gemini chat.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      console.error(`[gemini-ocr] Failed to fetch image: ${imageUrl}`);
+      return null;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+
+    const imagePart = {
+      inlineData: {
+        data: buffer.toString("base64"),
+        mimeType,
+      },
+    };
+
+    // Construct native Gemini prompt
+    // For simplicity with vision, we pass the system prompt and history as context in the main prompt
+    let fullPrompt = `SYSTEM INSTRUCTIONS:\n${systemPrompt}\n\n`;
+    
+    if (history.length > 0) {
+      fullPrompt += `CHAT HISTORY:\n`;
+      for (const msg of history) {
+        fullPrompt += `${msg.role.toUpperCase()}: ${msg.content}\n\n`;
+      }
+    }
+    
+    fullPrompt += `CURRENT USER MESSAGE:\n${userMessage}`;
+
+    const result = await model.generateContent([fullPrompt, imagePart]);
+    return result.response.text()?.trim() || null;
+  } catch (error) {
+    console.error("[gemini-ocr] Native chat failed:", error);
+    return null;
+  }
+}

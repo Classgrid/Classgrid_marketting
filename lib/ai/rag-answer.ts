@@ -16,7 +16,7 @@ import {
   type RetrievedRagChunk,
 } from "@/lib/ai/rag-retrieve";
 import { extractTextFromAttachment } from "./file-parser";
-import { describeImageWithGemini } from "./gemini-ocr";
+import { describeImageWithGemini, answerChatWithGeminiNatively } from "./gemini-ocr";
 import { fetchPlatformContext } from "./platform-context";
 
 export type ChatHistoryItem = {
@@ -367,18 +367,19 @@ export async function generateClassgridRagAnswer(
     userName: normalizeText(options.userName),
   });
 
-  // Prepare the user's final message
   let userMessageContent: string = question;
+  
+  // Check if we have any images. If so, we will bypass Mistral completely and use Gemini Native.
+  let imageToProcessNatively = null;
 
   if (options.attachments && options.attachments.length > 0) {
     for (const att of options.attachments) {
       if (att.mimeType.startsWith("image/")) {
-        const imageDescription = await describeImageWithGemini(att.url, att.mimeType);
-        if (imageDescription) {
-           userMessageContent += `\n\n[User attached an image: ${att.name}]\n--- ACTUAL IMAGE DESCRIPTION ---\n${imageDescription}\n--- END DESCRIPTION ---`;
-        } else {
-           userMessageContent += `\n\n[User attached an image: ${att.name}. Note: I could not extract a description for this image.]`;
+        if (!imageToProcessNatively) {
+          imageToProcessNatively = att;
         }
+        // Still add the text context in case we fall back to Mistral (though we shouldn't)
+        userMessageContent += `\n\n[User attached an image: ${att.name}]`;
       } else {
         // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
         const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
@@ -401,14 +402,32 @@ export async function generateClassgridRagAnswer(
     { role: "user", content: userMessageContent },
   ];
 
-  const answer = await generateGroqReply({
-    messages,
-    channel,
-    maxTokens: channel === "whatsapp" ? 220 : 1500,
-    timeoutMs: channel === "whatsapp" ? 10000 : 20000,
-    temperature: 0.35,
-    onStatus: options.onStatus,
-  });
+  let answer: string | null = null;
+
+  if (imageToProcessNatively) {
+    // 🚀 NATIVE GEMINI BYPASS: Do not send images to Mistral. Send the entire chat to Gemini 3.5 Flash natively!
+    console.log("[rag-answer] Image detected, routing entire request natively to Gemini 3.5 Flash!");
+    options.onStatus?.("analyzing image");
+    answer = await answerChatWithGeminiNatively(
+      systemPrompt,
+      normalizeHistory(options.history),
+      userMessageContent,
+      imageToProcessNatively.url,
+      imageToProcessNatively.mimeType
+    );
+  }
+
+  // Fallback to Mistral if no image, or if native Gemini failed
+  if (!answer) {
+    answer = await generateGroqReply({
+      messages,
+      channel,
+      maxTokens: channel === "whatsapp" ? 220 : 1500,
+      timeoutMs: channel === "whatsapp" ? 10000 : 20000,
+      temperature: 0.35,
+      onStatus: options.onStatus,
+    });
+  }
 
   if (answer === "[RATE_LIMITED]") {
     const rateLimitMsg = "The AI is currently receiving too many requests. Please try again in a minute.";
