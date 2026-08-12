@@ -1,4 +1,5 @@
 import officeParser from 'officeparser';
+import { extractPdfWithGemini } from './gemini-ocr';
 
 /**
  * Downloads a file from a URL and extracts its text content if it's a supported format (PDF, PPTX, DOCX, XLSX).
@@ -14,7 +15,15 @@ export async function extractTextFromAttachment(url: string, mimeType: string): 
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // OfficeParser supports PDF, DOCX, PPTX, XLSX, ODT, ODP, ODS
+    // If it's a PDF, try the advanced Gemini OCR pipeline first
+    if (mimeType === "application/pdf") {
+      const geminiText = await extractPdfWithGemini(buffer, mimeType);
+      if (geminiText) {
+        return geminiText;
+      }
+    }
+
+    // Fallback or non-PDF files: use officeparser (supports PDF, DOCX, PPTX, XLSX)
     const text = await officeParser.parseOfficeAsync(buffer);
     return text?.trim() || null;
   } catch (error) {
