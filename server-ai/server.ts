@@ -118,4 +118,12 @@ app.post("/api/ai/chat", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Classgrid AI Server running on http://localhost:${PORT}`);
+  console.log("----------------------------------------");
+  console.log("✅ Groq API Key: " + (process.env.GROQ_API_KEY ? "Connected" : "Missing"));
+  console.log("✅ OpenAI API Key: " + (process.env.OPENAI_API_KEY ? "Connected" : "Missing"));
+  console.log("✅ Anthropic API Key: " + (process.env.ANTHROPIC_API_KEY ? "Connected" : "Missing"));
+  console.log("✅ Mistral API Key: " + (process.env.MISTRAL_API_KEY ? "Connected" : "Missing"));
+  console.log("✅ Gemini API Key: " + (process.env.GEMINI_API_KEY ? "Connected" : "Missing"));
+  console.log("✅ RAG Engine: " + (process.env.RAG_ENABLED === "true" ? "Online" : "Offline"));
+  console.log("----------------------------------------");
 });
