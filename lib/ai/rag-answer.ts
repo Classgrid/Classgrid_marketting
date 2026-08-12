@@ -15,6 +15,7 @@ import {
   type RagRetrievalResult,
   type RetrievedRagChunk,
 } from "@/lib/ai/rag-retrieve";
+import { extractTextFromAttachment } from "@/lib/ai/file-parser";
 
 export type ChatHistoryItem = {
   role: "user" | "assistant";
@@ -379,10 +380,20 @@ export async function generateClassgridRagAnswer(
           image_url: { url: att.url }
         });
       } else {
-        userMessageContent.push({
-          type: "text",
-          text: `[Attached Document: ${att.name} — Please download or analyze this file from the following URL if possible: ${att.url}]`
-        });
+        // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
+        const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
+        
+        if (extractedText) {
+          userMessageContent.push({
+            type: "text",
+            text: `[Attached Document: ${att.name}]\n\n--- DOCUMENT CONTENT ---\n${extractedText.slice(0, 4000)}\n--- END CONTENT ---`
+          });
+        } else {
+          userMessageContent.push({
+            type: "text",
+            text: `[Attached Document: ${att.name} — Note: I am unable to read the contents of this file format directly. Please summarize it or download it from: ${att.url}]`
+          });
+        }
       }
     }
   }
