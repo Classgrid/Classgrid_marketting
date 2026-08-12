@@ -860,8 +860,8 @@ export default function InquiryPage() {
 
                           const editor = document.getElementById("richEditor");
                           const currentImages = editor?.querySelectorAll("img").length || 0;
-                          if (currentImages >= 5) {
-                            alert("You can only upload a maximum of 5 inline images.");
+                          if (currentImages >= 8) {
+                            alert("You can only upload a maximum of 8 inline images.");
                             (e.target as HTMLInputElement).value = "";
                             return;
                           }
@@ -1189,7 +1189,7 @@ export default function InquiryPage() {
                       </motion.div>
                     ))}
                     <p className="text-xs text-muted-foreground">
-                      {files.length}/5 files · Max 10 MB each
+                      {files.length}/8 files · Max 10 MB each
                     </p>
                   </motion.div>
                 )}

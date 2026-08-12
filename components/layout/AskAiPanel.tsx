@@ -784,7 +784,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     if (newFiles.length === 0) return;
 
     setAttachedFiles(prev => {
-      const combined = [...prev, ...newFiles].slice(0, 5); // Max 5 files
+      const combined = [...prev, ...newFiles].slice(0, 8); // Max 8 files
       return combined;
     });
 
@@ -1834,9 +1834,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={attachedFiles.length >= 5}
+                  disabled={attachedFiles.length >= 8}
                   className="h-8 w-8 shrink-0 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 disabled:opacity-30 transition-all cursor-pointer"
-                  title={attachedFiles.length >= 5 ? "Max 5 files" : "Attach file (max 35MB)"}
+                  title={attachedFiles.length >= 8 ? "Max 8 files" : "Attach file (max 35MB)"}
                 >
                   <Paperclip className={cn("h-4 w-4 -rotate-45", isAnyFileUploading && "opacity-50")} />
                 </button>
