@@ -1,16 +1,16 @@
 import { createClient } from 'next-sanity';
 import { NextResponse } from 'next/server';
 
-const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2026-03-30',
-  token: process.env.SANITY_API_WRITE_TOKEN,
-  useCdn: false,
-});
-
 export async function POST(req: Request) {
   try {
+    const writeClient = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'dummy-project-id',
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+      apiVersion: '2026-03-30',
+      token: process.env.SANITY_API_WRITE_TOKEN,
+      useCdn: false,
+    });
+
     const { slug, appendContent } = await req.json();
 
     if (!slug || !appendContent) {
