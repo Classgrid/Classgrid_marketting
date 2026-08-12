@@ -20,8 +20,10 @@
     "googlethis": "^1.8.0",
     "groq-sdk": "^0.3.2",
     "ioredis": "^5.3.2",
+    "leo-profanity": "^1.6.1",
     "mongoose": "^8.2.0",
-    "next-sanity": "^7.1.1"
+    "next-sanity": "^7.1.1",
+    "nodemailer": "^6.9.16"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
