@@ -88,6 +88,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "gemini",
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       apiKey: geminiKey,
+      // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
       model: process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash",
     });
   }
@@ -117,6 +118,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
 
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
   const chain = getProviderChain(channel);
+  // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
   return chain.length > 0 ? chain[0].model : "gemini-3.5-flash";
 }
 
