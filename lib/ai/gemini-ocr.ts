@@ -142,8 +142,11 @@ export async function answerChatWithGeminiNatively(
 
     const result = await model.generateContent([fullPrompt, imagePart]);
     return result.response.text()?.trim() || null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[gemini-ocr] Native chat failed:", error);
+    if (error?.status === 429 || error?.message?.includes("429")) {
+      return "[RATE_LIMITED]";
+    }
     return null;
   }
 }
