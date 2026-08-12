@@ -417,8 +417,8 @@ export async function generateClassgridRagAnswer(
     );
   }
 
-  // Fallback to Mistral if no image, or if native Gemini failed
-  if (!answer) {
+  // Fallback to Mistral/Groq if no image, or if native Gemini failed or was rate-limited
+  if (!answer || answer === "[RATE_LIMITED]") {
     answer = await generateGroqReply({
       messages,
       channel,
