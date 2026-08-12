@@ -183,7 +183,7 @@ export function ClassgridRoleShowcase({
   }
 
   return (
-    <section className="relative overflow-hidden bg-muted py-24 md:py-32">
+    <section className="hidden md:block relative overflow-hidden bg-muted py-24 md:py-32">
       {/* Ambient background */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-60 top-0 h-[600px] w-[600px] rounded-full bg-emerald-500/8 blur-[120px]" />
