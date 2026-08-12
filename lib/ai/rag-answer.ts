@@ -15,7 +15,9 @@ import {
   type RagRetrievalResult,
   type RetrievedRagChunk,
 } from "@/lib/ai/rag-retrieve";
-import { extractTextFromAttachment } from "@/lib/ai/file-parser";
+import { extractTextFromAttachment } from "./file-parser";
+import { describeImageWithGemini } from "./gemini-ocr";
+import { fetchPlatformContext } from "./platform-context";
 
 export type ChatHistoryItem = {
   role: "user" | "assistant";
@@ -371,7 +373,12 @@ export async function generateClassgridRagAnswer(
   if (options.attachments && options.attachments.length > 0) {
     for (const att of options.attachments) {
       if (att.mimeType.startsWith("image/")) {
-        userMessageContent += `\n\n[User attached an image: ${att.name}. Note: I cannot currently process raw image pixels in this specific chat mode unless you provide a description, but I acknowledge the upload.]`;
+        const imageDescription = await describeImageWithGemini(att.url, att.mimeType);
+        if (imageDescription) {
+           userMessageContent += `\n\n[User attached an image: ${att.name}]\n--- ACTUAL IMAGE DESCRIPTION ---\n${imageDescription}\n--- END DESCRIPTION ---`;
+        } else {
+           userMessageContent += `\n\n[User attached an image: ${att.name}. Note: I could not extract a description for this image.]`;
+        }
       } else {
         // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
         const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
