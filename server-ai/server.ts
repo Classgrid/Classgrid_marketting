@@ -126,4 +126,10 @@ app.listen(PORT, () => {
   console.log("✅ Gemini API Key: " + (process.env.GEMINI_API_KEY ? "Connected" : "Missing"));
   console.log("✅ RAG Engine: " + (process.env.RAG_ENABLED === "true" ? "Online" : "Offline"));
   console.log("----------------------------------------");
+
+  // INTENTIONAL CHAOS TEST
+  setTimeout(() => {
+    console.error("💥 FATAL ERROR: SYSTEM CRASH TEST INITIATED BY SUPER ADMIN 💥");
+    process.exit(1); // Force the server to crash
+  }, 5000);
 });
