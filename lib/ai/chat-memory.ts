@@ -10,8 +10,8 @@
 import { getRedisClient } from "@/lib/redis";
 import type { ChatHistoryItem } from "@/lib/ai/rag-answer";
 
-// Session TTL: 30 minutes of inactivity = session cleanup
-const SESSION_TTL_SECONDS = 30 * 60; // 30 minutes
+// Session TTL: 2 hours of inactivity = session cleanup
+const SESSION_TTL_SECONDS = 2 * 60 * 60; // 2 hours
 
 // Max messages to store per session (prevents unbounded token growth that crashes Groq/Mistral)
 const MAX_SESSION_MESSAGES = 32;

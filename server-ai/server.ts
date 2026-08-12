@@ -230,7 +230,7 @@ app.post("/api/ai/chat", async (req, res) => {
 
     // ── 2. RATE LIMITING ──────────────────────────────────────────────────────
     const identifier = userEmail || ip;
-    const MAX_MESSAGES = 16;
+    const MAX_MESSAGES = 35;
     const ONE_HOUR_MS = 60 * 60 * 1000;
 
     const rateLimitRecord = await AiRateLimit.findOne({ identifier });
