@@ -13,7 +13,7 @@ export async function extractPdfWithGemini(pdfBuffer: Buffer, mimeType: string =
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL?.trim() || "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are a highly advanced Document OCR and Vision Preprocessor.
 Your job is to read this document and convert it into clean, structured Markdown text.
@@ -62,7 +62,7 @@ export async function describeImageWithGemini(imageUrl: string, mimeType: string
     const buffer = Buffer.from(arrayBuffer);
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL?.trim() || "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are an advanced image analysis assistant. 
 Describe EXACTLY what you see in this image in detail. Be accurate and factual.
@@ -118,7 +118,7 @@ export async function answerChatWithGeminiNatively(
     const buffer = Buffer.from(arrayBuffer);
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL?.trim() || "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const imagePart = {
       inlineData: {
