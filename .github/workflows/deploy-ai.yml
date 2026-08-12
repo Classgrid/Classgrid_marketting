@@ -1,4 +1,4 @@
-name: Deploy AI Server to AWS
+name: Deploying RAG to Server
 
 on:
   push:
