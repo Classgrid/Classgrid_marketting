@@ -49,7 +49,7 @@ import { CodeBlockClient } from "@/components/docs/code-block-client";
 import { toast } from "sonner";
 import { getPresignedUrlForAskAiFile } from "@/app/actions/docs-file-actions";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
-import { ImageGallery } from "@/components/shared/ImageGallery";
+import { DocsImageViewer } from "@/components/shared/DocsImageViewer";
 
 type AskAiPanelProps = {
   open: boolean;
@@ -1573,22 +1573,21 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                     {isUser && message.attachments && message.attachments.length > 0 && (
                       <div className="flex flex-col gap-2 items-end">
                         
-                        {/* Images using ImageGallery */}
+                        {/* Images using DocsImageViewer */}
                         {message.attachments.filter(a => a.mimeType.startsWith("image/")).length > 0 && (
-                          <ImageGallery
-                            disableHoverZoom
+                          <DocsImageViewer
                             images={message.attachments.filter(a => a.mimeType.startsWith("image/")).map((a, idx) => ({
                               id: `${a.name}-${idx}-${message.id}`,
                               src: a.url,
                               alt: a.name
                             }))}
-                            customGrid={(images, openImage) => (
+                            renderThumbnails={(images, openImage) => (
                               <div className="flex flex-wrap gap-2 justify-end">
                                 {images.map((img) => (
                                   <button
                                     key={img.id}
                                     type="button"
-                                    onClick={() => openImage(img)}
+                                    onClick={(e) => openImage(img, e)}
                                     title={img.alt}
                                     className={cn(
                                       "relative group overflow-hidden flex items-center justify-center bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 hover:border-emerald-500/50 transition-all shadow-sm cursor-pointer",
@@ -1949,16 +1948,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         />
       )}
 
-      {/* Image Gallery for standalone image previews (e.g. from the input chip) */}
+      {/* DocsImageViewer for standalone image previews (e.g. from the input chip) */}
       {previewFile && previewFile.mimeType?.startsWith("image/") && (
-        <ImageGallery
+        <DocsImageViewer
           images={[{ 
             id: previewFile.name, 
             src: typeof previewFile.src === 'string' ? previewFile.src : URL.createObjectURL(previewFile.src as Blob), 
             alt: previewFile.name 
           }]}
           defaultOpenIndex={0}
-          customGrid={() => null} // Don't render a grid, just auto-open the lightbox
+          renderThumbnails={() => null}
           onClose={() => setPreviewFile(null)}
         />
       )}
