@@ -89,7 +89,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       apiKey: geminiKey,
       // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
-      model: process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash",
+      model: "gemini-3.5-flash",
     });
   }
 

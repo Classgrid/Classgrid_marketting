@@ -13,6 +13,7 @@ export async function extractPdfWithGemini(pdfBuffer: Buffer, mimeType: string =
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
+    // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are a highly advanced Document OCR and Vision Preprocessor.
@@ -62,6 +63,7 @@ export async function describeImageWithGemini(imageUrl: string, mimeType: string
     const buffer = Buffer.from(arrayBuffer);
 
     const genAI = new GoogleGenerativeAI(apiKey);
+    // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are an advanced image analysis assistant. 
@@ -118,6 +120,7 @@ export async function answerChatWithGeminiNatively(
     const buffer = Buffer.from(arrayBuffer);
 
     const genAI = new GoogleGenerativeAI(apiKey);
+    // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const imagePart = {
