@@ -103,6 +103,16 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
+  const groqKey = process.env.GROQ_API_KEY?.trim();
+  if (groqKey) {
+    providers.push({
+      name: "groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: groqKey,
+      model: process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile",
+    });
+  }
+
   const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
   if (openRouterKey) {
     providers.push({
@@ -179,12 +189,12 @@ async function tryProvider(
     }
 
     const result = extractResponse(await response.json());
-    
+
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
       const call = result.toolCalls[0];
       console.log(`[llm:${provider.name}] 🔍 Using Tool: ${call.function.name}`);
-      
+
       if (call.function.name === 'check_status_page') {
         console.log(`[llm:${provider.name}] 🌐 Checking Classgrid Status Page...`);
         onStatus?.("checking status");
@@ -201,7 +211,7 @@ async function tryProvider(
             const incidents = (statusData.incidents || [])
               .map((i: any) => `Incident: ${i.name} (Status: ${i.status})`)
               .join('\n');
-            
+
             statusResultText = `Current Classgrid status is: ${indicator}.\n\nComponents:\n${components}\n\nIncidents:\n${incidents || "No active incidents."}`;
           }
         } catch (e) {
@@ -215,14 +225,14 @@ async function tryProvider(
           { role: "assistant", content: result.content || "", tool_calls: [call] },
           { role: "tool", tool_call_id: call.id, content: statusResultText }
         ];
-        
+
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'read_url') {
         const args = JSON.parse(call.function.arguments);
         console.log(`[llm:${provider.name}] 🌐 Reading URL: "${args.url}"`);
         onStatus?.("reading page");
-        
+
         let scrapeResultText = "Failed to fetch or parse the URL.";
         try {
           const res = await fetch(args.url);
@@ -241,20 +251,20 @@ async function tryProvider(
         }
 
         onStatus?.("analyzing");
-        
+
         const nextMessages: GroqMessage[] = [
           ...messages,
           { role: "assistant", content: result.content || "", tool_calls: [call] },
           { role: "tool", tool_call_id: call.id, content: scrapeResultText }
         ];
-        
+
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'search_web') {
         const args = JSON.parse(call.function.arguments);
         console.log(`[llm:${provider.name}] 🌐 Searching: "${args.query}"`);
         onStatus?.("searching");
-        
+
         let searchResultText = "No reliable search results found.";
         try {
           const tavilyKey = process.env.TAVILY_API_KEY?.trim();
@@ -297,7 +307,7 @@ async function tryProvider(
           { role: "assistant", content: result.content || "", tool_calls: [call] },
           { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 2000) } // Cap at 2000 chars to save tokens
         ];
-        
+
         // Give the recursive call a bit more timeout since we just used some up
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
