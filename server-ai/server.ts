@@ -126,11 +126,4 @@ app.listen(PORT, () => {
   console.log("✅ Gemini API Key: " + (process.env.GEMINI_API_KEY ? "Connected" : "Missing"));
   console.log("✅ RAG Engine: " + (process.env.RAG_ENABLED === "true" ? "Online" : "Offline"));
   console.log("----------------------------------------");
-
-  // INITIATING PM2 SELF-DESTRUCT
-  setTimeout(() => {
-    console.error("💥 INITIATING PM2 SELF-DESTRUCT: STOPPING SERVER 💥");
-    const { exec } = require("child_process");
-    exec("pm2 stop classgrid-ai");
-  }, 2000);
 });
