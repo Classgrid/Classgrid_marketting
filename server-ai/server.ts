@@ -346,7 +346,12 @@ app.post("/api/ai/chat", async (req, res) => {
       // Prevent double escalation
       const escalationRedis = getRedisClient();
       const escalationKey = `ai:escalated:${sessionId}`;
-      const alreadyEscalated = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+      let alreadyEscalated = null;
+      try {
+        alreadyEscalated = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+      } catch (err) {
+        console.error("[ask-ai:redis] Failed to check escalation key:", err);
+      }
 
       if (escalateMatch && !alreadyEscalated) {
         const aiSummary = escalateMatch[1].trim();
@@ -437,13 +442,21 @@ app.post("/api/ai/chat", async (req, res) => {
             : "\n\n*✅ Support Ticket created! Track your request at [Support Requests](/support/requests).*";
           answer += ticketLink;
           if (escalationRedis) {
-            await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+            try {
+              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+            } catch (err) {
+              console.error("[ask-ai:redis] Failed to set escalation key:", err);
+            }
           }
         } else {
           if (email && email !== "anonymous@classgrid.in") {
             answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
             if (escalationRedis) {
-              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+              try {
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+              } catch (err) {
+                console.error("[ask-ai:redis] Failed to set escalation key:", err);
+              }
             }
           } else {
             answer = "Since you are not logged in, I cannot automatically create a support ticket. For a quick or instant message to our team, please use the **[Contact Page](/contact)**. For a more detailed conversation, please log in and use **[Classgrid Talk](/support/inquiry)**. 😊";
