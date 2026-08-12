@@ -766,10 +766,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     return File;
   }
 
-  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
+  const processFiles = useCallback(async (files: File[]) => {
     const newFiles: UIFileAttachment[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -790,9 +787,6 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       const combined = [...prev, ...newFiles].slice(0, 5); // Max 5 files
       return combined;
     });
-
-    // Reset input so the same file can be re-selected
-    e.target.value = "";
 
     // Upload files immediately in the background
     for (const newFile of newFiles) {
@@ -820,6 +814,31 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       }
     }
   }, []);
+
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    await processFiles(Array.from(files));
+    e.target.value = "";
+  }, [processFiles]);
+
+  const handlePaste = useCallback(async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    
+    const pastedFiles: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file') {
+        const file = items[i].getAsFile();
+        if (file) pastedFiles.push(file);
+      }
+    }
+    
+    if (pastedFiles.length > 0) {
+      e.preventDefault();
+      await processFiles(pastedFiles);
+    }
+  }, [processFiles]);
 
   const removeAttachedFile = useCallback((id: string) => {
     setAttachedFiles(prev => prev.filter(f => f.id !== id));
@@ -1794,6 +1813,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
               ref={inputRef as any}
               value={input}
               onChange={(event) => setInput(event.target.value)}
+              onPaste={handlePaste}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

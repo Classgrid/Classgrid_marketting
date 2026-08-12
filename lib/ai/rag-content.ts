@@ -46,6 +46,7 @@ export type PreparedRagChunk = {
 export const INDEXABLE_SANITY_TYPES = [
   "homePage",
   "pricingPage",
+  "apiDoc",
   "aboutPage",
   "demoPage",
   "supportPage",
@@ -281,6 +282,7 @@ function resolveSourcePath(type: string, slug: string): string {
 
   if (singletonMap[type]) return singletonMap[type];
 
+  if (type === "apiDoc") return `/docs/${normalizedSlug}`;
   if (type === "post") return `/blog/${normalizedSlug}`;
   if (type === "helpArticle") return `/help-center/article/${normalizedSlug}`;
   if (type === "legalPage") return `/${normalizedSlug}`;
