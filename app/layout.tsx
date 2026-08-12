@@ -108,9 +108,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${interBody.variable} font-sans min-h-screen bg-background text-foreground antialiased selection:bg-emerald-300/30 selection:text-emerald-900 dark:selection:bg-emerald-500/30 dark:selection:text-emerald-50`}
-      >
+      <head>
         {/* JSON-LD Structured Data for Google Rich Results */}
         <script
           type="application/ld+json"
@@ -172,7 +170,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             })
           }}
         />
-
+      </head>
+      <body
+        className={`${inter.variable} ${interBody.variable} font-sans min-h-screen bg-background text-foreground antialiased selection:bg-emerald-300/30 selection:text-emerald-900 dark:selection:bg-emerald-500/30 dark:selection:text-emerald-50`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

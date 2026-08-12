@@ -44,7 +44,7 @@ export function MobileStatsBridge() {
           {/* Inner dark pill */}
           <div className="relative flex flex-col items-center px-8 py-3.5 rounded-full bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl z-10">
             <span className="font-mono text-[26px] font-bold tracking-widest text-slate-900 dark:text-white">
-              {count.toLocaleString()}
+              {count.toLocaleString("en-US")}
             </span>
           </div>
         </div>

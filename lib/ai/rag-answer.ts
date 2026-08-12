@@ -29,6 +29,7 @@ export type GenerateRagAnswerOptions = {
   userName?: string;
   history?: ChatHistoryItem[];
   pageContext?: PageContext;
+  attachments?: { url: string; name: string; mimeType: string }[];
   isGuest?: boolean;
   topK?: number;
   onStatus?: (label: string) => void;
@@ -363,13 +364,36 @@ export async function generateClassgridRagAnswer(
     userName: normalizeText(options.userName),
   });
 
+  // Prepare the user's final message
+  let userMessageContent: any = question;
+
+  if (options.attachments && options.attachments.length > 0) {
+    userMessageContent = [
+      { type: "text", text: question }
+    ];
+
+    for (const att of options.attachments) {
+      if (att.mimeType.startsWith("image/")) {
+        userMessageContent.push({
+          type: "image_url",
+          image_url: { url: att.url }
+        });
+      } else {
+        userMessageContent.push({
+          type: "text",
+          text: `[Attached Document: ${att.name} — Please download or analyze this file from the following URL if possible: ${att.url}]`
+        });
+      }
+    }
+  }
+
   const messages: GroqMessage[] = [
     { role: "system", content: systemPrompt },
     ...normalizeHistory(options.history).map((item) => ({
       role: item.role,
       content: item.content,
     })),
-    { role: "user", content: question },
+    { role: "user", content: userMessageContent },
   ];
 
   const answer = await generateGroqReply({

@@ -132,23 +132,23 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
       {/* Top Bar */}
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl dark:border-white/5 dark:bg-[#111113]/80 print:hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              className="flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white shrink-0"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">{s.back}</span>
             </Link>
-            <span className="hidden text-slate-300 dark:text-slate-600 sm:inline">|</span>
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-emerald-500" />
-              <span className="text-sm font-semibold text-slate-900 dark:text-white">
+            <span className="hidden text-slate-300 dark:text-slate-600 sm:inline shrink-0">|</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <Shield className="h-4 w-4 shrink-0 text-emerald-500" />
+              <span className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                 IP Protection Policy
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Select
               value={lang}
               onValueChange={(value) => setLang(value as Language)}
@@ -179,24 +179,20 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
                 {s.print}
               </a>
             </Button>
+            {/* Mobile TOC Button */}
+            {sections.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setMobileTocOpen((o) => !o)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white lg:hidden"
+                aria-label="On this page"
+              >
+                <FileText className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       </header>
-
-      {/* ── Mobile Nav Bar (only visible below lg) ── */}
-      <div className="sticky top-14 z-40 flex items-center justify-end border-b border-slate-200/80 bg-white/95 px-4 py-3 backdrop-blur-sm dark:border-white/5 dark:bg-[#111113]/95 lg:hidden print:hidden">
-        {/* Right: On this page button */}
-        {sections.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setMobileTocOpen((o) => !o)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-            aria-label="On this page"
-          >
-            <FileText className="h-4 w-4" />
-          </button>
-        )}
-      </div>
 
       {/* ── Mobile TOC Drawer (On this page) ── */}
       <AnimatePresence>
@@ -291,23 +287,30 @@ export function IPProtectionClient({ dataByLang }: IPProtectionClientProps) {
         {/* Main Content */}
         <main className="min-w-0 flex-1">
           {/* Hero */}
-          <div className="mb-12 rounded-2xl border border-slate-200/80 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8 dark:border-white/5 dark:from-emerald-500/5 dark:via-[#111113] dark:to-teal-500/5 sm:p-10">
-            <div className="flex items-start gap-4">
+          <div className="mb-12 rounded-2xl border border-slate-200/80 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 dark:border-white/5 dark:from-emerald-500/5 dark:via-[#111113] dark:to-teal-500/5 sm:p-10">
+            <div className="flex flex-col sm:flex-row items-start gap-5">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10">
                 <Shield className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl leading-tight">
                   {s.title}
                 </h1>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                  {s.subtitle}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-600 dark:text-slate-300 print:hidden">
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-white/10 dark:bg-white/5">
+                
+                <div className="mt-5 flex flex-col gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+                  {s.subtitle.split(' • ').map((part: string, idx: number) => (
+                    <div key={idx} className="flex items-start gap-2.5">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500/60" />
+                      <span className="leading-relaxed">{part}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 print:hidden">
+                  <span className="rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 dark:border-white/10 dark:bg-white/5">
                     {s.effective}
                   </span>
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-white/10 dark:bg-white/5">
+                  <span className="rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 dark:border-white/10 dark:bg-white/5">
                     {s.updated}
                   </span>
                 </div>

@@ -71,6 +71,7 @@ type AskAiRequestBody = {
   history?: ChatHistoryItem[];
   sessionId?: string;
   pageContext?: PageContext;
+  attachments?: { url: string; name: string; mimeType: string }[];
 };
 
 const DEFAULT_ERROR_MESSAGE = "Unable to answer right now. Please try again.";
@@ -318,6 +319,7 @@ export async function POST(req: Request) {
             userRole: normalizeText(body?.userRole),
             history: mergedHistory,
             pageContext: normalizePageContext(body?.pageContext),
+            attachments: body?.attachments,
             isGuest,
             onStatus: (label: string) => sendEvent({ type: "status", label }),
           });

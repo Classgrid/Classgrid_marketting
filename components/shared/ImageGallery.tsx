@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -19,6 +20,9 @@ interface ImageGalleryProps {
   images: GalleryImage[];
   className?: string;
   disableHoverZoom?: boolean;
+  customGrid?: (images: GalleryImage[], openImage: (img: GalleryImage) => void) => React.ReactNode;
+  defaultOpenIndex?: number;
+  onClose?: () => void;
 }
 
 /* ─── slide variants for arrow-key / swipe navigation ─── */
@@ -55,11 +59,22 @@ const slideVariants = {
  * Mobile: swipe left/right to navigate, pinch to zoom, tap outside to close
  * Desktop: arrow keys, prev/next buttons, keyboard Escape
  */
-export function ImageGallery({ images, className, disableHoverZoom = false }: ImageGalleryProps) {
+export function ImageGallery({ images, className, disableHoverZoom = false, customGrid, defaultOpenIndex, onClose }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [direction, setDirection] = useState(0);
   const clickedImageRef = useRef<GalleryImage | null>(null);
   const hasNavigatedRef = useRef(false);
+
+  // Auto-open if defaultOpenIndex is provided
+  useEffect(() => {
+    if (defaultOpenIndex !== undefined && images[defaultOpenIndex]) {
+      const img = images[defaultOpenIndex];
+      clickedImageRef.current = img;
+      hasNavigatedRef.current = false;
+      setDirection(0);
+      setSelectedImage(img);
+    }
+  }, [defaultOpenIndex, images]);
 
   const selectedIndex = selectedImage
     ? images.findIndex((img) => img.id === selectedImage.id)
@@ -94,13 +109,15 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
         requestAnimationFrame(() => {
           setSelectedImage(null);
           clickedImageRef.current = null;
+          onClose?.();
         });
       });
     } else {
       setSelectedImage(null);
       clickedImageRef.current = null;
+      onClose?.();
     }
-  }, []);
+  }, [onClose]);
 
   const isOnClickedImage =
     selectedImage &&
@@ -152,55 +169,60 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
 
   return (
     <>
-      {/* ──────────── BENTO GRID ──────────── */}
-      <div
-        className={cn(
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[250px]",
-          className
-        )}
-      >
-        {images.map((img, index) => (
-          <motion.div
-            key={img.id}
-            className={cn(
-              "group relative overflow-hidden rounded-2xl bg-card border border-border cursor-pointer",
-              img.className
-            )}
-            onClick={() => openImage(img)}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: index * 0.08 }}
-          >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
+      {/* ──────────── GRID ──────────── */}
+      {customGrid ? (
+        customGrid(images, openImage)
+      ) : (
+        <div
+          className={cn(
+            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[250px]",
+            className
+          )}
+        >
+          {images.map((img, index) => (
+            <motion.div
+              key={img.id}
               className={cn(
-                "transition-transform duration-700 ease-out",
-                images.length === 1 ? "object-contain" : "object-cover",
-                !disableHoverZoom && "group-hover:scale-105"
+                "group relative overflow-hidden rounded-2xl bg-card border border-border cursor-pointer",
+                img.className
               )}
-              sizes={images.length === 1 ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
-            />
-            <div className={cn(
-              "absolute inset-0 bg-black/0 transition-colors duration-300 z-10",
-              !disableHoverZoom && "group-hover:bg-black/20"
-            )} />
-            {img.caption && (
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <p className="text-white text-sm font-medium">{img.caption}</p>
-              </div>
-            )}
-          </motion.div>
-        ))}
-      </div>
+              onClick={() => openImage(img)}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className={cn(
+                  "transition-transform duration-700 ease-out",
+                  images.length === 1 ? "object-contain" : "object-cover",
+                  !disableHoverZoom && "group-hover:scale-105"
+                )}
+                sizes={images.length === 1 ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
+              />
+              <div className={cn(
+                "absolute inset-0 bg-black/0 transition-colors duration-300 z-10",
+                !disableHoverZoom && "group-hover:bg-black/20"
+              )} />
+              {img.caption && (
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <p className="text-white text-sm font-medium">{img.caption}</p>
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* ──────────── FULL SCREEN LIGHTBOX ──────────── */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            key="lightbox-backdrop"
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {selectedImage && (
+            <motion.div
+              key="lightbox-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -294,7 +316,9 @@ export function ImageGallery({ images, className, disableHoverZoom = false }: Im
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </>
   );
 }

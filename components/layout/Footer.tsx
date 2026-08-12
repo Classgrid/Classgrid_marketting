@@ -353,7 +353,7 @@ export function Footer({
 
             {/* RIGHT — legal links */}
             {legalItems.length > 0 && (
-              <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-y-3 sm:gap-y-1 sm:gap-x-3">
+              <div className="flex flex-col items-start gap-y-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-y-1 sm:gap-x-3 mt-4 sm:mt-0">
                 {legalItems.map((link, idx) => {
                   const isSitemap = link.label?.toLowerCase() === 'sitemap';
                   return (
@@ -363,7 +363,7 @@ export function Footer({
                         prefetch={false}
                         target={isExternal(link.href!) ? "_blank" : undefined}
                         rel={isExternal(link.href!) ? "nofollow noopener noreferrer" : (isSitemap ? undefined : "nofollow")}
-                        className={`whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
+                        className={`block w-full sm:inline sm:w-auto whitespace-nowrap transition-colors hover:text-emerald-500 ${isSitemap ? "hidden sm:inline" : ""}`}
                       >
                         {link.label}
                       </Link>
@@ -393,8 +393,7 @@ export function Footer({
               <span className="flex items-center gap-2">
                 <span className={`h-2 w-2 animate-pulse rounded-full ${statusDotClass}`} />
                 {!liveStatus && !statusLabel ? (
-                  // Skeleton placeholder — same approximate width as the real label.
-                  // Prevents layout shift when the fetch resolves.
+                  // Skeleton placeholder
                   <span className={`inline-block h-3.5 w-40 animate-pulse rounded ${statusDotClass} opacity-20`} />
                 ) : resolvedStatusHref ? (
                   <Link
@@ -412,7 +411,7 @@ export function Footer({
               </span>
             </div>
 
-            {/* RIGHT — language and theme (stacked on mobile, inline on sm+) */}
+            {/* RIGHT — language and theme */}
             {mounted ? (
               <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2.5">
                 <LanguageSelector />

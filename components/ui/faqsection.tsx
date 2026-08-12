@@ -9,9 +9,21 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type FAQItem = {
-  question: string;
-  answer: string;
+  question: any;
+  answer: any;
 };
+
+function resolveLocalizedString(val: any): string {
+  if (!val) return "";
+  if (typeof val === "string") return val;
+  if (typeof val === "object") {
+    // If it's a Sanity portable text block, we might need a different renderer,
+    // but the error specifically says { en: "..." }, so it's a locale object.
+    return val.en || val.current || Object.values(val)[0] || "";
+  }
+  return String(val);
+}
+
 
 interface FAQSectionProps {
   title?: string;
@@ -52,7 +64,7 @@ function FAQRow({
         className="flex w-full items-center justify-between gap-4 min-h-[72px] py-5 text-left text-[18px] font-medium leading-snug text-slate-900 transition-colors hover:text-emerald-500 focus-visible:outline-none dark:text-white dark:hover:text-emerald-400"
         aria-expanded={open}
       >
-        <span>{faq.question}</span>
+        <span>{resolveLocalizedString(faq.question)}</span>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
@@ -76,7 +88,7 @@ function FAQRow({
             style={{ overflow: "hidden" }}
           >
             <div className="pb-6 pr-4 text-base leading-7 text-muted-foreground">
-              {faq.answer}
+              {resolveLocalizedString(faq.answer)}
             </div>
           </motion.div>
         ) : null}

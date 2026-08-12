@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import hljs from "highlight.js";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -12,11 +12,14 @@ import {
   Copy,
   CreditCard,
   ChevronRight,
+  File,
+  FileImage,
   FileText,
   Globe2,
   HelpCircle,
   LayoutDashboard,
   MessageCircleMore,
+  Paperclip,
   School,
   Search,
   Sparkles,
@@ -43,12 +46,30 @@ import { cn } from "@/lib/utils";
 import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
 import { CodeBlockClient } from "@/components/docs/code-block-client";
+import { toast } from "sonner";
+import { getPresignedUrlForAskAiFile } from "@/app/actions/docs-file-actions";
+import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
+import { ImageGallery } from "@/components/shared/ImageGallery";
 
 type AskAiPanelProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pageContext?: PageContext;
   variant?: "in-flow" | "overlay";
+};
+
+type AiAttachment = {
+  name: string;
+  url: string;
+  mimeType: string;
+  size: number;
+};
+
+type UIFileAttachment = {
+  id: string;
+  file: File;
+  status: "uploading" | "done" | "error";
+  url?: string;
 };
 
 type ChatMessage = {
@@ -59,6 +80,7 @@ type ChatMessage = {
   typing?: boolean;
   contextUrl?: string;
   contextTitle?: string;
+  attachments?: AiAttachment[];
 };
 
 type ListItem = {
@@ -724,6 +746,85 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const [copiedAll, setCopiedAll] = useState(false);
   const [lastSentDocsPath, setLastSentDocsPath] = useState<string | null>(null);
 
+  // ── File attachment state ──
+  const [attachedFiles, setAttachedFiles] = useState<UIFileAttachment[]>([]);
+  const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const MAX_FILE_SIZE = 35 * 1024 * 1024; // 35MB
+  const ACCEPTED_FILE_TYPES = "image/*,.pdf,.md,.txt,.csv,.doc,.docx,.xlsx,.pptx";
+
+  function formatFileSize(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  function getFileIcon(mimeType: string) {
+    if (mimeType.startsWith("image/")) return FileImage;
+    if (mimeType === "application/pdf") return FileText;
+    return File;
+  }
+
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newFiles: UIFileAttachment[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`"${file.name}" exceeds the 35MB limit (${formatFileSize(file.size)}).`);
+        continue;
+      }
+      newFiles.push({
+        id: `${file.name}-${Date.now()}-${i}`,
+        file,
+        status: "uploading"
+      });
+    }
+
+    if (newFiles.length === 0) return;
+
+    setAttachedFiles(prev => {
+      const combined = [...prev, ...newFiles].slice(0, 5); // Max 5 files
+      return combined;
+    });
+
+    // Reset input so the same file can be re-selected
+    e.target.value = "";
+
+    // Upload files immediately in the background
+    for (const newFile of newFiles) {
+      try {
+        const result = await getPresignedUrlForAskAiFile(newFile.file.name, newFile.file.type, newFile.file.size);
+        if ("error" in result) {
+          toast.error(result.error);
+          setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
+          continue;
+        }
+
+        // Upload directly to R2 via presigned URL
+        await fetch(result.uploadUrl, {
+          method: "PUT",
+          body: newFile.file,
+          headers: { "Content-Type": newFile.file.type },
+        });
+
+        // Mark as done and save URL
+        setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "done", url: result.publicUrl } : f));
+      } catch (err) {
+        console.error(`Failed to upload ${newFile.file.name}:`, err);
+        toast.error(`Failed to upload "${newFile.file.name}".`);
+        setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
+      }
+    }
+  }, []);
+
+  const removeAttachedFile = useCallback((id: string) => {
+    setAttachedFiles(prev => prev.filter(f => f.id !== id));
+  }, []);
+
   // Load chat history and session ID from local storage on mount
   useEffect(() => {
     try {
@@ -841,6 +942,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     setMessages([]);
     setInput("");
     setSessionId(null);
+    setAttachedFiles([]);
     localStorage.removeItem("classgrid_ai_chat_history");
     localStorage.removeItem("classgrid_ai_session_id");
   }
@@ -895,7 +997,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   const hasDocsContext = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
-  const canSubmit = (input.trim().length > 0 || hasDocsContext) && !submitting;
+  const isAnyFileUploading = attachedFiles.some(f => f.status === "uploading");
+  const canSubmit = (input.trim().length > 0 || hasDocsContext || attachedFiles.length > 0) && !submitting && !isAnyFileUploading;
   const emptyState = useMemo(() => messages.length === 0, [messages.length]);
   const suggestedQuestions = useMemo(() => suggestedQuestionsForPage(pageContext), [pageContext]);
 
@@ -1073,28 +1176,53 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     let displayQuestion = question.trim();
     let apiQuestion = question.trim();
     const isDocsContextActive = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
+    
+    // Only send files that successfully uploaded
+    const filesToUpload = attachedFiles.filter(f => f.status === "done" && f.url).map(f => ({
+      name: f.file.name,
+      url: f.url!,
+      mimeType: f.file.type,
+      size: f.file.size
+    }));
 
-    if (!apiQuestion && !isDocsContextActive) return;
+    if (!apiQuestion && !isDocsContextActive && filesToUpload.length === 0) return;
     if (submitting) return;
 
     if (isDocsContextActive && pageContext?.path) {
       const docsUrl = `https://classgrid.in${pageContext.path}`;
       setLastSentDocsPath(pageContext.path);
 
-      if (!displayQuestion) {
-        displayQuestion = `Explain this page: ${pageContext.title || "Documentation"}`;
+      if (!apiQuestion) {
         apiQuestion = `Explain this page: ${pageContext.title || "Documentation"} (${docsUrl})`;
       } else {
         apiQuestion = `${apiQuestion}\n\n*(Context: ${docsUrl})*`;
       }
     }
 
+    // If user only attached files with no text, set a default question
+    if (!displayQuestion && filesToUpload.length > 0) {
+      const fileNames = filesToUpload.map(f => f.name).join(", ");
+      displayQuestion = ""; // Leave UI blank so only the image renders
+      apiQuestion = `[User attached file(s): ${fileNames}] Please analyze or read the attached content.`;
+    }
+
     setError("");
     setInput("");
+    setAttachedFiles([]);
     setSubmitting(true);
     setThinking(true);
     setThinkingLabel("Thinking");
     userScrolledUpRef.current = false; // Reset scroll lock for new question
+
+    const uploadedAttachments: AiAttachment[] = filesToUpload;
+
+    // Append file context to API question
+    if (uploadedAttachments.length > 0) {
+      const fileContextLines = uploadedAttachments.map(a =>
+        `[Attached file: ${a.name} (${a.mimeType}, ${formatFileSize(a.size)}) — URL: ${a.url}]`
+      ).join("\n");
+      apiQuestion = `${apiQuestion}\n\n${fileContextLines}`;
+    }
 
     const sentContextUrl = isDocsContextActive && pageContext?.path
       ? `https://classgrid.in${pageContext.path}`
@@ -1112,6 +1240,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         createdAt: Date.now(),
         contextUrl: sentContextUrl,
         contextTitle: sentContextTitle,
+        attachments: uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
       },
     ];
 
@@ -1133,6 +1262,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           userName: session?.user?.name ?? undefined,
           userEmail: (session?.user as any)?.email || (session?.user as any)?.userEmail || undefined,
           sessionId: sessionId ?? undefined,
+          attachments: uploadedAttachments.length > 0 ? uploadedAttachments.map(a => ({ url: a.url, name: a.name, mimeType: a.mimeType })) : undefined,
           history: nextMessages
             .filter((m) => m.role === "user" || m.role === "assistant")
             .slice(-10)
@@ -1373,7 +1503,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                   <div
                     className={cn(
                       "flex h-8 w-8 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                      isUser
+                      isUser && ((session?.user as any)?.image || userInitial)
                         ? "order-2 bg-muted text-muted-foreground"
                         : "hidden"
                     )}
@@ -1382,52 +1512,128 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                       (session?.user as any)?.image ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={(session.user as any).image} alt="User" className="h-full w-full object-cover" />
-                      ) : userInitial ? userInitial : <UserRound className="h-4 w-4" />
+                      ) : userInitial ? (
+                        userInitial
+                      ) : null
                     ) : null}
                   </div>
 
-                  <div
-                    className={cn(
-                      "relative transition-colors",
-                      isUser
-                        ? "order-1 max-w-[75%] rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
-                        : "order-2 w-full max-w-full bg-transparent text-foreground"
-                    )}
-                  >
-                    {isUser && (
-                      <svg
-                        width="8"
-                        height="12"
-                        viewBox="0 0 8 12"
-                        fill="currentColor"
-                        className="absolute bottom-0 -right-1.5 text-foreground"
-                      >
-                        <path d="M0 0V12H8C5 12 2 9 0 0Z" />
-                      </svg>
-                    )}
-                    {isUser ? (
-                      <>
-                        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
-                        {message.contextUrl && (
-                          <a
-                            href={message.contextUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-300 dark:text-sky-300 hover:text-sky-200 transition-opacity relative z-10"
-                          >
-                            <FileText className="h-3 w-3" />
-                            <span className="underline underline-offset-2 truncate max-w-[200px]">
-                              {message.contextTitle || message.contextUrl}
-                            </span>
-                          </a>
+                  <div className={cn("flex flex-col gap-1.5", isUser ? "order-1 items-end max-w-[75%]" : "order-2 w-full")}>
+                    
+                    {/* ── Text Bubble ── */}
+                    {message.content && (
+                      <div
+                        className={cn(
+                          "relative transition-colors",
+                          isUser
+                            ? "rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
+                            : "w-full max-w-full bg-transparent text-foreground"
                         )}
-                      </>
-                    ) : (
-                      <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
+                      >
+                        {isUser && (
+                          <svg
+                            width="8"
+                            height="12"
+                            viewBox="0 0 8 12"
+                            fill="currentColor"
+                            className="absolute bottom-0 -right-1.5 text-foreground"
+                          >
+                            <path d="M0 0V12H8C5 12 2 9 0 0Z" />
+                          </svg>
+                        )}
+                        {isUser ? (
+                          <>
+                            <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
+                            {message.contextUrl && (
+                              <a
+                                href={message.contextUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-300 dark:text-sky-300 hover:text-sky-200 transition-opacity relative z-10"
+                              >
+                                <FileText className="h-3 w-3" />
+                                <span className="underline underline-offset-2 truncate max-w-[200px]">
+                                  {message.contextTitle || message.contextUrl}
+                                </span>
+                              </a>
+                            )}
+                          </>
+                        ) : (
+                          <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
+                        )}
+                        {!isUser && !message.typing && message.content.length > 0 && (
+                          <div className="pl-1 mt-3">
+                            <MessageActions content={message.content} messageId={message.id} />
+                          </div>
+                        )}
+                      </div>
                     )}
-                    {!isUser && !message.typing && message.content.length > 0 && (
-                      <div className="pl-1 mt-3">
-                        <MessageActions content={message.content} messageId={message.id} />
+
+                    {/* ── Attachments (Outside Bubble) ── */}
+                    {isUser && message.attachments && message.attachments.length > 0 && (
+                      <div className="flex flex-col gap-2 items-end">
+                        
+                        {/* Images using ImageGallery */}
+                        {message.attachments.filter(a => a.mimeType.startsWith("image/")).length > 0 && (
+                          <ImageGallery
+                            disableHoverZoom
+                            images={message.attachments.filter(a => a.mimeType.startsWith("image/")).map((a, idx) => ({
+                              id: `${a.name}-${idx}-${message.id}`,
+                              src: a.url,
+                              alt: a.name
+                            }))}
+                            customGrid={(images, openImage) => (
+                              <div className="flex flex-wrap gap-2 justify-end">
+                                {images.map((img) => (
+                                  <button
+                                    key={img.id}
+                                    type="button"
+                                    onClick={() => openImage(img)}
+                                    title={img.alt}
+                                    className={cn(
+                                      "relative group overflow-hidden flex items-center justify-center bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 hover:border-emerald-500/50 transition-all shadow-sm cursor-pointer",
+                                      images.length === 1 && !message.content ? "rounded-2xl rounded-tr-none h-auto w-[180px] sm:w-[220px]" : "rounded-xl h-20 w-20 sm:h-[88px] sm:w-[88px]"
+                                    )}
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={img.src}
+                                      alt={img.alt}
+                                      className={cn("absolute inset-0 h-full w-full transition-transform duration-300 group-hover:scale-105", images.length === 1 && !message.content ? "relative object-contain" : "object-cover")}
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 dark:group-hover:bg-white/10 transition-colors" />
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          />
+                        )}
+
+                        {/* Other Documents using FilePreviewModal */}
+                        {message.attachments.filter(a => !a.mimeType.startsWith("image/")).length > 0 && (
+                          <div className="flex flex-wrap gap-2 justify-end">
+                            {message.attachments.filter(a => !a.mimeType.startsWith("image/")).map((att, i) => {
+                              const Icon = getFileIcon(att.mimeType);
+                              return (
+                                <button
+                                  key={`${att.name}-${i}`}
+                                  type="button"
+                                  onClick={() => setPreviewFile({ name: att.name, src: att.url, mimeType: att.mimeType })}
+                                  title={att.name}
+                                  className="relative group overflow-hidden flex items-center justify-center bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 hover:border-emerald-500/50 transition-all shadow-sm rounded-xl h-20 w-20 sm:h-[88px] sm:w-[88px]"
+                                >
+                                  <div className="flex flex-col items-center justify-center gap-1 text-foreground/70 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                    <Icon className="h-7 w-7" strokeWidth={1.5} />
+                                    <span className="text-[9px] uppercase tracking-wider font-bold">
+                                      {att.name.split('.').pop()?.substring(0, 4)}
+                                    </span>
+                                  </div>
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 dark:group-hover:bg-white/10 transition-colors" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1478,6 +1684,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       ) : (
         <form onSubmit={handleSubmit} className="space-y-2">
           <div className="relative w-full shadow-sm rounded-2xl border border-border bg-background focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/30 transition-colors">
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept={ACCEPTED_FILE_TYPES}
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+
             {pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath && (
               <div className="px-3 pt-3 pb-0">
                 <div className="group relative inline-flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-muted/40 px-3 py-2 pr-8 shadow-sm max-w-[95%]">
@@ -1502,6 +1718,76 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 </div>
               </div>
             )}
+
+            {/* Attached file chips */}
+            {attachedFiles.length > 0 && (
+              <div className="px-3 pt-3 pb-0 flex flex-wrap gap-1.5">
+                {attachedFiles.map((att) => {
+                  const Icon = getFileIcon(att.file.type);
+                  const isImage = att.file.type.startsWith("image/");
+                  return (
+                    <div
+                      key={att.id}
+                      className={cn(
+                        "group relative inline-flex items-center gap-2 rounded-[10px] border px-3 py-2 pr-8 shadow-sm max-w-[200px] transition-all",
+                        att.status === "error" ? "border-red-500/50 bg-red-500/10" : "border-border/80 bg-muted/40",
+                        att.status === "uploading" ? "opacity-70 animate-pulse" : "opacity-100"
+                      )}
+                    >
+                      {isImage ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={URL.createObjectURL(att.file)}
+                          alt={att.file.name}
+                          className="h-6 w-6 rounded object-cover shrink-0"
+                        />
+                      ) : (
+                        <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      )}
+                      <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0">
+                        <span className="text-[11px] font-medium text-foreground truncate leading-tight">
+                          {att.file.name}
+                        </span>
+                        {att.status === "uploading" ? (
+                          <div className="h-1.5 w-full max-w-[80px] bg-muted-foreground/20 rounded-full overflow-hidden mt-1 mb-0.5">
+                            <motion.div 
+                              initial={{ width: "0%" }} 
+                              animate={{ width: "85%" }} 
+                              transition={{ duration: 2.5, ease: "easeOut" }}
+                              className="h-full bg-emerald-500 rounded-full" 
+                            />
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground/70 leading-tight">
+                            {att.status === "error" ? "Failed" : formatFileSize(att.file.size)}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Allow previewing the file immediately after successful upload */}
+                      {att.status === "done" && att.url && (
+                        <button
+                          type="button"
+                          onClick={() => setPreviewFile({ name: att.file.name, src: att.url!, mimeType: att.file.type })}
+                          className="absolute inset-0 w-full h-full cursor-pointer z-0"
+                          title="Preview file"
+                        />
+                      )}
+                      
+                      <button
+                        type="button"
+                        onClick={() => removeAttachedFile(att.id)}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors z-10"
+                        title={`Remove ${att.file.name}`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             <textarea
               id="ask-ai-input"
               name="askAiQuestion"
@@ -1515,36 +1801,56 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                   if (canSubmit) void askQuestion(input);
                 }
               }}
-              placeholder="Ask a question..."
+              placeholder={attachedFiles.length > 0 ? "Add a message or send files..." : "Ask a question..."}
               autoComplete="off"
               className={cn(
-                "min-h-[120px] max-h-[240px] w-full resize-none bg-transparent pb-12 pl-4 pr-12 text-sm text-foreground focus:outline-none overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors",
-                pageContext?.path?.startsWith("/docs") ? "pt-3" : "pt-4 rounded-2xl"
+                "min-h-[120px] max-h-[240px] w-full resize-none bg-transparent pb-12 pr-12 pl-4 text-sm text-foreground focus:outline-none overflow-y-auto [scrollbar-width:thin] leading-relaxed transition-colors",
+                (pageContext?.path?.startsWith("/docs") || attachedFiles.length > 0) ? "pt-3" : "pt-4 rounded-2xl"
               )}
             />
-            {isGenerating ? (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={handleStop}
-                className="!absolute !bottom-3 !right-3 !top-auto h-8 rounded-full bg-foreground text-background hover:bg-foreground/90 px-3 text-[11px] font-medium shadow-sm transition-all active:scale-95"
-                title="Stop generating"
-              >
-                <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
-                Stop
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                variant="primary"
-                size="icon"
-                disabled={!canSubmit}
-                className="!absolute !bottom-3 !right-3 !top-auto h-8 w-8 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-all shadow-sm"
-              >
-                <ArrowUp className="h-4 w-4" />
-                <span className="sr-only">Send question</span>
-              </Button>
+
+            {/* Bottom Left action bar: paperclip */}
+            {pageContext?.path?.startsWith("/docs") && !isGenerating && (
+              <div className="absolute bottom-3 left-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={attachedFiles.length >= 5}
+                  className="h-8 w-8 shrink-0 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 disabled:opacity-30 transition-all"
+                  title={attachedFiles.length >= 5 ? "Max 5 files" : "Attach file (max 35MB)"}
+                >
+                  <Paperclip className={cn("h-4 w-4 -rotate-45", isAnyFileUploading && "opacity-50")} />
+                </button>
+              </div>
             )}
+
+            {/* Bottom Right action bar: send/stop */}
+            <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+
+              {isGenerating ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleStop}
+                  className="h-8 rounded-full bg-foreground text-background hover:bg-foreground/90 px-3 text-[11px] font-medium shadow-sm transition-all active:scale-95"
+                  title="Stop generating"
+                >
+                  <Square className="mr-1.5 h-3 w-3 fill-current opacity-80" />
+                  Stop
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="icon"
+                  disabled={!canSubmit}
+                  className="h-8 w-8 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-all shadow-sm"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                  <span className="sr-only">Send question</span>
+                </Button>
+              )}
+            </div>
           </div>
         </form>
       )}
@@ -1633,6 +1939,28 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           {panelChat}
           {panelInput}
         </motion.aside>
+      )}
+
+      {/* File Preview Modal */}
+      {previewFile && !previewFile.mimeType?.startsWith("image/") && (
+        <FilePreviewModal
+          file={previewFile}
+          onClose={() => setPreviewFile(null)}
+        />
+      )}
+
+      {/* Image Gallery for standalone image previews (e.g. from the input chip) */}
+      {previewFile && previewFile.mimeType?.startsWith("image/") && (
+        <ImageGallery
+          images={[{ 
+            id: previewFile.name, 
+            src: typeof previewFile.src === 'string' ? previewFile.src : URL.createObjectURL(previewFile.src as Blob), 
+            alt: previewFile.name 
+          }]}
+          defaultOpenIndex={0}
+          customGrid={() => null} // Don't render a grid, just auto-open the lightbox
+          onClose={() => setPreviewFile(null)}
+        />
       )}
     </>
   );
