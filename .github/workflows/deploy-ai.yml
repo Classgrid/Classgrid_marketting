@@ -27,6 +27,12 @@ jobs:
         run: |
           ssh-keyscan -H 16.192.13.132 >> ~/.ssh/known_hosts
 
+      - name: Generate .env file
+        run: |
+          cat << 'EOF' > .env
+          ${{ secrets.AI_PRODUCTION_ENV }}
+          EOF
+
       - name: Deploy Code via SSH and restart PM2
         run: |
           ssh ubuntu@16.192.13.132 << 'EOF'
@@ -37,6 +43,7 @@ jobs:
           # Copy ALL required files to the AWS server
           scp -r server-ai lib ubuntu@16.192.13.132:/var/www/classgrid_ai/
           scp server-ai/tsconfig.server.json ubuntu@16.192.13.132:/var/www/classgrid_ai/tsconfig.json
+          scp .env ubuntu@16.192.13.132:/var/www/classgrid_ai/.env
           
           # Install dependencies and restart PM2
           ssh ubuntu@16.192.13.132 << 'EOF'
