@@ -582,7 +582,7 @@ app.listen(PORT, () => {
   const hasAgora = !!process.env.AGORA_APP_ID;
   const hasRazorpay = !!process.env.RAZORPAY_KEY_ID;
   const hasZoom = !!process.env.ZOOM_CLIENT_ID;
-  const hasFast2sms = !!process.env.FAST2SMS_API_KEY;
+
   const hasRecaptcha = !!process.env.RECAPTCHA_SECRET;
   const hasResend = !!process.env.RESEND_API_KEY;
   const hasBrevo = !!process.env.BREVO_SMTP_HOST;
@@ -610,7 +610,7 @@ app.listen(PORT, () => {
   console.log(`✅ Agora Video:       ${hasAgora ? "Configured" : "❌ Missing"}`);
   console.log(`✅ Razorpay:          ${hasRazorpay ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Zoom API:          ${hasZoom ? "Configured" : "❌ Missing"}`);
-  console.log(`✅ Fast2SMS:          ${hasFast2sms ? "Connected" : "❌ Missing"}`);
+
   console.log(`✅ ReCAPTCHA:         ${hasRecaptcha ? "Configured" : "❌ Missing"}`);
   console.log(`✅ Resend Email:      ${hasResend ? "Configured" : "❌ Missing"}`);
   console.log(`✅ Google OAuth:      ${hasGoogleOAuth ? "Configured" : "❌ Missing"}`);
