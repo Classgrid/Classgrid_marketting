@@ -567,18 +567,53 @@ app.post("/api/ai/chat", async (req, res) => {
 
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
+  const hasMistral = !!process.env.MISTRAL_API_KEY;
+  const hasGemini = !!process.env.GEMINI_API_KEY;
+  const hasTavily = !!process.env.TAVILY_API_KEY;
+  const hasRedis = !!process.env.REDIS_URL;
+  const hasRag = process.env.RAG_ENABLED === "true";
+  const hasMongo = !!process.env.MONGO_URI;
+  const hasSanity = !!process.env.SANITY_API_TOKEN;
+  const hasAwsS3 = !!process.env.AWS_S3_BUCKET_NAME && !!process.env.AWS_REGION;
+  const hasAwsSes = !!process.env.AWS_SES_SMTP_USER && !!process.env.AWS_SES_SMTP_PASS;
+  const hasCloudflareR2 = !!process.env.NEW_R2_ACCESS_KEY_ID && !!process.env.NEW_R2_SECRET_ACCESS_KEY;
+  const hasFirebase = !!process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const hasSupabase = !!process.env.SUPABASE_CHAT_URL;
+  const hasAgora = !!process.env.AGORA_APP_ID;
+  const hasRazorpay = !!process.env.RAZORPAY_KEY_ID;
+  const hasZoom = !!process.env.ZOOM_CLIENT_ID;
+  const hasFast2sms = !!process.env.FAST2SMS_API_KEY;
+  const hasRecaptcha = !!process.env.RECAPTCHA_SECRET;
+  const hasResend = !!process.env.RESEND_API_KEY;
+  const hasBrevo = !!process.env.BREVO_SMTP_HOST;
+  const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID;
+  const hasGithubOAuth = !!process.env.GITHUB_CLIENT_ID;
+
   console.log(`🚀 Classgrid AI Server running on http://localhost:${PORT}`);
   console.log("----------------------------------------");
   console.log("✅ Groq API Key:      " + (process.env.GROQ_API_KEY ? "Connected" : "❌ Missing"));
   console.log("✅ OpenAI API Key:    " + (process.env.OPENAI_API_KEY ? "Connected" : "❌ Missing"));
   console.log("✅ Anthropic API Key: " + (process.env.ANTHROPIC_API_KEY ? "Connected" : "❌ Missing"));
-  console.log("✅ Mistral API Key:   " + (process.env.MISTRAL_API_KEY ? "Connected" : "❌ Missing"));
-  console.log("✅ Gemini API Key:    " + (process.env.GEMINI_API_KEY ? "Connected" : "❌ Missing"));
-  console.log("✅ Redis:             " + (process.env.REDIS_URL ? "Configured" : "❌ Missing"));
-  console.log("✅ RAG Engine:        " + (process.env.RAG_ENABLED === "true" ? "Online" : "Offline"));
-  console.log("✅ MongoDB:           " + (process.env.MONGO_URI ? "Configured" : "❌ Missing"));
-  console.log("✅ Sanity:            " + (process.env.SANITY_API_WRITE_TOKEN ? "Connected" : "❌ Missing"));
+  console.log(`✅ Mistral API:       ${hasMistral ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Gemini API:        ${hasGemini ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Tavily API:        ${hasTavily ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Redis:             ${hasRedis ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ RAG Engine:        ${hasRag ? "Online" : "Offline"}`);
+  console.log(`✅ MongoDB:           ${hasMongo ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Sanity CMS:        ${hasSanity ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ AWS S3:            ${hasAwsS3 ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ AWS SES:           ${hasAwsSes ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Cloudflare R2:     ${hasCloudflareR2 ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Firebase Admin:    ${hasFirebase ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Supabase:          ${hasSupabase ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Brevo Email:       ${hasBrevo ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Agora Video:       ${hasAgora ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Razorpay:          ${hasRazorpay ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Zoom API:          ${hasZoom ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Fast2SMS:          ${hasFast2sms ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ ReCAPTCHA:         ${hasRecaptcha ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Resend Email:      ${hasResend ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Google OAuth:      ${hasGoogleOAuth ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ GitHub OAuth:      ${hasGithubOAuth ? "Configured" : "❌ Missing"}`);
   console.log("----------------------------------------");
 });
-
-// deploy trigger
