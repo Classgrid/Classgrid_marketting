@@ -1339,6 +1339,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 setThinkingLabel(
                   event.label === "searching" ? "Searching the web" :
                   event.label === "reading page" ? "Reading webpage" :
+                  event.label === "reading image" ? "Reading image" :
+                  event.label === "reading document" ? "Reading document" :
                   event.label === "analyzing" ? "Analyzing results" :
                   "Thinking"
                 );
@@ -1672,7 +1674,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                   <div className="pl-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{thinkingLabel}</span>
-                      {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage") ? (
+                      {(thinkingLabel === "Searching the web" || thinkingLabel === "Reading webpage" || thinkingLabel === "Reading image" || thinkingLabel === "Reading document") ? (
                         <SearchingSpinner reducedMotion={Boolean(prefersReducedMotion)} />
                       ) : (
                         <TypingDots reducedMotion={Boolean(prefersReducedMotion)} />

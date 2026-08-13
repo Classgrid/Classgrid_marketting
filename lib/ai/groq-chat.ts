@@ -277,7 +277,7 @@ async function tryProvider(
                 query: args.query,
                 search_depth: "basic",
                 include_answer: true,
-                max_results: 3
+                max_results: 5
               })
             });
             const searchData = await tavilyRes.json();
@@ -305,7 +305,7 @@ async function tryProvider(
         const nextMessages: GroqMessage[] = [
           ...messages,
           { role: "assistant", content: result.content || "", tool_calls: [call] },
-          { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 2000) } // Cap at 2000 chars to save tokens
+          { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 4000) } // Cap at 4000 chars for richer context (EC2 has no timeout pressure)
         ];
 
         // Give the recursive call a bit more timeout since we just used some up
@@ -340,7 +340,7 @@ export async function generateGroqReply({
   channel,
   temperature = 0.35,
   maxTokens = 600,
-  timeoutMs = 20000,
+  timeoutMs = 60000,
   onStatus,
 }: GroqChatOptions): Promise<string | null> {
   const chain = getProviderChain(channel);

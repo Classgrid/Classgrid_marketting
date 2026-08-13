@@ -118,6 +118,13 @@ export async function answerChatWithGeminiNatively(
 
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    
+    console.log(`[gemini-ocr] Fetched image from ${imageUrl}`);
+    console.log(`[gemini-ocr] Status: ${response.status}, Content-Type: ${response.headers.get("content-type")}, Size: ${buffer.length} bytes`);
+    
+    if (buffer.length < 100) {
+       console.log(`[gemini-ocr] WARNING: Image is unusually small. It might be corrupted or empty!`);
+    }
 
     const genAI = new GoogleGenerativeAI(apiKey);
     // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!

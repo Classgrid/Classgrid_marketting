@@ -382,6 +382,7 @@ export async function generateClassgridRagAnswer(
         userMessageContent += `\n\n[User attached an image: ${att.name}]`;
       } else {
         // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
+        options.onStatus?.("reading document");
         const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
         
         if (extractedText) {
@@ -407,7 +408,7 @@ export async function generateClassgridRagAnswer(
   if (imageToProcessNatively) {
     // 🚀 NATIVE GEMINI BYPASS: Do not send images to Mistral. Send the entire chat to Gemini 3.5 Flash natively!
     console.log("[rag-answer] Image detected, routing entire request natively to Gemini 3.5 Flash!");
-    options.onStatus?.("analyzing image");
+    options.onStatus?.("reading image");
     answer = await answerChatWithGeminiNatively(
       systemPrompt,
       normalizeHistory(options.history),
@@ -423,7 +424,7 @@ export async function generateClassgridRagAnswer(
       messages,
       channel,
       maxTokens: channel === "whatsapp" ? 220 : 1500,
-      timeoutMs: channel === "whatsapp" ? 10000 : 20000,
+      timeoutMs: channel === "whatsapp" ? 10000 : 60000,
       temperature: 0.35,
       onStatus: options.onStatus,
     });
