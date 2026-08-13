@@ -235,12 +235,18 @@ async function tryProvider(
 
         let scrapeResultText = "Failed to fetch or parse the URL.";
         try {
-          const res = await fetch(args.url);
+          const res = await fetch(args.url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
+            },
+          });
           if (res.ok) {
             const html = await res.text();
             const $ = cheerio.load(html);
-            $('script, style, noscript, iframe, img, svg').remove();
-            scrapeResultText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 4000);
+            $('script, style, noscript, iframe, img, svg, nav, footer, header').remove();
+            scrapeResultText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
             if (!scrapeResultText) scrapeResultText = "Page was empty or unreadable.";
           } else {
             scrapeResultText = `Failed to fetch URL. HTTP Status: ${res.status}`;
