@@ -580,3 +580,5 @@ app.listen(PORT, () => {
   console.log("✅ Sanity:            " + (process.env.SANITY_API_WRITE_TOKEN ? "Connected" : "❌ Missing"));
   console.log("----------------------------------------");
 });
+
+// deploy trigger
