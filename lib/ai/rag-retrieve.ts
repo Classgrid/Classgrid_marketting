@@ -388,6 +388,8 @@ export async function retrieveClassgridContext(
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
 
+  console.log(`[rag] Search completed for query: "${query}". Found ${ranked.length} chunks.`);
+
   return {
     chunks: ranked,
     contextText: formatContext(ranked),
