@@ -838,9 +838,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     }
 
     let accepted = newFiles;
+    let droppedWarning = "";
     if (newFiles.length > remaining) {
       const dropped = newFiles.length - remaining;
-      toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 6 files · 35MB each" });
+      droppedWarning = `${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`;
       accepted = newFiles.slice(0, remaining);
     }
 
@@ -854,6 +855,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     } catch (err) {
       console.error("Pre-flight rate limit check failed:", err);
       // Fail open so we don't break the app if DB is down
+    }
+
+    // If pre-check passed and we had dropped files, show the warning now
+    if (droppedWarning) {
+      toast.warning(droppedWarning, { description: "Limit: 6 files · 35MB each" });
     }
 
     setAttachedFiles(prev => [...prev, ...accepted]);
