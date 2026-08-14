@@ -110,7 +110,7 @@ app.get("/", (_req, res) => {
 });
 
 // ── Main AI chat endpoint ─────────────────────────────────────────────────────
-app.post("/api/ai/chat", async (req, res) => {
+const aiChatHandler = async (req: express.Request, res: express.Response) => {
   try {
     const body = req.body as AskAiRequestBody;
     const question = normalizeText(body?.question);
@@ -563,7 +563,11 @@ app.post("/api/ai/chat", async (req, res) => {
       res.status(500).json({ answer: DEFAULT_ERROR_MESSAGE });
     }
   }
-});
+};
+
+app.post("/api/ai/chat", aiChatHandler);
+app.post("/api/ask-ai", aiChatHandler);
+
 
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
