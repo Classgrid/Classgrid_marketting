@@ -352,7 +352,9 @@ export async function retrieveClassgridContext(
 
   let rows: RetrievedRagChunk[] = [];
   let usedFallbackSearch = false;
-  rows.push(...(await fetchIntentPriorityChunks(query, options.pageContext, Math.max(topK * 2, 12))));
+  
+  // DISABLED: This indiscriminately pulls the current page's source code and hardcodes its score to 1.0, destroying all vector search results
+  // rows.push(...(await fetchIntentPriorityChunks(query, options.pageContext, Math.max(topK * 2, 12))));
   
   // 🚀 HYBRID RAG FIX: Add explicit keyword search to catch specific nouns (founder, names) that weak vectors miss
   // DISABLED: This artificially inflates scores of bad matches and kicks out good vector results
