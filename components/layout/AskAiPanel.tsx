@@ -790,6 +790,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           url: f.url
         }));
       localStorage.setItem("askAiDraftFiles", JSON.stringify(filesToSave));
+    } else {
+      localStorage.removeItem("askAiDraftInput");
+      localStorage.removeItem("askAiDraftFiles");
     }
   }, [input, attachedFiles]);
 
