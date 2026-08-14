@@ -1040,7 +1040,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   useEffect(() => {
     async function checkBanStatus() {
       try {
-        const res = await fetch("/api/ask-ai", {
+        const endpoint = process.env.NEXT_PUBLIC_AI_ENDPOINT || "/api/ask-ai";
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question: "__ban_check__" }),
