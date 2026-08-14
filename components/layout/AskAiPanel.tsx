@@ -1627,7 +1627,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                   animate={{ opacity: 1 }}
                   transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.16 }}
                   className={cn(
-                    "flex items-end gap-2",
+                    "flex items-end gap-2 w-full",
                     isUser ? "justify-end" : "justify-start"
                   )}
                 >
