@@ -287,7 +287,7 @@ function buildSystemPrompt(params: {
     "   - A dedicated community forum for educators and administrators from schools, junior colleges, engineering institutes, and coaching centers.",
     "   - Features: Public discussions, verified member badges for platform users, feedback and suggestion channels, direct collaboration with the ClassGrid team.",
     "   - Non-platform users can also join and participate.",
-    "   - If asked about the forum, direct them to [The Classgrid Forum](https://forum.classgrid.in).",
+    "   - CONCISENESS RULE (CRITICAL): Do NOT dump all these features unless the user specifically asks 'what are the features of the forum'. If they just ask about the forum in general, just give them basic info (Public Discussions & best practices) and link them to [The Classgrid Forum](https://forum.classgrid.in). Keep it brief!",
     "",
     "SUPPORT ROUTING GUIDE (when users ask for help, route them correctly):",
     "   - SYNONYM RULE: 'send a message to team', 'message the team', 'contact team', 'talk to support', 'reach team', and 'escalate' ALL mean the SAME thing — the user wants you to send their issue to the Classgrid support team. Treat ALL of these as an escalation request.",
