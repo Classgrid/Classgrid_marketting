@@ -86,3 +86,34 @@ export async function getPresignedUrlForAskAiFile(
     publicUrl: `${R2_PUBLIC_URL}/${filePath}`,
   };
 }
+
+/**
+ * Pre-flight check to see if the user has enough hourly quota left for a batch of files.
+ * This prevents the frontend from showing 'fake uploads' in the UI if they are going to fail anyway.
+ */
+export async function checkAiUploadRateLimit(filesToUpload: number) {
+  try {
+    const session = await getServerSession(authOptions);
+    const identifier = session?.user?.email || (await headers()).get("x-forwarded-for") || "unknown-ip";
+    
+    await connectMongo();
+    const rateLimit = await AiRateLimit.findOne({ identifier });
+    const MAX_FILES = 10;
+    
+    const currentCount = rateLimit?.fileUploadCount || 0;
+    if (currentCount >= MAX_FILES) {
+      return { error: `You have reached the maximum limit of ${MAX_FILES} file uploads per hour. Please try again later.` };
+    }
+    
+    if (currentCount + filesToUpload > MAX_FILES) {
+      const remaining = MAX_FILES - currentCount;
+      return { error: `Hourly limit reached. You can only upload ${remaining} more file${remaining === 1 ? '' : 's'} right now.` };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error("[docs-file-actions] Pre-flight check error:", error);
+    return { success: true }; // Fail open so we don't break the app if DB is down
+  }
+}
+

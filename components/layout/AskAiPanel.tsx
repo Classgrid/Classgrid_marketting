@@ -47,7 +47,7 @@ import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
 import { CodeBlockClient } from "@/components/docs/code-block-client";
 import { toast } from "sonner";
-import { getPresignedUrlForAskAiFile } from "@/app/actions/docs-file-actions";
+import { getPresignedUrlForAskAiFile, checkAiUploadRateLimit } from "@/app/actions/docs-file-actions";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 import { DocsImageViewer } from "@/components/shared/DocsImageViewer";
 
@@ -795,6 +795,18 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       const dropped = newFiles.length - remaining;
       toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 6 files · 35MB each" });
       accepted = newFiles.slice(0, remaining);
+    }
+
+    // Pre-flight check: See if we have enough hourly quota BEFORE adding fake uploads to UI
+    try {
+      const preCheck = await checkAiUploadRateLimit(accepted.length);
+      if (preCheck.error) {
+        toast.error(preCheck.error);
+        return; // Completely abort before changing UI!
+      }
+    } catch (err) {
+      console.error("Pre-flight rate limit check failed:", err);
+      // Fail open so we don't break the app if DB is down
     }
 
     setAttachedFiles(prev => [...prev, ...accepted]);
