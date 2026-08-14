@@ -2,7 +2,7 @@ require('dotenv').config({ path: '.env.local' });
 const { retrieveClassgridContext } = require('../lib/ai/rag-retrieve');
 
 async function main() {
-  const query = "What is the color code for the Classgrid Xavier Rein project?";
+  const query = "Which person is responsible for turning abstract product ideas into the visual interface decisions that users ultimately see?";
   console.log("Testing RAG retrieval internally...");
   
   const result = await retrieveClassgridContext(query);
