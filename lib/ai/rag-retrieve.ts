@@ -267,6 +267,63 @@ async function fallbackCosineSearch(
     .slice(0, limit);
 }
 
+// Extract keywords from the query to perform a robust regex fallback search
+function extractKeywords(question: string): string[] {
+  const stopWords = new Set(["who", "is", "of", "the", "a", "an", "what", "how", "why", "when", "where", "does", "do", "classgrid", "platform", "software", "can", "i", "we", "you", "they", "it"]);
+  return question
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(/\s+/)
+    .filter((word) => word.length > 2 && !stopWords.has(word));
+}
+
+async function hybridKeywordSearch(
+  question: string,
+  limit: number,
+  contentTypes?: string[]
+): Promise<RetrievedRagChunk[]> {
+  const keywords = extractKeywords(question);
+  if (keywords.length === 0) return [];
+
+  // Build a regex that matches ANY of the keywords
+  const regexPattern = keywords.map(kw => `\\b${kw}\\b`).join('|');
+  const query: any = { chunkText: { $regex: regexPattern, $options: 'i' } };
+  
+  if (contentTypes?.length) {
+    query.contentType = { $in: contentTypes };
+  }
+
+  const docs = await RagChunk.find(query)
+    .select({
+      documentId: 1,
+      documentType: 1,
+      chunkIndex: 1,
+      chunkText: 1,
+      pageSlug: 1,
+      pageTitle: 1,
+      section: 1,
+      contentType: 1,
+      sourceUrl: 1,
+    })
+    .limit(limit * 2)
+    .lean();
+
+  return docs.map((doc) => {
+    // Score based on how many keywords match
+    let matchCount = 0;
+    const textLower = String(doc.chunkText).toLowerCase();
+    for (const kw of keywords) {
+      if (textLower.includes(kw)) matchCount++;
+    }
+    
+    return toRetrievedChunk({
+      ...doc,
+      score: 0.8 + (matchCount * 0.05) // Keyword matches get very high base score to override weak vectors
+    });
+  }).sort((a, b) => b.score - a.score).slice(0, limit);
+}
+
+
 export async function retrieveClassgridContext(
   question: string,
   options: RetrieveRagOptions = {}
@@ -296,6 +353,9 @@ export async function retrieveClassgridContext(
   let rows: RetrievedRagChunk[] = [];
   let usedFallbackSearch = false;
   rows.push(...(await fetchIntentPriorityChunks(query, options.pageContext, Math.max(topK * 2, 12))));
+  
+  // 🚀 HYBRID RAG FIX: Add explicit keyword search to catch specific nouns (founder, names) that weak vectors miss
+  rows.push(...(await hybridKeywordSearch(query, topK, options.contentTypes)));
 
   try {
     if (contextSlug) {
