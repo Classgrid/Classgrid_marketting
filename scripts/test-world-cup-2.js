@@ -1,0 +1,1 @@
+fetch('https://ai.classgrid.in/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: 'What is the secret password for the 2026 World Cup?' }) }).then(r=>r.text()).then(console.log).catch(console.error);
