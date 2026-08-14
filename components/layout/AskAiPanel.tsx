@@ -783,22 +783,21 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     if (newFiles.length === 0) return;
 
+    const remaining = 8 - attachedFiles.length;
+    
+    if (remaining <= 0) {
+      toast.error("Maximum 8 files per message. Remove a file to add a new one.", { description: "Limit: 8 files · 35MB each" });
+      return;
+    }
+
     let accepted = newFiles;
-    setAttachedFiles(prev => {
-      const remaining = 8 - prev.length;
-      if (remaining <= 0) {
-        toast.error("Maximum 8 files per message. Remove a file to add a new one.", { description: "Limit: 8 files · 35MB each" });
-        accepted = [];
-        return prev;
-      }
-      if (newFiles.length > remaining) {
-        const dropped = newFiles.length - remaining;
-        toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 8 files · 35MB each" });
-        accepted = newFiles.slice(0, remaining);
-        return [...prev, ...accepted];
-      }
-      return [...prev, ...newFiles];
-    });
+    if (newFiles.length > remaining) {
+      const dropped = newFiles.length - remaining;
+      toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 8 files · 35MB each" });
+      accepted = newFiles.slice(0, remaining);
+    }
+
+    setAttachedFiles(prev => [...prev, ...accepted]);
 
     // Upload accepted files immediately in the background
     for (const newFile of accepted) {

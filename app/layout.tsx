@@ -14,6 +14,7 @@ import { getHomeChrome, getLatestChangelogEntry } from "@/sanity/lib/marketing";
 
 import { NextAuthProvider } from "@/app/providers";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -188,6 +189,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
