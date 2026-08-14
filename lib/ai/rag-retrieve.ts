@@ -390,6 +390,15 @@ export async function retrieveClassgridContext(
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
 
+  const foundIds = ranked.map(c => c.documentId).join(", ");
+  console.log(`\n🔍 [rag] Searching knowledge base for: "${query}"`);
+  if (ranked.length > 0) {
+    console.log(`📑 [rag] Found ${ranked.length} chunks successfully!`);
+    console.log(`📂 [rag] Retrieved Documents: [${foundIds}]`);
+  } else {
+    console.log(`⚠️ [rag] No relevant documents found in the database.`);
+  }
+
   return {
     chunks: ranked,
     contextText: formatContext(ranked),
