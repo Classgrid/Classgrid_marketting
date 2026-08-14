@@ -116,7 +116,7 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
   // Auto-open Ask AI panel on mount if the user has an unsent draft OR if it was open before refresh
   useEffect(() => {
     try {
-      const wasOpen = sessionStorage.getItem("askAiPanelOpen") === "true";
+      const openState = sessionStorage.getItem("askAiPanelOpen");
       const savedInput = localStorage.getItem("askAiDraftInput");
       const savedFilesStr = localStorage.getItem("askAiDraftFiles");
       
@@ -128,7 +128,11 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
         }
       }
 
-      if (wasOpen || savedInput || hasDraftFiles) {
+      if (openState === "true") {
+        setAskAiOpen(true);
+      } else if (openState === "false") {
+        setAskAiOpen(false);
+      } else if (savedInput || hasDraftFiles) {
         setAskAiOpen(true);
       }
     } catch (err) {
