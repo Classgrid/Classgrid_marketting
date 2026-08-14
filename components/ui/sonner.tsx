@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon } from "lucide-react"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, CircleAlertIcon } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -23,7 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           <TriangleAlertIcon className="size-4" />
         ),
         error: (
-          <OctagonXIcon className="size-4" />
+          <CircleAlertIcon className="size-4" />
         ),
         loading: (
           <Spinner className="w-4 h-4 text-inherit" />
@@ -42,7 +42,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast cursor-pointer",
+          toast: "cn-toast",
           error: "!bg-red-50 dark:!bg-[#2e0e0e] !border-red-200 dark:!border-red-900 !text-red-600 dark:!text-red-400 [&_[data-description]]:!text-red-500/80 dark:[&_[data-description]]:!text-red-400/80",
         },
       }}
