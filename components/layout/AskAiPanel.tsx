@@ -868,7 +868,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     // If pre-check passed and we had dropped files, show the warning now
     if (droppedWarning) {
-      toast.warning(droppedWarning, { description: "Limit: 6 files · 35MB each" });
+      toast.error(droppedWarning, { description: "Limit: 6 files · 35MB each" });
     }
 
     setAttachedFiles(prev => [...prev, ...accepted]);
