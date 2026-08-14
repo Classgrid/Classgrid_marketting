@@ -355,31 +355,35 @@ export async function retrieveClassgridContext(
   rows.push(...(await fetchIntentPriorityChunks(query, options.pageContext, Math.max(topK * 2, 12))));
   
   // 🚀 HYBRID RAG FIX: Add explicit keyword search to catch specific nouns (founder, names) that weak vectors miss
-  rows.push(...(await hybridKeywordSearch(query, topK, options.contentTypes)));
+  // DISABLED: This artificially inflates scores of bad matches and kicks out good vector results
+  // rows.push(...(await hybridKeywordSearch(query, topK, options.contentTypes)));
 
+  let vectorRows: RetrievedRagChunk[] = [];
   try {
     if (contextSlug) {
       const pageRows = await vectorSearch(queryEmbedding, Math.max(4, topK), numCandidates, {
         pageSlug: contextSlug,
       });
-      rows.push(...pageRows);
+      vectorRows.push(...pageRows);
     }
 
     const filter = options.contentTypes?.length
       ? { contentType: { $in: options.contentTypes } }
       : undefined;
-    rows.push(...(await vectorSearch(queryEmbedding, limit, numCandidates, filter)));
+    vectorRows.push(...(await vectorSearch(queryEmbedding, limit, numCandidates, filter)));
   } catch (error) {
     usedFallbackSearch = true;
     const message = error instanceof Error ? error.message : String(error);
     console.warn("[rag] Atlas vector search failed, using local cosine fallback:", message);
-    rows.push(...(await fallbackCosineSearch(queryEmbedding, limit, options.contentTypes)));
   }
 
-  if (rows.length === 0) {
+  // If Vector Search returned absolutely nothing (which happens if index is broken/syncing), we MUST use fallback
+  if (vectorRows.length === 0) {
     usedFallbackSearch = true;
-    rows = await fallbackCosineSearch(queryEmbedding, limit, options.contentTypes);
+    vectorRows = await fallbackCosineSearch(queryEmbedding, limit, options.contentTypes);
   }
+  
+  rows.push(...vectorRows);
 
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
