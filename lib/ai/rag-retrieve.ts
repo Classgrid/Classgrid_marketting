@@ -382,7 +382,10 @@ export async function retrieveClassgridContext(
   // If Vector Search returned absolutely nothing (which happens if index is broken/syncing), we MUST use fallback
   if (vectorRows.length === 0) {
     usedFallbackSearch = true;
+    console.log(`🔄 [rag] Atlas Vector Search returned 0 results. Running Local Cosine Fallback...`);
     vectorRows = await fallbackCosineSearch(queryEmbedding, limit, options.contentTypes);
+  } else {
+    console.log(`🌐 [rag] Atlas Vector Search found ${vectorRows.length} chunks.`);
   }
   
   rows.push(...vectorRows);
@@ -390,14 +393,17 @@ export async function retrieveClassgridContext(
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
 
-  const foundIds = ranked.map(c => c.documentId).join(", ");
-  console.log(`\n🔍 [rag] Searching knowledge base for: "${query}"`);
+  console.log(`\n==================================================`);
+  console.log(`🔍 [rag] SEARCH COMPLETED: "${query}"`);
   if (ranked.length > 0) {
-    console.log(`📑 [rag] Found ${ranked.length} chunks successfully!`);
-    console.log(`📂 [rag] Retrieved Documents: [${foundIds}]`);
+    console.log(`📑 [rag] Found ${ranked.length} chunks successfully! (Fallback: ${usedFallbackSearch})`);
+    ranked.forEach((chunk, i) => {
+      console.log(`   ${i + 1}. [Score: ${chunk.score.toFixed(4)}] 📄 ID: ${chunk.documentId}`);
+    });
   } else {
     console.log(`⚠️ [rag] No relevant documents found in the database.`);
   }
+  console.log(`==================================================\n`);
 
   return {
     chunks: ranked,
