@@ -113,6 +113,28 @@ export function AppChrome({ children, chromeContent, latestReleaseDate }: AppChr
   const [currentHash, setCurrentHash] = useState("");
   const { data: session, status } = useSession();
 
+  // Auto-open Ask AI panel on mount if the user has an unsent draft
+  useEffect(() => {
+    try {
+      const savedInput = localStorage.getItem("askAiDraftInput");
+      const savedFilesStr = localStorage.getItem("askAiDraftFiles");
+      
+      let hasDraftFiles = false;
+      if (savedFilesStr) {
+        const savedFiles = JSON.parse(savedFilesStr);
+        if (Array.isArray(savedFiles) && savedFiles.length > 0) {
+          hasDraftFiles = true;
+        }
+      }
+
+      if (savedInput || hasDraftFiles) {
+        setAskAiOpen(true);
+      }
+    } catch (err) {
+      // ignore JSON parse errors
+    }
+  }, []);
+
   // Global Ctrl+K / Cmd+K shortcut for docs search (capture phase to beat browser defaults)
   useEffect(() => {
     if (!isDocsRoute) return;
