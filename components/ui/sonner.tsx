@@ -42,7 +42,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast: "cn-toast cursor-pointer",
           error: "!bg-red-50 dark:!bg-[#2e0e0e] !border-red-200 dark:!border-red-900 !text-red-600 dark:!text-red-400 [&_[data-description]]:!text-red-500/80 dark:[&_[data-description]]:!text-red-400/80",
         },
       }}
