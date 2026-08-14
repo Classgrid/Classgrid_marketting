@@ -67,7 +67,10 @@ type AiAttachment = {
 
 type UIFileAttachment = {
   id: string;
-  file: File;
+  name: string;
+  size: number;
+  type: string;
+  file?: File; // Only present for live uploads, stripped for localStorage
   status: "uploading" | "done" | "error";
   url?: string;
 };
@@ -751,6 +754,45 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // ── Local Storage Draft Persistence ──
+  useEffect(() => {
+    try {
+      const savedInput = localStorage.getItem("askAiDraftInput");
+      if (savedInput) setInput(savedInput);
+
+      const savedFilesStr = localStorage.getItem("askAiDraftFiles");
+      if (savedFilesStr) {
+        const savedFiles = JSON.parse(savedFilesStr) as UIFileAttachment[];
+        // Only restore files that finished uploading and have URLs,
+        // because we can't restore the raw File object to resume failed uploads.
+        const validRestoredFiles = savedFiles.filter(f => f.status === "done" && f.url);
+        if (validRestoredFiles.length > 0) {
+          setAttachedFiles(validRestoredFiles);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to restore Ask AI draft:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (input.trim() || attachedFiles.length > 0) {
+      localStorage.setItem("askAiDraftInput", input);
+      
+      const filesToSave = attachedFiles
+        .filter(f => f.status === "done" && f.url)
+        .map(f => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          status: f.status,
+          url: f.url
+        }));
+      localStorage.setItem("askAiDraftFiles", JSON.stringify(filesToSave));
+    }
+  }, [input, attachedFiles]);
+
   const MAX_FILE_SIZE = 35 * 1024 * 1024; // 35MB
   const ACCEPTED_FILE_TYPES = "image/*,.pdf,.md,.txt,.csv,.doc,.docx,.xlsx,.pptx";
 
@@ -767,18 +809,20 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   }
 
   const processFiles = useCallback(async (files: File[]) => {
-    const newFiles: UIFileAttachment[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error(`"${file.name}" is too large (${formatFileSize(file.size)}).`, { description: "Limit: 8 files · 35MB each" });
-        continue;
+    const newFiles: UIFileAttachment[] = files.map(file => ({
+      id: Math.random().toString(36).substring(7),
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      file,
+      status: "uploading"
+    }));
+
+    for (const f of newFiles) {
+      if (f.size > MAX_FILE_SIZE) {
+        toast.error(`"${f.name}" is too large (${formatFileSize(f.size)}).`, { description: "Limit: 8 files · 35MB each" });
+        return;
       }
-      newFiles.push({
-        id: `${file.name}-${Date.now()}-${i}`,
-        file,
-        status: "uploading"
-      });
     }
 
     if (newFiles.length === 0) return;
@@ -816,7 +860,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     // Upload accepted files immediately in the background
     for (const newFile of accepted) {
       try {
-        const result = await getPresignedUrlForAskAiFile(newFile.file.name, newFile.file.type, newFile.file.size);
+        const result = await getPresignedUrlForAskAiFile(newFile.name, newFile.type, newFile.size);
         if ("error" in result) {
           if (!rateLimitToastShown) {
             toast.error(result.error);
@@ -836,18 +880,19 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         }
 
         // Upload directly to R2 via presigned URL
+        if (!newFile.file) throw new Error("Missing file blob for upload");
         await fetch(result.uploadUrl, {
           method: "PUT",
           body: newFile.file,
-          headers: { "Content-Type": newFile.file.type },
+          headers: { "Content-Type": newFile.type },
         });
 
         // Mark as done and save URL
         setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "done", url: result.publicUrl } : f));
       } catch (err) {
-        console.error(`Failed to upload ${newFile.file.name}:`, err);
+        console.error(`Failed to upload ${newFile.name}:`, err);
         if (!rateLimitToastShown) {
-          toast.error(`Failed to upload "${newFile.file.name}".`);
+          toast.error(`Failed to upload "${newFile.name}".`);
         }
         setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
       }
@@ -1236,12 +1281,14 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     const isDocsContextActive = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
     
     // Only send files that successfully uploaded
-    const filesToUpload = attachedFiles.filter(f => f.status === "done" && f.url).map(f => ({
-      name: f.file.name,
-      url: f.url!,
-      mimeType: f.file.type,
-      size: f.file.size
-    }));
+    const filesToUpload = attachedFiles
+          .filter(f => f.status === "done" && f.url)
+          .map(f => ({
+            name: f.name,
+            url: f.url!,
+            mimeType: f.type,
+            size: f.size,
+          }));
 
     if (!apiQuestion && !isDocsContextActive && filesToUpload.length === 0) return;
     if (submitting) return;
@@ -1267,6 +1314,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     setError("");
     setInput("");
     setAttachedFiles([]);
+    localStorage.removeItem("askAiDraftInput");
+    localStorage.removeItem("askAiDraftFiles");
     setSubmitting(true);
     setThinking(true);
     setThinkingLabel("Thinking");
@@ -1782,8 +1831,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
             {attachedFiles.length > 0 && (
               <div className="px-3 pt-3 pb-0 flex flex-wrap gap-1.5">
                 {attachedFiles.map((att) => {
-                  const Icon = getFileIcon(att.file.type);
-                  const isImage = att.file.type.startsWith("image/");
+                  const Icon = getFileIcon(att.type);
+                  const isImage = att.type.startsWith("image/");
                   return (
                     <div
                       key={att.id}
@@ -1796,8 +1845,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                       {isImage ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
-                          src={URL.createObjectURL(att.file)}
-                          alt={att.file.name}
+                          src={att.url || (att.file ? URL.createObjectURL(att.file) : "")}
+                          alt={att.name}
                           className="h-6 w-6 rounded object-cover shrink-0"
                         />
                       ) : (
@@ -1805,7 +1854,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                       )}
                       <div className="flex flex-col min-w-0 overflow-hidden text-left gap-0">
                         <span className="text-[11px] font-medium text-foreground truncate leading-tight">
-                          {att.file.name}
+                          {att.name}
                         </span>
                         {att.status === "uploading" ? (
                           <div className="h-1.5 w-full max-w-[80px] bg-muted-foreground/20 rounded-full overflow-hidden mt-1 mb-0.5">
@@ -1818,7 +1867,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                           </div>
                         ) : (
                           <span className="text-[10px] text-muted-foreground/70 leading-tight">
-                            {att.status === "error" ? "Failed" : formatFileSize(att.file.size)}
+                            {att.status === "error" ? "Failed" : formatFileSize(att.size)}
                           </span>
                         )}
                       </div>
@@ -1827,7 +1876,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                       {att.status === "done" && att.url && (
                         <button
                           type="button"
-                          onClick={() => setPreviewFile({ name: att.file.name, src: att.url!, mimeType: att.file.type })}
+                          onClick={() => setPreviewFile({ name: att.name, src: att.url!, mimeType: att.type })}
                           className="absolute inset-0 w-full h-full cursor-pointer z-0"
                           title="Preview file"
                         />
@@ -1837,7 +1886,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                         type="button"
                         onClick={() => removeAttachedFile(att.id)}
                         className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors z-10 cursor-pointer"
-                        title={`Remove ${att.file.name}`}
+                        title={`Remove ${att.name}`}
                       >
                         <X className="h-3 w-3" />
                       </button>
