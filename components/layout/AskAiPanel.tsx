@@ -770,6 +770,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           setAttachedFiles(validRestoredFiles);
         }
       }
+
+      const savedContext = localStorage.getItem("askAiDraftContext");
+      if (savedContext) setLastSentDocsPath(savedContext);
     } catch (err) {
       console.error("Failed to restore Ask AI draft:", err);
     }
@@ -794,7 +797,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       localStorage.removeItem("askAiDraftInput");
       localStorage.removeItem("askAiDraftFiles");
     }
-  }, [input, attachedFiles]);
+
+    if (lastSentDocsPath) {
+      localStorage.setItem("askAiDraftContext", lastSentDocsPath);
+    } else {
+      localStorage.removeItem("askAiDraftContext");
+    }
+  }, [input, attachedFiles, lastSentDocsPath]);
 
   const MAX_FILE_SIZE = 35 * 1024 * 1024; // 35MB
   const ACCEPTED_FILE_TYPES = "image/*,.pdf,.md,.txt,.csv,.doc,.docx,.xlsx,.pptx";
@@ -1055,8 +1064,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     setInput("");
     setSessionId(null);
     setAttachedFiles([]);
+    setLastSentDocsPath(null);
     localStorage.removeItem("classgrid_ai_chat_history");
     localStorage.removeItem("classgrid_ai_session_id");
+    localStorage.removeItem("askAiDraftContext");
   }
 
   function handleStop() {
@@ -1325,6 +1336,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     setAttachedFiles([]);
     localStorage.removeItem("askAiDraftInput");
     localStorage.removeItem("askAiDraftFiles");
+    localStorage.removeItem("askAiDraftContext");
     setSubmitting(true);
     setThinking(true);
     setThinkingLabel("Thinking");
