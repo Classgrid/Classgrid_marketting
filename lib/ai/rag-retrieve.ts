@@ -390,17 +390,6 @@ export async function retrieveClassgridContext(
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
 
-  const foundIds = ranked.map(c => c.documentId).join(", ");
-  console.log(`[rag] Search completed for query: "${query}". Found ${ranked.length} chunks. IDs: [${foundIds}]`);
-  
-  // DEBUG CHECK: Does the fake document even exist in this server's database?
-  try {
-    const fakeDoc = await RagChunk.findOne({ documentId: "test-fake-color-code" }).select("documentId");
-    console.log(`[rag-debug] DB Check: 'test-fake-color-code' exists in this DB? ${!!fakeDoc}`);
-  } catch (err) {
-    console.log(`[rag-debug] DB Check failed: ${err.message}`);
-  }
-
   return {
     chunks: ranked,
     contextText: formatContext(ranked),
