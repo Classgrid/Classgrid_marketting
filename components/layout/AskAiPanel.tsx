@@ -1649,13 +1649,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                     ) : null}
                   </div>
 
-                  <div className={cn("flex flex-col gap-1.5", isUser ? "order-1 items-end max-w-[75%]" : "order-2 w-full")}>
+                  <div className={cn("flex flex-col gap-1.5 min-w-0", isUser ? "order-1 items-end max-w-[75%]" : "order-2 w-full")}>
                     
                     {/* ── Text Bubble ── */}
                     {message.content && (
                       <div
                         className={cn(
-                          "relative transition-colors",
+                          "relative transition-colors min-w-0",
                           isUser
                             ? "rounded-2xl rounded-br-none px-4 py-2.5 bg-foreground text-background"
                             : "w-full max-w-full bg-transparent text-foreground"
