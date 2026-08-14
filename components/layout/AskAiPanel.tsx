@@ -841,7 +841,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     let droppedWarning = "";
     if (newFiles.length > remaining) {
       const dropped = newFiles.length - remaining;
-      droppedWarning = `${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`;
+      droppedWarning = `${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} more file${remaining === 1 ? "" : "s"} allowed.`;
       accepted = newFiles.slice(0, remaining);
     }
 
