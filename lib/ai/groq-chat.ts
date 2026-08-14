@@ -157,6 +157,9 @@ async function tryProvider(
 ): Promise<{ answer: string | null; rateLimited: boolean; error?: string }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const startTime = Date.now();
+
+  console.log(`\n🚀 [llm] Requesting answer from ${provider.name.toUpperCase()} (${provider.model})...`);
 
   try {
     const response = await fetch(provider.url, {
@@ -177,7 +180,7 @@ async function tryProvider(
 
     if (!response.ok) {
       const body = await response.text().catch(() => "");
-      console.error(`[llm:${provider.name}] HTTP ${response.status} ${body.slice(0, 300)}`);
+      console.error(`❌ [llm:${provider.name}] HTTP ${response.status} Error: ${body.slice(0, 300)}`);
 
       if (response.status === 429) {
         return { answer: null, rateLimited: true, error: "rate_limited" };
@@ -188,15 +191,17 @@ async function tryProvider(
       return { answer: null, rateLimited: false, error: `http_${response.status}` };
     }
 
-    const result = extractResponse(await response.json());
+    const data = await response.json();
+    const result = extractResponse(data);
+    const usage = (data as any).usage ? `[Tokens: ${(data as any).usage.total_tokens || 'Unknown'}]` : '';
 
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
       const call = result.toolCalls[0];
-      console.log(`[llm:${provider.name}] 🔍 Using Tool: ${call.function.name}`);
+      console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name}`);
 
       if (call.function.name === 'check_status_page') {
-        console.log(`[llm:${provider.name}] 🌐 Checking Classgrid Status Page...`);
+        console.log(`🌐 [llm:${provider.name}] Checking Classgrid Status Page...`);
         onStatus?.("checking status");
 
         let statusResultText = "Failed to fetch status page.";
@@ -215,7 +220,7 @@ async function tryProvider(
             statusResultText = `Current Classgrid status is: ${indicator}.\n\nComponents:\n${components}\n\nIncidents:\n${incidents || "No active incidents."}`;
           }
         } catch (e) {
-          console.error(`[llm:${provider.name}] Status check failed:`, e);
+          console.error(`❌ [llm:${provider.name}] Status check failed:`, e);
         }
 
         onStatus?.("analyzing");
@@ -230,7 +235,7 @@ async function tryProvider(
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'read_url') {
         const args = JSON.parse(call.function.arguments);
-        console.log(`[llm:${provider.name}] 🌐 Reading URL: "${args.url}"`);
+        console.log(`🌐 [llm:${provider.name}] Reading URL: "${args.url}"`);
         onStatus?.("reading page");
 
         let scrapeResultText = "Failed to fetch or parse the URL.";
@@ -252,7 +257,7 @@ async function tryProvider(
             scrapeResultText = `Failed to fetch URL. HTTP Status: ${res.status}`;
           }
         } catch (e) {
-          console.error(`[llm:${provider.name}] Read URL failed:`, e);
+          console.error(`❌ [llm:${provider.name}] Read URL failed:`, e);
           scrapeResultText = `Failed to fetch URL: ${e instanceof Error ? e.message : String(e)}`;
         }
 
@@ -268,7 +273,7 @@ async function tryProvider(
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'search_web') {
         const args = JSON.parse(call.function.arguments);
-        console.log(`[llm:${provider.name}] 🌐 Searching: "${args.query}"`);
+        console.log(`🌐 [llm:${provider.name}] Searching Web for: "${args.query}"`);
         onStatus?.("searching");
 
         let searchResultText = "No reliable search results found.";
@@ -288,49 +293,44 @@ async function tryProvider(
             });
             const searchData = await tavilyRes.json();
             if (searchData.answer) {
-              // Include the answer plus the actual source URLs
               const sourceUrls = (searchData.results || []).map((r: any) => `- ${r.title}: ${r.url}`).join('\n');
               searchResultText = `${searchData.answer}\n\nSource URLs:\n${sourceUrls}`;
             } else if (searchData.results && searchData.results.length > 0) {
               searchResultText = searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
             }
           } else {
-            console.error(`[llm:${provider.name}] TAVILY_API_KEY is missing. Cannot perform live search.`);
+            console.error(`❌ [llm:${provider.name}] TAVILY_API_KEY is missing. Cannot perform live search.`);
             searchResultText = "Search failed because TAVILY_API_KEY is not configured in the server environment.";
           }
         } catch (e) {
-          console.error(`[llm:${provider.name}] Search failed:`, e);
+          console.error(`❌ [llm:${provider.name}] Web Search failed:`, e);
         }
 
-        // Notify frontend that search is done, now analyzing
         onStatus?.("analyzing");
 
-        // Recursively call the provider with the search results appended
-        // IMPORTANT: We must only pass the specific tool call we processed,
-        // otherwise strict providers (Mistral) throw "Not the same number of function calls and responses"
         const nextMessages: GroqMessage[] = [
           ...messages,
           { role: "assistant", content: result.content || "", tool_calls: [call] },
-          { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 4000) } // Cap at 4000 chars for richer context (EC2 has no timeout pressure)
+          { role: "tool", tool_call_id: call.id, content: searchResultText.slice(0, 4000) }
         ];
 
-        // Give the recursive call a bit more timeout since we just used some up
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       }
     }
 
     if (result.content) {
-      console.log(`[llm] ✓ ${provider.name} (${provider.model}) answered successfully.`);
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`✅ [llm] ${provider.name.toUpperCase()} answered successfully in ${duration}s! ${usage}`);
     }
     return { answer: result.content || null, rateLimited: false };
   } catch (error) {
     const name = error instanceof Error ? error.name : "";
     const message = error instanceof Error ? error.message : String(error);
     if (name === "AbortError" || message.toLowerCase().includes("abort")) {
-      console.warn(`[llm:${provider.name}] aborted after ${timeoutMs}ms`);
+      console.warn(`⚠️ [llm:${provider.name}] Aborted due to timeout after ${timeoutMs}ms`);
     } else {
-      console.error(`[llm:${provider.name}]`, message);
+      console.error(`❌ [llm:${provider.name}] Fatal error:`, message);
     }
     return { answer: null, rateLimited: false, error: message };
   } finally {
