@@ -401,7 +401,8 @@ export async function retrieveClassgridContext(
       console.log(`   ${i + 1}. [Score: ${chunk.score.toFixed(4)}] 📄 ID: ${chunk.documentId}`);
     });
   } else {
-    console.log(`⚠️ [rag] No relevant documents found in the database.`);
+    console.log(`⚠️ [rag] No relevant documents found in the database!`);
+    console.log(`❌ [rag] 0 Sources Available. The AI will answer without database context.`);
   }
   console.log(`==================================================\n`);
 
