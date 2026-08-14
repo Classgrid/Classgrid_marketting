@@ -783,28 +783,33 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     if (newFiles.length === 0) return;
 
-    const remaining = 8 - attachedFiles.length;
+    const remaining = 6 - attachedFiles.length;
     
     if (remaining <= 0) {
-      toast.error("Maximum 8 files per message. Remove a file to add a new one.", { description: "Limit: 8 files · 35MB each" });
+      toast.error("Maximum 6 files per message. Remove a file to add a new one.", { description: "Limit: 6 files · 35MB each" });
       return;
     }
 
     let accepted = newFiles;
     if (newFiles.length > remaining) {
       const dropped = newFiles.length - remaining;
-      toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 8 files · 35MB each" });
+      toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 6 files · 35MB each" });
       accepted = newFiles.slice(0, remaining);
     }
 
     setAttachedFiles(prev => [...prev, ...accepted]);
+
+    let rateLimitToastShown = false;
 
     // Upload accepted files immediately in the background
     for (const newFile of accepted) {
       try {
         const result = await getPresignedUrlForAskAiFile(newFile.file.name, newFile.file.type, newFile.file.size);
         if ("error" in result) {
-          toast.error(result.error);
+          if (!rateLimitToastShown) {
+            toast.error(result.error);
+            rateLimitToastShown = true;
+          }
           setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
           continue;
         }
@@ -820,11 +825,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "done", url: result.publicUrl } : f));
       } catch (err) {
         console.error(`Failed to upload ${newFile.file.name}:`, err);
-        toast.error(`Failed to upload "${newFile.file.name}".`);
+        if (!rateLimitToastShown) {
+          toast.error(`Failed to upload "${newFile.file.name}".`);
+        }
         setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
       }
     }
-  }, []);
+  }, [attachedFiles.length]);
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -1847,9 +1854,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={attachedFiles.length >= 8}
+                  disabled={attachedFiles.length >= 6}
                   className="h-8 w-8 shrink-0 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 disabled:opacity-30 transition-all cursor-pointer"
-                  title={attachedFiles.length >= 8 ? "Max 8 files" : "Attach file (max 35MB)"}
+                  title={attachedFiles.length >= 6 ? "Max 6 files" : "Attach file (max 35MB)"}
                 >
                   <Paperclip className={cn("h-4 w-4 -rotate-45", isAnyFileUploading && "opacity-50")} />
                 </button>
