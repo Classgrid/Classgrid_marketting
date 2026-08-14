@@ -106,7 +106,8 @@ export async function checkAiUploadRateLimit(filesToUpload: number) {
     }
     
     if (currentCount + filesToUpload > MAX_FILES) {
-      return { error: `You have reached the maximum file upload limit. Please try again later.` };
+      const remaining = MAX_FILES - currentCount;
+      return { error: `You can only upload ${remaining} more file${remaining === 1 ? '' : 's'} right now.` };
     }
     
     return { success: true };
