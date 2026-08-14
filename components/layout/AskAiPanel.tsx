@@ -823,7 +823,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     for (const f of newFiles) {
       if (f.size > MAX_FILE_SIZE) {
-        toast.error(`"${f.name}" is too large (${formatFileSize(f.size)}).`, { description: "Limit: 8 files · 35MB each" });
+        toast.error(`"${f.name}" is too large (${formatFileSize(f.size)}).`, { description: "Limit: 6 files · 35MB each" });
         return;
       }
     }

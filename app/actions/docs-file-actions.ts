@@ -106,8 +106,7 @@ export async function checkAiUploadRateLimit(filesToUpload: number) {
     }
     
     if (currentCount + filesToUpload > MAX_FILES) {
-      const remaining = MAX_FILES - currentCount;
-      return { error: `Session limit reached. You can only upload ${remaining} more file${remaining === 1 ? '' : 's'} right now.` };
+      return { error: `You have reached the maximum file upload limit. Please try again later.` };
     }
     
     return { success: true };
