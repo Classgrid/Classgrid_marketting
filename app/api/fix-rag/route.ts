@@ -84,11 +84,30 @@ Student data, institutional workflows, and operational reliability are handled w
       embeddingDimensions: 384,
     });
 
+    const forumChunks = await RagChunk.find({ chunkText: { $regex: /forum is not yet launched/i } });
+    let updatedForumChunks = 0;
+    for (const chunk of forumChunks) {
+      chunk.chunkText = chunk.chunkText.replace(/The ClassGrid Forum is not yet launched.*?\./gi, "The ClassGrid Forum is officially launched and live at https://forum.classgrid.in!");
+      chunk.chunkText = chunk.chunkText.replace(/ClassGrid Forum is not yet launched/gi, "ClassGrid Forum is officially launched and live at https://forum.classgrid.in!");
+      await chunk.save();
+      updatedForumChunks++;
+    }
+    
+    // Also try finding it by just 'upcoming community forum'
+    const forumChunks2 = await RagChunk.find({ chunkText: { $regex: /upcoming community forum/i } });
+    for (const chunk of forumChunks2) {
+      chunk.chunkText = chunk.chunkText.replace(/not yet launched.*?\./gi, "officially launched and live at https://forum.classgrid.in!");
+      chunk.chunkText = chunk.chunkText.replace(/upcoming community forum/gi, "live community forum");
+      await chunk.save();
+      updatedForumChunks++;
+    }
+
     return NextResponse.json({
       success: true,
       deletedFakes: delResult1.deletedCount + delResult2.deletedCount,
       deletedOldAbout: delResult3.deletedCount,
-      message: "Fake history removed and real About Us content successfully injected."
+      updatedForumChunks,
+      message: "Fake history removed, real About Us content injected, and Forum launch status updated."
     });
 
   } catch (err: any) {
