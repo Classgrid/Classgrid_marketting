@@ -57,7 +57,7 @@ export async function getPresignedUrlForAskAiFile(
     let rateLimitRecord = await AiRateLimit.findOne({ identifier });
     if (rateLimitRecord) {
       if ((rateLimitRecord.fileUploadCount || 0) >= MAX_FILES) {
-        return { error: `You have reached the maximum limit of ${MAX_FILES} file uploads. Please try again later.` };
+        return { error: `You have reached the maximum file upload limit. Please try again later.` };
       }
       rateLimitRecord.fileUploadCount = (rateLimitRecord.fileUploadCount || 0) + 1;
       await rateLimitRecord.save();
@@ -102,7 +102,7 @@ export async function checkAiUploadRateLimit(filesToUpload: number) {
     
     const currentCount = rateLimit?.fileUploadCount || 0;
     if (currentCount >= MAX_FILES) {
-      return { error: `You have reached the maximum limit of ${MAX_FILES} file uploads. Please try again later.` };
+      return { error: `You have reached the maximum file upload limit. Please try again later.` };
     }
     
     if (currentCount + filesToUpload > MAX_FILES) {
