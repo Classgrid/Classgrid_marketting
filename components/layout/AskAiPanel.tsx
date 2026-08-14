@@ -771,7 +771,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(`"${file.name}" exceeds the 35MB limit (${formatFileSize(file.size)}).`);
+        toast.error(`"${file.name}" is too large (${formatFileSize(file.size)}).`, { description: "Limit: 8 files · 35MB each" });
         continue;
       }
       newFiles.push({
@@ -783,13 +783,25 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     if (newFiles.length === 0) return;
 
+    let accepted = newFiles;
     setAttachedFiles(prev => {
-      const combined = [...prev, ...newFiles].slice(0, 8); // Max 8 files
-      return combined;
+      const remaining = 8 - prev.length;
+      if (remaining <= 0) {
+        toast.error("Maximum 8 files per message. Remove a file to add a new one.", { description: "Limit: 8 files · 35MB each" });
+        accepted = [];
+        return prev;
+      }
+      if (newFiles.length > remaining) {
+        const dropped = newFiles.length - remaining;
+        toast.error(`${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} slot${remaining === 1 ? "" : "s"} remaining.`, { description: "Limit: 8 files · 35MB each" });
+        accepted = newFiles.slice(0, remaining);
+        return [...prev, ...accepted];
+      }
+      return [...prev, ...newFiles];
     });
 
-    // Upload files immediately in the background
-    for (const newFile of newFiles) {
+    // Upload accepted files immediately in the background
+    for (const newFile of accepted) {
       try {
         const result = await getPresignedUrlForAskAiFile(newFile.file.name, newFile.file.type, newFile.file.size);
         if ("error" in result) {

@@ -1,6 +1,11 @@
 "use server";
 
 import { getPresignedUploadUrl, R2_PUBLIC_URL } from "@/lib/r2";
+import { headers } from "next/headers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { connectMongo } from "@/lib/mongodb";
+import { AiRateLimit } from "@/lib/models/AiRateLimit";
 
 const MAX_FILE_SIZE = 35 * 1024 * 1024; // 35MB
 
@@ -34,6 +39,39 @@ export async function getPresignedUrlForAskAiFile(
   // Validate MIME type
   if (!ALLOWED_MIME_TYPES.has(mimeType)) {
     return { error: `File type "${mimeType}" is not supported. Please upload an image, PDF, document, or text file.` };
+  }
+
+  // Rate Limiting (Max 10 files per session/hour)
+  try {
+    const headerStore = await headers();
+    const ip = headerStore.get("x-forwarded-for") || headerStore.get("x-real-ip") || "unknown";
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email;
+    const identifier = userEmail || ip;
+
+    await connectMongo();
+
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const MAX_FILES = 10;
+
+    let rateLimitRecord = await AiRateLimit.findOne({ identifier });
+    if (rateLimitRecord) {
+      if ((rateLimitRecord.fileUploadCount || 0) >= MAX_FILES) {
+        return { error: `You have reached the maximum limit of ${MAX_FILES} file uploads per hour. Please try again later.` };
+      }
+      rateLimitRecord.fileUploadCount = (rateLimitRecord.fileUploadCount || 0) + 1;
+      await rateLimitRecord.save();
+    } else {
+      await AiRateLimit.create({
+        identifier,
+        count: 0,
+        fileUploadCount: 1,
+        expireAt: new Date(Date.now() + ONE_HOUR_MS)
+      });
+    }
+  } catch (error) {
+    console.error("[docs-file-actions] Rate limit error:", error);
+    // Proceed with upload if DB fails, to not break core functionality
   }
 
   const sanitizedName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
