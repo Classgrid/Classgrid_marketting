@@ -1674,7 +1674,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                         )}
                         {isUser ? (
                           <>
-                            <p className="text-sm leading-relaxed break-words whitespace-pre-wrap relative z-10">{message.content}</p>
+                            <p className="text-sm leading-relaxed break-words break-all whitespace-pre-wrap relative z-10">{message.content}</p>
                             {message.contextUrl && (
                               <a
                                 href={message.contextUrl}
