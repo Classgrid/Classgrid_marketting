@@ -45,6 +45,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
+import { usePostHog } from "posthog-js/react";
 import { CodeBlockClient } from "@/components/docs/code-block-client";
 import { toast } from "sonner";
 import { getPresignedUrlForAskAiFile, checkAiUploadRateLimit } from "@/app/actions/docs-file-actions";
@@ -527,6 +528,7 @@ function renderInlineText(rawText: string) {
 function MessageActions({ content, messageId }: { content: string; messageId: string }) {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
+  const posthog = usePostHog();
 
   useEffect(() => {
     try {
@@ -567,7 +569,17 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
       }
     } catch (e) {}
     
-    // Future: send feedback to analytics/API
+    if (newFeedback === "down") {
+      posthog?.capture("ai_message_thumbs_down", {
+        message_id: messageId,
+        content_preview: content.substring(0, 100)
+      });
+    } else if (newFeedback === "up") {
+      posthog?.capture("ai_message_thumbs_up", {
+        message_id: messageId,
+        content_preview: content.substring(0, 100)
+      });
+    }
   }
 
   return (
