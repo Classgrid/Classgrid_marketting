@@ -102,12 +102,40 @@ Student data, institutional workflows, and operational reliability are handled w
       updatedForumChunks++;
     }
 
+    // 3. Inject dedicated Classgrid Forum chunk
+    const forumContent = `
+The ClassGrid Forum is the official, live community platform for educators and administrators from schools, junior colleges, engineering institutes, and coaching centers. 
+It is a dedicated space to:
+1. Host Public Discussions: Ask questions and share best practices on managing academics, operations, and communications.
+2. Earn Verified Badges: Verified students, teachers, and administrators get official member badges (though non-platform users can also join).
+3. Share Feedback: Report issues, request new features, and collaborate directly with the ClassGrid team.
+The forum is officially launched and live right now at https://forum.classgrid.in
+    `.trim();
+
+    // Delete any old forum chunks we might have injected to avoid duplicates
+    await RagChunk.deleteMany({ documentId: "classgrid-forum-official" });
+
+    const forumEmb = await embedText(forumContent);
+    await RagChunk.create({
+      documentId: "classgrid-forum-official",
+      documentType: "page",
+      chunkIndex: 0,
+      chunkText: forumContent,
+      pageSlug: "community",
+      pageTitle: "Classgrid Forum",
+      section: "What is the Classgrid Forum",
+      contentType: "markdown",
+      embedding: forumEmb,
+      embeddingModel: "Xenova/all-MiniLM-L6-v2",
+      embeddingDimensions: 384,
+    });
+
     return NextResponse.json({
       success: true,
       deletedFakes: delResult1.deletedCount + delResult2.deletedCount,
       deletedOldAbout: delResult3.deletedCount,
       updatedForumChunks,
-      message: "Fake history removed, real About Us content injected, and Forum launch status updated."
+      message: "Fake history removed, real About Us content injected, and Forum RAG context successfully injected."
     });
 
   } catch (err: any) {
