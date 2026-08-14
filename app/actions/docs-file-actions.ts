@@ -107,7 +107,8 @@ export async function checkAiUploadRateLimit(filesToUpload: number) {
     
     if (currentCount + filesToUpload > MAX_FILES) {
       const remaining = MAX_FILES - currentCount;
-      return { error: `Only ${remaining} file${remaining === 1 ? '' : 's'} left. Please select ${remaining} file${remaining === 1 ? '' : 's'}.` };
+      const selectText = remaining === 1 ? '1 file' : `up to ${remaining} files`;
+      return { error: `Only ${remaining} file${remaining === 1 ? '' : 's'} left. Please select ${selectText}.` };
     }
     
     return { success: true };
