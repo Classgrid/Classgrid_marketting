@@ -810,7 +810,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
             toast.error(result.error);
             rateLimitToastShown = true;
           }
-          setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
+          
+          if (result.error.includes("maximum limit")) {
+            // If it's a rate limit, remove this file and all remaining unprocessed files from the UI
+            const remainingIds = accepted.slice(accepted.indexOf(newFile)).map(f => f.id);
+            setAttachedFiles(prev => prev.filter(f => !remainingIds.includes(f.id)));
+            break; // Abort the rest of the batch
+          } else {
+            // For normal errors (like network/size), leave it as a red Failed box
+            setAttachedFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: "error" } : f));
+          }
           continue;
         }
 
