@@ -189,7 +189,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        <Toaster position="top-center" />
+        <Toaster position="bottom-right" offset={140} />
       </body>
     </html>
   );
