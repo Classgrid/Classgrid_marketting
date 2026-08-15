@@ -82,13 +82,22 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
+  const groqKey = process.env.GROQ_API_KEY?.trim();
+  if (groqKey) {
+    providers.push({
+      name: "groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: groqKey,
+      model: process.env.GROQ_MODEL?.trim() || "deepseek-r1-distill-llama-70b", // <-- CHANGED TO DEEPSEEK TO SHOW THINKING
+    });
+  }
+
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   if (geminiKey) {
     providers.push({
       name: "gemini",
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       apiKey: geminiKey,
-      // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
       model: "gemini-3.5-flash",
     });
   }
@@ -100,16 +109,6 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey,
       model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
-    });
-  }
-
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile",
     });
   }
 
@@ -128,8 +127,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
 
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
   const chain = getProviderChain(channel);
-  // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
-  return chain.length > 0 ? chain[0].model : "gemini-3.5-flash";
+  return chain.length > 0 ? chain[0].model : "deepseek-r1-distill-llama-70b";
 }
 
 // ── Response Extraction ──────────────────────────────────────────────────────
