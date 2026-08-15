@@ -294,6 +294,21 @@ async function tryProvider(
       console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name} (Depth: ${depth + 1}/${maxDepth})`);
 
       if (call.function.name === 'internal_thought_process') {
+        // DUPLICATE THOUGHT BLOCKER
+        const alreadyThought = messages.some(m => 
+          m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'internal_thought_process')
+        );
+        if (alreadyThought) {
+          console.error(`⚠️ [llm:${provider.name}] Blocked duplicate internal_thought_process call.`);
+          const nextMessages: GroqMessage[] = [
+            ...messages,
+            { role: "assistant", content: result.content || "", tool_calls: [call] },
+            { role: "tool", tool_call_id: call.id, content: "ERROR: You have ALREADY used the internal_thought_process tool. Do NOT use it again. You must provide your final answer immediately." }
+          ];
+          clearTimeout(timeout);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1); // punish for repeating
+        }
+
         let args;
         try {
           args = JSON.parse(call.function.arguments);
