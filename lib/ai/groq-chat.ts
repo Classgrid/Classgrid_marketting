@@ -396,8 +396,10 @@ async function tryProvider(
             $('script, style, noscript, iframe, img, svg, nav, footer, header').remove();
             scrapeResultText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
             if (!scrapeResultText) scrapeResultText = "Page was empty or unreadable.";
+            console.log(`✅ [llm:${provider.name}] Successfully read URL: "${args.url}" (Extracted ${scrapeResultText.length} characters)`);
           } else {
             scrapeResultText = `Failed to fetch URL. HTTP Status: ${res.status}`;
+            console.error(`❌ [llm:${provider.name}] Failed to read URL: "${args.url}" (HTTP ${res.status})`);
           }
         } catch (e) {
           console.error(`❌ [llm:${provider.name}] Read URL failed:`, e);
@@ -455,8 +457,12 @@ async function tryProvider(
             if (searchData.answer) {
               const sourceUrls = (searchData.results || []).map((r: any) => `- ${r.title}: ${r.url}`).join('\n');
               searchResultText = `${searchData.answer}\n\nSource URLs:\n${sourceUrls}`;
+              console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found Answer + ${searchData.results?.length || 0} links)`);
             } else if (searchData.results && searchData.results.length > 0) {
               searchResultText = searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
+              console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found ${searchData.results.length} links)`);
+            } else {
+              console.log(`⚠️ [llm:${provider.name}] Web search returned NO results for: "${args.query}"`);
             }
           } else {
             console.error(`❌ [llm:${provider.name}] TAVILY_API_KEY is missing. Cannot perform live search.`);
