@@ -1372,11 +1372,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     const uploadedAttachments: AiAttachment[] = filesToUpload;
 
-    // Append file context to API question
     if (uploadedAttachments.length > 0) {
-      const fileContextLines = uploadedAttachments.map(a =>
-        `[Attached file: ${a.name} (${a.mimeType}, ${formatFileSize(a.size)}) — URL: ${a.url}]`
-      ).join("\n");
+      const fileContextLines = uploadedAttachments.map((a, i) => {
+        let cleanName = a.name;
+        if (/^whatsapp image/i.test(cleanName)) cleanName = "Uploaded Image";
+        else if (/^screenshot/i.test(cleanName)) cleanName = "Screenshot";
+        else if (/^img_/i.test(cleanName)) cleanName = "Uploaded Image";
+        
+        return `[Attached file: ${cleanName} (${a.mimeType}) — URL: ${a.url}]`;
+      }).join("\n");
       apiQuestion = `${apiQuestion}\n\n${fileContextLines}`;
     }
 

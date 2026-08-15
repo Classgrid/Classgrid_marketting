@@ -279,19 +279,37 @@ async function tryProvider(
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'read_url') {
-        const args = JSON.parse(call.function.arguments);
+        let args;
+        try {
+          args = JSON.parse(call.function.arguments);
+        } catch (e) {
+          console.error(`❌ [llm:${provider.name}] Bad JSON in tool arguments:`, call.function.arguments);
+          const nextMessages: GroqMessage[] = [
+            ...messages,
+            { role: "assistant", content: result.content || "", tool_calls: [call] },
+            { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
+          ];
+          clearTimeout(timeout);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+        }
         console.log(`🌐 [llm:${provider.name}] Reading URL: "${args.url}"`);
         onStatus?.("reading page");
 
         let scrapeResultText = "Failed to fetch or parse the URL.";
         try {
+          const scrapeController = new AbortController();
+          const scrapeTimeout = setTimeout(() => scrapeController.abort(), 8000); // 8 second strict timeout
+          
           const res = await fetch(args.url, {
+            signal: scrapeController.signal,
             headers: {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.9',
             },
           });
+          clearTimeout(scrapeTimeout);
+          
           if (res.ok) {
             const html = await res.text();
             const $ = cheerio.load(html);
@@ -317,7 +335,19 @@ async function tryProvider(
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       } else if (call.function.name === 'search_web') {
-        const args = JSON.parse(call.function.arguments);
+        let args;
+        try {
+          args = JSON.parse(call.function.arguments);
+        } catch (e) {
+          console.error(`❌ [llm:${provider.name}] Bad JSON in tool arguments:`, call.function.arguments);
+          const nextMessages: GroqMessage[] = [
+            ...messages,
+            { role: "assistant", content: result.content || "", tool_calls: [call] },
+            { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
+          ];
+          clearTimeout(timeout);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+        }
         console.log(`🌐 [llm:${provider.name}] Searching Web for: "${args.query}"`);
         onStatus?.("searching");
 
