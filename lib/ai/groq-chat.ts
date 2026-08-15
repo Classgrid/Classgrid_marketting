@@ -452,13 +452,7 @@ async function tryProvider(
       }
     }
 
-    if (result.thinking) {
-      console.log(`\n════════════════════════════════════════════════════════════`);
-      console.log(`🧠 [thinking] ${provider.name.toUpperCase()} Internal Reasoning:`);
-      console.log(`────────────────────────────────────────────────────────────`);
-      console.log(result.thinking.trim());
-      console.log(`════════════════════════════════════════════════════════════`);
-    }
+    // Removed duplicate thinking log
 
     if (result.content) {
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
