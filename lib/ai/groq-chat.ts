@@ -172,42 +172,20 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
     }
     
     // Check for OpenRouter JSON leak style (Mistral/Claude)
-    if (content.trim().startsWith('{"type":"thinking"')) {
-      // Find the end of the JSON object roughly by looking for the first `\n\n` or the end of the array
-      // A more reliable way is to just match the outer JSON object, but since LLM output varies, 
-      // let's do a simple extraction of everything up to the first newline that isn't inside quotes,
-      // or just strip the entire {"type":"thinking"...} structure.
+    const trimmedContent = content.trim();
+    if (trimmedContent.startsWith('{"type":"thinking"')) {
+      // 1. Force the entire raw JSON into the thinking block so it GUARANTEES it prints in the server logs!
+      thinking = content;
       
-      try {
-        // Try to isolate the JSON part from the rest of the text
-        const parts = content.split('}\n');
-        if (parts.length > 1) {
-          const possibleJson = parts[0] + '}';
-          const parsed = JSON.parse(possibleJson);
-          if (parsed.type === "thinking") {
-             thinking = JSON.stringify(parsed.thinking, null, 2);
-             content = parts.slice(1).join('}\n').trim();
-          }
-        } else {
-          // Fallback if it's all mushed together: Just regex strip the starting JSON array 
-          const match = content.match(/^{"type":"thinking","thinking":\[[\s\S]*?\}\]\}(?:\n|,?)/);
-          if (match) {
-            try {
-              const parsed = JSON.parse(match[0].replace(/,\n?$/, '').trim());
-              thinking = JSON.stringify(parsed.thinking, null, 2);
-            } catch (e) {
-              thinking = match[0]; // fallback
-            }
-            content = content.replace(match[0], "").trim();
-          }
-        }
-      } catch (e) {
-        // If parsing fails, try aggressive regex to just wipe it from the UI
-        const aggressiveMatch = content.match(/^{"type":"thinking"[\s\S]*?\}\]\},?\n?/);
-        if (aggressiveMatch) {
-          thinking = aggressiveMatch[0];
-          content = content.replace(aggressiveMatch[0], "").trim();
-        }
+      // 2. Try to extract ONLY the real answer text to show to the user UI
+      const textMatch = content.match(/"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"([\s\S]*?)"\s*\}/);
+      
+      if (textMatch) {
+        // Parse the escaped newlines and quotes back to normal text
+        content = textMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+      } else {
+        // Fallback: If we can't find the text block, do not show the JSON to the user!
+        content = "I am processing your request. (The response was captured in the server logs).";
       }
     }
   }
