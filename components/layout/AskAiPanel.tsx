@@ -1015,6 +1015,21 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [userContext, setUserContext] = useState<any>(null);
+
+  // Fetch contextual user data on mount if session exists
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetch("/api/user/ai-context")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.userContext) {
+            setUserContext(data.userContext);
+          }
+        })
+        .catch((err) => console.error("Failed to fetch user context", err));
+    }
+  }, [session]);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const isGenerating = submitting || thinking || (messages[messages.length - 1]?.typing === true);
@@ -1401,7 +1416,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         body: JSON.stringify({
           question: apiQuestion,
           userName: session?.user?.name ?? undefined,
-          userEmail: (session?.user as any)?.email || (session?.user as any)?.userEmail || undefined,
+          userEmail: session?.user?.email ?? undefined,
+          userContext: userContext,
           sessionId: sessionId ?? undefined,
           attachments: uploadedAttachments.length > 0 ? uploadedAttachments.map(a => ({ url: a.url, name: a.name, mimeType: a.mimeType })) : undefined,
           history: nextMessages

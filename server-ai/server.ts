@@ -56,6 +56,7 @@ type AskAiRequestBody = {
   userName?: string;
   userEmail?: string;
   userRole?: string;
+  userContext?: Record<string, any>;
   history?: ChatHistoryItem[];
   sessionId?: string;
   pageContext?: PageContext;
@@ -291,7 +292,10 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         question,
         channel: "web",
         userName: firstName,
+        userEmail,
         userRole: normalizeText(body?.userRole),
+        userContext: body?.userContext,
+        orgName: normalizeText(body?.orgName),
         history: mergedHistory,
         pageContext: normalizePageContext(body?.pageContext),
         attachments: body?.attachments,

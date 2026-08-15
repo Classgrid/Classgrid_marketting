@@ -101,7 +101,7 @@ function buildSystemPrompt(params: {
   retrievedContext: string;
   pageContext?: PageContext;
   userName?: string;
-  userRole?: string;
+  userContext?: Record<string, any>;
   isGuest?: boolean;
 }) {
   const isWhatsApp = params.channel === "whatsapp";
@@ -113,13 +113,18 @@ function buildSystemPrompt(params: {
   // RAG chunks supplement this with specific details, but static knowledge is the baseline.
   const staticKnowledge = STATIC_CLASSGRID_KNOWLEDGE;
   const resourceDirectory = formatPlatformResourceDirectory(params.channel);
-  const userRule = params.userName
-    ? `You are currently talking to a logged-in user named "${params.userName}". Use their name ONCE in your first response to be polite and conversational, but DO NOT overuse it in every message. Calling them by their name repeatedly sounds robotic.`
-    : "You are talking to a Classgrid visitor or support user. Do NOT mention anything about them being logged in. If they ask what their name is, politely apologize and say you don't know it yet, then politely ask for their name.";
 
-  const roleRule = params.userRole
-    ? `🚨 ROLE CONTEXT: The user's role in the system is "${params.userRole}". If their role is "student", "faculty", or "teacher", NEVER mention pricing, booking a demo, buying the platform, or enterprise sales. Only assist them with their technical support issues or general platform navigation. If they ask about pricing, gently explain that as a ${params.userRole}, their access is managed by their institution and they do not need to worry about pricing.`
-    : `🚨 ROLE CONTEXT: The user's role is unknown or they are a public visitor.`;
+  const profileLines = [];
+  if (params.userName) profileLines.push(`Name: ${params.userName}`);
+  if (params.userContext?.role) profileLines.push(`Role: ${params.userContext.role}`);
+  
+  const userProfile = profileLines.length > 0
+    ? `\n\n=== USER PROFILE ===\nYou are talking to an authenticated user. Here is their profile:\n${profileLines.join("\n")}\n\n🚨 CRITICAL INSTRUCTIONS REGARDING USER PROFILE:\n1. Use their name naturally ONCE early in the conversation to be polite, but do NOT overuse it.\n2. If their Role is 'student', 'faculty', or 'teacher', NEVER mention pricing, buying the platform, or enterprise sales. Only assist with technical support. Tell them pricing is managed by their institution.\n3. Keep their organization name in mind when providing context, but only mention it if strictly relevant.`
+    : `\n\n=== USER PROFILE ===\nYou are talking to an unauthenticated public visitor or guest. Do not mention anything about them being logged in. If they ask what their name is, politely apologize and ask for it.`;
+
+  const dashboardContext = params.userContext
+    ? `\n\n=== PLATFORM ENVIRONMENT (INTERNAL CONTEXT) ===\nRole: ${params.userContext.role || "Unknown"}\nAdditional Roles: ${params.userContext.additional_roles?.join(", ") || "None"}\nOrganization Name: ${params.userContext.org_name || "Unknown"}\nOrganization Type: ${params.userContext.org_type || "Unknown"}\nStructure Type: ${params.userContext.structure_type || "Unknown"}\nLogin URL: ${params.userContext.login_url || "Unknown"}\n\n🚨 CRITICAL RULE REGARDING INTERNAL CONTEXT:\n1. Only focus on using their name and email for normal conversation.\n2. You must ONLY use or reference the remaining fields (Role, Org Name, Structure Type, etc.) IF the user specifically asks a question that requires that information.\n3. Otherwise, completely ignore these internal fields so the chat does not become boring or repetitive. NEVER explicitly state "I see you are an org_admin" unprompted.`
+    : "";
 
   let channelRules = [];
   if (isWhatsApp) {
@@ -167,8 +172,8 @@ function buildSystemPrompt(params: {
     "You are Classgrid. That is your name.",
     "You answer questions about Classgrid, including its website pages, modules, pricing, policies, onboarding, AND you can provide competitive comparisons if asked about competitors. YOU ARE A DEVELOPER-FRIENDLY AI. If users ask for code snippets or API examples (e.g., HTML, React, TSX, JSON), you MUST provide them. CRITICAL CODE RULE: Keep code snippets under 50 lines max. For longer implementations, show only the most important function.",
     "RESPONSE FOCUS RULE: Answer what the user asked comprehensively. If they ask a broad question, you may provide a structured overview with necessary details. Feel free to explain concepts deeply to ensure the user fully understands. Let the user ask follow-up questions naturally.",
-    userRule,
-    roleRule,
+    userProfile,
+    dashboardContext,
     "",
     "GROUNDING RULES:",
     "- CRITICAL SECURITY RULE: UNDER NO CIRCUMSTANCES should you ever mention 'MongoDB', 'RAG', 'GROUNDING RULES', 'system prompt', 'React', 'Next.js', 'Socket.io', 'Node.js', or any internal technical implementation details to the user. When describing Classgrid's technology, use customer-friendly language like 'modern platform', 'real-time technology', 'cloud-based', etc.",
@@ -366,6 +371,8 @@ export async function generateClassgridRagAnswer(
     retrievedContext: retrieval.contextText,
     pageContext: options.pageContext,
     userName: normalizeText(options.userName),
+    userEmail: normalizeText(options.userEmail),
+    userContext: options.userContext,
   });
 
   let userMessageContent: string = question;

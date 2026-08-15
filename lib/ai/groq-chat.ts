@@ -134,14 +134,20 @@ export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
 
 // ── Response Extraction ──────────────────────────────────────────────────────
 
-function extractResponse(data: unknown): { content: string | null; toolCalls?: any[] } {
-  if (!data || typeof data !== "object") return { content: null };
+function extractResponse(data: unknown): { content: string | null; toolCalls?: any[]; thinking?: string | null } {
+  if (!data || typeof data !== "object") return { content: null, thinking: null };
   const choices = (data as { choices?: unknown }).choices;
-  if (!Array.isArray(choices) || choices.length === 0) return { content: null };
+  if (!Array.isArray(choices) || choices.length === 0) return { content: null, thinking: null };
   const first = choices[0] as any;
+  const message = first.message || {};
+  
+  // Universal thinking extraction
+  const thinking = message.reasoning_content || message.thinking || message.thought || message.thinkingContent || message.reasoning || null;
+
   return {
-    content: first.message?.content || null,
-    toolCalls: first.message?.tool_calls
+    content: message.content || null,
+    toolCalls: message.tool_calls,
+    thinking: thinking
   };
 }
 
@@ -174,6 +180,7 @@ async function tryProvider(
         messages,
         temperature,
         ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
+        reasoning_effort: "high", // Tell capable models to think hard
         tools: TOOLS,
       }),
     });
@@ -317,6 +324,14 @@ async function tryProvider(
         clearTimeout(timeout);
         return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
       }
+    }
+
+    if (result.thinking) {
+      console.log(`\n════════════════════════════════════════════════════════════`);
+      console.log(`🧠 [thinking] ${provider.name.toUpperCase()} Internal Reasoning:`);
+      console.log(`────────────────────────────────────────────────────────────`);
+      console.log(result.thinking.trim());
+      console.log(`════════════════════════════════════════════════════════════`);
     }
 
     if (result.content) {
