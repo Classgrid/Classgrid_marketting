@@ -1,155 +1,67 @@
-# Future Guide: Enabling AI Reasoning & Thinking Logs
+# Guide: Agentic Status UI (Tool Calling Progress)
 
-This guide explains exactly how to add reasoning models (like DeepSeek R1 or OpenAI o3-mini) to your Classgrid backend in the future, so you can see the `🧠 [thinking]` block in your PM2 server logs.
+When you use tools like Vercel v0, Cloudflare, PostHog, or Antigravity IDE, you will notice that before the AI gives you the final answer, it shows a UI block that says something like `[Thinking...]`, `[Searching Web...]`, or `[Generating Code...]` for a few seconds.
 
-> [!WARNING]  
-> **OpenAI Hides Reasoning:** If you use an official OpenAI API Key (for models like `o1` or `o3-mini`), OpenAI explicitly hides the raw thinking process from the API response for "safety and competitive reasons." You will not see the `[thinking]` block with official OpenAI models.
+This is **not** the AI outputting text. This is a UI pattern called **Agentic Status Streaming** (or Tool Calling Progress UI).
+
+Here is exactly how these companies build it, and how your Classgrid AI server is already set up to do it!
+
+---
+
+## 1. How the Architecture Works
+
+When the user sends a message, the server doesn't just wait 10 seconds and send back the whole text. Instead, it opens a **Server-Sent Events (SSE)** connection.
+
+While the AI is "talking to itself" (deciding to call a tool, scraping a URL, or searching Google), the server sends **Status Events** down the stream. 
+
+The React frontend listens to the stream. If it sees a `status` event, it renders a spinner or a loading pill. If it sees an `answer` event, it renders the chat bubble.
+
+### Example SSE Stream:
+```json
+data: { "type": "status", "label": "thinking" }
+// (Frontend shows a spinning brain: "Thinking...")
+
+data: { "type": "status", "label": "searching web" }
+// (Frontend changes spinner to a globe: "Searching the web...")
+
+data: { "type": "status", "label": "analyzing" }
+// (Frontend changes spinner to a magnifying glass: "Analyzing results...")
+
+data: { "type": "answer", "text": "Hello! I found the answer..." }
+// (Frontend hides the spinner and types out the actual message)
+```
+
+---
+
+## 2. How Your Classgrid Server Does This Today
+
+Your server is **already doing this!** 
+
+If you look inside `server-ai/server.ts`, the very first thing it does when a request comes in is send a `thinking` status to the frontend:
+```typescript
+sendEvent({ type: "status", label: "thinking" });
+```
+
+If the AI decides it needs to search the internet, look inside `lib/ai/groq-chat.ts`. You will see these lines:
+```typescript
+console.log(`🌐 Searching Web for: "${args.query}"`);
+onStatus?.("searching"); // This sends the status to the frontend!
+
+// ... after search finishes ...
+onStatus?.("analyzing"); 
+```
+
+---
+
+## 3. How to Build the UI in React (AskAI Panel)
+
+To make your Classgrid frontend look like Vercel v0 or Antigravity IDE, your React component (`AskAiPanel.tsx`) just needs to listen for those status events and show a UI element.
+
+If you want to build this, you can copy and paste this exact prompt to ChatGPT or Claude:
+
+> **Copy & Paste this to ChatGPT / Claude:**
+> *"I have a Node.js SSE backend that streams AI responses. Before the final answer arrives, the backend streams status events like `data: {"type": "status", "label": "searching"}` or `{"type": "status", "label": "thinking"}`.*
 > 
-> **To see the thinking block, you MUST use DeepSeek R1 via OpenRouter or Groq.**
-
----
-
-## 1. How to Add OpenRouter (DeepSeek R1)
-If you get an OpenRouter API key, this is the best way to see the thinking block.
-
-### Step 1: Add the API Key
-On your AWS Server, open your `.env` file and add:
-```bash
-OPENROUTER_API_KEY="sk-or-v1-your-key-here"
-```
-
-### Step 2: Update `lib/ai/groq-chat.ts`
-In `lib/ai/groq-chat.ts`, find the `getProviderChain` function and add the OpenRouter block to the very top:
-
-```typescript
-function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
-  const providers: LLMProvider[] = [];
-
-  const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (openRouterKey) {
-    providers.push({
-      name: "openrouter",
-      url: "https://openrouter.ai/api/v1/chat/completions",
-      apiKey: openRouterKey,
-      model: "deepseek/deepseek-r1:free", 
-    });
-  }
-
-  const geminiKey = process.env.GEMINI_API_KEY?.trim();
-  // ... rest of the code ...
-}
-```
-
-### Step 3: Add `include_reasoning` carefully!
-To force OpenRouter to send the thinking block, you must add `include_reasoning: true` to the request payload. **However, you must only add it for OpenRouter**, otherwise Gemini and Mistral will crash!
-
-Find the `tryProvider` function and update the `body` like this:
-
-```typescript
-      body: JSON.stringify({
-        model: provider.model,
-        messages,
-        temperature,
-        ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
-        
-        // ONLY ADD THIS IF THE PROVIDER IS OPENROUTER OR GROQ
-        ...(provider.name === "openrouter" || provider.name === "groq" ? { include_reasoning: true } : {}),
-        
-        tools: TOOLS,
-      }),
-```
-
----
-
-## 2. How to Add Anthropic (Claude 4 / 5)
-Anthropic is one of the best providers because they **do** expose the internal thinking block via their API. In your list, they call this feature "Adaptive Thinking" or "Extended Thinking".
-
-### Step 1: Add the API Key
-On your AWS Server, open your `.env` file and add:
-```bash
-ANTHROPIC_API_KEY="sk-ant-your-key-here"
-```
-
-### Step 2: Update `lib/ai/groq-chat.ts`
-Add the Anthropic block to `getProviderChain`:
-
-```typescript
-function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
-  const providers: LLMProvider[] = [];
-
-  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
-  if (anthropicKey) {
-    providers.push({
-      name: "anthropic",
-      url: "https://api.anthropic.com/v1/messages",
-      apiKey: anthropicKey,
-      model: "claude-5-sonnet-latest", // Or claude-4-sonnet
-    });
-  }
-
-  // ... rest of the code ...
-}
-```
-
-### Step 3: Enable the Thinking Block for Anthropic
-Unlike OpenAI, Anthropic will give you the thinking block, but you have to specifically ask for it in the API payload by providing a "budget" for how much it is allowed to think.
-
-In `tryProvider`, you would modify the payload for Anthropic like this:
-```typescript
-      body: JSON.stringify({
-        model: provider.model,
-        messages,
-        ...(provider.name === "anthropic" ? { 
-            thinking: { type: "enabled", budget_tokens: 1024 } 
-        } : {}),
-      }),
-```
-
----
-
-## 3. How to Add Official OpenAI
-If you get an official OpenAI API key, here is how to add it (remember, you won't see the thinking block).
-
-### Step 1: Add the API Key
-On your AWS Server, open your `.env` file and add:
-```bash
-OPENAI_API_KEY="sk-your-openai-key-here"
-```
-
-### Step 2: Update `lib/ai/groq-chat.ts`
-Add the OpenAI block to `getProviderChain`:
-
-```typescript
-function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
-  const providers: LLMProvider[] = [];
-
-  const openAIKey = process.env.OPENAI_API_KEY?.trim();
-  if (openAIKey) {
-    providers.push({
-      name: "openai",
-      url: "https://api.openai.com/v1/chat/completions",
-      apiKey: openAIKey,
-      model: "gpt-4o", // Or o3-mini
-    });
-  }
-
-  // ... rest of the code ...
-}
-```
-
----
-
-## 3. How the Thinking Block is Extracted
-Your `groq-chat.ts` file already contains the perfect logic to extract and print the thinking block! You don't need to change this part.
-
-Whenever an API returns a reasoning block, this code automatically catches it and prints it to your PM2 logs:
-
-```typescript
-    if (result.thinking) {
-      console.log(`\n════════════════════════════════════════════════════════════`);
-      console.log(`🧠 [thinking] ${provider.name.toUpperCase()} Internal Reasoning:`);
-      console.log(`────────────────────────────────────────────────────────────`);
-      console.log(result.thinking.trim());
-      console.log(`════════════════════════════════════════════════════════════\n`);
-    }
-```
+> *I want to build a React UI similar to Vercel v0 or Antigravity IDE. When the frontend receives a status event, it should show a temporary, animated loading pill (e.g., 'Thinking...' with a spinner). If the status changes to 'searching', the pill text should update. When the final `{"type": "answer", "text": "..."}` arrives, the status pill should disappear and the markdown text should render.*
+> 
+> *Can you provide the React/Tailwind code for this streaming message loop and the animated status pill?"*
