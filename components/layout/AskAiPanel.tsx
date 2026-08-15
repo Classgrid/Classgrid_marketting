@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import hljs from "highlight.js";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -634,7 +634,7 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   );
 }
 
-function AssistantMessageContent({ content }: { content: string }) {
+const AssistantMessageContent = memo(function AssistantMessageContent({ content, isTyping }: { content: string, isTyping?: boolean }) {
   const blocks = useMemo(() => buildStructuredBlocks(content), [content]);
 
   return (
@@ -696,17 +696,26 @@ function AssistantMessageContent({ content }: { content: string }) {
 
         if (block.type === "code") {
           let highlighted = block.code;
-          try {
-            if (block.language && hljs.getLanguage(block.language)) {
-              highlighted = hljs.highlight(block.code, { language: block.language }).value;
-            } else {
-              highlighted = hljs.highlightAuto(block.code).value;
+          
+          // Disable CPU-heavy syntax highlighting while actively typing to prevent scrolling freeze and main thread locks
+          if (!isTyping) {
+            try {
+              if (block.language && hljs.getLanguage(block.language)) {
+                highlighted = hljs.highlight(block.code, { language: block.language }).value;
+              } else {
+                highlighted = hljs.highlightAuto(block.code).value;
+              }
+            } catch (e) {
+              highlighted = block.code
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
             }
-          } catch (e) {
+          } else {
             highlighted = block.code
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;");
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
           }
 
           // Build line-numbered HTML
@@ -1773,7 +1782,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                                 </AccordionItem>
                               </Accordion>
                             )}
-                            <AssistantMessageContent content={message.content} />
+                            <AssistantMessageContent content={message.content} isTyping={message.typing} />
                           </div>
                         )}
                         {!isUser && !message.typing && message.content.length > 0 && (
