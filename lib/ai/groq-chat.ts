@@ -263,6 +263,7 @@ async function tryProvider(
       console.log(`────────────────────────────────────────────────────────────`);
       console.log(result.thinking.trim());
       console.log(`════════════════════════════════════════════════════════════\n`);
+      onThought?.(result.thinking.trim());
     }
 
     // Handle Tool Calling
