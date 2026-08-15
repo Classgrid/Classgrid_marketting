@@ -292,6 +292,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         question,
         channel: "web",
         userName: firstName,
+        fullName: rawUserName,
         userEmail,
         userRole: normalizeText(body?.userRole),
         userContext: body?.userContext,
@@ -304,6 +305,11 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       });
 
       let answer = result.answer || DEFAULT_ERROR_MESSAGE;
+
+      // ── ADDED BY AI: PRINT THE RAW LLM TEXT TO SERVER LOGS ──────────
+      console.log(`\n════════════════════ RAW LLM OUTPUT ════════════════════`);
+      console.log(answer);
+      console.log(`════════════════════════════════════════════════════════\n`);
 
       // ── 5. ESCALATE TAG PROCESSING (full identical logic from route.ts) ───────
       let escalateMatch = answer.match(ESCALATE_RE);

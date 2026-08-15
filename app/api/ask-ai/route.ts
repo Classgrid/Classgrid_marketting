@@ -316,6 +316,8 @@ export async function POST(req: Request) {
             question,
             channel: "web",
             userName: firstName,
+            fullName: rawUserName,
+            userEmail,
             userRole: normalizeText(body?.userRole),
             history: mergedHistory,
             pageContext: normalizePageContext(body?.pageContext),

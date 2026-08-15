@@ -30,6 +30,9 @@ export type GenerateRagAnswerOptions = {
   question: string;
   channel: RagAnswerChannel;
   userName?: string;
+  fullName?: string;
+  userEmail?: string;
+  userContext?: Record<string, any>;
   history?: ChatHistoryItem[];
   pageContext?: PageContext;
   attachments?: { url: string; name: string; mimeType: string }[];
@@ -101,6 +104,8 @@ function buildSystemPrompt(params: {
   retrievedContext: string;
   pageContext?: PageContext;
   userName?: string;
+  fullName?: string;
+  userEmail?: string;
   userContext?: Record<string, any>;
   isGuest?: boolean;
 }) {
@@ -115,7 +120,9 @@ function buildSystemPrompt(params: {
   const resourceDirectory = formatPlatformResourceDirectory(params.channel);
 
   const profileLines = [];
-  if (params.userName) profileLines.push(`Name: ${params.userName}`);
+  if (params.userName) profileLines.push(`First Name: ${params.userName}`);
+  if (params.fullName) profileLines.push(`Full Name: ${params.fullName}`);
+  if (params.userEmail) profileLines.push(`Email: ${params.userEmail}`);
   if (params.userContext?.role) profileLines.push(`Role: ${params.userContext.role}`);
   
   const userProfile = profileLines.length > 0
@@ -123,7 +130,7 @@ function buildSystemPrompt(params: {
     : `\n\n=== USER PROFILE ===\nYou are talking to an unauthenticated public visitor or guest. Do not mention anything about them being logged in. If they ask what their name is, politely apologize and ask for it.`;
 
   const dashboardContext = params.userContext
-    ? `\n\n=== PLATFORM ENVIRONMENT (INTERNAL CONTEXT) ===\nRole: ${params.userContext.role || "Unknown"}\nAdditional Roles: ${params.userContext.additional_roles?.join(", ") || "None"}\nOrganization Name: ${params.userContext.org_name || "Unknown"}\nOrganization Type: ${params.userContext.org_type || "Unknown"}\nStructure Type: ${params.userContext.structure_type || "Unknown"}\nLogin URL: ${params.userContext.login_url || "Unknown"}\n\n🚨 CRITICAL RULE REGARDING INTERNAL CONTEXT:\n1. Only focus on using their name and email for normal conversation.\n2. You must ONLY use or reference the remaining fields (Role, Org Name, Structure Type, etc.) IF the user specifically asks a question that requires that information.\n3. Otherwise, completely ignore these internal fields so the chat does not become boring or repetitive. NEVER explicitly state "I see you are an org_admin" unprompted.`
+    ? `\n\n=== PLATFORM ENVIRONMENT (INTERNAL CONTEXT) ===\nRole: ${params.userContext.role || "Unknown"}\nAdditional Roles: ${params.userContext.additional_roles?.join(", ") || "None"}\nOrganization Name: ${params.userContext.org_name || "Unknown"}\nOrganization Type: ${params.userContext.org_type || "Unknown"}\nStructure Type: ${params.userContext.structure_type || "Unknown"}\nLogin URL: ${params.userContext.login_url || "Unknown"}\n\n🚨 CRITICAL RULE REGARDING INTERNAL CONTEXT:\n1. Only focus on using their name and email for normal conversation.\n2. You must ONLY use or reference the remaining fields (Role, Org Name, Structure Type, etc.) IF the user specifically asks a question that requires that information.\n3. If you ever output these fields, format them nicely as human-readable text (e.g. "Organization Admin" instead of "org_admin", "Engineering College" instead of "engineering_with_div"). Do NOT output raw database JSON values or bad emojis.\n4. Otherwise, completely ignore these internal fields so the chat does not become boring or repetitive. NEVER explicitly state "I see you are an org_admin" unprompted.`
     : "";
 
   let channelRules = [];
@@ -367,12 +374,14 @@ export async function generateClassgridRagAnswer(
   });
 
   const systemPrompt = buildSystemPrompt({
-    channel,
+    channel: options.channel,
     retrievedContext: retrieval.contextText,
     pageContext: options.pageContext,
-    userName: normalizeText(options.userName),
-    userEmail: normalizeText(options.userEmail),
+    userName: options.userName,
+    fullName: options.fullName,
+    userEmail: options.userEmail,
     userContext: options.userContext,
+    isGuest: options.isGuest,
   });
 
   let userMessageContent: string = question;

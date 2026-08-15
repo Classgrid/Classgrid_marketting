@@ -141,14 +141,75 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
   const first = choices[0] as any;
   const message = first.message || {};
   
-  // Universal thinking extraction
-  const thinking = message.reasoning_content || message.thinking || message.thought || message.thinkingContent || message.reasoning || null;
-
+  // 1. Check standard API fields for universal thinking extraction
+  let thinking = message.reasoning_content || message.thinking || message.thought || message.thinkingContent || message.reasoning || null;
   let content = message.content;
+  
+  // 2. Handle Anthropic / OpenRouter Array Format
   if (Array.isArray(content)) {
-    content = content.map((c: any) => c.text || (typeof c === 'string' ? c : JSON.stringify(c))).join("\\n");
+    let textParts: string[] = [];
+    for (const block of content) {
+      if (typeof block === 'string') {
+        textParts.push(block);
+      } else if (block.type === 'thinking') {
+        thinking = typeof block.thinking === 'string' ? block.thinking : JSON.stringify(block.thinking);
+      } else if (block.type === 'text' || block.text) {
+        textParts.push(block.text);
+      }
+    }
+    content = textParts.join("\n");
   } else if (typeof content === "object" && content !== null) {
     content = JSON.stringify(content);
+  }
+
+  // 3. Handle Raw String Leaks (DeepSeek <think> or OpenRouter JSON)
+  if (typeof content === "string") {
+    // Check for DeepSeek style: <think>...</think>
+    const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
+    if (thinkMatch) {
+      if (!thinking) thinking = thinkMatch[1].trim();
+      content = content.replace(/<think>[\s\S]*?<\/think>\n?/g, "").trim();
+    }
+    
+    // Check for OpenRouter JSON leak style (Mistral/Claude)
+    if (content.trim().startsWith('{"type":"thinking"')) {
+      // Find the end of the JSON object roughly by looking for the first `\n\n` or the end of the array
+      // A more reliable way is to just match the outer JSON object, but since LLM output varies, 
+      // let's do a simple extraction of everything up to the first newline that isn't inside quotes,
+      // or just strip the entire {"type":"thinking"...} structure.
+      
+      try {
+        // Try to isolate the JSON part from the rest of the text
+        const parts = content.split('}\n');
+        if (parts.length > 1) {
+          const possibleJson = parts[0] + '}';
+          const parsed = JSON.parse(possibleJson);
+          if (parsed.type === "thinking") {
+             thinking = JSON.stringify(parsed.thinking, null, 2);
+             content = parts.slice(1).join('}\n').trim();
+          }
+        } else {
+          // Fallback if it's all mushed together: Just regex strip the starting JSON array 
+          const match = content.match(/^{"type":"thinking","thinking":\[[\s\S]*?\}\]\}(?:\n|,?)/);
+          if (match) {
+            try {
+              const parsed = JSON.parse(match[0].replace(/,\n?$/, '').trim());
+              thinking = JSON.stringify(parsed.thinking, null, 2);
+            } catch (e) {
+              thinking = match[0]; // fallback
+            }
+            content = content.replace(match[0], "").trim();
+          }
+        }
+      } catch (e) {
+        // If parsing fails, try aggressive regex to just wipe it from the UI
+        const aggressiveMatch = content.match(/^{"type":"thinking"[\s\S]*?\}\]\},?\n?/);
+        if (aggressiveMatch) {
+          thinking = aggressiveMatch[0];
+          content = content.replace(aggressiveMatch[0], "").trim();
+        }
+      }
+    }
   }
 
   return {
@@ -206,6 +267,12 @@ async function tryProvider(
     }
 
     const data = await response.json();
+    
+    // ── ADDED BY AI: PRINT THE RAW PROVIDER JSON TO SERVER LOGS ──────────
+    console.log(`\n════════════════ RAW PROVIDER RESPONSE ════════════════`);
+    console.log(JSON.stringify(data, null, 2));
+    console.log(`═══════════════════════════════════════════════════════\n`);
+    
     const result = extractResponse(data);
     const usage = (data as any).usage ? `[Tokens: ${(data as any).usage.total_tokens || 'Unknown'}]` : '';
 
