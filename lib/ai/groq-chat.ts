@@ -218,7 +218,8 @@ async function tryProvider(
   maxTokens: number,
   timeoutMs: number,
   onStatus?: (label: string) => void,
-  onThought?: (thought: string) => void
+  onThought?: (thought: string) => void,
+  depth: number = 0
 ): Promise<{ answer: string | null; rateLimited: boolean; error?: string }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -278,6 +279,11 @@ async function tryProvider(
 
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
+      if (depth >= 4) {
+        console.error(`❌ [llm:${provider.name}] Maximum tool call depth (4) reached. Aborting loop.`);
+        return { answer: "I've used too many tools and need to stop here to save resources. Based on what I found so far, I cannot fully answer. Please try asking in a different way!", rateLimited: false, error: "max_depth" };
+      }
+
       const call = result.toolCalls[0];
       console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name}`);
 
@@ -293,7 +299,7 @@ async function tryProvider(
             { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
           ];
           clearTimeout(timeout);
-          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
         }
 
         console.log(`\n════════════════════════════════════════════════════════════`);
@@ -312,7 +318,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
       } else if (call.function.name === 'check_status_page') {
         console.log(`🌐 [llm:${provider.name}] Checking Classgrid Status Page...`);
         onStatus?.("checking status");
@@ -345,7 +351,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
       } else if (call.function.name === 'read_url') {
         let args;
         try {
@@ -358,7 +364,7 @@ async function tryProvider(
             { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
           ];
           clearTimeout(timeout);
-          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
         }
         console.log(`🌐 [llm:${provider.name}] Reading URL: "${args.url}"`);
         onStatus?.("reading page");
@@ -366,7 +372,7 @@ async function tryProvider(
         let scrapeResultText = "Failed to fetch or parse the URL.";
         try {
           const scrapeController = new AbortController();
-          const scrapeTimeout = setTimeout(() => scrapeController.abort(), 8000); // 8 second strict timeout
+          const scrapeTimeout = setTimeout(() => scrapeController.abort(), 20000); // 20 second strict timeout
           
           const res = await fetch(args.url, {
             signal: scrapeController.signal,
@@ -401,7 +407,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
       } else if (call.function.name === 'search_web') {
         let args;
         try {
@@ -414,17 +420,21 @@ async function tryProvider(
             { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
           ];
           clearTimeout(timeout);
-          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
         }
         console.log(`🌐 [llm:${provider.name}] Searching Web for: "${args.query}"`);
         onStatus?.("searching");
 
         let searchResultText = "No reliable search results found.";
         try {
+          const searchController = new AbortController();
+          const searchTimeout = setTimeout(() => searchController.abort(), 20000); // 20 second strict timeout
+          
           const tavilyKey = process.env.TAVILY_API_KEY?.trim();
           if (tavilyKey) {
             const tavilyRes = await fetch("https://api.tavily.com/search", {
               method: "POST",
+              signal: searchController.signal,
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 api_key: tavilyKey,
@@ -434,6 +444,7 @@ async function tryProvider(
                 max_results: 5
               })
             });
+            clearTimeout(searchTimeout);
             const searchData = await tavilyRes.json();
             if (searchData.answer) {
               const sourceUrls = (searchData.results || []).map((r: any) => `- ${r.title}: ${r.url}`).join('\n');
@@ -458,7 +469,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
       }
     }
 
