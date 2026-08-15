@@ -145,7 +145,16 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
       if (typeof block === 'string') {
         textParts.push(block);
       } else if (block.type === 'thinking') {
-        thinking = typeof block.thinking === 'string' ? block.thinking : JSON.stringify(block.thinking);
+        if (typeof block.thinking === 'string') {
+          thinking = block.thinking;
+        } else if (Array.isArray(block.thinking)) {
+          thinking = block.thinking
+            .filter((t: any) => t.type === 'text' && t.text)
+            .map((t: any) => t.text)
+            .join('\n');
+        } else {
+          thinking = JSON.stringify(block.thinking);
+        }
       } else if (block.type === 'text' || block.text) {
         textParts.push(block.text);
       }

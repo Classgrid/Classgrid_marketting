@@ -324,6 +324,7 @@ export async function POST(req: Request) {
             attachments: body?.attachments,
             isGuest,
             onStatus: (label: string) => sendEvent({ type: "status", label }),
+            onThought: (thought: string) => sendEvent({ type: "thought", thought }),
           });
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
