@@ -1291,29 +1291,36 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
   async function typeAssistantResponse(answer: string) {
     const runId = ++typingRunRef.current;
-    const assistantId = createMessageId("assistant");
 
-    setMessages((current) => [
-      ...current,
-      {
-        id: assistantId,
-        role: "assistant",
-        content: "",
-        createdAt: Date.now(),
-        typing: true,
-      },
-    ]);
+    setMessages((current) => {
+      const last = current[current.length - 1];
+      if (last && last.role === "assistant" && !last.content) {
+        return current.map(m => m.id === last.id ? { ...m, typing: true } : m);
+      }
+      return [
+        ...current,
+        {
+          id: createMessageId("assistant"),
+          role: "assistant",
+          content: "",
+          createdAt: Date.now(),
+          typing: true,
+        },
+      ];
+    });
 
     for (let index = 1; index <= answer.length; index += 1) {
       if (runId !== typingRunRef.current) return;
 
-      setMessages((current) =>
-        current.map((message) =>
-          message.id === assistantId
+      setMessages((current) => {
+        const last = current[current.length - 1];
+        if (!last || last.role !== "assistant") return current;
+        return current.map((message) =>
+          message.id === last.id
             ? { ...message, content: answer.slice(0, index) }
             : message
-        )
-      );
+        );
+      });
 
       const delay = getCharDelay(answer[index - 1]);
       if (delay > 0) {
@@ -1323,11 +1330,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     if (runId !== typingRunRef.current) return;
 
-    setMessages((current) =>
-      current.map((message) =>
-        message.id === assistantId ? { ...message, typing: false } : message
-      )
-    );
+    setMessages((current) => {
+      const last = current[current.length - 1];
+      if (!last || last.role !== "assistant") return current;
+      return current.map((message) =>
+        message.id === last.id ? { ...message, typing: false } : message
+      );
+    });
   }
 
   async function askQuestion(question: string) {
@@ -1497,11 +1506,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 finalPayload = event;
               } else if (event.type === "thought") {
                 setMessages((prev) => {
-                  const lastMsg = prev[prev.length - 1];
-                  if (!lastMsg || lastMsg.role !== "assistant") return prev;
+                  let lastMsg = prev[prev.length - 1];
+                  let targetPrev = prev;
+                  if (!lastMsg || lastMsg.role !== "assistant") {
+                    lastMsg = { id: createMessageId("assistant"), role: "assistant", content: "", createdAt: Date.now() };
+                    targetPrev = [...prev, lastMsg];
+                  }
                   const thoughtText = event.thought || event.content || "";
                   return [
-                    ...prev.slice(0, -1),
+                    ...targetPrev.slice(0, -1),
                     { ...lastMsg, thought: (lastMsg.thought || "") + thoughtText + "\n\n" }
                   ];
                 });
