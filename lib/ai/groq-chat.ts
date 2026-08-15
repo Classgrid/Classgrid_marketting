@@ -279,13 +279,17 @@ async function tryProvider(
 
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
-      if (depth >= 4) {
-        console.error(`❌ [llm:${provider.name}] Maximum tool call depth (4) reached. Aborting loop.`);
-        return { answer: "I've used too many tools and need to stop here to save resources. Based on what I found so far, I cannot fully answer. Please try asking in a different way!", rateLimited: false, error: "max_depth" };
+      
+      const isDeepSearch = messages.some(m => m.role === "user" && (m.content.toLowerCase().includes("deep search") || m.content.toLowerCase().includes("exhaustive")));
+      const maxDepth = isDeepSearch ? 4 : 2;
+
+      if (depth >= maxDepth) {
+        console.error(`❌ [llm:${provider.name}] Maximum tool call depth (${maxDepth}) reached. Aborting loop.`);
+        return { answer: "I've reached my search limit for this question to save resources! Based on what I found so far, I cannot fully answer. Please try asking in a different way or specify 'deep search' if you want me to look further!", rateLimited: false, error: "max_depth" };
       }
 
       const call = result.toolCalls[0];
-      console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name}`);
+      console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name} (Depth: ${depth + 1}/${maxDepth})`);
 
       if (call.function.name === 'internal_thought_process') {
         let args;
