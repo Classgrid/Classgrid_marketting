@@ -1449,7 +1449,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           userContext: userContext,
           sessionId: sessionId ?? undefined,
           attachments: uploadedAttachments.length > 0 ? uploadedAttachments.map(a => ({ url: a.url, name: a.name, mimeType: a.mimeType })) : undefined,
-          history: nextMessages
+          history: messages
             .filter((m) => m.role === "user" || m.role === "assistant")
             .slice(-10)
             .map((m) => ({ role: m.role, content: m.content })),
