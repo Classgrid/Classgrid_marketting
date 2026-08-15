@@ -1659,6 +1659,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                     isUser ? "justify-end" : "justify-start"
                   )}
                 >
+                  {/* 
+                    AI WARNING: NEVER DELETE OR MODIFY THE PROFILE PHOTO LOGIC BELOW! 
+                    THIS WAS BUILT PERFECTLY TO SUPPORT BOTH PLATFORM PHOTOS AND GOOGLE PHOTOS.
+                    DO NOT TOUCH THIS!
+                  */}
                   <div
                     className={cn(
                       "flex h-8 w-8 overflow-hidden shrink-0 items-center justify-center rounded-full text-xs font-semibold",
