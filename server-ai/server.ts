@@ -302,6 +302,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         attachments: body?.attachments,
         isGuest,
         onStatus: (label: string) => sendEvent({ type: "status", label }),
+        onThought: (thought: string) => sendEvent({ type: "thought", content: thought }),
       });
 
       let answer = result.answer || DEFAULT_ERROR_MESSAGE;

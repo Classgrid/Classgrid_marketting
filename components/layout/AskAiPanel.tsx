@@ -42,6 +42,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import type { PageContext } from "@/lib/ai/rag-content";
 import { useSession } from "next-auth/react";
@@ -85,6 +91,7 @@ type ChatMessage = {
   contextUrl?: string;
   contextTitle?: string;
   attachments?: AiAttachment[];
+  thought?: string;
 };
 
 type ListItem = {
@@ -1488,6 +1495,15 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 );
               } else if (event.type === "answer") {
                 finalPayload = event;
+              } else if (event.type === "thought") {
+                setMessages((prev) => {
+                  const lastMsg = prev[prev.length - 1];
+                  if (!lastMsg || lastMsg.role !== "assistant") return prev;
+                  return [
+                    ...prev.slice(0, -1),
+                    { ...lastMsg, thought: (lastMsg.thought || "") + event.content + "\n\n" }
+                  ];
+                });
               } else if (event.type === "error") {
                 streamError = event.error || "Unable to answer right now. Please try again.";
               }
@@ -1727,7 +1743,24 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                             )}
                           </>
                         ) : (
-                          <div className="pl-1"><AssistantMessageContent content={message.content} /></div>
+                          <div className="pl-1 w-full max-w-full">
+                            {message.thought && (
+                              <Accordion type="single" collapsible defaultValue="thought" className="mb-4">
+                                <AccordionItem value="thought" className="border-none">
+                                  <AccordionTrigger className="w-fit flex-none justify-start gap-1.5 px-2.5 py-1.5 h-auto text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 hover:no-underline dark:bg-white/5 dark:border-white/10 dark:text-slate-400 dark:hover:bg-white/10 transition-colors [&>svg]:size-3 [&>svg]:ml-0">
+                                    <span className="group-aria-[expanded=false]/accordion-trigger:hidden">Hide reasoning</span>
+                                    <span className="group-aria-[expanded=true]/accordion-trigger:hidden">Show reasoning</span>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="pt-3 pb-1 px-1">
+                                    <div className="border-l-[3px] border-slate-200 dark:border-white/10 pl-3.5 py-0.5 text-[13px] text-slate-500 dark:text-slate-400 font-mono whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto custom-scrollbar">
+                                      {message.thought.trim()}
+                                    </div>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
+                            )}
+                            <AssistantMessageContent content={message.content} />
+                          </div>
                         )}
                         {!isUser && !message.typing && message.content.length > 0 && (
                           <div className="pl-1 mt-3">

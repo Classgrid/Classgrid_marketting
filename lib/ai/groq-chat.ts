@@ -25,6 +25,7 @@ export type GroqChatOptions = {
   maxTokens?: number;
   timeoutMs?: number;
   onStatus?: (label: string) => void;
+  onThought?: (thought: string) => void;
 };
 
 // ── Provider Definitions ─────────────────────────────────────────────────────
@@ -37,6 +38,20 @@ type LLMProvider = {
 };
 
 const TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "internal_thought_process",
+      description: "CRITICAL: If you need to plan your response, analyze rules, or think step-by-step before answering the user, you MUST call this tool FIRST. Never output raw thoughts as text.",
+      parameters: {
+        type: "object",
+        properties: {
+          thought: { type: "string", description: "Your internal reasoning, step-by-step plan, or thought process." }
+        },
+        required: ["thought"]
+      }
+    }
+  },
   {
     type: "function",
     function: {
@@ -183,7 +198,8 @@ async function tryProvider(
   temperature: number,
   maxTokens: number,
   timeoutMs: number,
-  onStatus?: (label: string) => void
+  onStatus?: (label: string) => void,
+  onThought?: (thought: string) => void
 ): Promise<{ answer: string | null; rateLimited: boolean; error?: string }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -245,7 +261,39 @@ async function tryProvider(
       const call = result.toolCalls[0];
       console.log(`🛠️  [llm:${provider.name}] Tool Call Triggered: ${call.function.name}`);
 
-      if (call.function.name === 'check_status_page') {
+      if (call.function.name === 'internal_thought_process') {
+        let args;
+        try {
+          args = JSON.parse(call.function.arguments);
+        } catch (e) {
+          console.error(`❌ [llm:${provider.name}] Bad JSON in thought arguments:`, call.function.arguments);
+          const nextMessages: GroqMessage[] = [
+            ...messages,
+            { role: "assistant", content: result.content || "", tool_calls: [call] },
+            { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
+          ];
+          clearTimeout(timeout);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+        }
+
+        console.log(`\n════════════════════════════════════════════════════════════`);
+        console.log(`🧠 [thinking via tool] ${provider.name.toUpperCase()} Internal Reasoning:`);
+        console.log(`────────────────────────────────────────────────────────────`);
+        console.log(args.thought);
+        console.log(`════════════════════════════════════════════════════════════\n`);
+
+        onThought?.(args.thought);
+        onStatus?.("analyzing");
+
+        const nextMessages: GroqMessage[] = [
+          ...messages,
+          { role: "assistant", content: result.content || "", tool_calls: [call] },
+          { role: "tool", tool_call_id: call.id, content: "Thought logged successfully. Please provide your final answer to the user now." }
+        ];
+
+        clearTimeout(timeout);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
+      } else if (call.function.name === 'check_status_page') {
         console.log(`🌐 [llm:${provider.name}] Checking Classgrid Status Page...`);
         onStatus?.("checking status");
 
@@ -277,7 +325,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
       } else if (call.function.name === 'read_url') {
         let args;
         try {
@@ -290,7 +338,7 @@ async function tryProvider(
             { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
           ];
           clearTimeout(timeout);
-          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
         }
         console.log(`🌐 [llm:${provider.name}] Reading URL: "${args.url}"`);
         onStatus?.("reading page");
@@ -333,7 +381,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
       } else if (call.function.name === 'search_web') {
         let args;
         try {
@@ -346,7 +394,7 @@ async function tryProvider(
             { role: "tool", tool_call_id: call.id, content: "Error: Invalid JSON arguments. Please correct and try again." }
           ];
           clearTimeout(timeout);
-          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
         }
         console.log(`🌐 [llm:${provider.name}] Searching Web for: "${args.query}"`);
         onStatus?.("searching");
@@ -390,7 +438,7 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus);
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought);
       }
     }
 
@@ -431,6 +479,7 @@ export async function generateGroqReply({
   maxTokens = 600,
   timeoutMs = 60000,
   onStatus,
+  onThought,
 }: GroqChatOptions): Promise<string | null> {
   const chain = getProviderChain(channel);
 
@@ -442,7 +491,7 @@ export async function generateGroqReply({
   let allRateLimited = true;
 
   for (const provider of chain) {
-    const result = await tryProvider(provider, messages, temperature, maxTokens, timeoutMs, onStatus);
+    const result = await tryProvider(provider, messages, temperature, maxTokens, timeoutMs, onStatus, onThought);
 
     if (result.answer) {
       return result.answer;
