@@ -1499,9 +1499,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                 setMessages((prev) => {
                   const lastMsg = prev[prev.length - 1];
                   if (!lastMsg || lastMsg.role !== "assistant") return prev;
+                  const thoughtText = event.thought || event.content || "";
                   return [
                     ...prev.slice(0, -1),
-                    { ...lastMsg, thought: (lastMsg.thought || "") + event.content + "\n\n" }
+                    { ...lastMsg, thought: (lastMsg.thought || "") + thoughtText + "\n\n" }
                   ];
                 });
               } else if (event.type === "error") {
