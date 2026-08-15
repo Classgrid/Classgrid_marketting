@@ -453,7 +453,9 @@ export async function generateClassgridRagAnswer(
       : channel === "telegram"
         ? DEFAULT_TELEGRAM_FALLBACK
         : DEFAULT_WEB_FALLBACK;
-  const finalAnswer = enforceOnboardingLanguage(answer?.trim() || fallback);
+  const finalAnswer = enforceOnboardingLanguage(
+    (typeof answer === "string" ? answer.trim() : answer ? JSON.stringify(answer) : "") || fallback
+  );
 
   return {
     answer: channel === "whatsapp" ? trimWhatsAppAnswer(finalAnswer) : finalAnswer,

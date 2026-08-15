@@ -144,8 +144,15 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
   // Universal thinking extraction
   const thinking = message.reasoning_content || message.thinking || message.thought || message.thinkingContent || message.reasoning || null;
 
+  let content = message.content;
+  if (Array.isArray(content)) {
+    content = content.map((c: any) => c.text || (typeof c === 'string' ? c : JSON.stringify(c))).join("\\n");
+  } else if (typeof content === "object" && content !== null) {
+    content = JSON.stringify(content);
+  }
+
   return {
-    content: message.content || null,
+    content: content || null,
     toolCalls: message.tool_calls,
     thinking: thinking
   };
