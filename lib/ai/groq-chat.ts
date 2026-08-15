@@ -173,21 +173,31 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
       content = content.replace(/<think>[\s\S]*?<\/think>\n?/g, "").trim();
     }
     
-    // Check for OpenRouter JSON leak style (Mistral/Claude)
+    // Check for JSON leak style (Mistral often leaks `[{"type":"text"...` instead of calling the tool)
     const trimmedContent = content.trim();
-    if (trimmedContent.startsWith('{"type":"thinking"')) {
-      // 1. Force the entire raw JSON into the thinking block so it GUARANTEES it prints in the server logs!
-      thinking = content;
-      
-      // 2. Try to extract ONLY the real answer text to show to the user UI
-      const textMatch = content.match(/"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"([\s\S]*?)"\s*\}/);
-      
-      if (textMatch) {
-        // Parse the escaped newlines and quotes back to normal text
-        content = textMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
-      } else {
-        // Fallback: If we can't find the text block, do not show the JSON to the user!
-        content = "I am processing your request. (The response was captured in the server logs).";
+    if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmedContent);
+        
+        // It successfully parsed as JSON, meaning Mistral leaked JSON into the content block!
+        // 1. Force the entire raw JSON into the thinking block so it GUARANTEES it shows in the UI and logs!
+        thinking = content;
+        
+        // 2. Extract ONLY the real answer text to show as the final reply
+        if (Array.isArray(parsed)) {
+          const textBlocks = parsed.filter(b => (b.type === "text" || b.type === "answer") && b.text);
+          if (textBlocks.length > 0) {
+            content = textBlocks.map(b => b.text).join('\n');
+          } else {
+            content = "I am processing your request.";
+          }
+        } else if (parsed.text) {
+          content = parsed.text;
+        } else {
+          content = "I am processing your request.";
+        }
+      } catch (e) {
+        // Not valid JSON, ignore and leave content as normal text
       }
     }
   }
