@@ -437,7 +437,7 @@ export async function generateClassgridRagAnswer(
 
   // Fallback to Mistral/Groq if no image, or if native Gemini failed or was rate-limited
   if (!answer || answer === "[RATE_LIMITED]") {
-    answer = await generateGroqReply({
+    const groqRes = await generateGroqReply({
       messages,
       channel,
       maxTokens: channel === "whatsapp" ? 220 : 1500,
@@ -445,6 +445,7 @@ export async function generateClassgridRagAnswer(
       temperature: 0.35,
       onStatus: options.onStatus,
     });
+    answer = groqRes || "[RATE_LIMITED]";
   }
 
   if (answer === "[RATE_LIMITED]") {

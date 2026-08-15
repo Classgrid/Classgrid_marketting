@@ -151,7 +151,13 @@ export async function answerChatWithGeminiNatively(
     fullPrompt += `CURRENT USER MESSAGE:\n${userMessage}`;
 
     const result = await model.generateContent([fullPrompt, imagePart]);
-    return result.response.text()?.trim() || null;
+    const text = result.response.text()?.trim() || null;
+    
+    console.log(`\n════════════════ RAW PROVIDER RESPONSE (GEMINI NATIVE) ════════════════`);
+    console.log(text);
+    console.log(`══════════════════════════════════════════════════════════════════════\n`);
+    
+    return text;
   } catch (error: any) {
     console.error("[gemini-ocr] Native chat failed:", error);
     if (error?.status === 429 || error?.message?.includes("429")) {
