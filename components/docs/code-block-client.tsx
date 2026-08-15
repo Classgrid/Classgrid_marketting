@@ -53,7 +53,7 @@ export function CodeBlockClient({ rawCode, html, language = 'javascript' }: { ra
         
         <button
           onClick={onCopy}
-          className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5"
+          className="flex items-center gap-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5"
           title="Copy code"
         >
           {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
