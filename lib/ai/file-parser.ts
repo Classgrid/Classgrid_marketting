@@ -1,4 +1,4 @@
-import officeParser from 'officeparser';
+import * as officeParser from 'officeparser';
 import { extractPdfWithGemini } from './gemini-ocr';
 
 /**
@@ -24,7 +24,7 @@ export async function extractTextFromAttachment(url: string, mimeType: string): 
     }
 
     // Fallback or non-PDF files: use officeparser (supports PDF, DOCX, PPTX, XLSX)
-    const text = await (officeParser as any).parseOfficeAsync(buffer);
+    const text = await officeParser.parseOffice(buffer);
     return text?.trim() || null;
   } catch (error) {
     console.error("Error parsing attachment:", error);
