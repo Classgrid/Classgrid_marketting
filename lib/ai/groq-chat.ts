@@ -82,13 +82,14 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
+  const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (openRouterKey) {
     providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: process.env.GROQ_MODEL?.trim() || "deepseek-r1-distill-llama-70b", // <-- CHANGED TO DEEPSEEK TO SHOW THINKING
+      name: "openrouter",
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      apiKey: openRouterKey,
+      // FORCE DEEPSEEK R1 TO SHOW THE THINKING BLOCK
+      model: process.env.OPENROUTER_MODEL?.trim() || "deepseek/deepseek-r1:free", 
     });
   }
 
@@ -112,13 +113,13 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (openRouterKey) {
+  const groqKey = process.env.GROQ_API_KEY?.trim();
+  if (groqKey) {
     providers.push({
-      name: "openrouter",
-      url: "https://openrouter.ai/api/v1/chat/completions",
-      apiKey: openRouterKey,
-      model: process.env.OPENROUTER_MODEL?.trim() || "meta-llama/llama-3.2-3b-instruct:free",
+      name: "groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: groqKey,
+      model: process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile",
     });
   }
 
@@ -127,7 +128,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
 
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
   const chain = getProviderChain(channel);
-  return chain.length > 0 ? chain[0].model : "deepseek-r1-distill-llama-70b";
+  return chain.length > 0 ? chain[0].model : "deepseek/deepseek-r1:free";
 }
 
 // ── Response Extraction ──────────────────────────────────────────────────────
