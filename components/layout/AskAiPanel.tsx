@@ -764,7 +764,7 @@ const AssistantMessageContent = memo(function AssistantMessageContent({ content,
       })}
     </div>
   );
-}
+});
 
 export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow" }: AskAiPanelProps) {
   const { data: session } = useSession();
