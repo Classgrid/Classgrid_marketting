@@ -82,16 +82,6 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: process.env.GROQ_MODEL?.trim() || "deepseek-r1-distill-qwen-32b", 
-    });
-  }
-
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   if (geminiKey) {
     providers.push({
@@ -112,23 +102,12 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (openRouterKey) {
-    providers.push({
-      name: "openrouter",
-      url: "https://openrouter.ai/api/v1/chat/completions",
-      apiKey: openRouterKey,
-      // FORCE DEEPSEEK R1 TO SHOW THE THINKING BLOCK
-      model: process.env.OPENROUTER_MODEL?.trim() || "deepseek/deepseek-r1:free", 
-    });
-  }
-
   return providers;
 }
 
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
   const chain = getProviderChain(channel);
-  return chain.length > 0 ? chain[0].model : "deepseek-r1-distill-qwen-32b";
+  return chain.length > 0 ? chain[0].model : "gemini-3.5-flash";
 }
 
 // ── Response Extraction ──────────────────────────────────────────────────────
