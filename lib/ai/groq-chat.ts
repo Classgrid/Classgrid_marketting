@@ -324,7 +324,8 @@ async function tryProvider(
         ];
 
         clearTimeout(timeout);
-        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
+        // CRITICAL FIX: Do NOT increment depth for thoughts so we don't punish the model for reasoning!
+        return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth);
       } else if (call.function.name === 'check_status_page') {
         console.log(`🌐 [llm:${provider.name}] Checking Classgrid Status Page...`);
         onStatus?.("checking status");
@@ -372,6 +373,22 @@ async function tryProvider(
           clearTimeout(timeout);
           return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
         }
+
+        // DUPLICATE URL BLOCKER
+        const alreadyRead = messages.some(m => 
+          m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'read_url' && tc.function.arguments.includes(args.url))
+        );
+        if (alreadyRead) {
+          console.error(`⚠️ [llm:${provider.name}] Blocked duplicate read_url call for: "${args.url}"`);
+          const nextMessages: GroqMessage[] = [
+            ...messages,
+            { role: "assistant", content: result.content || "", tool_calls: [call] },
+            { role: "tool", tool_call_id: call.id, content: "ERROR: You have ALREADY read this exact URL in this conversation. Do NOT read it again. Please use the context you already gathered to provide your final answer to the user immediately." }
+          ];
+          clearTimeout(timeout);
+          return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1);
+        }
+
         console.log(`🌐 [llm:${provider.name}] Reading URL: "${args.url}"`);
         onStatus?.("reading page");
 
