@@ -285,7 +285,7 @@ async function tryProvider(
 
       if (depth >= maxDepth) {
         console.error(`❌ [llm:${provider.name}] Maximum tool call depth (${maxDepth}) reached. Aborting loop.`);
-        return { answer: "I've reached my search limit for this question to save resources! Based on what I found so far, I cannot fully answer. Please try asking in a different way or specify 'deep search' if you want me to look further!", rateLimited: false, error: "max_depth" };
+        return { answer: "I searched the web, but I couldn't find a clear answer or any verified details about that. Could you try rephrasing your question or providing a bit more context?", rateLimited: false, error: "max_depth" };
       }
 
       const call = result.toolCalls[0];
