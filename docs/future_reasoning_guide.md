@@ -61,7 +61,53 @@ Find the `tryProvider` function and update the `body` like this:
 
 ---
 
-## 2. How to Add Official OpenAI
+## 2. How to Add Anthropic (Claude 4 / 5)
+Anthropic is one of the best providers because they **do** expose the internal thinking block via their API. In your list, they call this feature "Adaptive Thinking" or "Extended Thinking".
+
+### Step 1: Add the API Key
+On your AWS Server, open your `.env` file and add:
+```bash
+ANTHROPIC_API_KEY="sk-ant-your-key-here"
+```
+
+### Step 2: Update `lib/ai/groq-chat.ts`
+Add the Anthropic block to `getProviderChain`:
+
+```typescript
+function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
+  const providers: LLMProvider[] = [];
+
+  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
+  if (anthropicKey) {
+    providers.push({
+      name: "anthropic",
+      url: "https://api.anthropic.com/v1/messages",
+      apiKey: anthropicKey,
+      model: "claude-5-sonnet-latest", // Or claude-4-sonnet
+    });
+  }
+
+  // ... rest of the code ...
+}
+```
+
+### Step 3: Enable the Thinking Block for Anthropic
+Unlike OpenAI, Anthropic will give you the thinking block, but you have to specifically ask for it in the API payload by providing a "budget" for how much it is allowed to think.
+
+In `tryProvider`, you would modify the payload for Anthropic like this:
+```typescript
+      body: JSON.stringify({
+        model: provider.model,
+        messages,
+        ...(provider.name === "anthropic" ? { 
+            thinking: { type: "enabled", budget_tokens: 1024 } 
+        } : {}),
+      }),
+```
+
+---
+
+## 3. How to Add Official OpenAI
 If you get an official OpenAI API key, here is how to add it (remember, you won't see the thinking block).
 
 ### Step 1: Add the API Key
