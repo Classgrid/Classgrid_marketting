@@ -226,6 +226,7 @@ async function tryProvider(
         temperature,
         ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
         reasoning_effort: "high", // Tell capable models to think hard
+        include_reasoning: true, // CRITICAL FOR OPENROUTER DEEPSEEK TO RETURN THINKING BLOCK
         tools: TOOLS,
       }),
     });
