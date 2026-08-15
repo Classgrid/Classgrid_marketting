@@ -400,7 +400,7 @@ export async function POST(req: Request) {
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
-              answer = "I understand this is frustrating, especially with a deadline approaching. I've flagged this issue to our support team so they can look into it right away! 🙏";
+              answer = "Your request has been forwarded to the Classgrid support team! They will review it and get back to you shortly.";
             }
 
             const email = userEmail || body?.userEmail;
