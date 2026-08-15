@@ -285,6 +285,8 @@ async function tryProvider(
 
       if (depth >= maxDepth) {
         console.error(`❌ [llm:${provider.name}] Maximum tool call depth (${maxDepth}) reached. Aborting loop.`);
+        const attemptedTool = result.toolCalls[0]?.function?.name || "unknown";
+        console.error(`❌ [llm:${provider.name}] The AI was trying to call tool: "${attemptedTool}" when it was aborted.`);
         return { answer: "I searched the web, but I couldn't find a clear answer or any verified details about that. Could you try rephrasing your question or providing a bit more context?", rateLimited: false, error: "max_depth" };
       }
 
