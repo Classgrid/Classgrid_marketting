@@ -634,7 +634,7 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   );
 }
 
-const AssistantMessageContent = memo(function AssistantMessageContent({ content, isTyping }: { content: string, isTyping?: boolean }) {
+const AssistantMessageContent = memo(({ content, isTyping }: { content: string, isTyping?: boolean }) => {
   const blocks = useMemo(() => buildStructuredBlocks(content), [content]);
 
   return (
