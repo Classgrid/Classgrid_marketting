@@ -276,6 +276,14 @@ async function tryProvider(
     const result = extractResponse(data);
     const usage = (data as any).usage ? `[Tokens: ${(data as any).usage.total_tokens || 'Unknown'}]` : '';
 
+    if (result.thinking) {
+      console.log(`\n════════════════════════════════════════════════════════════`);
+      console.log(`🧠 [thinking] ${provider.name.toUpperCase()} Internal Reasoning:`);
+      console.log(`────────────────────────────────────────────────────────────`);
+      console.log(result.thinking.trim());
+      console.log(`════════════════════════════════════════════════════════════\n`);
+    }
+
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
       const call = result.toolCalls[0];
