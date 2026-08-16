@@ -1217,3 +1217,8 @@ body[data-ask-ai-open="true"] .hide-when-ask-ai-open {
   pointer-events: none;
   overflow: hidden !important;
 }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
