@@ -24,6 +24,17 @@ function isTokenValid(email: string, token: string): boolean {
   return token === hmacHash || token === md5Hash || token === fallbackHash;
 }
 
+function createErrorPage(title: string, message: string) {
+  return new NextResponse(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} | Classgrid</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#fafafa;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}.c{max-width:460px;padding:40px;background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);text-align:center;border:1px solid #eaeaea}h1{color:#b91c1c;font-size:22px;margin:16px 0 12px;font-weight:600}p{color:#4b5563;font-size:15px;line-height:1.6}a{display:inline-block;margin-top:24px;padding:10px 24px;background:#111;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:500}a:hover{background:#333}</style></head>
+<body><div class="c">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+<h1>${title}</h1><p>${message}</p>
+<a href="/">Go to Homepage</a>
+</div></body></html>`, { headers: { "Content-Type": "text/html" }, status: 400 });
+}
+
 // ─── Route ───────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request) {
@@ -38,10 +49,7 @@ export async function GET(req: Request) {
 
     // Verify the token (accepts both old MD5 and new HMAC tokens)
     if (!isTokenValid(email, token)) {
-      return NextResponse.json(
-        { error: "Invalid or expired unsubscribe link." },
-        { status: 403 }
-      );
+      return createErrorPage("Expired or Invalid Link", "This unsubscribe link is no longer valid. Please use the latest email you received and click the unsubscribe link from there.");
     }
 
     const type = searchParams.get("type") || "blog";
@@ -71,7 +79,7 @@ export async function GET(req: Request) {
 
       if (updateError) {
         console.error("Unsubscribe DB Update Error:", updateError);
-        return NextResponse.json({ error: "Failed to unsubscribe. Please try again." }, { status: 500 });
+        return createErrorPage("Unsubscribe Failed", "We couldn't process your request. Please try again later or contact support@classgrid.in.");
       }
     } else {
       // User is from MongoDB and not in Supabase yet. Insert them into the blocklist!
@@ -90,7 +98,7 @@ export async function GET(req: Request) {
 
       if (insertError) {
         console.error("Unsubscribe DB Insert Error:", insertError);
-        return NextResponse.json({ error: "Failed to unsubscribe. Please try again." }, { status: 500 });
+        return createErrorPage("Unsubscribe Failed", "We couldn't process your request. Please try again later or contact support@classgrid.in.");
       }
     }
 
@@ -110,9 +118,6 @@ export async function GET(req: Request) {
 
   } catch (error) {
     console.error("Unsubscribe Error:", error);
-    return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 }
-    );
+    return createErrorPage("Something Went Wrong", "We couldn't process your unsubscribe request. Please try again later or contact support@classgrid.in.");
   }
 }

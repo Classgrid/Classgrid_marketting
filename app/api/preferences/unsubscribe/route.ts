@@ -102,6 +102,6 @@ export async function GET(req: NextRequest) {
 
   } catch (error) {
     console.error("Error in unsubscribe callback:", error);
-    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+    return createErrorPage("Something Went Wrong", "We couldn't process your unsubscribe request. Please try again later or contact support@classgrid.in.");
   }
 }
