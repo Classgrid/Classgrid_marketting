@@ -29,7 +29,7 @@ export function DocsFAQItem({
 
   const childArray = Array.isArray(children) ? children : [children];
   childArray.forEach((child: any) => {
-    if (child?.type === "summary" || child?.props?.node?.tagName === "summary") {
+    if (child?.type === "summary" || child?.props?.node?.tagName === "summary" || child?.type === DocsFAQSummary || child?.type?.name === "DocsFAQSummary") {
       summaryContent = child?.props?.children ?? child;
     } else {
       bodyContent.push(child);

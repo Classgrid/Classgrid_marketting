@@ -90,13 +90,6 @@ export default function ProfileUpload() {
         },
         {
           _key: key(),
-          _type: "docsImage",
-          src: "https://cdn.classgrid.in/classgrid/classgrid.png",
-          alt: "Classgrid GridX Component Library",
-          title: "GridX UI"
-        },
-        {
-          _key: key(),
           _type: "block",
           style: "normal",
           children: [{ _key: key(), _type: "span", text: "As our ecosystem continues to grow, maintaining a cohesive design system by manually copying and pasting component files was no longer a scalable solution. We needed a centralized, enterprise-grade architecture. So, we built one from the ground up." }]

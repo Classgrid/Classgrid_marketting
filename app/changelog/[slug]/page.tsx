@@ -2,7 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight, Bug, Rocket, WandSparkles } from "lucide-react";
+import {
+  ArrowRight, Bug, Rocket, WandSparkles, Megaphone, Zap, Shield, Trash2,
+  LayoutDashboard, Server, RefreshCw, FileText, Palette, Scale, Gavel,
+  Handshake, Flame, RotateCcw, ArrowLeftRight, Wrench, Package, Code2,
+  Database, Accessibility, Languages, TestTube, FlaskConical, Sparkles,
+  Eye, PartyPopper, XCircle, Settings, SwatchBook, BarChart3, Search,
+  TrendingUp, UserPlus, CreditCard, Tag, HeadphonesIcon, Users, Webhook,
+  Puzzle, Smartphone, Monitor, Cpu, CircuitBoard, GitBranch, Heart, HardHat
+} from "lucide-react";
 import { format } from "date-fns";
 
 import { ShareUpdateButton } from "@/components/changelog/ShareUpdateButton";
