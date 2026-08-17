@@ -68,7 +68,7 @@ export default function ProfileUpload() {
     seoTitle: "Introducing GridX: Classgrid's Official UI Component Library",
     metaDescription: "Classgrid has officially released GridX, our proprietary standalone React UI library published on NPM, featuring 100+ components and deep Tailwind CSS integration.",
     releaseDate: new Date().toISOString().split('T')[0],
-    updateType: "feature",
+    updateType: "announcement",
     versionLabel: "v0.1.5",
     modules: [],
     sendSubscriberNotification: false,
