@@ -44,13 +44,15 @@ function LoginContent() {
   const intent = searchParams.get("intent");
   const unsubscribeType = searchParams.get("type");
   const targetToken = searchParams.get("token");
-  
+  const targetEmail = searchParams.get("email");
 
-  
   let unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
     ? `/api/preferences/unsubscribe?type=${unsubscribeType}` 
     : null;
     
+  if (unsubscribeReturnTo && targetEmail) {
+    unsubscribeReturnTo += `&email=${encodeURIComponent(targetEmail)}`;
+  }
   if (unsubscribeReturnTo && targetToken) {
     unsubscribeReturnTo += `&token=${targetToken}`;
   }
