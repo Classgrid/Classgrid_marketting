@@ -130,15 +130,15 @@ function LoginContent() {
   const [otpExpired, setOtpExpired] = useState(false);
 
   useEffect(() => {
-    if (targetToken) {
-      fetch(`/api/preferences/get-email?token=${targetToken}`)
+    if (targetShortCode) {
+      fetch(`/api/preferences/get-email?c=${targetShortCode}`)
         .then(res => res.json())
         .then(data => {
           if (data.email) setEmail(data.email);
         })
-        .catch(err => console.error("Failed to fetch email from token:", err));
+        .catch(err => console.error("Failed to fetch email from short code:", err));
     }
-  }, [targetToken]);
+  }, [targetShortCode]);
 
   // If there's an error in the URL but they are still authenticated, sign them out
   // so they can see the error message and log in with the correct account.

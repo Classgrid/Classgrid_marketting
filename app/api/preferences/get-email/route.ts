@@ -3,20 +3,20 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.nextUrl.searchParams.get("token");
+    const shortCode = req.nextUrl.searchParams.get("c");
     
-    if (!token) {
-      return NextResponse.json({ error: "Missing token" }, { status: 400 });
+    if (!shortCode) {
+      return NextResponse.json({ error: "Missing short code" }, { status: 400 });
     }
 
     const { data: subscriber } = await supabaseAdmin
       .from("blog_subscribers")
       .select("email")
-      .eq("unsubscribe_token", token)
+      .eq("short_code", shortCode)
       .maybeSingle();
       
     if (!subscriber || !subscriber.email) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid short code" }, { status: 400 });
     }
 
     return NextResponse.json({ email: subscriber.email }, { status: 200 });
