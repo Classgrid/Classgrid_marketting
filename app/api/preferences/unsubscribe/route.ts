@@ -1,120 +1,85 @@
 import { NextResponse, NextRequest } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import crypto from "crypto";
 
-// ─── Token generators ────────────────────────────────────────────────────────
-
-/** New token: SHA-256 HMAC (used by platform email worker) */
 function generateUnsubscribeHash(email: string): string {
   const secret = process.env.SANITY_WEBHOOK_SECRET || "classgrid_fallback";
   return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
 }
 
-/** Legacy token: plain MD5 of email (used by old Express/Python backend) */
-function generateLegacyHash(email: string): string {
-  return crypto.createHash("md5").update(email).digest("hex");
-}
-
-/** Verify the token is valid via either scheme */
-function isTokenValid(email: string, token: string): boolean {
-  const hmacHash = generateUnsubscribeHash(email);
-  const md5Hash = generateLegacyHash(email);
-  const fallbackHash = crypto.createHmac("sha256", "classgrid_fallback").update(email).digest("hex").slice(0, 32);
-  return token === hmacHash || token === md5Hash || token === fallbackHash;
-}
-
-// ─── Route ───────────────────────────────────────────────────────────────────
-// This route is 100% STATELESS. It does NOT use getServerSession, does NOT
-// redirect to /login, and does NOT touch any existing Docs/Marketing session.
-// It identifies the recipient purely from the signed email+token in the URL.
-
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    const loggedInEmail = session?.user?.email;
+
     const type = req.nextUrl.searchParams.get("type") || "blog";
-    const email = req.nextUrl.searchParams.get("email");
+    const targetEmailParam = req.nextUrl.searchParams.get("email");
     const token = req.nextUrl.searchParams.get("token");
 
-    // Both email and token are required — no session fallback ever
-    if (!email || !token) {
-      return NextResponse.json(
-        { error: "Invalid unsubscribe link. Missing parameters." },
-        { status: 400 }
-      );
+    if (!targetEmailParam || !token) {
+      return NextResponse.json({ error: "Invalid unsubscribe link." }, { status: 400 });
     }
 
     if (!["blog", "changelog", "legal"].includes(type)) {
-      return NextResponse.json(
-        { error: "Invalid unsubscribe type." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid unsubscribe type." }, { status: 400 });
     }
 
-    // Verify the cryptographic token matches the email — this is the ONLY
-    // authentication. No session, no login, no cookies are read or written
-    // for auth purposes. The existing Docs/Marketing session is untouched.
-    if (!isTokenValid(email, token)) {
-      return NextResponse.json(
-        { error: "Invalid or expired unsubscribe link." },
-        { status: 403 }
-      );
+    // Verify the cryptographic token
+    const expectedToken = generateUnsubscribeHash(targetEmailParam);
+    if (token !== expectedToken) {
+      return NextResponse.json({ error: "Invalid or expired unsubscribe link." }, { status: 403 });
     }
 
-    // Build the update payload for the specific type
-    const targetEmail = email;
+    // ── Step 1: If NOT logged in → redirect to login page ──
+    if (!loggedInEmail) {
+      const loginUrl = `/login?intent=unsubscribe&type=${type}&email=${encodeURIComponent(targetEmailParam)}&token=${token}`;
+      return NextResponse.redirect(new URL(loginUrl, req.url));
+    }
+
+    // ── Step 2: If logged in with WRONG email → force logout, show error ──
+    if (loggedInEmail.toLowerCase() !== targetEmailParam.toLowerCase()) {
+      const errorUrl = `/logout?callbackUrl=${encodeURIComponent(`/login?intent=unsubscribe&type=${type}&email=${encodeURIComponent(targetEmailParam)}&token=${token}&error=OAuthAccountNotLinked`)}`;
+      return NextResponse.redirect(new URL(errorUrl, req.url));
+    }
+
+    // ── Step 3: Logged in with CORRECT email → proceed with unsubscribe ──
     let updatePayload: Record<string, any> = { updated_at: new Date().toISOString() };
+    if (type === "legal") updatePayload.receives_legal = false;
+    else if (type === "changelog") updatePayload.receives_changelog = false;
+    else updatePayload.receives_blog = false;
 
-    if (type === "legal") {
-      updatePayload.receives_legal = false;
-    } else if (type === "changelog") {
-      updatePayload.receives_changelog = false;
-    } else {
-      updatePayload.receives_blog = false;
-    }
-
-    // Check if the user exists in Supabase
+    // Check if user exists in Supabase
     const { data: existingUser } = await supabaseAdmin
       .from("blog_subscribers")
       .select("email")
-      .eq("email", targetEmail)
+      .eq("email", targetEmailParam)
       .maybeSingle();
 
     if (existingUser) {
-      // Update the specific preference to false
       const { error: updateError } = await supabaseAdmin
         .from("blog_subscribers")
         .update(updatePayload)
-        .eq("email", targetEmail);
-
-      if (updateError) {
-        console.error("Unsubscribe DB Update Error:", updateError);
-        return NextResponse.json({ error: "Failed to unsubscribe." }, { status: 500 });
-      }
+        .eq("email", targetEmailParam);
+      if (updateError) throw updateError;
     } else {
-      // User is from MongoDB and not in Supabase yet — insert into the blocklist
+      // MongoDB user not in Supabase yet — insert into blocklist
       const insertPayload = {
-        email: targetEmail,
+        email: targetEmailParam,
         name: "Subscriber",
         receives_blog: type !== "blog",
         receives_changelog: type !== "changelog",
         receives_legal: type !== "legal",
         unsubscribe_token: crypto.randomBytes(16).toString("hex"),
       };
-
-      const { error: insertError } = await supabaseAdmin
-        .from("blog_subscribers")
-        .insert([insertPayload]);
-
-      if (insertError) {
-        console.error("Unsubscribe DB Insert Error:", insertError);
-        return NextResponse.json({ error: "Failed to unsubscribe." }, { status: 500 });
-      }
+      const { error: insertError } = await supabaseAdmin.from("blog_subscribers").insert([insertPayload]);
+      if (insertError) throw insertError;
     }
 
-    // Redirect to the success confirmation page
+    // Redirect to success page
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://classgrid.in";
     const response = NextResponse.redirect(`${siteUrl}/blog/unsubscribed?type=${type}`);
-
-    // Short-lived cookie for the success screen only (NOT an auth cookie)
     response.cookies.set("unsubscribed_session", "true", {
       maxAge: 30,
       path: "/",
