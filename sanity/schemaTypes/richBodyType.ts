@@ -233,5 +233,68 @@ export const richBodyType = defineType({
         }
       }
     }),
+
+    // ── Video Embed ──────────────────────────────────────────────
+    defineArrayMember({
+      type: 'object',
+      name: 'docsVideo',
+      title: 'Video Embed',
+      fields: [
+        { name: 'url', type: 'string', title: 'Video URL (MP4, etc)' },
+        { name: 'title', type: 'string', title: 'Title (Optional)' },
+        { name: 'description', type: 'text', title: 'Description (Optional)' },
+      ],
+      preview: {
+        select: { title: 'title', url: 'url' },
+        prepare({ title, url }: any) {
+          return { title: 'Video Embed', subtitle: title || url }
+        }
+      }
+    }),
+
+    // ── Button / CTA ────────────────────────────────────────────
+    defineArrayMember({
+      type: 'object',
+      name: 'docsButton',
+      title: 'Button / CTA',
+      fields: [
+        { name: 'text', type: 'string', title: 'Button Text' },
+        { name: 'href', type: 'string', title: 'Link URL' },
+        { 
+          name: 'variant', 
+          type: 'string', 
+          title: 'Variant', 
+          options: { list: ['default', 'secondary', 'outline', 'ghost'] },
+          initialValue: 'default'
+        },
+      ],
+      preview: {
+        select: { text: 'text', href: 'href' },
+        prepare({ text, href }: any) {
+          return { title: 'Button', subtitle: `${text} -> ${href}` }
+        }
+      }
+    }),
+
+    // ── Divider ─────────────────────────────────────────────────
+    defineArrayMember({
+      type: 'object',
+      name: 'docsDivider',
+      title: 'Divider (Horizontal Rule)',
+      fields: [
+        { 
+          name: 'style', 
+          type: 'string', 
+          title: 'Style', 
+          options: { list: ['solid', 'dashed', 'dotted'] }, 
+          initialValue: 'solid' 
+        }
+      ],
+      preview: {
+        prepare() {
+          return { title: 'Divider (---)' }
+        }
+      }
+    }),
   ],
 })

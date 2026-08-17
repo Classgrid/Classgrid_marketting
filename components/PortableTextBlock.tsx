@@ -11,6 +11,9 @@ import { DocsFAQItem, DocsFAQSummary } from "@/components/docs/docs-faq";
 import { DocsImage } from "@/components/docs/docs-image";
 import { Callout } from "@/components/docs/callout";
 import { VercelTable } from "@/components/ui/vercel-table";
+import { YouTubeStylePlayer } from "@/components/sections/YouTubeStylePlayer";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // Subtle animation
 const blockAnim = {
@@ -250,6 +253,41 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         return (
           <div className="my-10 mx-auto max-w-[750px]">
             <VercelTable columns={columns} rows={rows} />
+          </div>
+        );
+      },
+      docsVideo: ({ value }) => {
+        if (!value?.url) return null;
+        return (
+          <div className="my-10 mx-auto max-w-[950px] overflow-hidden rounded-xl">
+            <YouTubeStylePlayer 
+              videos={[{ url: value.url }]} 
+              title={value.title} 
+              description={value.description} 
+            />
+          </div>
+        );
+      },
+      docsButton: ({ value }) => {
+        if (!value?.text || !value?.href) return null;
+        return (
+          <div className="my-8 mx-auto max-w-[750px] flex justify-center">
+            <Button asChild variant={value.variant || 'default'} size="lg">
+              <Link href={value.href}>{value.text}</Link>
+            </Button>
+          </div>
+        );
+      },
+      docsDivider: ({ value }) => {
+        const styleMap = {
+          solid: "border-solid",
+          dashed: "border-dashed",
+          dotted: "border-dotted"
+        };
+        const borderStyle = styleMap[(value?.style as keyof typeof styleMap) || 'solid'];
+        return (
+          <div className="my-14 mx-auto max-w-[750px]">
+            <hr className={`border-t-2 border-slate-200 dark:border-white/10 ${borderStyle}`} />
           </div>
         );
       },
