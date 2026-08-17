@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
-import { ShareUpdateButton } from "@/components/changelog/ShareUpdateButton";
+import { ChangelogSidebar } from "@/components/changelog/ChangelogSidebar";
 import { PortableTextBlock } from "@/components/PortableTextBlock";
 import { Badge } from "@/components/ui/badge";
 import { CmsFallback } from "@/components/ui/CmsErrorBoundary";
@@ -175,6 +175,7 @@ export default async function ChangelogDetailPage({
         relatedTourHref: cms.relatedTourHref ?? fallback?.relatedTourHref,
         metaDescription: extractLocaleString(cms.metaDescription, lang) || fallback?.metaDescription || "",
         authors: cms.authors ?? [],
+        readingTime: cms.readingTimeOverride ?? null,
       }
     : {
         title: fallback.title,
@@ -190,6 +191,7 @@ export default async function ChangelogDetailPage({
         relatedTourHref: fallback.relatedTourHref,
         metaDescription: fallback.metaDescription,
         authors: [],
+        readingTime: null,
       };
 
   const sharePath = buildLangHref(`/changelog/${entry.slug}`, lang);
@@ -266,13 +268,7 @@ export default async function ChangelogDetailPage({
             description={entry.summary}
             lang={lang}
             showAccentBar={false}
-          >
-            <ShareUpdateButton
-              title={entry.title}
-              url={shareUrl}
-              className="rounded-full border-border bg-card text-foreground hover:bg-accent"
-            />
-          </DocumentHero>
+          />
 
           {entry.modules.length > 0 && (
             <div className="mt-8 flex flex-wrap justify-center gap-2">
@@ -286,7 +282,9 @@ export default async function ChangelogDetailPage({
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-4xl px-4 sm:px-6 py-10 sm:py-16">
+      <section className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-10 sm:py-16">
+        <div className="flex gap-8">
+        <div className="flex-1 min-w-0 max-w-4xl">
         {entry.imageUrl ? (
           <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
         ) : null}
@@ -340,6 +338,12 @@ export default async function ChangelogDetailPage({
               View All Updates
             </Link>
           </div>
+        </div>
+        </div>
+        <ChangelogSidebar 
+          releaseDate={format(new Date(entry.releaseDate), "dd MMM yyyy")}
+          readingTime={entry.readingTime}
+        />
         </div>
       </section>
     </main>

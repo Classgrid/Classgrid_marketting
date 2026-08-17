@@ -180,6 +180,13 @@ export const changelogEntryType = defineType({
       description: "Relative URL to a related product tour section or page.",
     }),
     defineField({
+      name: 'readingTimeOverride',
+      title: '⏱️ Reading Time (minutes)',
+      description: 'Optional. If set, shows "X min read" in the sidebar. Leave blank to auto-calculate.',
+      type: 'number',
+      validation: (rule) => rule.min(1).max(60),
+    }),
+    defineField({
       name: 'authors',
       title: '✍️ Authors',
       description: 'Add up to 3 authors for this changelog entry. Shows as small avatars + names below the title (like Vercel).',

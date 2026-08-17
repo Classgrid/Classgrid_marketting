@@ -132,6 +132,7 @@ export const changelogEntryBySlugQuery = `*[_type == "changelogEntry" && slug.cu
   image,
   relatedTourLabel,
   relatedTourHref,
+  readingTimeOverride,
   authors[]{
     name,
     image,
