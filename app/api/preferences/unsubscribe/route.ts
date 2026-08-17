@@ -4,21 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import crypto from "crypto";
 
-function generateUnsubscribeHash(email: string): string {
-  const secret = process.env.SANITY_WEBHOOK_SECRET || "classgrid_fallback";
-  return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
-}
-
-function generateLegacyHash(email: string): string {
-  return crypto.createHash("md5").update(email).digest("hex");
-}
-
-function isTokenValid(email: string, token: string): boolean {
-  const hmacHash = generateUnsubscribeHash(email);
-  const md5Hash = generateLegacyHash(email);
-  const fallbackHash = crypto.createHmac("sha256", "classgrid_fallback").update(email).digest("hex").slice(0, 32);
-  return token === hmacHash || token === md5Hash || token === fallbackHash;
-}
+// Cryptographic hashes removed, replaced by short_code lookup
 
 function createErrorPage(title: string, message: string) {
   return new NextResponse(`<!DOCTYPE html>
@@ -37,31 +23,38 @@ export async function GET(req: NextRequest) {
     const loggedInEmail = session?.user?.email;
 
     const type = req.nextUrl.searchParams.get("type") || "blog";
-    const targetEmailParam = req.nextUrl.searchParams.get("email");
-    const token = req.nextUrl.searchParams.get("token");
+    const shortCode = req.nextUrl.searchParams.get("c");
 
-    if (!targetEmailParam || !token) {
-      return createErrorPage("Invalid Unsubscribe Link", "This unsubscribe link is missing required parameters. Please use the link directly from your email.");
+    if (!shortCode) {
+      return createErrorPage("Invalid Unsubscribe Link", "This unsubscribe link is missing the required code. Please use the exact link from your email.");
     }
 
     if (!["blog", "changelog", "legal"].includes(type)) {
       return createErrorPage("Invalid Unsubscribe Link", "The unsubscribe type is not recognized.");
     }
 
-    // Verify the cryptographic token
-    if (!isTokenValid(targetEmailParam, token)) {
-      return createErrorPage("Expired or Invalid Link", "This unsubscribe link is no longer valid. Please use the latest email you received and click the unsubscribe link from there.");
+    // Lookup the email associated with this short code
+    const { data: subscriberData, error: lookupError } = await supabaseAdmin
+      .from("blog_subscribers")
+      .select("email")
+      .eq("short_code", shortCode)
+      .maybeSingle();
+
+    if (lookupError || !subscriberData?.email) {
+      return createErrorPage("Expired or Invalid Link", "This unsubscribe link is no longer valid or the code is incorrect. Please use the latest email you received.");
     }
+
+    const targetEmailParam = subscriberData.email;
 
     // ── Step 1: If NOT logged in → redirect to login page ──
     if (!loggedInEmail) {
-      const loginUrl = `/login?intent=unsubscribe&type=${type}&email=${encodeURIComponent(targetEmailParam)}&token=${token}`;
+      const loginUrl = `/login?intent=unsubscribe&type=${type}&c=${shortCode}`;
       return NextResponse.redirect(new URL(loginUrl, req.url));
     }
 
     // ── Step 2: If logged in with WRONG email → force logout, show error ──
     if (loggedInEmail.toLowerCase() !== targetEmailParam.toLowerCase()) {
-      const errorUrl = `/logout?callbackUrl=${encodeURIComponent(`/login?intent=unsubscribe&type=${type}&email=${encodeURIComponent(targetEmailParam)}&token=${token}&error=OAuthAccountNotLinked`)}`;
+      const errorUrl = `/logout?callbackUrl=${encodeURIComponent(`/login?intent=unsubscribe&type=${type}&c=${shortCode}&error=OAuthAccountNotLinked`)}`;
       return NextResponse.redirect(new URL(errorUrl, req.url));
     }
 

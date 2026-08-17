@@ -43,18 +43,14 @@ function LoginContent() {
 
   const intent = searchParams.get("intent");
   const unsubscribeType = searchParams.get("type");
-  const targetToken = searchParams.get("token");
-  const targetEmail = searchParams.get("email");
+  const targetShortCode = searchParams.get("c");
 
   let unsubscribeReturnTo = intent === "unsubscribe" && unsubscribeType 
     ? `/api/preferences/unsubscribe?type=${unsubscribeType}` 
     : null;
     
-  if (unsubscribeReturnTo && targetEmail) {
-    unsubscribeReturnTo += `&email=${encodeURIComponent(targetEmail)}`;
-  }
-  if (unsubscribeReturnTo && targetToken) {
-    unsubscribeReturnTo += `&token=${targetToken}`;
+  if (unsubscribeReturnTo && targetShortCode) {
+    unsubscribeReturnTo += `&c=${targetShortCode}`;
   }
 
   // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
