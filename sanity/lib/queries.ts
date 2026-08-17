@@ -131,7 +131,12 @@ export const changelogEntryBySlugQuery = `*[_type == "changelogEntry" && slug.cu
   content,
   image,
   relatedTourLabel,
-  relatedTourHref
+  relatedTourHref,
+  authors[]{
+    name,
+    image,
+    profileLink
+  }
 }`;
 
 export const latestChangelogEntryQuery = `*[_type == "changelogEntry"] | order(releaseDate desc)[0]{

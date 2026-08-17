@@ -7,6 +7,7 @@ type DocumentHeroProps = {
   badgeLabel?: any;
   badgeDotColor?: string;
   title: any;
+  authorRow?: React.ReactNode;
   subtitles?: any[];
   description?: any;
   children?: React.ReactNode;
@@ -18,6 +19,7 @@ export function DocumentHero({
   badgeLabel,
   badgeDotColor = "bg-emerald-500",
   title,
+  authorRow,
   subtitles = [],
   description,
   children,
@@ -44,6 +46,7 @@ export function DocumentHero({
             <h1 className="text-balance text-[clamp(1.75rem,3.5vw,2.5rem)] font-extrabold leading-[1.05] tracking-tight text-foreground">
               {(extractLocaleString(title, lang) ?? "").replace(/\.\s*$/, "")}
             </h1>
+            {authorRow}
             {subtitles.length > 0 && (
               <div className="mt-6 space-y-1.5 text-sm text-muted-foreground">
                 {subtitles.map((sub, idx) => (

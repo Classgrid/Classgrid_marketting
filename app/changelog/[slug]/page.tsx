@@ -174,6 +174,7 @@ export default async function ChangelogDetailPage({
         relatedTourLabel: cms.relatedTourLabel ?? fallback?.relatedTourLabel,
         relatedTourHref: cms.relatedTourHref ?? fallback?.relatedTourHref,
         metaDescription: extractLocaleString(cms.metaDescription, lang) || fallback?.metaDescription || "",
+        authors: cms.authors ?? [],
       }
     : {
         title: fallback.title,
@@ -188,6 +189,7 @@ export default async function ChangelogDetailPage({
         relatedTourLabel: fallback.relatedTourLabel,
         relatedTourHref: fallback.relatedTourHref,
         metaDescription: fallback.metaDescription,
+        authors: [],
       };
 
   const sharePath = buildLangHref(`/changelog/${entry.slug}`, lang);
@@ -225,6 +227,38 @@ export default async function ChangelogDetailPage({
             badgeLabel={`Update / ${updateMeta.label}`}
             badgeDotColor="bg-emerald-500"
             title={entry.title}
+            authorRow={
+              entry.authors && entry.authors.length > 0 ? (
+                <div className="mt-5 flex items-center justify-center gap-2.5">
+                  <div className="flex items-center -space-x-2">
+                    {entry.authors.slice(0, 3).map((author: any, idx: number) => (
+                      author.image ? (
+                        <Image
+                          key={idx}
+                          src={urlFor(author.image).width(64).height(64).url()}
+                          alt={author.name || 'Author'}
+                          width={28}
+                          height={28}
+                          className="h-7 w-7 rounded-full object-cover ring-2 ring-background"
+                          style={{ zIndex: 3 - idx }}
+                        />
+                      ) : (
+                        <div
+                          key={idx}
+                          className="h-7 w-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-[11px] font-bold text-emerald-500 ring-2 ring-background"
+                          style={{ zIndex: 3 - idx }}
+                        >
+                          {(author.name || 'C').charAt(0)}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {entry.authors.slice(0, 3).map((a: any) => a.name || 'Classgrid Team').join(', ')}
+                  </span>
+                </div>
+              ) : undefined
+            }
             subtitles={[
               entry.versionLabel ? `Version ${entry.versionLabel}` : "",
               format(new Date(entry.releaseDate), "MMMM d, yyyy"),

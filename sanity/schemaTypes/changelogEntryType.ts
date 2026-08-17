@@ -179,6 +179,37 @@ export const changelogEntryType = defineType({
       type: "string",
       description: "Relative URL to a related product tour section or page.",
     }),
+    defineField({
+      name: 'authors',
+      title: '✍️ Authors',
+      description: 'Add up to 3 authors for this changelog entry. Shows as small avatars + names below the title (like Vercel).',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'changelogAuthor',
+          title: 'Author',
+          fields: [
+            defineField({ name: 'name', title: 'Author Name', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'image', title: 'Author Image (Passport Size)', type: 'image', options: { hotspot: true } }),
+            defineField({
+              name: 'profileLink',
+              title: '🔗 Author Profile Link',
+              description: 'Paste any URL — clicking the author image will open this. (e.g. Twitter, LinkedIn)',
+              type: 'url',
+              validation: (rule) => rule.uri({ scheme: ['http', 'https'] }),
+            }),
+          ],
+          preview: {
+            select: { title: 'name', media: 'image' },
+            prepare({ title, media }: any) {
+              return { title: title || 'Unnamed Author', media };
+            },
+          },
+        },
+      ],
+      validation: (rule) => rule.max(3),
+    }),
   ],
   preview: {
     select: {
