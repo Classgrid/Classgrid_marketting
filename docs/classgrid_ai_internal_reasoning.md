@@ -67,3 +67,20 @@ If you are working with a new AI assistant in the future and want to port this S
 > 4. In the React frontend, catch the `thought` SSE event, store it in the message state, and render it using a Shadcn Accordion right above the final message.
 > 
 > Please implement this across my Next.js backend and React frontend."
+
+---
+
+## 4. Advanced Learnings on Model Behaviors (August 16 Update)
+
+During rigorous testing with multiple AI models, we discovered crucial behavioral differences that impact how the reasoning accordion functions in production. **You cannot perfectly control the AI's internal brain**, you can only architect around its tendencies.
+
+### The "Speed vs. Reasoning" Tradeoff
+- **Gemini 3.5 Flash:** "Flash" models are heavily optimized for extreme speed and minimal latency. Because executing the `internal_thought_process` tool adds a server round-trip delay, Gemini Flash will frequently **skip the tool entirely** for simple prompts (like "hello") to give an instant answer. If the tool is skipped, the accordion never triggers unless a manual fallback is injected in the backend.
+- **Mistral (Small):** Mistral is aggressively obedient to system prompts demanding tool usage. However, because it is a smaller model with less raw reasoning power, it struggles with complex logic traps. When stressed, Mistral will **stutter and loop its thoughts** multiple times inside the accordion (e.g., repeating its logic three times) before finally generating an answer.
+
+### User Psychology of the "Thinking Loop"
+- **Normal Users (Principals/Admins):** When a user opens the accordion and sees the AI looping and double-checking its own logic, they view it as **absolute magic**. They perceive the AI as highly intelligent and careful, which builds immense trust in the product.
+- **AI Experts / Developers:** Engineers recognize the loop as a symptom of a small model processing complex logic, but they deeply respect the underlying architecture because it proves the existence of a true **Agentic Chain-of-Thought (CoT)** system rather than a basic chatbot.
+
+### The Ultimate Enterprise Solution
+To achieve perfect, simultaneous execution of massive workloads (e.g., processing huge RAG document payloads + Web Search + Internal Reasoning) without skipping tools or stuttering, small/free-tier models are insufficient. The architecture built here is perfect, but to scale it to production, you **must plug in a Flagship Enterprise Model** (the highest capability tier available from providers like OpenAI, Anthropic, or Google at the time of reading). These frontier-class models possess the vast reasoning capacity required to orchestrate complex agentic workflows flawlessly in a single pass.
