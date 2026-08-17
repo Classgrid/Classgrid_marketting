@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Bell, Bug, Rocket, WandSparkles } from "lucide-react";
+import { Bell, Bug, Rocket, WandSparkles, Megaphone } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -51,12 +51,13 @@ type ChangelogPageClientProps = {
   lang: SupportedLang;
 };
 
-const UPDATE_TYPE_META = {
+const UPDATE_TYPE_META: Record<string, { label: string; icon: any; color: string }> = {
   all:         { label: "All",         icon: Bell,          color: "border-border bg-card text-muted-foreground" },
   feature:     { label: "New Feature", icon: Rocket,        color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400" },
   improvement: { label: "Improvement", icon: WandSparkles,  color: "border-sky-500/40 bg-sky-500/10 text-sky-400" },
   bugfix:      { label: "Bug Fix",     icon: Bug,           color: "border-orange-500/40 bg-orange-500/10 text-orange-400" },
-} as const;
+  announcement:{ label: "Announcement",icon: Megaphone,     color: "border-purple-500/40 bg-purple-500/10 text-purple-400" },
+};
 
 type UpdateType = keyof typeof UPDATE_TYPE_META;
 

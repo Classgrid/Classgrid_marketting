@@ -274,7 +274,7 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         return (
           <div className="my-6 mx-auto max-w-[750px]">
             <DocsFAQItem>
-              <DocsFAQSummary>{value.question}</DocsFAQSummary>
+              <summary className="text-lg font-semibold cursor-pointer">{value.question}</summary>
               {value.answer ? (
                 <PortableText value={value.answer} components={components} />
               ) : null}

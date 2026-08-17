@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { codeToHtml } from "shiki";
+import "@/app/docs/docs.css";
 import {
   ArrowRight, Bug, Rocket, WandSparkles, Megaphone, Zap, Shield, Trash2,
   LayoutDashboard, Server, RefreshCw, FileText, Palette, Scale, Gavel,
@@ -256,7 +258,31 @@ export default async function ChangelogDetailPage({
         ) : null}
 
         <div className="space-y-0">
-          <PortableTextBlock value={entry.content} showAccentBars={false} />
+          <PortableTextBlock 
+            value={await Promise.all((entry.content || []).map(async (block: any) => {
+              if (block._type === 'codeBlock' && block.code) {
+                let html = '';
+                try {
+                  html = await codeToHtml(block.code, {
+                    lang: block.language || 'javascript',
+                    themes: { light: 'github-light', dark: 'github-dark' },
+                    transformers: [
+                      {
+                        line(node, line) {
+                          node.properties['data-line'] = line;
+                        }
+                      }
+                    ]
+                  });
+                } catch (e) {
+                  html = `<pre><code>${block.code}</code></pre>`;
+                }
+                return { ...block, highlightedHtml: html };
+              }
+              return block;
+            }))} 
+            showAccentBars={false} 
+          />
         </div>
 
         <div className="mt-12 sm:mt-20 rounded-2xl border border-border bg-card p-6 sm:p-8">
