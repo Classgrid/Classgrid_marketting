@@ -119,7 +119,7 @@ function LoginContent() {
   // Show OAuth error from URL (e.g. OAuthCallback)
   const urlError = searchParams.get("error");
   const friendlyUrlError = urlError
-    ? OAUTH_ERROR_MAP[urlError] || OAUTH_ERROR_MAP.default
+    ? (Object.prototype.hasOwnProperty.call(OAUTH_ERROR_MAP, urlError) ? OAUTH_ERROR_MAP[urlError] : OAUTH_ERROR_MAP.default)
     : "";
 
   const [email, setEmail] = useState("");
@@ -205,7 +205,7 @@ function LoginContent() {
       setStep("otp");
       startCountdown();
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message && typeof err.message === "string" ? err.message : "Failed to send OTP.");
     } finally {
       setLoading(false);
     }
@@ -242,7 +242,7 @@ function LoginContent() {
           "Too many attempts. Please request a new OTP.": "Too many wrong attempts. Please resend.",
           "Invalid or expired OTP": "Code not found. Please resend.",
         };
-        setError(errorMap[res.error] || res.error);
+        setError(Object.prototype.hasOwnProperty.call(errorMap, res.error) ? errorMap[res.error] : (typeof res.error === "string" ? res.error : "Sign-in error"));
         setLoading(false);
         return;
       }
@@ -250,7 +250,7 @@ function LoginContent() {
       isRedirecting.current = true;
       window.location.href = otpSuccessUrl;
     } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      setError(err?.message && typeof err.message === "string" ? err.message : "Something went wrong.");
       setLoading(false);
     }
   };
