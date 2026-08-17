@@ -34,7 +34,7 @@ type ChangelogEntry = {
   title: string;
   slug: string;
   releaseDate: string;
-  updateType: "feature" | "improvement" | "bugfix";
+  updateType: string;
   versionLabel?: string;
   modules: string[];
   summary: string;

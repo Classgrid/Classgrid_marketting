@@ -23,11 +23,60 @@ type ChangelogDetailPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const UPDATE_LABELS = {
+const UPDATE_LABELS: Record<string, { label: string; icon: any }> = {
   feature: { label: "New Feature", icon: Rocket },
   improvement: { label: "Improvement", icon: WandSparkles },
   bugfix: { label: "Bug Fix", icon: Bug },
-} as const;
+  announcement: { label: "Announcement", icon: Megaphone },
+  performance: { label: "Performance", icon: Zap },
+  security: { label: "Security", icon: Shield },
+  deprecation: { label: "Deprecation", icon: Trash2 },
+  removal: { label: "Removal", icon: XCircle },
+  architecture: { label: "Architecture", icon: LayoutDashboard },
+  infrastructure: { label: "Infrastructure", icon: Server },
+  refactor: { label: "Refactor", icon: RefreshCw },
+  documentation: { label: "Documentation", icon: FileText },
+  "ui-ux": { label: "UI/UX", icon: Palette },
+  compliance: { label: "Compliance", icon: Scale },
+  legal: { label: "Legal", icon: Gavel },
+  partnership: { label: "Partnership", icon: Handshake },
+  hotfix: { label: "Hotfix", icon: Flame },
+  rollback: { label: "Rollback", icon: RotateCcw },
+  migration: { label: "Migration", icon: ArrowLeftRight },
+  maintenance: { label: "Maintenance", icon: Wrench },
+  dependencies: { label: "Dependencies", icon: Package },
+  "api-change": { label: "API Change", icon: Code2 },
+  "data-model": { label: "Data Model", icon: Database },
+  accessibility: { label: "Accessibility", icon: Accessibility },
+  localization: { label: "Localization", icon: Languages },
+  testing: { label: "Testing", icon: TestTube },
+  experiment: { label: "Experiment", icon: FlaskConical },
+  beta: { label: "Beta Release", icon: Sparkles },
+  "early-access": { label: "Early Access", icon: Eye },
+  ga: { label: "General Availability", icon: PartyPopper },
+  eol: { label: "End of Life", icon: XCircle },
+  configuration: { label: "Configuration", icon: Settings },
+  "design-system": { label: "Design System", icon: SwatchBook },
+  analytics: { label: "Analytics", icon: BarChart3 },
+  seo: { label: "SEO", icon: Search },
+  marketing: { label: "Marketing", icon: TrendingUp },
+  onboarding: { label: "Onboarding", icon: UserPlus },
+  billing: { label: "Billing & Subscriptions", icon: CreditCard },
+  pricing: { label: "Pricing", icon: Tag },
+  support: { label: "Support", icon: HeadphonesIcon },
+  community: { label: "Community", icon: Users },
+  webhooks: { label: "Webhooks", icon: Webhook },
+  integrations: { label: "Integrations", icon: Puzzle },
+  mobile: { label: "Mobile App", icon: Smartphone },
+  desktop: { label: "Desktop App", icon: Monitor },
+  hardware: { label: "Hardware", icon: Cpu },
+  firmware: { label: "Firmware", icon: CircuitBoard },
+  "open-source": { label: "Open Source", icon: GitBranch },
+  qol: { label: "Quality of Life", icon: Heart },
+  "internal-tooling": { label: "Internal Tooling", icon: HardHat },
+};
+
+const DEFAULT_UPDATE_META = { label: "Update", icon: Rocket };
 
 function buildSanityImageUrl(image: unknown, width: number) {
   if (!image) return null;
@@ -133,7 +182,7 @@ export default async function ChangelogDetailPage({
 
   const sharePath = buildLangHref(`/changelog/${entry.slug}`, lang);
   const shareUrl = `${siteMeta.domain}${sharePath}`;
-  const updateMeta = UPDATE_LABELS[entry.updateType];
+  const updateMeta = UPDATE_LABELS[entry.updateType] ?? DEFAULT_UPDATE_META;
   const UpdateIcon = updateMeta.icon;
 
   const softwareUpdateJsonLd = {
