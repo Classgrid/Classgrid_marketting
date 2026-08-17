@@ -9,7 +9,7 @@ version: "v0.1.5"
 
 Today, we are thrilled to announce a major leap forward in our frontend engineering architecture: the official release of **GridX (@classgrid/gridx)**.
 
-<DocsImage src="https://cdn.classgrid.in/classgrid/classgrid.png" alt="Classgrid GridX Component Library" title="GridX UI" />
+<DocsImage src="https://cdn.classgrid.in/classgrid/Screenshot_2026-08-17_220924.png" alt="Classgrid GridX Component Library" title="GridX UI" />
 
 As our ecosystem continues to grow, maintaining a cohesive design system by manually copying and pasting component files was no longer a scalable solution. We needed a centralized, enterprise-grade architecture. So, we built one from the ground up.
 
