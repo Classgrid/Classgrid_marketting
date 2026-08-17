@@ -21,7 +21,7 @@ export function ChangelogSidebar({ readingTime }: ChangelogSidebarProps) {
 
   const handleCopyMarkdown = () => {
     const el = document.querySelector('.changelog-content');
-    const text = el?.textContent || 'No content found.';
+    const text = el?.getAttribute('data-markdown') || el?.textContent || 'No content found.';
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(text).catch(console.error);
     }

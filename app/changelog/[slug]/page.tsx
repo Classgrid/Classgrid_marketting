@@ -23,6 +23,34 @@ import { ContentCoverImage } from "@/components/ui/ContentCoverImage";
 import { DocumentHero } from "@/components/ui/DocumentHero";
 import { changelogFallbackBySlug, changelogFallbackEntries } from "@/content/changelog";
 import { siteMeta } from "@/content/siteMeta";
+
+// Helper to convert Sanity Portable Text to raw Markdown string for the 'Copy Markdown' feature
+function portableTextToMarkdown(blocks: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return '';
+  return blocks.map(block => {
+    if (block._type === 'block') {
+      let text = block.children?.map((c: any) => {
+        let t = c.text;
+        if (c.marks?.includes('strong')) t = `**${t}**`;
+        if (c.marks?.includes('em')) t = `*${t}*`;
+        if (c.marks?.includes('code')) t = `\`${t}\``;
+        return t;
+      }).join('') || '';
+      
+      if (block.style === 'h1') return `# ${text}`;
+      if (block.style === 'h2') return `## ${text}`;
+      if (block.style === 'h3') return `### ${text}`;
+      if (block.style === 'h4') return `#### ${text}`;
+      if (block.listItem === 'bullet') return `- ${text}`;
+      if (block.listItem === 'number') return `1. ${text}`;
+      return text;
+    }
+    if (block._type === 'codeBlock' && block.code) {
+      return `\n\`\`\`${block.language || ''}\n${block.code}\n\`\`\`\n`;
+    }
+    return '';
+  }).join('\n\n');
+}
 import { buildLangHref, extractLocaleString, extractLocaleValue, parseLang } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/metadata";
 import { urlFor } from "@/sanity/lib/image";
@@ -289,7 +317,7 @@ export default async function ChangelogDetailPage({
           <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
         ) : null}
 
-        <div className="space-y-0 changelog-content">
+        <div className="space-y-0 changelog-content" data-markdown={portableTextToMarkdown(entry.content || [])}>
           <PortableTextBlock 
             value={await Promise.all((entry.content || []).map(async (block: any) => {
               if (block._type === 'codeBlock' && block.code) {
