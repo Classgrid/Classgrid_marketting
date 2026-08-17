@@ -39,9 +39,16 @@ export const changelogEntryType = defineType({
     }),
     defineField({
       name: "ogImage",
-      title: "Open Graph Image",
+      title: "Open Graph Image (Upload)",
+      description: "Upload an image to Sanity. This takes priority over the URL below.",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "ogImageUrl",
+      title: "Open Graph Image (External URL)",
+      description: "Paste an external image URL (e.g. from your CDN). Used as fallback if no uploaded image is set.",
+      type: "url",
     }),
     defineField({
       name: "versionLabel",

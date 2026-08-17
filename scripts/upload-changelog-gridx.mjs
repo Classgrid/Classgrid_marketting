@@ -72,6 +72,7 @@ export default function ProfileUpload() {
     versionLabel: "v0.1.5",
     modules: [],
     sendSubscriberNotification: false,
+    ogImageUrl: "https://cdn.classgrid.in/classgrid/classgrid.png",
     summary: {
       _type: "localeText",
       en: "We're thrilled to announce the official release of GridX (@classgrid/gridx). Our proprietary, fully decoupled React UI library is now live on NPM, featuring 100+ beautifully designed components, micro-animations, and strict TypeScript types."

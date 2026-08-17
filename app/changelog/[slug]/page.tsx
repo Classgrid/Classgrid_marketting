@@ -64,10 +64,11 @@ export async function generateMetadata({
         seoTitle?: string;
         metaDescription?: unknown;
         ogImage?: unknown;
+        ogImageUrl?: string;
       }
     | null;
   const fallback = changelogFallbackBySlug[slug];
-  const ogImage = buildSanityImageUrl(cms?.ogImage, 1200) ?? fallback?.ogImage;
+  const ogImage = buildSanityImageUrl(cms?.ogImage, 1200) ?? cms?.ogImageUrl ?? fallback?.ogImage;
   const localizedTitle = extractLocaleString(cms?.title, lang);
   const localizedSummary = extractLocaleString(cms?.summary, lang);
   const localizedMetaDescription = extractLocaleString(cms?.metaDescription, lang);
