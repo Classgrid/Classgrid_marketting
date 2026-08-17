@@ -55,18 +55,43 @@ export async function GET(req: Request) {
       updatePayload.receives_blog = false;
     }
 
-    // Soft-delete: set the specific preference to false
-    const { error: updateError } = await supabaseAdmin
+    // Check if the user exists in Supabase
+    const { data: existingUser } = await supabaseAdmin
       .from("blog_subscribers")
-      .update(updatePayload)
-      .eq("email", email);
+      .select("email")
+      .eq("email", email)
+      .maybeSingle();
 
-    if (updateError) {
-      console.error("Unsubscribe DB Error:", updateError);
-      return NextResponse.json(
-        { error: "Failed to unsubscribe. Please try again." },
-        { status: 500 }
-      );
+    if (existingUser) {
+      // Soft-delete: set the specific preference to false
+      const { error: updateError } = await supabaseAdmin
+        .from("blog_subscribers")
+        .update(updatePayload)
+        .eq("email", email);
+
+      if (updateError) {
+        console.error("Unsubscribe DB Update Error:", updateError);
+        return NextResponse.json({ error: "Failed to unsubscribe. Please try again." }, { status: 500 });
+      }
+    } else {
+      // User is from MongoDB and not in Supabase yet. Insert them into the blocklist!
+      const insertPayload = {
+        email: email,
+        name: "Subscriber", // Fallback name
+        receives_blog: type !== "blog", // True if they didn't unsubscribe from blog
+        receives_changelog: type !== "changelog",
+        receives_legal: type !== "legal",
+        unsubscribe_token: crypto.randomBytes(16).toString('hex') // Generate a proper DB token for them
+      };
+
+      const { error: insertError } = await supabaseAdmin
+        .from("blog_subscribers")
+        .insert([insertPayload]);
+
+      if (insertError) {
+        console.error("Unsubscribe DB Insert Error:", insertError);
+        return NextResponse.json({ error: "Failed to unsubscribe. Please try again." }, { status: 500 });
+      }
     }
 
     // Redirect to the confirmation page

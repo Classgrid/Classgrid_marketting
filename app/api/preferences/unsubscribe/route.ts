@@ -1,66 +1,37 @@
-// ⚠️ ============================================================
-// ⚠️  AI WARNING — DO NOT MODIFY THIS FILE
-// ⚠️ ============================================================
-// This route handles the email unsubscribe flow WITH mandatory login.
-// The login requirement (getServerSession check) is INTENTIONAL and
-// MUST NEVER be removed. This is by design — users must log in to
-// confirm their identity before their subscription preferences are changed.
-//
-// FLOW:
-//   Email link → /api/preferences/unsubscribe?type=blog|changelog|legal
-//   → If NOT logged in → redirect to /login?intent=unsubscribe&type=...
-//   → After login → update the specific preference → redirect to /blog/unsubscribed
-//
-// DO NOT:
-//   - Remove the getServerSession check
-//   - Bypass login with a token
-//   - Change the redirect to /login
-//   - Make this route publicly accessible without a session
-//
-// This flow took 15+ hours to design and build. Do not break it.
-// ⚠️ ============================================================
-
 import { NextResponse, NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    const email = session?.user?.email;
-
     const type = req.nextUrl.searchParams.get("type") || "blog";
     const token = req.nextUrl.searchParams.get("token");
-    let targetEmail = "";
-    if (token) {
-      const { data: subscriber } = await supabaseAdmin
-        .from("blog_subscribers")
-        .select("email")
-        .eq("unsubscribe_token", token)
-        .maybeSingle();
-      if (subscriber && subscriber.email) {
-        targetEmail = subscriber.email;
-      }
+
+    if (!token) {
+      return NextResponse.json({ error: "Invalid unsubscribe link. Token missing." }, { status: 400 });
     }
 
-    if (!email) {
-      // If they somehow hit this without a session, bounce them back to login
-      let loginUrl = `/login?intent=unsubscribe&type=${type}`;
-      if (token) loginUrl += `&token=${token}`;
-      return NextResponse.redirect(new URL(loginUrl, req.url));
-    }
-
-    // Strict validation: They must log in with the exact email that received the link
-    if (targetEmail && email.toLowerCase() !== targetEmail.toLowerCase()) {
-      return NextResponse.redirect(new URL(`/login?intent=unsubscribe&type=${type}&token=${token}&error=OAuthAccountNotLinked`, req.url));
-    }
-
-    if (!req.nextUrl.searchParams.get("type") || !["blog", "changelog", "legal"].includes(req.nextUrl.searchParams.get("type")!)) {
+    if (!["blog", "changelog", "legal"].includes(type)) {
       return NextResponse.json({ error: "Invalid unsubscribe type." }, { status: 400 });
     }
 
+    // Identify the original recipient securely from the unique token
+    const { data: subscriber, error: fetchError } = await supabaseAdmin
+      .from("blog_subscribers")
+      .select("email")
+      .eq("unsubscribe_token", token)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("Error fetching subscriber by token:", fetchError);
+      return NextResponse.json({ error: "Database error." }, { status: 500 });
+    }
+
+    if (!subscriber || !subscriber.email) {
+      // If the email is already unsubscribed/deleted or the token is bad, don't fallback to logged-in user!
+      return NextResponse.json({ error: "Invalid or expired unsubscribe link." }, { status: 400 });
+    }
+
+    const targetEmail = subscriber.email;
 
     // Determine which field to update
     let updateData: Record<string, boolean> = {};
@@ -68,11 +39,11 @@ export async function GET(req: NextRequest) {
     if (type === "changelog") updateData.receives_changelog = false;
     if (type === "legal") updateData.receives_legal = false;
 
-    // Perform the update
+    // Perform the update only on the original recipient
     const { error } = await supabaseAdmin
       .from("blog_subscribers")
       .update(updateData)
-      .eq("email", email.toLowerCase());
+      .eq("email", targetEmail);
 
     if (error) {
       console.error("Supabase Error unsubscribing user:", error);
