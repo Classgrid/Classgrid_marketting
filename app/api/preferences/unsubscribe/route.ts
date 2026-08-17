@@ -1,37 +1,48 @@
 import { NextResponse, NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import crypto from "crypto";
+
+function generateUnsubscribeHash(email: string): string {
+  const secret = process.env.SANITY_WEBHOOK_SECRET || "classgrid_fallback";
+  return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
+}
 
 export async function GET(req: NextRequest) {
   try {
     const type = req.nextUrl.searchParams.get("type") || "blog";
     const token = req.nextUrl.searchParams.get("token");
+    const emailParam = req.nextUrl.searchParams.get("email");
 
-    if (!token) {
-      return NextResponse.json({ error: "Invalid unsubscribe link. Token missing." }, { status: 400 });
+    if (!token || !emailParam) {
+      return NextResponse.json({ error: "Invalid unsubscribe link. Parameters missing." }, { status: 400 });
     }
 
     if (!["blog", "changelog", "legal"].includes(type)) {
       return NextResponse.json({ error: "Invalid unsubscribe type." }, { status: 400 });
     }
 
-    // Identify the original recipient securely from the unique token
-    const { data: subscriber, error: fetchError } = await supabaseAdmin
-      .from("blog_subscribers")
-      .select("email")
-      .eq("unsubscribe_token", token)
-      .maybeSingle();
-
-    if (fetchError) {
-      console.error("Error fetching subscriber by token:", fetchError);
-      return NextResponse.json({ error: "Database error." }, { status: 500 });
+    // Isolate the session entirely: just verify the cryptographic signature or UUID token
+    let targetEmail = emailParam;
+    
+    if (token && !emailParam) {
+      // Legacy behavior: lookup by Supabase UUID token
+      const { data: subscriber } = await supabaseAdmin
+        .from("blog_subscribers")
+        .select("email")
+        .eq("unsubscribe_token", token)
+        .maybeSingle();
+      if (subscriber?.email) targetEmail = subscriber.email;
+    } else if (emailParam && token) {
+      // New behavior: verify stateless HMAC token
+      const expectedToken = generateUnsubscribeHash(emailParam);
+      if (token !== expectedToken) {
+         return NextResponse.json({ error: "Invalid or expired unsubscribe link." }, { status: 403 });
+      }
     }
 
-    if (!subscriber || !subscriber.email) {
-      // If the email is already unsubscribed/deleted or the token is bad, don't fallback to logged-in user!
-      return NextResponse.json({ error: "Invalid or expired unsubscribe link." }, { status: 400 });
+    if (!targetEmail || !token) {
+      return NextResponse.json({ error: "Invalid unsubscribe link. Parameters missing." }, { status: 400 });
     }
-
-    const targetEmail = subscriber.email;
 
     // Determine which field to update
     let updateData: Record<string, boolean> = {};
