@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ThumbsUp, ThumbsDown, Copy, Bot, Sparkles } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
-import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
 interface TocItem {
@@ -62,14 +61,11 @@ export function DocsToc() {
         commentSubmitted: false,
         feedbackId: newFeedbackId
       }));
-
-      toast.success(isHelpful ? 'Thanks! We are glad it helped.' : 'Thanks for your feedback! We will improve it.');
     } catch (e) {
       console.error(e);
       // Revert UI if API fails
       setHasVoted(false);
       setVotedValue(null);
-      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmittingFeedback(false);
     }
@@ -105,11 +101,8 @@ export function DocsToc() {
           }));
         } catch(e) {}
       }
-
-      toast.success('Your feedback has been securely sent to our team.');
     } catch (e) {
       console.error(e);
-      toast.error('Failed to send comment. Please try again.');
     } finally {
       setIsSubmittingComment(false);
     }
@@ -184,7 +177,6 @@ export function DocsToc() {
     const content = el?.getAttribute('data-markdown') || el?.textContent || 'No content found.';
     navigator.clipboard.writeText(content);
     setCopiedMarkdown(true);
-    toast.success('Markdown copied to clipboard!');
     setTimeout(() => setCopiedMarkdown(false), 2000);
   };
 
@@ -192,7 +184,6 @@ export function DocsToc() {
     const url = window.location.href;
     const prompt = `Read from ${url} so I can ask questions about its contents`;
     navigator.clipboard.writeText(prompt);
-    toast.success(`Opening ${aiName}...`);
 
     setTimeout(() => {
       if (aiName === 'ChatGPT') {
