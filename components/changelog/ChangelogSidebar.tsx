@@ -12,7 +12,9 @@ export function ChangelogSidebar({ readingTime }: ChangelogSidebarProps) {
   const [copiedMd, setCopiedMd] = useState(false);
 
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(window.location.href);
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(window.location.href).catch(console.error);
+    }
     setCopiedUrl(true);
     setTimeout(() => setCopiedUrl(false), 2000);
   };
@@ -20,7 +22,9 @@ export function ChangelogSidebar({ readingTime }: ChangelogSidebarProps) {
   const handleCopyMarkdown = () => {
     const el = document.querySelector('.changelog-content');
     const text = el?.textContent || 'No content found.';
-    navigator.clipboard.writeText(text);
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(text).catch(console.error);
+    }
     setCopiedMd(true);
     setTimeout(() => setCopiedMd(false), 2000);
   };
