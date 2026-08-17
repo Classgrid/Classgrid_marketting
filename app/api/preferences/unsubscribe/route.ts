@@ -9,6 +9,17 @@ function generateUnsubscribeHash(email: string): string {
   return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
 }
 
+function createErrorPage(title: string, message: string) {
+  return new NextResponse(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} | Classgrid</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#fafafa;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}.c{max-width:460px;padding:40px;background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);text-align:center;border:1px solid #eaeaea}h1{color:#b91c1c;font-size:22px;margin:16px 0 12px;font-weight:600}p{color:#4b5563;font-size:15px;line-height:1.6}a{display:inline-block;margin-top:24px;padding:10px 24px;background:#111;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:500}a:hover{background:#333}</style></head>
+<body><div class="c">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+<h1>${title}</h1><p>${message}</p>
+<a href="/">Go to Homepage</a>
+</div></body></html>`, { headers: { "Content-Type": "text/html" }, status: 400 });
+}
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,17 +30,17 @@ export async function GET(req: NextRequest) {
     const token = req.nextUrl.searchParams.get("token");
 
     if (!targetEmailParam || !token) {
-      return NextResponse.json({ error: "Invalid unsubscribe link." }, { status: 400 });
+      return createErrorPage("Invalid Unsubscribe Link", "This unsubscribe link is missing required parameters. Please use the link directly from your email.");
     }
 
     if (!["blog", "changelog", "legal"].includes(type)) {
-      return NextResponse.json({ error: "Invalid unsubscribe type." }, { status: 400 });
+      return createErrorPage("Invalid Unsubscribe Link", "The unsubscribe type is not recognized.");
     }
 
     // Verify the cryptographic token
     const expectedToken = generateUnsubscribeHash(targetEmailParam);
     if (token !== expectedToken) {
-      return NextResponse.json({ error: "Invalid or expired unsubscribe link." }, { status: 403 });
+      return createErrorPage("Expired or Invalid Link", "This unsubscribe link is no longer valid. Please use the latest email you received and click the unsubscribe link from there.");
     }
 
     // ── Step 1: If NOT logged in → redirect to login page ──
