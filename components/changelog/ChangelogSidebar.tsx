@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { Copy, Link2 } from 'lucide-react';
 
 interface ChangelogSidebarProps {
-  releaseDate: string;
-  readingTime?: number;
+  readingTime?: number | null;
 }
 
-export function ChangelogSidebar({ releaseDate, readingTime }: ChangelogSidebarProps) {
+export function ChangelogSidebar({ readingTime }: ChangelogSidebarProps) {
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedMd, setCopiedMd] = useState(false);
 
@@ -42,13 +41,12 @@ export function ChangelogSidebar({ releaseDate, readingTime }: ChangelogSidebarP
   return (
     <aside className="w-[200px] hidden xl:block sticky top-[5rem] h-fit pt-2 pl-6 text-sm shrink-0">
       <div className="flex flex-col gap-5">
-        {/* Date & Read Time */}
-        <div className="space-y-1">
-          <p className="text-[13px] text-muted-foreground">{releaseDate}</p>
-          {readingTime && (
+        {/* Read Time */}
+        {readingTime && (
+          <div className="space-y-1">
             <p className="text-[13px] text-muted-foreground">{readingTime} min read</p>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Copy */}
         <div>

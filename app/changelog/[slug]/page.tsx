@@ -341,7 +341,6 @@ export default async function ChangelogDetailPage({
         </div>
         </div>
         <ChangelogSidebar 
-          releaseDate={format(new Date(entry.releaseDate), "dd MMM yyyy")}
           readingTime={entry.readingTime}
         />
         </div>
