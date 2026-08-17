@@ -6,7 +6,10 @@ import { motion } from "framer-motion";
 import { HeroVideoSlider } from "@/components/sections/HeroVideoSlider";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
 import { urlFor } from "@/sanity/lib/image";
-import { Check, Link as LinkIcon } from "lucide-react";
+import { CodeBlockClient } from "@/components/docs/code-block-client";
+import { DocsFAQItem, DocsFAQSummary } from "@/components/docs/docs-faq";
+import { DocsImage } from "@/components/docs/docs-image";
+import { Callout } from "@/components/docs/callout";
 
 // Subtle animation
 const blockAnim = {
@@ -251,6 +254,49 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
               ))}
             </tbody>
             </table>
+          </div>
+        );
+      },
+      codeBlock: ({ value }) => {
+        if (!value?.code) return null;
+        return (
+          <div className="my-10 mx-auto max-w-[750px]">
+            <CodeBlockClient 
+              rawCode={value.code} 
+              language={value.language || "javascript"} 
+              html={value.highlightedHtml || `<pre><code>${value.code}</code></pre>`} 
+            />
+          </div>
+        );
+      },
+      docsFaq: ({ value, components }) => {
+        if (!value?.question) return null;
+        return (
+          <div className="my-6 mx-auto max-w-[750px]">
+            <DocsFAQItem>
+              <DocsFAQSummary>{value.question}</DocsFAQSummary>
+              {value.answer ? (
+                <PortableText value={value.answer} components={components} />
+              ) : null}
+            </DocsFAQItem>
+          </div>
+        );
+      },
+      docsImage: ({ value }) => {
+        if (!value?.src) return null;
+        return (
+          <div className="my-10 mx-auto max-w-[750px]">
+            <DocsImage src={value.src} alt={value.alt || ""} title={value.title || ""} />
+          </div>
+        );
+      },
+      callout: ({ value }) => {
+        if (!value?.title && !value?.body) return null;
+        return (
+          <div className="my-6 mx-auto max-w-[750px]">
+            <Callout type={value.type || "info"} title={value.title || ""}>
+              {value.body}
+            </Callout>
           </div>
         );
       }
