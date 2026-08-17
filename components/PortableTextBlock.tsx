@@ -10,6 +10,7 @@ import { CodeBlockClient } from "@/components/docs/code-block-client";
 import { DocsFAQItem, DocsFAQSummary } from "@/components/docs/docs-faq";
 import { DocsImage } from "@/components/docs/docs-image";
 import { Callout } from "@/components/docs/callout";
+import { VercelTable } from "@/components/ui/vercel-table";
 
 // Subtle animation
 const blockAnim = {
@@ -198,62 +199,57 @@ function createPortableTextComponents(showAccentBars: boolean): PortableTextComp
         );
       },
       table: ({ value }) => {
-      if (!value?.rows?.length) return null;
-      return (
-        <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-slate-300 dark:border-white/10 bg-card shadow-sm">
-          <table className="w-full border-collapse text-left text-sm">
-            <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
-              <tr>
-                {value.rows[0].cells.map((cell: any, i: number) => (
-                  <th key={i} className="px-5 py-3 font-semibold text-emerald-700 dark:text-emerald-400 antialiased border-r border-slate-300 dark:border-white/10 last:border-r-0">
-                    {cell}
-                  </th>
-                  ))}
-                </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-300 dark:divide-white/10">
-              {value.rows.slice(1).map((row: any, i: number) => (
-                <tr key={i} className="transition-colors hover:bg-emerald-500/5">
-                  {row.cells.map((cell: any, j: number) => (
-                    <td key={j} className="px-5 py-3.5 text-slate-800 dark:text-slate-300 font-medium antialiased leading-relaxed border-r border-slate-300 dark:border-white/10 last:border-r-0">
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-            </table>
+        if (!value?.rows?.length) return null;
+        
+        // Convert Sanity table format to VercelTable format
+        const hasHeaders = value.rows[0].cells.some((cell: any) => cell !== "");
+        const columns = hasHeaders
+          ? value.rows[0].cells.map((header: string, i: number) => ({
+              key: `col_${i}`,
+              header: header || `Column ${i + 1}`,
+              accent: i === 0, // Accent the first column by default
+            }))
+          : value.rows[0].cells.map((_: any, i: number) => ({
+              key: `col_${i}`,
+              header: `Column ${i + 1}`,
+              accent: i === 0,
+            }));
+            
+        const rows = value.rows.slice(hasHeaders ? 1 : 0).map((row: any) => {
+          const rowObj: Record<string, any> = {};
+          row.cells.forEach((cell: string, i: number) => {
+            rowObj[`col_${i}`] = cell;
+          });
+          return rowObj;
+        });
+
+        return (
+          <div className="my-10 mx-auto max-w-[750px]">
+            <VercelTable columns={columns} rows={rows} />
           </div>
         );
       },
       richTable: ({ value }) => {
-      if (!value?.headers?.length && !value?.rows?.length) return null;
-      return (
-        <div className="my-10 mx-auto max-w-[750px] overflow-x-auto rounded-xl border border-slate-300 dark:border-white/10 bg-card shadow-sm">
-          <table className="w-full border-collapse text-left text-sm">
-            {value.headers?.length > 0 && (
-              <thead className="border-b-2 border-emerald-500/40 bg-emerald-500/10">
-                <tr>
-                  {value.headers.map((header: string, i: number) => (
-                    <th key={i} className="px-5 py-3 font-semibold text-emerald-700 dark:text-emerald-400 antialiased border-r border-slate-300 dark:border-white/10 last:border-r-0">
-                      {header}
-                    </th>
-                    ))}
-                  </tr>
-              </thead>
-            )}
-            <tbody className="divide-y divide-slate-300 dark:divide-white/10">
-              {(value.rows || []).map((row: any, i: number) => (
-                <tr key={i} className="transition-colors hover:bg-emerald-500/5">
-                  {(row.cells || []).map((cell: string, j: number) => (
-                    <td key={j} className="px-5 py-3.5 text-slate-800 dark:text-slate-300 font-medium antialiased leading-relaxed border-r border-slate-300 dark:border-white/10 last:border-r-0">
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-            </table>
+        if (!value?.headers?.length && !value?.rows?.length) return null;
+        
+        // Convert Sanity richTable format to VercelTable format
+        const columns = (value.headers || []).map((header: string, i: number) => ({
+          key: `col_${i}`,
+          header: header,
+          accent: i === 0, // Accent the first column by default
+        }));
+        
+        const rows = (value.rows || []).map((row: any) => {
+          const rowObj: Record<string, any> = {};
+          (row.cells || []).forEach((cell: string, i: number) => {
+            rowObj[`col_${i}`] = cell;
+          });
+          return rowObj;
+        });
+
+        return (
+          <div className="my-10 mx-auto max-w-[750px]">
+            <VercelTable columns={columns} rows={rows} />
           </div>
         );
       },
