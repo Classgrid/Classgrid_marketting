@@ -2,7 +2,10 @@ import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.local" });
+import fs from "fs";
+
+if (fs.existsSync(".env.local")) dotenv.config({ path: ".env.local" });
+if (fs.existsSync(".env")) dotenv.config({ path: ".env" });
 
 const supabaseUrl = process.env.BLOG_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.BLOG_SUPABASE_SERVICE_ROLE_KEY;
