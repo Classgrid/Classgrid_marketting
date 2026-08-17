@@ -289,7 +289,7 @@ export default async function ChangelogDetailPage({
           <ContentCoverImage src={entry.imageUrl} alt={entry.title} className="mb-12" />
         ) : null}
 
-        <div className="space-y-0">
+        <div className="space-y-0 changelog-content">
           <PortableTextBlock 
             value={await Promise.all((entry.content || []).map(async (block: any) => {
               if (block._type === 'codeBlock' && block.code) {
