@@ -9,6 +9,17 @@ function generateUnsubscribeHash(email: string): string {
   return crypto.createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
 }
 
+function generateLegacyHash(email: string): string {
+  return crypto.createHash("md5").update(email).digest("hex");
+}
+
+function isTokenValid(email: string, token: string): boolean {
+  const hmacHash = generateUnsubscribeHash(email);
+  const md5Hash = generateLegacyHash(email);
+  const fallbackHash = crypto.createHmac("sha256", "classgrid_fallback").update(email).digest("hex").slice(0, 32);
+  return token === hmacHash || token === md5Hash || token === fallbackHash;
+}
+
 function createErrorPage(title: string, message: string) {
   return new NextResponse(`<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} | Classgrid</title>
@@ -38,8 +49,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Verify the cryptographic token
-    const expectedToken = generateUnsubscribeHash(targetEmailParam);
-    if (token !== expectedToken) {
+    if (!isTokenValid(targetEmailParam, token)) {
       return createErrorPage("Expired or Invalid Link", "This unsubscribe link is no longer valid. Please use the latest email you received and click the unsubscribe link from there.");
     }
 
