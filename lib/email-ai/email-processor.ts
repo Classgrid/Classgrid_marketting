@@ -412,6 +412,7 @@ export async function processIncomingEmail(
       aiResponse: answer,
       isEscalation,
       ticketId: ticketId || undefined,
+      originalMessage: parsed.textBody || parsed.cleanBody,
     });
 
     console.log(`\n📤 ════════════ SES EMAIL DISPATCH ════════════`);

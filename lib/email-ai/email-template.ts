@@ -42,13 +42,14 @@ export type EmailTemplateParams = {
   aiResponse: string;
   isEscalation?: boolean;
   ticketId?: string;
+  originalMessage?: string; // The user's original email body
 };
 
 /**
  * Generate a branded AI reply email using the existing baseTemplate.
  */
 export function generateAIReplyEmail(params: EmailTemplateParams): string {
-  const { recipientName, recipientEmail, subject, aiResponse, isEscalation, ticketId } = params;
+  const { recipientName, recipientEmail, subject, aiResponse, isEscalation, ticketId, originalMessage } = params;
   const firstName = recipientName ? recipientName.split(" ")[0] : "there";
   const responseHtml = markdownToHtml(aiResponse);
 
@@ -65,12 +66,22 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     </div>`
     : "";
 
+  const originalMessageBlock = originalMessage
+    ? `
+    <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; color: #6b7280; font-size: 13px;">
+      <p style="margin-bottom: 8px;">On ${new Date().toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at ${new Date().toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit' })}, ${recipientName || recipientEmail} wrote:</p>
+      <blockquote style="margin: 0; padding-left: 16px; border-left: 4px solid #d1d5db; white-space: pre-wrap; font-family: inherit;">${originalMessage}</blockquote>
+    </div>`
+    : "";
+
   // The AI response already includes a natural greeting (per the professional email rulebook).
   // We do not hardcode any greeting here to avoid duplication.
   const content = `
     <p>${responseHtml}</p>
 
     ${escalationBlock}
+
+    ${originalMessageBlock}
   `;
 
   return baseTemplate({
