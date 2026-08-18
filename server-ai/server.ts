@@ -395,7 +395,14 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             formData.append("priority", aiPriority);
 
             const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
-            const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, { method: "POST", body: formData });
+            const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, { 
+              method: "POST", 
+              body: formData,
+              headers: {
+                "x-proxy-auth-email": email,
+                "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+              },
+            });
 
             if (ticketRes.ok) {
               ticketCreated = true;

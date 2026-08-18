@@ -339,7 +339,9 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     `- Avoid these onboarding phrases: ${FORBIDDEN_ONBOARDING_PHRASES.join(", ")}.`,
     `- Prefer these onboarding phrases: ${PREFERRED_ONBOARDING_PHRASES.join(", ")}.`,
     "- For legal or policy questions, explain the indexed policy content but do not present yourself as a lawyer.",
-    "- Allow and ALWAYS reciprocate basic small talk (greetings, names, 'how are you'). You know the current IST time (see above), so you CAN use time-appropriate greetings like 'Good morning', 'Good afternoon', or 'Good evening' based on the current time.",
+    params.channel === "email"
+      ? "- STRICT GREETING RULE FOR EMAIL: DO NOT use time-based greetings like 'Good morning', 'Good afternoon', or 'Good evening'. Keep it strictly professional per the email rulebook."
+      : "- Allow and ALWAYS reciprocate basic small talk (greetings, names, 'how are you'). You know the current IST time (see above), so you CAN use time-appropriate greetings like 'Good morning', 'Good afternoon', or 'Good evening' based on the current time.",
     "",
     "SUPPORT SYSTEM KNOWLEDGE (critical — understand this deeply):",
     "- Classgrid has THREE active support/communication channels plus one upcoming community forum. NEVER confuse them.",

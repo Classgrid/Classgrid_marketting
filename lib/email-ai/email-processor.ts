@@ -262,6 +262,10 @@ export async function processIncomingEmail(
         const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
           method: "POST",
           body: formData,
+          headers: {
+            "x-proxy-auth-email": parsed.senderEmail,
+            "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+          },
         });
 
         if (ticketRes.ok) {
