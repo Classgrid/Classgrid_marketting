@@ -14,7 +14,7 @@ import { processIncomingEmail } from "./email-processor";
 // ── Configuration ─────────────────────────────────────────────────────────────
 
 const POLL_INTERVAL_MS = Number(process.env.EMAIL_POLL_INTERVAL_MS || 45_000); // Default: 45 seconds
-const MAX_EMAILS_PER_POLL = Number(process.env.EMAIL_MAX_PER_POLL || 10);       // Max emails to process per cycle
+const MAX_EMAILS_PER_POLL = Number(process.env.EMAIL_MAX_PER_POLL || 50);       // Max emails to process per cycle
 const PROCESSING_LOCK_KEY = "email-ai-processing";
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -104,8 +104,8 @@ async function pollCycle(): Promise<void> {
         console.error(`❌ [email-poller] Failed to process email ${emailSummary.messageId}:`, msg);
       }
 
-      // Small delay between emails to avoid rate limiting
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Small delay between emails to avoid rate limiting (SES allows 14/sec)
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
