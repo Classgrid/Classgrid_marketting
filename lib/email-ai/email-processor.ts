@@ -92,7 +92,7 @@ function generateMessageId(): string {
 
 // ── Sentiment Pre-Filter ──────────────────────────────────────────────────────
 
-async function checkEmailSentiment(emailBody: string, subject: string): Promise<{ isAngry: boolean, summary: string }> {
+async function checkEmailSentiment(emailBody: string, subject: string): Promise<{ isAngry: boolean, summary: string, replyToUser: string }> {
   try {
     const apiKey = process.env.GROQ_API_KEY || process.env.MISTRAL_API_KEY;
     const url = process.env.GROQ_API_KEY 
@@ -100,7 +100,7 @@ async function checkEmailSentiment(emailBody: string, subject: string): Promise<
       : "https://api.mistral.ai/v1/chat/completions";
     const model = process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "mistral-small-latest";
     
-    if (!apiKey) return { isAngry: false, summary: "" };
+    if (!apiKey) return { isAngry: false, summary: "", replyToUser: "" };
 
     const res = await fetch(url, {
       method: "POST",
@@ -112,13 +112,13 @@ async function checkEmailSentiment(emailBody: string, subject: string): Promise<
         model,
         messages: [{
           role: "system",
-          content: "You are an email classifier. Read the user's email and determine if the user is HIGHLY angry, threatening, or aggressively demanding a refund. If yes, respond with EXACTLY the word 'ANGRY' followed by a colon and a 1-sentence summary of the problem. If no (even for normal complaints), respond with EXACTLY the word 'CALM'."
+          content: "You are an email classifier. Read the user's email and determine if the user is HIGHLY angry, threatening, or aggressively demanding a refund. If yes, respond with EXACTLY the word 'ANGRY' followed by a colon, then a 1-sentence summary, then a pipe '|', then a short, professional, empathetic reply to the user (e.g. 'Hello, I understand you are frustrated... I have forwarded this to our team...'). If no, respond with EXACTLY the word 'CALM'."
         }, {
           role: "user",
           content: `Subject: ${subject}\n\nBody: ${emailBody.substring(0, 1000)}`
         }],
         temperature: 0.1,
-        max_tokens: 100
+        max_tokens: 300
       })
     });
     
@@ -126,15 +126,17 @@ async function checkEmailSentiment(emailBody: string, subject: string): Promise<
     const content = data.choices?.[0]?.message?.content?.trim() || "CALM";
     
     if (content.startsWith("ANGRY")) {
+      const parts = content.substring(5).replace(/^:/, "").split("|");
       return {
         isAngry: true,
-        summary: content.substring(5).replace(/^:/, "").trim() || "Customer sent an angry or urgent email."
+        summary: (parts[0] || "").trim() || "Customer sent an angry or urgent email.",
+        replyToUser: (parts[1] || "").trim() || "Hello,\n\nI understand you are facing a frustrating issue. I have escalated this immediately to our human support team for priority review. They will get back to you as soon as possible.\n\nThank you for your patience."
       };
     }
-    return { isAngry: false, summary: "" };
+    return { isAngry: false, summary: "", replyToUser: "" };
   } catch (e) {
     console.error("[email-ai] Sentiment check failed:", e);
-    return { isAngry: false, summary: "" };
+    return { isAngry: false, summary: "", replyToUser: "" };
   }
 }
 
@@ -258,7 +260,7 @@ export async function processIncomingEmail(
     if (sentiment.isAngry) {
       console.log(`🚨 [email-ai] Sentiment was ANGRY. Skipping RAG and escalating directly.`);
       isEscalation = true;
-      answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
+      answer = sentiment.replyToUser || "Hello,\n\nI understand your frustration regarding this issue. I have escalated this directly to our support team who will review it immediately.\n\nThank you for your patience.";
       aiSummary = sentiment.summary;
       aiSubject = `[URGENT] ${parsed.subject}`;
       rawPriority = "high";
@@ -299,7 +301,7 @@ export async function processIncomingEmail(
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();
         if (!answer || answer.length < 15) {
-          answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
+          answer = "Hello,\n\nI understand you are facing an issue. I have forwarded your request to our human support team. They will review your email and respond as soon as possible.";
         }
       }
     }
