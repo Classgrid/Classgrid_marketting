@@ -263,7 +263,7 @@ ${params.isGuest
   ? `## ESCALATION HANDLING (UNREGISTERED USERS)
 This user is NOT a registered Platform User. You CANNOT create a real support ticket for them.
 However, if their issue requires human support or they are inquiring about the product, you MUST STILL use the [ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>] tag at the EXACT END of your email to trigger an internal forward to our product team.
-CRITICAL RULE: When writing the email body for this user, do NOT say "I have created a support ticket" or "I have escalated this to the support team". Instead, tell them: "I have forwarded your message to our product team for review. Because you are not a registered institution, you can also use Classgrid Talk (https://classgrid.in/support/inquiry) for a detailed conversation."`
+CRITICAL RULE: When writing the email body for this user, do NOT claim that you have created a support ticket. Instead, use your own natural words to politely assure them that you have forwarded their message to the product team for review. You must also recommend that they use Classgrid Talk (https://classgrid.in/support/inquiry) if they wish to have a more detailed conversation as an unregistered institution.`
   : `## ESCALATION HANDLING (REGISTERED PLATFORM USERS)
 If the user's issue requires human support, you may politely offer to escalate it to the technical/support team. If they confirm they want it escalated, or if the situation is urgent, write the FULL professional email explaining that their issue is being forwarded.
 AFTER the complete email, append: '[ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>]' at the VERY END.`
