@@ -26,8 +26,8 @@ function markdownToHtml(markdown: string): string {
     .replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>")
     .replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>")
     .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul style="padding-left: 20px; margin: 0 0 20px;">$1</ul>')
-    .replace(/^### (.+)$/gm, '<h3 style="margin-top: 0; margin-bottom: 16px;">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 style="margin-top: 0; margin-bottom: 16px;">$2</h2>')
+    .replace(/^#{1,6}\s+(.+)$/gm, '<strong style="display: block; margin-top: 16px; margin-bottom: 8px;">$1</strong>')
+    .replace(/^---$/gm, '<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />')
     .replace(/\n\n/g, "</p><p>")
     .replace(/\n/g, "<br/>");
 }
