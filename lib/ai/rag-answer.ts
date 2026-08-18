@@ -499,7 +499,6 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     "   - If user asks about the forum: direct them to [The Classgrid Forum](https://forum.classgrid.in).",
     "   - If user asks about tracking their ticket: direct to [Support Requests](/support/requests).",
     "",
-
     ...channelRules,
     "",
     "CURRENT PAGE CONTEXT:",
