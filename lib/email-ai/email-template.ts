@@ -52,9 +52,9 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
   const cleanOriginalMessage = originalMessage ? originalMessage.trim().replace(/\n{3,}/g, '\n\n') : "";
   const originalMessageBlock = cleanOriginalMessage
     ? `
-    <div style="margin-top: 40px; font-size: 13px; color: #6b7280;">
+    <div class="gmail_quote" style="margin-top: 40px; font-size: 13px; color: #6b7280;">
       <p style="margin-bottom: 8px;">On ${new Date().toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at ${new Date().toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit' })}, ${recipientName || recipientEmail} wrote:</p>
-      <blockquote style="margin: 0; padding-left: 16px; border-left: 2px solid #d1d5db; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; font-family: inherit;">${cleanOriginalMessage}</blockquote>
+      <blockquote class="gmail_quote" style="margin: 0; padding-left: 16px; border-left: 2px solid #d1d5db; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; font-family: inherit;">${cleanOriginalMessage}</blockquote>
     </div>`
     : "";
 
