@@ -31,7 +31,7 @@ const MAX_PROCESSED_CACHE = 500; // Keep last 500 message IDs in memory
 
 const retryCounts = new Map<string, number>();
 const nextRetryTimes = new Map<string, number>(); // Stores the timestamp (ms) when the email is allowed to be retried
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 4;
 
 function addToProcessedCache(messageId: string) {
   processedMessageIds.add(messageId);
