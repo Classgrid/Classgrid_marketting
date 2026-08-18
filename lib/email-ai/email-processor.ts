@@ -90,55 +90,7 @@ function generateMessageId(): string {
   return `<ai-${timestamp}-${random}@classgrid.in>`;
 }
 
-// ── Sentiment Pre-Filter ──────────────────────────────────────────────────────
-
-async function checkEmailSentiment(emailBody: string, subject: string): Promise<{ isAngry: boolean, summary: string, replyToUser: string }> {
-  try {
-    const apiKey = process.env.GROQ_API_KEY || process.env.MISTRAL_API_KEY;
-    const url = process.env.GROQ_API_KEY 
-      ? "https://api.groq.com/openai/v1/chat/completions" 
-      : "https://api.mistral.ai/v1/chat/completions";
-    const model = process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "mistral-small-latest";
-    
-    if (!apiKey) return { isAngry: false, summary: "", replyToUser: "" };
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{
-          role: "system",
-          content: "You are an email classifier. Read the user's email and determine if the user is HIGHLY angry, threatening, or aggressively demanding a refund. If yes, respond with EXACTLY the word 'ANGRY' followed by a colon, then a 1-sentence summary, then a pipe '|', then a short, professional, empathetic reply to the user (e.g. 'Hello, I understand you are frustrated... I have forwarded this to our team...'). If no, respond with EXACTLY the word 'CALM'."
-        }, {
-          role: "user",
-          content: `Subject: ${subject}\n\nBody: ${emailBody.substring(0, 1000)}`
-        }],
-        temperature: 0.1,
-        max_tokens: 300
-      })
-    });
-    
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content?.trim() || "CALM";
-    
-    if (content.startsWith("ANGRY")) {
-      const parts = content.substring(5).replace(/^:/, "").split("|");
-      return {
-        isAngry: true,
-        summary: (parts[0] || "").trim() || "Customer sent an angry or urgent email.",
-        replyToUser: (parts[1] || "").trim() || "Hello,\n\nI understand you are facing a frustrating issue. I have escalated this immediately to our human support team for priority review. They will get back to you as soon as possible.\n\nThank you for your patience."
-      };
-    }
-    return { isAngry: false, summary: "", replyToUser: "" };
-  } catch (e) {
-    console.error("[email-ai] Sentiment check failed:", e);
-    return { isAngry: false, summary: "", replyToUser: "" };
-  }
-}
+// Sentiment Pre-Filter has been removed. All emails are now routed directly through the main RAG AI.
 
 // ── Main Processing Function ──────────────────────────────────────────────────
 
@@ -245,10 +197,6 @@ export async function processIncomingEmail(
         content: msg.content,
       }));
 
-    // 7.5 Sentiment Pre-Filter (Skip heavy RAG if extremely angry)
-    console.log(`🔎 [email-ai] State: Checking email sentiment...`);
-    const sentiment = await checkEmailSentiment(parsed.cleanBody, parsed.subject);
-
     let answer = "";
     let isEscalation = false;
     let ticketId: string | null = null;
@@ -257,27 +205,19 @@ export async function processIncomingEmail(
     let rawCategory = "general";
     let rawPriority = "medium";
 
-    if (sentiment.isAngry) {
-      console.log(`🚨 [email-ai] Sentiment was ANGRY. Skipping RAG and escalating directly.`);
-      isEscalation = true;
-      answer = sentiment.replyToUser || "Hello,\n\nI understand your frustration regarding this issue. I have escalated this directly to our support team who will review it immediately.\n\nThank you for your patience.";
-      aiSummary = sentiment.summary;
-      aiSubject = `[URGENT] ${parsed.subject}`;
-      rawPriority = "high";
-    } else {
-      // 8. Generate AI response using existing RAG pipeline
-      console.log(`🧠 [email-ai] State: Generating AI response...`);
-      console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
+    // 8. Generate AI response using existing RAG pipeline
+    console.log(`🧠 [email-ai] State: Generating AI response...`);
+    console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
 
-      const result = await generateClassgridRagAnswer({
-        question: parsed.cleanBody,
-        channel: "email", // Use professional email channel rules
-        userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
-        fullName: parsed.senderName || undefined,
-        userEmail: parsed.senderEmail,
-        history: history.slice(0, -1), // Exclude the current message (it's the question)
-        isGuest: false, // Email senders are treated as authenticated for escalation purposes
-      });
+    const result = await generateClassgridRagAnswer({
+      question: parsed.cleanBody,
+      channel: "email", // Use professional email channel rules
+      userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
+      fullName: parsed.senderName || undefined,
+      userEmail: parsed.senderEmail,
+      history: history.slice(0, -1), // Exclude the current message (it's the question)
+      isGuest: false, // Email senders are treated as authenticated for escalation purposes
+    });
 
       answer = result.answer || "Thank you for reaching out. Our team will review your message and respond soon.";
 
