@@ -117,6 +117,16 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
+  const groqKey = process.env.GROQ_API_KEY?.trim();
+  if (groqKey) {
+    providers.push({
+      name: "groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: groqKey,
+      model: "llama-3.3-70b-versatile",
+    });
+  }
+
   return providers;
 }
 
