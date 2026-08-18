@@ -1,7 +1,7 @@
 export const aboutPageFallback = {
   seoTitle: "About Classgrid",
   metaDescription:
-    "The Classgrid story, mission, values, and team behind a calmer operating system for modern education.",
+    "The Classgrid story, mission, values, and team behind a calmer Operating System for Educational Institutions.",
   heroHeadline: "We build the infrastructure that lets educators focus on education",
   heroSubheadline:
     "Classgrid exists to replace fragmented admin work with one calm, dependable operating system for modern institutions.",

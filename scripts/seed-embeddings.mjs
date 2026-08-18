@@ -171,7 +171,7 @@ async function fetchAllDocs() {
       _id: "static_about",
       _type: "staticPage",
       title: "About Classgrid",
-      body: "Classgrid is the operating system for modern education. It manages admissions, academics, operations, communication, and analytics in one unified education platform. Built for schools, colleges, junior colleges, coaching institutes, and engineering colleges across India.",
+      body: "Classgrid is the Operating System for Educational Institutions. It manages admissions, academics, operations, communication, and analytics in one unified education platform. Built for schools, colleges, junior colleges, coaching institutes, and engineering colleges across India.",
     },
   ];
 

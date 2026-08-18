@@ -8,7 +8,7 @@ export const pageMeta: Record<string, PageMeta> = {
   home: {
     title: "The Operating System for Educational Institutions",
     description:
-      "Classgrid is the operating system for modern education - one stack for academics, operations, finance, admissions, communication, and AI.",
+      "Classgrid is the Operating System for Educational Institutions - one stack for academics, operations, finance, admissions, communication, and AI.",
     path: "/",
   },
   about: {
