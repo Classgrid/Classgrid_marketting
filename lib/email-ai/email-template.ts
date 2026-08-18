@@ -5,7 +5,6 @@
  * to ensure consistent branding across all emails.
  */
 
-import { baseTemplate } from "../email-templates";
 
 // ── Markdown to HTML (for AI responses) ───────────────────────────────────────
 
@@ -46,48 +45,53 @@ export type EmailTemplateParams = {
 };
 
 /**
- * Generate a branded AI reply email using the existing baseTemplate.
+ * Generate a branded AI reply email using a minimal, plain-text style layout.
  */
 export function generateAIReplyEmail(params: EmailTemplateParams): string {
-  const { recipientName, recipientEmail, subject, aiResponse, isEscalation, ticketId, originalMessage } = params;
-  const firstName = recipientName ? recipientName.split(" ")[0] : "there";
+  const { recipientName, recipientEmail, aiResponse, isEscalation, ticketId, originalMessage } = params;
   const responseHtml = markdownToHtml(aiResponse);
 
-  const escalationBlock = isEscalation
+  const escalationBlock = isEscalation && ticketId
     ? `
-    <div style="margin-top: 24px; padding: 20px; background-color: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 8px;">
-      <div class="meta" style="color: #92400e;">Support Ticket Created</div>
-      <p style="margin: 0 0 8px; color: #78350f;">
-        Your issue has been escalated to our human support team.
-        ${ticketId ? `Your Ticket ID is <strong>#${ticketId.slice(0, 8)}</strong>.` : ""}
-        Our team will review your request and respond as soon as possible.
-      </p>
-      ${ticketId ? `<a href="https://classgrid.in/support/requests/${ticketId}?email=${encodeURIComponent(recipientEmail)}" class="btn" style="margin-top: 12px;">Track Your Ticket</a>` : ""}
-    </div>`
+    <p style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #e5e7eb; color: #374151;">
+      Your support request (Ticket ID: <strong>#${ticketId.slice(0, 8)}</strong>) has been received, and our team is actively reviewing it to assist you at the earliest. 
+      You can track your ticket status anytime <a href="https://classgrid.in/support/requests/${ticketId}?email=${encodeURIComponent(recipientEmail)}" style="color: #2563eb; text-decoration: underline;">here</a>.
+    </p>`
     : "";
 
   const originalMessageBlock = originalMessage
     ? `
-    <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; color: #6b7280; font-size: 13px;">
+    <div style="margin-top: 40px; color: #6b7280; font-size: 13px;">
       <p style="margin-bottom: 8px;">On ${new Date().toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at ${new Date().toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit' })}, ${recipientName || recipientEmail} wrote:</p>
-      <blockquote style="margin: 0; padding-left: 16px; border-left: 4px solid #d1d5db; white-space: pre-wrap; font-family: inherit;">${originalMessage}</blockquote>
+      <blockquote style="margin: 0; padding-left: 16px; border-left: 2px solid #d1d5db; white-space: pre-wrap; font-family: inherit;">${originalMessage}</blockquote>
     </div>`
     : "";
 
-  // The AI response already includes a natural greeting (per the professional email rulebook).
-  // We do not hardcode any greeting here to avoid duplication.
-  const content = `
-    <p>${responseHtml}</p>
-
-    ${escalationBlock}
-
-    ${originalMessageBlock}
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #111111;
+            margin: 0;
+            padding: 16px;
+          }
+          a {
+            color: #2563eb;
+            text-decoration: underline;
+          }
+        </style>
+      </head>
+      <body>
+        ${responseHtml}
+        ${escalationBlock}
+        ${originalMessageBlock}
+      </body>
+    </html>
   `;
-
-  return baseTemplate({
-    content,
-    title: subject,
-    ignoreText: "This is an automated email from the Classgrid system.",
-    hideSupportLink: true,
-  });
 }
