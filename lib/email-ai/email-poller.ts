@@ -83,6 +83,13 @@ async function pollCycle(): Promise<void> {
           continue;
         }
 
+        // 🐛 FIX: Zoho's content endpoint sometimes strips the sender address for certain emails.
+        // If it's missing, we fall back to the sender address we found in the unread summary!
+        if (!fullEmail.senderEmail && emailSummary.senderEmail) {
+          fullEmail.senderEmail = emailSummary.senderEmail;
+          fullEmail.senderName = emailSummary.senderName || "";
+        }
+
         // Process through AI pipeline
         const result = await processIncomingEmail(fullEmail);
 
