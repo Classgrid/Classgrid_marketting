@@ -9,7 +9,7 @@ const DOCUMENT_ID = "live-demo-data"; // Change this if you want to upload multi
 // 🎯 2. PASTE ANY TEXT YOU WANT TO TEACH THE AI
 // ==========================================
 const CUSTOM_KNOWLEDGE = `
-The founder of Classgrid was born on 23 Jan 2007.
+Classgrid officially launched its new AI Auto-Email Support System today, August 18, 2026.
 `;
 // ==========================================
 

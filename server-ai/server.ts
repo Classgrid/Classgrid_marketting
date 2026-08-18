@@ -606,6 +606,14 @@ app.listen(PORT, () => {
   const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID;
   const hasGithubOAuth = !!process.env.GITHUB_CLIENT_ID;
 
+  // ── DETAILED ZOHO ENV CONNECTION LOGS ──
+  console.log(`\n📧 ════════════ ZOHO ENV CONNECTION LOGS ════════════`);
+  console.log(`ZOHO_MAIL_CLIENT_ID:     ${process.env.ZOHO_MAIL_CLIENT_ID ? process.env.ZOHO_MAIL_CLIENT_ID.substring(0, 8) + '********' : "❌ MISSING"}`);
+  console.log(`ZOHO_MAIL_CLIENT_SECRET: ${process.env.ZOHO_MAIL_CLIENT_SECRET ? "✅ CONFIGURED (Hidden for security)" : "❌ MISSING"}`);
+  console.log(`ZOHO_MAIL_REFRESH_TOKEN: ${process.env.ZOHO_MAIL_REFRESH_TOKEN ? process.env.ZOHO_MAIL_REFRESH_TOKEN.substring(0, 8) + '********' : "❌ MISSING"}`);
+  console.log(`ZOHO_MAIL_ACCOUNT_ID:    ${process.env.ZOHO_MAIL_ACCOUNT_ID ? process.env.ZOHO_MAIL_ACCOUNT_ID : "❌ MISSING"}`);
+  console.log(`📧 ════════════════════════════════════════════════════\n`);
+
   // Start the Email AI Support poller
   startEmailPoller();
   const emailPollerStatus = getEmailPollerStatus();

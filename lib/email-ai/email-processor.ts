@@ -322,6 +322,11 @@ export async function processIncomingEmail(
       ticketId: ticketId || undefined,
     });
 
+    console.log(`\n📤 ════════════ SES EMAIL SENDING LOG ════════════`);
+    console.log(`📤 [email-ai] Connecting to AWS SES SMTP...`);
+    console.log(`📤 [email-ai] Preparing to send AI reply to: ${parsed.senderEmail}`);
+    console.log(`📤 [email-ai] Message Subject: ${parsed.subject.startsWith("Re:") ? parsed.subject : `Re: ${parsed.subject}`}`);
+    
     // 13. Send reply via SES SMTP
     const transporter = getSmtpTransporter();
     await transporter.sendMail({
@@ -338,7 +343,8 @@ export async function processIncomingEmail(
       },
     });
 
-    console.log(`📤 [email-ai] Reply sent to ${parsed.senderEmail}`);
+    console.log(`✅ [email-ai] SUCCESS: AI Reply email successfully sent to ${parsed.senderEmail} via SES!`);
+    console.log(`📤 ════════════════════════════════════════════════════\n`);
 
     // 14. Mark original email as read in Zoho
     await markEmailAsRead(email.messageId, email.folderId);
