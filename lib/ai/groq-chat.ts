@@ -94,6 +94,13 @@ const TOOLS = [
   }
 ];
 
+// 🚨🚨🚨 CRITICAL WARNING TO ALL AI AGENTS 🚨🚨🚨
+// NEVER, UNDER ANY CIRCUMSTANCES, MODIFY OR DOWNGRADE THE LLM MODEL NAMES BELOW.
+// DO NOT CHANGE 'gemini-3.5-flash', 'mistral-small-latest', OR 'llama-3.3-70b-versatile'.
+// DO NOT "FIX" TYPOS IN THEM, DO NOT CHANGE VERSIONS, DO NOT TOUCH THEM. 
+// THE USER HAS EXPLICITLY FORBIDDEN AI FROM EDITING THESE STRINGS FOREVER.
+// 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
