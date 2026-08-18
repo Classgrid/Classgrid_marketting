@@ -123,6 +123,11 @@ export async function processIncomingEmail(
     console.log(`📧 [email-ai] Body (cleaned): ${parsed.cleanBody.slice(0, 200)}...`);
     console.log(`📧 ════════════════════════════════════════════════════\n`);
 
+    // Clean up empty subjects from Gmail
+    if (!parsed.subject || parsed.subject.toLowerCase().includes("(no subject)")) {
+      parsed.subject = "Classgrid Support";
+    }
+
     // 2. Check if we should skip this email
     if (!parsed.senderEmail || shouldSkipEmail(parsed.senderEmail, parsed.subject)) {
       console.log(`⏭️  [email-ai] Skipping email from ${parsed.senderEmail || "unknown"} (internal/automated/empty sender)`);
@@ -324,7 +329,7 @@ export async function processIncomingEmail(
 
     // 12. Generate branded HTML email
     const htmlEmail = generateAIReplyEmail({
-      recipientName: parsed.senderName || parsed.senderEmail,
+      recipientName: parsed.senderName || "",
       recipientEmail: parsed.senderEmail,
       subject: parsed.subject,
       aiResponse: answer,
