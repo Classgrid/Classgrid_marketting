@@ -29,6 +29,9 @@ let lastPollTime: Date | null = null;
 const processedMessageIds = new Set<string>();
 const MAX_PROCESSED_CACHE = 500; // Keep last 500 message IDs in memory
 
+const retryCounts = new Map<string, number>();
+const MAX_RETRIES = 3;
+
 function addToProcessedCache(messageId: string) {
   processedMessageIds.add(messageId);
   // Evict oldest entries if cache is too large
