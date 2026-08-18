@@ -6,36 +6,6 @@
  */
 
 
-import { baseTemplate } from "../email-templates";
-
-// ── Markdown to HTML (for AI responses) ───────────────────────────────────────
-
-function markdownToHtml(markdown: string): string {
-  return markdown
-    // Bold: **text** or __text__
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/__(.+?)__/g, "<strong>$1</strong>")
-    // Italic: *text* or _text_
-    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
-    // Links: [text](url)
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #111111; text-decoration: underline;">$1</a>')
-    // Numbered lists
-    .replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>")
-    // Bullet points
-    .replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>")
-    // Wrap consecutive <li> elements in <ul>
-    .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul style="padding-left: 20px; margin: 0 0 20px; color: #374151; font-size: 14px; line-height: 1.7;">$1</ul>')
-    // Headings
-    .replace(/^### (.+)$/gm, '<h3 style="color: #111111; margin-top: 0; margin-bottom: 16px;">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 style="color: #111111; margin-top: 0; margin-bottom: 16px;">$1</h2>')
-    // Paragraphs (double newline)
-    .replace(/\n\n/g, "</p><p>")
-    // Single newlines to <br>
-    .replace(/\n/g, "<br/>");
-}
-
-// ── Template ──────────────────────────────────────────────────────────────────
-
 export type EmailTemplateParams = {
   recipientName: string;
   recipientEmail: string;
@@ -46,9 +16,23 @@ export type EmailTemplateParams = {
   originalMessage?: string; // The user's original email body
 };
 
+function markdownToHtml(markdown: string): string {
+  return markdown
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/__(.+?)__/g, "<strong>$1</strong>")
+    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>')
+    .replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>")
+    .replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>")
+    .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul style="padding-left: 20px; margin: 0 0 20px;">$1</ul>')
+    .replace(/^### (.+)$/gm, '<h3 style="margin-top: 0; margin-bottom: 16px;">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="margin-top: 0; margin-bottom: 16px;">$2</h2>')
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/\n/g, "<br/>");
+}
+
 /**
- * Generate a branded AI reply email using the existing baseTemplate,
- * but keeping the internal layout extremely clean (no yellow boxes).
+ * Generate a clean, minimalistic AI reply email.
  */
 export function generateAIReplyEmail(params: EmailTemplateParams): string {
   const { recipientName, recipientEmail, subject, aiResponse, isEscalation, ticketId, originalMessage } = params;
@@ -73,20 +57,33 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     </div>`
     : "";
 
-  // Signature block is handled by the AI's 6-section output
-  const signatureBlock = "";
-
-  const content = `
-    <p>${responseHtml}</p>
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #111111; line-height: 1.6; font-size: 14px; max-width: 600px; margin: 0 auto; padding: 20px; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    p { margin: 0 0 16px 0; }
+  </style>
+</head>
+<body>
+  <div style="margin-bottom: 24px;">
+    <img src="https://classgrid.in/logo.png" alt="Classgrid" style="height: 32px;" />
+  </div>
+  
+  <div style="margin-bottom: 32px;">
+    ${responseHtml}
     ${escalationBlock}
-    ${signatureBlock}
-    ${originalMessageBlock}
-  `;
+  </div>
 
-  return baseTemplate({
-    content,
-    title: subject,
-    ignoreText: "This is an automated email from the Classgrid system.",
-    hideSupportLink: true,
-  });
+  <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; color: #6b7280; font-size: 12px; text-align: center;">
+    <p style="margin-bottom: 8px;">This is an automated email from the Classgrid system.</p>
+    <p>&copy; ${new Date().getFullYear()} Classgrid. All rights reserved.</p>
+  </div>
+  
+  ${originalMessageBlock}
+</body>
+</html>`;
 }
