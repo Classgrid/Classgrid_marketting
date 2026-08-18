@@ -326,17 +326,17 @@ export async function processIncomingEmail(
       ticketId: ticketId || undefined,
     });
 
-    console.log(`\n📤 ════════════ SES EMAIL SENDING LOG ════════════`);
+    console.log(`\n📤 ════════════ SES EMAIL DISPATCH ════════════`);
     console.log(`📤 [email-ai] Connecting to AWS SES SMTP...`);
-    console.log(`📤 [email-ai] Preparing to send AI reply to: ${parsed.senderEmail}`);
-    console.log(`📤 [email-ai] Message Subject: ${parsed.subject.startsWith("Re:") ? parsed.subject : `Re: ${parsed.subject}`}`);
     
+    const replySubject = parsed.subject.startsWith("Re:") ? parsed.subject : `Re: ${parsed.subject}`;
+
     // 13. Send reply via SES SMTP
     const transporter = getSmtpTransporter();
     await transporter.sendMail({
       from: `"Classgrid Support" <support@classgrid.in>`,
       to: parsed.senderEmail,
-      subject: parsed.subject.startsWith("Re:") ? parsed.subject : `Re: ${parsed.subject}`,
+      subject: replySubject,
       html: htmlEmail,
       messageId: replyMessageId.replace(/[<>]/g, ""),
       inReplyTo: email.messageId,
@@ -347,7 +347,11 @@ export async function processIncomingEmail(
       },
     });
 
-    console.log(`✅ [email-ai] SUCCESS: AI Reply email successfully sent to ${parsed.senderEmail} via SES!`);
+    console.log(`✅ [email-ai] ---------------------------------------------`);
+    console.log(`✅ [email-ai] STATUS:  SUCCESS - EMAIL SENT`);
+    console.log(`✅ [email-ai] TO:      ${parsed.senderEmail}`);
+    console.log(`✅ [email-ai] SUBJECT: ${replySubject}`);
+    console.log(`✅ [email-ai] ---------------------------------------------`);
     console.log(`📤 ════════════════════════════════════════════════════\n`);
 
     // 14. Mark original email as read in Zoho
