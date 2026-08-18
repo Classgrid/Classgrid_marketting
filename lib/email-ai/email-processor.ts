@@ -297,10 +297,13 @@ export async function processIncomingEmail(
             || ticketResponse?._id || ticketResponse?.id || null;
           console.log(`✅ [email-ai] Support ticket created: ${ticketId}`);
         } else {
-          console.error("[email-ai] Ticket creation failed:", ticketRes.status, await ticketRes.text());
+          const errorText = await ticketRes.text();
+          console.error("[email-ai] Ticket creation failed:", ticketRes.status, errorText);
+          ticketId = `ERROR: ${ticketRes.status} ${errorText.substring(0, 100)}`;
         }
       } catch (e: any) {
         console.error("[email-ai] Failed to create ticket:", e.message);
+        ticketId = `CATCH_ERROR: ${e.message}`;
       }
 
       // Update conversation status
