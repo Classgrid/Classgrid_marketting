@@ -56,15 +56,17 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
 
   const escalationBlock = isEscalation && ticketId
     ? `
-    <p style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #e5e7eb; color: #374151;">
-      Your support request (Ticket ID: <strong>#${ticketId.slice(0, 8)}</strong>) has been received, and our team is actively reviewing it to assist you at the earliest. 
-      You can track your ticket status anytime <a href="https://classgrid.in/support/requests/${ticketId}?email=${encodeURIComponent(recipientEmail)}" style="color: #2563eb; text-decoration: underline;">here</a>.
-    </p>`
+    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #e5e7eb;">
+      <p>
+        Your support request (Ticket ID: <strong>#${ticketId.slice(0, 8)}</strong>) has been received, and our team is actively reviewing it to assist you at the earliest. 
+        You can track your ticket status anytime <a href="https://classgrid.in/support/requests/${ticketId}?email=${encodeURIComponent(recipientEmail)}">here</a>.
+      </p>
+    </div>`
     : "";
 
   const originalMessageBlock = originalMessage
     ? `
-    <div style="margin-top: 40px; color: #6b7280; font-size: 13px;">
+    <div style="margin-top: 40px; font-size: 13px; opacity: 0.8;">
       <p style="margin-bottom: 8px;">On ${new Date().toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at ${new Date().toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit' })}, ${recipientName || recipientEmail} wrote:</p>
       <blockquote style="margin: 0; padding-left: 16px; border-left: 2px solid #d1d5db; white-space: pre-wrap; font-family: inherit;">${originalMessage}</blockquote>
     </div>`
