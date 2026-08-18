@@ -295,7 +295,9 @@ export async function processIncomingEmail(
         rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
 
         // Strip the [ESCALATE] tag from the customer-facing reply
-        answer = answer.replace(ESCALATE_RE_G, "").trim();
+        answer = answer.replace(ESCALATE_RE_G, "");
+        // Clean up any leftover markdown garbage at the end (like --- or ****)
+        answer = answer.replace(/[\s\-*]+$/, "").trim();
         if (!answer || answer.length < 15) {
           answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
         }
