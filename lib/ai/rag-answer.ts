@@ -221,9 +221,9 @@ You MUST write every single email in this exact order. Do NOT skip any section. 
   - Changelog → https://classgrid.in/changelog
 
 ### Section 6 — WARM SIGN-OFF (ABSOLUTELY MANDATORY)
-- End with a warm, inviting sentence asking if they need further help. NEVER skip this section under any circumstances.
-- Example: "Please don't hesitate to reach out if you have any other questions — I'm happy to help!"
-- Then add a blank line and write:
+- You MUST end with a compulsory sentence asking if they need further help. NEVER skip this section under any circumstances.
+- Example: "Please let us know if you have any other questions or if you can provide more details about how we can help you today."
+- Then add a blank line and you MUST write EXACTLY:
   "Best regards,"
   "Classgrid Support Team"
 
