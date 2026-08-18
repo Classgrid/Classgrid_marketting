@@ -72,9 +72,22 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     </div>`
     : "";
 
+  // Build a signature block that always appears
+  const signatureBlock = `
+    <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+      <p style="margin: 0 0 2px; color: #111111; font-weight: 600; font-size: 14px;">Best regards,</p>
+      <p style="margin: 0; color: #374151; font-size: 14px;">Classgrid Support Team</p>
+      <p style="margin: 8px 0 0; font-size: 13px;">
+        <a href="https://classgrid.in" style="color: #6b7280; text-decoration: none;">classgrid.in</a>
+        &nbsp;·&nbsp;
+        <a href="mailto:support@classgrid.in" style="color: #6b7280; text-decoration: none;">support@classgrid.in</a>
+      </p>
+    </div>`;
+
   const content = `
     <p>${responseHtml}</p>
     ${escalationBlock}
+    ${signatureBlock}
     ${originalMessageBlock}
   `;
 
