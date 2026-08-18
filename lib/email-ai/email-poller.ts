@@ -53,11 +53,14 @@ async function pollCycle(): Promise<void> {
   lastPollTime = new Date();
 
   try {
+    console.log(`\n⏳ [email-poller] Waking up to poll Zoho Mail... (${new Date().toLocaleTimeString()})`);
+    console.log(`⏳ [email-poller] Connecting to Zoho API to fetch unread emails...`);
+    
     // 1. Fetch unread emails from Zoho
     const unreadEmails = await fetchUnreadEmails(MAX_EMAILS_PER_POLL);
 
     if (unreadEmails.length === 0) {
-      // Silent — no need to log every empty poll
+      console.log(`📭 [email-poller] 0 unread emails found. Going back to sleep.`);
       return;
     }
 
@@ -65,8 +68,10 @@ async function pollCycle(): Promise<void> {
 
     // 2. Process each email
     for (const emailSummary of unreadEmails) {
+      console.log(`🔍 [email-poller] Inspecting email from ${emailSummary.senderEmail}...`);
       // Skip if already processed (prevents double-processing from concurrent polls)
       if (processedMessageIds.has(emailSummary.messageId)) {
+        console.log(`⏭️  [email-poller] Skipping email (already processed in memory cache)`);
         continue;
       }
 

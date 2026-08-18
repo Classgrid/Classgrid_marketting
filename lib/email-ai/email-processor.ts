@@ -118,8 +118,8 @@ export async function processIncomingEmail(
     console.log(`📧 ════════════════════════════════════════════════════\n`);
 
     // 2. Check if we should skip this email
-    if (shouldSkipEmail(parsed.senderEmail, parsed.subject)) {
-      console.log(`⏭️  [email-ai] Skipping email from ${parsed.senderEmail} (internal/automated)`);
+    if (!parsed.senderEmail || shouldSkipEmail(parsed.senderEmail, parsed.subject)) {
+      console.log(`⏭️  [email-ai] Skipping email from ${parsed.senderEmail || "unknown"} (internal/automated/empty sender)`);
       await markEmailAsRead(email.messageId, email.folderId);
       return { success: true, action: "skipped" };
     }
@@ -132,9 +132,11 @@ export async function processIncomingEmail(
     }
 
     // 4. Connect to MongoDB
+    console.log(`🔌 [email-ai] State: Connecting to MongoDB database...`);
     await connectMongo();
 
     // 5. Look up or create conversation
+    console.log(`🔍 [email-ai] State: Searching for existing conversation thread for ${parsed.senderEmail}...`);
     const threadId = email.threadId || email.messageId || `thread-${Date.now()}`;
     let conversation = await EmailConversation.findOne({
       senderEmail: parsed.senderEmail.toLowerCase(),
@@ -183,7 +185,8 @@ export async function processIncomingEmail(
       }));
 
     // 8. Generate AI response using existing RAG pipeline
-    console.log(`🧠 [email-ai] Generating AI response...`);
+    console.log(`🧠 [email-ai] State: Generating AI response...`);
+    console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
 
     const result = await generateClassgridRagAnswer({
       question: parsed.cleanBody,
@@ -202,6 +205,7 @@ export async function processIncomingEmail(
     console.log(`═══════════════════════════════════════════════════════════\n`);
 
     // 9. Handle escalation
+    console.log(`⚙️  [email-ai] State: LLM processing finished. Evaluating escalation rules...`);
     let isEscalation = false;
     let ticketId: string | null = null;
     const escalateMatch = answer.match(ESCALATE_RE);
