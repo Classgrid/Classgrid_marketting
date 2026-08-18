@@ -14,6 +14,7 @@
  * and the escalation logic from server.ts.
  */
 
+import mongoose from "mongoose";
 import { connectMongo } from "../mongodb";
 import { getRedisClient } from "../redis";
 import { EmailConversation, type IEmailConversation } from "../models/EmailConversation";
@@ -199,9 +200,24 @@ export async function processIncomingEmail(
     let rawCategory = "general";
     let rawPriority = "medium";
 
-    // 8. Generate AI response using existing RAG pipeline
+    // 8. Check if user is a registered platform user
+    let isPlatformUser = false;
+    try {
+      await connectMongo();
+      const db = mongoose.connection.db;
+      if (db) {
+        const platformUser = await db.collection("users").findOne({
+          email: { $regex: new RegExp(`^${parsed.senderEmail}$`, 'i') }
+        });
+        isPlatformUser = !!(platformUser && platformUser.organization_id);
+      }
+    } catch (e) {
+      console.error("[email-ai] Failed to check platform user status", e);
+    }
+
+    // 9. Generate AI response using existing RAG pipeline
     console.log(`🧠 [email-ai] State: Generating AI response...`);
-    console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
+    console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM... (isPlatformUser: ${isPlatformUser})`);
 
     const result = await generateClassgridRagAnswer({
       question: parsed.cleanBody,
@@ -210,7 +226,7 @@ export async function processIncomingEmail(
       fullName: parsed.senderName || undefined,
       userEmail: parsed.senderEmail,
       history: history.slice(0, -1), // Exclude the current message (it's the question)
-      isGuest: false, // Email senders are treated as authenticated for escalation purposes
+      isGuest: !isPlatformUser, 
     });
 
     answer = result.answer || "";
