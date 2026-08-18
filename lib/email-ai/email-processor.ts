@@ -244,7 +244,6 @@ export async function processIncomingEmail(
           answer = "Hello,\n\nI understand you are facing an issue. I have forwarded your request to our human support team. They will review your email and respond as soon as possible.";
         }
       }
-    }
 
     if (isEscalation) {
       // Create support ticket via Platform API
