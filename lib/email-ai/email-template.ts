@@ -65,9 +65,9 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     </div>`
     : "";
 
+  // The AI response already includes a natural greeting (per the professional email rulebook).
+  // We do not hardcode any greeting here to avoid duplication.
   const content = `
-    <p>Hi ${firstName},</p>
-
     <p>${responseHtml}</p>
 
     ${escalationBlock}

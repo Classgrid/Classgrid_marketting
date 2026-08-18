@@ -201,7 +201,7 @@ export async function processIncomingEmail(
 
     const result = await generateClassgridRagAnswer({
       question: parsed.cleanBody,
-      channel: "web", // Use web channel rules (closest to email)
+      channel: "email", // Use professional email channel rules
       userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
       fullName: parsed.senderName || undefined,
       userEmail: parsed.senderEmail,
