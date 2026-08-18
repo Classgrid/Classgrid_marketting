@@ -79,12 +79,12 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     ${escalationBlock}
   </div>
 
-  <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; color: #6b7280; font-size: 12px; text-align: center;">
+  ${originalMessageBlock}
+
+  <div style="border-top: 1px solid #e5e7eb; margin-top: 40px; padding-top: 24px; color: #6b7280; font-size: 12px; text-align: center;">
     <p style="margin-bottom: 8px;">This is an automated email from the Classgrid system.</p>
     <p>&copy; ${new Date().getFullYear()} Classgrid. All rights reserved.</p>
   </div>
-  
-  ${originalMessageBlock}
 </body>
 </html>`;
 }
