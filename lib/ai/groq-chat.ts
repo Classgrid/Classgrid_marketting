@@ -123,7 +123,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "groq",
       url: "https://api.groq.com/openai/v1/chat/completions",
       apiKey: groqKey,
-      model: "llama-3.1-8b-instant",
+      model: "llama-3.3-70b-versatile",
     });
   }
 
