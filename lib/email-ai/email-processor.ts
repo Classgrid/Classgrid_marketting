@@ -240,6 +240,29 @@ export async function processIncomingEmail(
         answer = answer.replace(ESCALATE_RE_G, "");
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();
+        
+        // Failsafe: If the AI failed to write the email and ONLY outputted the [ESCALATE] tag,
+        // we must provide a fallback so MongoDB doesn't crash on an empty 'content' string.
+        // This fallback perfectly mimics the 6-section professional structure.
+        if (!answer || answer.length < 5) {
+          answer = `Hello,
+
+Thank you for reaching out to us. I want to assure you that your message has been received and reviewed.
+
+Because your request requires specialized assistance, I have escalated this directly to our human support team. They will look into this immediately and get back to you with a resolution as soon as possible.
+
+You can track the status of your ticket using the link below.
+
+Here are some resources that may help in the meantime:
+- Help Center: https://classgrid.in/help-center
+- Support Portal: https://classgrid.in/support
+- Product Modules: https://classgrid.in/product/modules
+
+Please don't hesitate to reply to this email if you have any additional details to add.
+
+Best regards,
+Classgrid Support Team`;
+        }
       }
 
     if (isEscalation) {
