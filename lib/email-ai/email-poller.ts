@@ -8,7 +8,7 @@
  * Automatically skips internal/automated emails.
  */
 
-import { fetchUnreadEmails, fetchEmailContent, isZohoMailConfigured } from "./zoho-mail";
+import { fetchUnreadEmails, fetchEmailContent, markEmailAsRead, isZohoMailConfigured } from "./zoho-mail";
 import { processIncomingEmail } from "./email-processor";
 
 // ── Configuration ─────────────────────────────────────────────────────────────
@@ -25,19 +25,20 @@ let totalProcessed = 0;
 let totalErrors = 0;
 let lastPollTime: Date | null = null;
 
-// Track processed message IDs to avoid double-processing
-const processedMessageIds = new Set<string>();
+// Track processed message IDs + their receivedTime to avoid double-processing
+// BUT allow new replies in the same thread (same messageId, newer timestamp) to be processed
+const processedMessageIds = new Map<string, number>(); // messageId → receivedTime
 const MAX_PROCESSED_CACHE = 500; // Keep last 500 message IDs in memory
 
 const retryCounts = new Map<string, number>();
 const nextRetryTimes = new Map<string, number>(); // Stores the timestamp (ms) when the email is allowed to be retried
 const MAX_RETRIES = 4;
 
-function addToProcessedCache(messageId: string) {
-  processedMessageIds.add(messageId);
+function addToProcessedCache(messageId: string, receivedTime: number) {
+  processedMessageIds.set(messageId, receivedTime);
   // Evict oldest entries if cache is too large
   if (processedMessageIds.size > MAX_PROCESSED_CACHE) {
-    const iterator = processedMessageIds.values();
+    const iterator = processedMessageIds.keys();
     processedMessageIds.delete(iterator.next().value!);
   }
 }
@@ -74,7 +75,9 @@ async function pollCycle(): Promise<void> {
     for (const emailSummary of unreadEmails) {
       console.log(`🔍 [email-poller] Inspecting email from ${emailSummary.senderEmail}...`);
       // Skip if already processed (prevents double-processing from concurrent polls)
-      if (processedMessageIds.has(emailSummary.messageId)) {
+      // BUT allow new replies in the same thread: if receivedTime is newer, process it again
+      const lastProcessedTime = processedMessageIds.get(emailSummary.messageId);
+      if (lastProcessedTime !== undefined && emailSummary.receivedTime <= lastProcessedTime) {
         console.log(`⏭️  [email-poller] Skipping email (already processed in memory cache)`);
         continue;
       }
@@ -107,7 +110,7 @@ async function pollCycle(): Promise<void> {
 
         if (result.success) {
           // Track result to prevent double processing
-          addToProcessedCache(emailSummary.messageId);
+          addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
           retryCounts.delete(emailSummary.messageId);
           nextRetryTimes.delete(emailSummary.messageId);
           totalProcessed++;
@@ -122,8 +125,10 @@ async function pollCycle(): Promise<void> {
           retryCounts.set(emailSummary.messageId, count);
           
           if (count >= MAX_RETRIES) {
-            console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as processed to skip permanently.`);
-            addToProcessedCache(emailSummary.messageId);
+            console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as read in Zoho and skipping permanently.`);
+            addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
+            // Mark as read in Zoho so it stops appearing in every poll cycle
+            await markEmailAsRead(emailSummary.messageId, emailSummary.folderId);
             retryCounts.delete(emailSummary.messageId);
             nextRetryTimes.delete(emailSummary.messageId);
           } else {
@@ -142,7 +147,9 @@ async function pollCycle(): Promise<void> {
         retryCounts.set(emailSummary.messageId, count);
         
         if (count >= MAX_RETRIES) {
-          addToProcessedCache(emailSummary.messageId);
+          addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
+          // Mark as read in Zoho so it stops appearing in every poll cycle
+          await markEmailAsRead(emailSummary.messageId, emailSummary.folderId);
           retryCounts.delete(emailSummary.messageId);
           nextRetryTimes.delete(emailSummary.messageId);
         } else {
