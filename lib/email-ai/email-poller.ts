@@ -30,6 +30,7 @@ const processedMessageIds = new Set<string>();
 const MAX_PROCESSED_CACHE = 500; // Keep last 500 message IDs in memory
 
 const retryCounts = new Map<string, number>();
+const nextRetryTimes = new Map<string, number>(); // Stores the timestamp (ms) when the email is allowed to be retried
 const MAX_RETRIES = 3;
 
 function addToProcessedCache(messageId: string) {
@@ -78,6 +79,14 @@ async function pollCycle(): Promise<void> {
         continue;
       }
 
+      // Skip if it's currently waiting in a scheduled retry delay
+      const nextRetryAt = nextRetryTimes.get(emailSummary.messageId);
+      if (nextRetryAt && Date.now() < nextRetryAt) {
+        const remainingMinutes = Math.ceil((nextRetryAt - Date.now()) / 60000);
+        console.log(`⏳ [email-poller] Skipping email — waiting ${remainingMinutes}m for scheduled retry.`);
+        continue;
+      }
+
       try {
         // Fetch full email content
         const fullEmail = await fetchEmailContent(emailSummary.messageId, emailSummary.folderId);
@@ -100,6 +109,7 @@ async function pollCycle(): Promise<void> {
           // Track result to prevent double processing
           addToProcessedCache(emailSummary.messageId);
           retryCounts.delete(emailSummary.messageId);
+          nextRetryTimes.delete(emailSummary.messageId);
           totalProcessed++;
           if (result.action !== "skipped") {
             console.log(`✅ [email-poller] ${result.action}: ${emailSummary.senderEmail} — "${emailSummary.subject}"`);
@@ -115,8 +125,12 @@ async function pollCycle(): Promise<void> {
             console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as processed to skip permanently.`);
             addToProcessedCache(emailSummary.messageId);
             retryCounts.delete(emailSummary.messageId);
+            nextRetryTimes.delete(emailSummary.messageId);
           } else {
-            console.log(`⏳ [email-poller] Will retry email on next poll (Attempt ${count}/${MAX_RETRIES})`);
+            const delays = [5, 7, 14];
+            const delayMinutes = delays[count - 1] || 5;
+            nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
+            console.log(`⏳ [email-poller] Scheduled retry ${count}/${MAX_RETRIES} in ${delayMinutes} minutes.`);
           }
         }
       } catch (err) {
@@ -130,6 +144,12 @@ async function pollCycle(): Promise<void> {
         if (count >= MAX_RETRIES) {
           addToProcessedCache(emailSummary.messageId);
           retryCounts.delete(emailSummary.messageId);
+          nextRetryTimes.delete(emailSummary.messageId);
+        } else {
+          const delays = [5, 7, 14];
+          const delayMinutes = delays[count - 1] || 5;
+          nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
+          console.log(`⏳ [email-poller] Scheduled retry ${count}/${MAX_RETRIES} in ${delayMinutes} minutes.`);
         }
       }
 
