@@ -219,7 +219,19 @@ export async function processIncomingEmail(
       isGuest: false, // Email senders are treated as authenticated for escalation purposes
     });
 
-      answer = result.answer || "";
+    answer = result.answer || "";
+
+    // 8.5. Catch AI Rate Limits and Crashes
+    // If the LLM provider crashes or hits a 429, it outputs a fallback string.
+    // We MUST NOT send this string to the user. We must throw an error so the poller retries in 2 minutes.
+    if (
+      answer.includes("The AI is currently receiving too many requests") ||
+      answer.includes("I am processing your request") ||
+      answer.trim() === ""
+    ) {
+      console.error(`❌ [email-ai] Fatal error: LLM failed or hit a rate limit. Throwing error to trigger Poller retry...`);
+      throw new Error("LLM Rate Limit or Generation Failure. Triggering poller retry.");
+    }
 
       console.log(`\n════════════════════ EMAIL AI RESPONSE ════════════════════`);
       console.log(answer);
