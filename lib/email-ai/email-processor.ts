@@ -324,9 +324,17 @@ export async function processIncomingEmail(
         );
       }
 
+      // Check if we actually got a real ticket ID from the backend, not an error string
+      const isRealTicket = ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH");
+
       // Update conversation status
-      conversation.status = "escalated";
-      if (ticketId) conversation.escalatedTicketId = ticketId;
+      conversation.status = isRealTicket ? "escalated" : "pending_escalation";
+      if (isRealTicket) {
+        conversation.escalatedTicketId = ticketId;
+      } else {
+        // If the ticket failed (likely unregistered user), append a manual fallback link to the email response
+        answer += "\n\n*Note: Since this email address is not registered to an active institution, a formal support ticket could not be automatically created. For a detailed conversation with our team, please log in and use [Classgrid Talk](https://classgrid.in/support/inquiry).*";
+      }
 
       // Log escalation to Sanity
       try {
@@ -345,8 +353,8 @@ export async function processIncomingEmail(
           userName: parsed.senderName || "",
           ipAddress: "email-inbound",
           deviceInfo: "Email Client",
-          status: ticketId ? "handled" : "pending",
-          ticketCreated: !!ticketId,
+          status: isRealTicket ? "handled" : "pending",
+          ticketCreated: !!isRealTicket,
           aiSummary,
           subject: aiSubject,
           ticketId: ticketId || "",
@@ -381,7 +389,7 @@ export async function processIncomingEmail(
       subject: parsed.subject,
       aiResponse: answer,
       isEscalation,
-      ticketId: ticketId || undefined,
+      ticketId: (isEscalation && ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH")) ? ticketId : undefined,
       originalMessage: parsed.textBody || parsed.cleanBody,
     });
 
