@@ -89,7 +89,7 @@ function buildPageContextBlock(pageContext?: PageContext) {
     pageContext.path && pageContext.path.includes("/support/requests")
       ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the Support Requests page looking at their existing ticket. DO NOT tell them to "Submit a Ticket" because they have ALREADY done so! The user's exact ticket details, status, and ALL message history (including admin/team replies) are provided above in the "Page summary". You HAVE access to this data — READ IT. When the user asks "did the team reply?", look at the messages in the Page summary and tell them exactly what the team said. NEVER say "I don't have real-time access" — you DO have access through the Page summary above. If there are admin replies, quote them. If there are no admin replies yet, say so honestly.`
       : "",
-      
+
     pageContext.path && pageContext.path.includes("/support/ticket")
       ? `\n🚨 CRITICAL CHATBOT RULE: The user is CURRENTLY on the 'Submit a Ticket' page. Tell them to fill out the form on their screen to reach the support team.`
       : "",
@@ -125,7 +125,7 @@ function buildSystemPrompt(params: {
   if (params.fullName) profileLines.push(`Full Name: ${params.fullName}`);
   if (params.userEmail) profileLines.push(`Email: ${params.userEmail}`);
   if (params.userContext?.role) profileLines.push(`Role: ${params.userContext.role}`);
-  
+
   const userProfile = profileLines.length > 0
     ? `\n\n=== USER PROFILE ===\nYou are talking to an authenticated user. Here is their profile:\n${profileLines.join("\n")}\n\n🚨 CRITICAL INSTRUCTIONS REGARDING USER PROFILE:\n1. Use their name naturally ONCE early in the conversation to be polite, but do NOT overuse it.\n2. If their Role is 'student', 'faculty', or 'teacher', NEVER mention pricing, buying the platform, or enterprise sales. Only assist with technical support. Tell them pricing is managed by their institution.\n3. Keep their organization name in mind when providing context, but only mention it if strictly relevant.`
     : `\n\n=== USER PROFILE ===\nYou are talking to an unauthenticated public visitor or guest. Do not mention anything about them being logged in. If they ask what their name is, politely apologize and ask for it.`;
@@ -467,7 +467,7 @@ export async function generateClassgridRagAnswer(
   });
 
   let userMessageContent: string = question;
-  
+
   // Check if we have any images. If so, we will bypass Mistral completely and use Gemini Native.
   let imageToProcessNatively = null;
 
@@ -483,7 +483,7 @@ export async function generateClassgridRagAnswer(
         // Attempt to parse text from the document (PDF, PPTX, DOCX, etc.)
         options.onStatus?.("reading document");
         const extractedText = await extractTextFromAttachment(att.url, att.mimeType);
-        
+
         if (extractedText) {
           userMessageContent += `\n\n[Attached Document: ${att.name}]\n\n--- DOCUMENT CONTENT ---\n${extractedText.slice(0, 4000)}\n--- END CONTENT ---`;
         } else {
