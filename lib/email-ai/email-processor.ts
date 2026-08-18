@@ -227,7 +227,8 @@ export async function processIncomingEmail(
     if (
       answer.includes("The AI is currently receiving too many requests") ||
       answer.includes("I am processing your request") ||
-      answer.trim() === ""
+      answer.includes("[RATE_LIMITED]") ||
+      answer.trim().length < 5
     ) {
       console.error(`❌ [email-ai] Fatal error: LLM failed or hit a rate limit. Throwing error to trigger Poller retry...`);
       throw new Error("LLM Rate Limit or Generation Failure. Triggering poller retry.");
@@ -254,26 +255,10 @@ export async function processIncomingEmail(
         answer = answer.replace(/[\s\-*]+$/, "").trim();
         
         // Failsafe: If the AI failed to write the email and ONLY outputted the [ESCALATE] tag,
-        // we must provide a fallback so MongoDB doesn't crash on an empty 'content' string.
-        // This fallback perfectly mimics the 6-section professional structure.
-        if (!answer || answer.length < 5) {
-          answer = `Hello,
-
-Thank you for reaching out to us. I want to assure you that your message has been received and reviewed.
-
-Because your request requires specialized assistance, I have escalated this directly to our human support team. They will look into this immediately and get back to you with a resolution as soon as possible.
-
-You can track the status of your ticket using the link below.
-
-Here are some resources that may help in the meantime:
-- Help Center: https://classgrid.in/help-center
-- Support Portal: https://classgrid.in/support
-- Product Modules: https://classgrid.in/product/modules
-
-Please don't hesitate to reply to this email if you have any additional details to add.
-
-Best regards,
-Classgrid Support Team`;
+        // we throw an error to trigger the poller retry loop, rather than sending a broken or empty email.
+        if (answer.length < 15) {
+          console.error(`❌ [email-ai] Fatal error: AI outputted [ESCALATE] but failed to write the email body. Throwing error to trigger Poller retry...`);
+          throw new Error("AI failed to generate email body alongside escalation tag. Triggering poller retry.");
         }
       }
 
