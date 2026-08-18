@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { baseTemplate } from "./email-templates";
 
 const transporter = nodemailer.createTransport({
   host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
@@ -94,32 +95,36 @@ export async function sendFailedEscalationEmail(
   originalMessage: string
 ) {
   const subject = `⚠️ AI Escalation Failed (Unregistered User): ${customerEmail}`;
-  const html = `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
-      <h2 style="color: #ea580c; border-bottom: 2px solid #ea580c; padding-bottom: 10px;">New Lead / Unregistered Escalation</h2>
-      <p>An unregistered user tried to escalate an issue to support. Because they are not registered on the platform, a support ticket was <strong>not</strong> created.</p>
-      
-      <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
-        <p style="margin: 0 0 10px 0;"><strong>Customer Name:</strong> ${customerName}</p>
-        <p style="margin: 0 0 10px 0;"><strong>Customer Email:</strong> <a href="mailto:${customerEmail}">${customerEmail}</a></p>
-        <p style="margin: 0 0 10px 0;"><strong>Source:</strong> ${channel}</p>
-      </div>
-
-      <h3 style="margin-top: 25px; color: #4b5563;">AI Summary</h3>
-      <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
-        ${aiSummary}
-      </div>
-
-      <h3 style="margin-top: 25px; color: #4b5563;">Original Message</h3>
-      <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
-        ${originalMessage}
-      </div>
-
-      <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
-        This incident was also logged to Sanity Studio under "AI Escalations".
-      </p>
+  const content = `
+    <p>An unregistered user tried to escalate an issue to support. Because they are not registered on the platform, a support ticket was <strong>not</strong> created.</p>
+    
+    <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px 0;"><strong>Customer Name:</strong> ${customerName}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Customer Email:</strong> <a href="mailto:${customerEmail}" style="color: #ea580c; text-decoration: none;">${customerEmail}</a></p>
+      <p style="margin: 0 0 10px 0;"><strong>Source:</strong> ${channel}</p>
     </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">AI Summary</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
+      ${aiSummary}
+    </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">Original Message</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
+      ${originalMessage}
+    </div>
+
+    <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
+      This incident was also logged to Sanity Studio under "AI Escalations".
+    </p>
   `;
+
+  const html = baseTemplate({
+    content,
+    title: 'New Lead / Unregistered Escalation ⚠️',
+    ignoreText: 'Internal team notification for failed AI escalations.',
+    hideSupportLink: true,
+  });
 
   try {
     await transporter.sendMail({
