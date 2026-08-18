@@ -499,8 +499,6 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     "   - If user asks about the forum: direct them to [The Classgrid Forum](https://forum.classgrid.in).",
     "   - If user asks about tracking their ticket: direct to [Support Requests](/support/requests).",
     "",
-    ...channelRules,
-    "",
     "CURRENT PAGE CONTEXT:",
     buildPageContextBlock(params.pageContext),
     "",
@@ -517,6 +515,9 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     "",
     "FALLBACK AI BEHAVIOR RULES (use only when Knowledge Base is empty):",
     fallbackBehaviorRules || "Not needed because Knowledge Base context is available.",
+    "",
+    "FINAL CRITICAL CHANNEL RULES (THESE OVERRIDE EVERYTHING ABOVE):",
+    ...channelRules,
   ].join("\n");
 }
 
