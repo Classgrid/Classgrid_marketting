@@ -6,6 +6,8 @@
  */
 
 
+import { baseTemplate } from "../email-templates";
+
 // ── Markdown to HTML (for AI responses) ───────────────────────────────────────
 
 function markdownToHtml(markdown: string): string {
@@ -45,10 +47,11 @@ export type EmailTemplateParams = {
 };
 
 /**
- * Generate a branded AI reply email using a minimal, plain-text style layout.
+ * Generate a branded AI reply email using the existing baseTemplate,
+ * but keeping the internal layout extremely clean (no yellow boxes).
  */
 export function generateAIReplyEmail(params: EmailTemplateParams): string {
-  const { recipientName, recipientEmail, aiResponse, isEscalation, ticketId, originalMessage } = params;
+  const { recipientName, recipientEmail, subject, aiResponse, isEscalation, ticketId, originalMessage } = params;
   const responseHtml = markdownToHtml(aiResponse);
 
   const escalationBlock = isEscalation && ticketId
@@ -67,31 +70,16 @@ export function generateAIReplyEmail(params: EmailTemplateParams): string {
     </div>`
     : "";
 
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #111111;
-            margin: 0;
-            padding: 16px;
-          }
-          a {
-            color: #2563eb;
-            text-decoration: underline;
-          }
-        </style>
-      </head>
-      <body>
-        ${responseHtml}
-        ${escalationBlock}
-        ${originalMessageBlock}
-      </body>
-    </html>
+  const content = `
+    <p>${responseHtml}</p>
+    ${escalationBlock}
+    ${originalMessageBlock}
   `;
+
+  return baseTemplate({
+    content,
+    title: subject,
+    ignoreText: "This is an automated email from the Classgrid system.",
+    hideSupportLink: true,
+  });
 }
