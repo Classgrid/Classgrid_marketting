@@ -90,6 +90,54 @@ function generateMessageId(): string {
   return `<ai-${timestamp}-${random}@classgrid.in>`;
 }
 
+// ── Sentiment Pre-Filter ──────────────────────────────────────────────────────
+
+async function checkEmailSentiment(emailBody: string, subject: string): Promise<{ isAngry: boolean, summary: string }> {
+  try {
+    const apiKey = process.env.GROQ_API_KEY || process.env.MISTRAL_API_KEY;
+    const url = process.env.GROQ_API_KEY 
+      ? "https://api.groq.com/openai/v1/chat/completions" 
+      : "https://api.mistral.ai/v1/chat/completions";
+    const model = process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "mistral-small-latest";
+    
+    if (!apiKey) return { isAngry: false, summary: "" };
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        messages: [{
+          role: "system",
+          content: "You are an email classifier. Read the user's email and determine if the user is HIGHLY angry, threatening, or aggressively demanding a refund. If yes, respond with EXACTLY the word 'ANGRY' followed by a colon and a 1-sentence summary of the problem. If no (even for normal complaints), respond with EXACTLY the word 'CALM'."
+        }, {
+          role: "user",
+          content: `Subject: ${subject}\n\nBody: ${emailBody.substring(0, 1000)}`
+        }],
+        temperature: 0.1,
+        max_tokens: 100
+      })
+    });
+    
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content?.trim() || "CALM";
+    
+    if (content.startsWith("ANGRY")) {
+      return {
+        isAngry: true,
+        summary: content.substring(5).replace(/^:/, "").trim() || "Customer sent an angry or urgent email."
+      };
+    }
+    return { isAngry: false, summary: "" };
+  } catch (e) {
+    console.error("[email-ai] Sentiment check failed:", e);
+    return { isAngry: false, summary: "" };
+  }
+}
+
 // ── Main Processing Function ──────────────────────────────────────────────────
 
 export type ProcessEmailResult = {
@@ -195,45 +243,66 @@ export async function processIncomingEmail(
         content: msg.content,
       }));
 
-    // 8. Generate AI response using existing RAG pipeline
-    console.log(`🧠 [email-ai] State: Generating AI response...`);
-    console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
+    // 7.5 Sentiment Pre-Filter (Skip heavy RAG if extremely angry)
+    console.log(`🔎 [email-ai] State: Checking email sentiment...`);
+    const sentiment = await checkEmailSentiment(parsed.cleanBody, parsed.subject);
 
-    const result = await generateClassgridRagAnswer({
-      question: parsed.cleanBody,
-      channel: "email", // Use professional email channel rules
-      userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
-      fullName: parsed.senderName || undefined,
-      userEmail: parsed.senderEmail,
-      history: history.slice(0, -1), // Exclude the current message (it's the question)
-      isGuest: false, // Email senders are treated as authenticated for escalation purposes
-    });
-
-    let answer = result.answer || "Thank you for reaching out. Our team will review your message and respond soon.";
-
-    console.log(`\n════════════════════ EMAIL AI RESPONSE ════════════════════`);
-    console.log(answer);
-    console.log(`═══════════════════════════════════════════════════════════\n`);
-
-    // 9. Handle escalation
-    console.log(`⚙️  [email-ai] State: LLM processing finished. Evaluating escalation rules...`);
+    let answer = "";
     let isEscalation = false;
     let ticketId: string | null = null;
-    const escalateMatch = answer.match(ESCALATE_RE);
+    let aiSummary = "";
+    let aiSubject = parsed.subject;
+    let rawCategory = "general";
+    let rawPriority = "medium";
 
-    if (escalateMatch) {
+    if (sentiment.isAngry) {
+      console.log(`🚨 [email-ai] Sentiment was ANGRY. Skipping RAG and escalating directly.`);
       isEscalation = true;
-      const aiSummary = escalateMatch[1].trim();
-      const aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
-      const rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
-      const rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+      answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
+      aiSummary = sentiment.summary;
+      aiSubject = `[URGENT] ${parsed.subject}`;
+      rawPriority = "high";
+    } else {
+      // 8. Generate AI response using existing RAG pipeline
+      console.log(`🧠 [email-ai] State: Generating AI response...`);
+      console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM...`);
 
-      // Strip the [ESCALATE] tag from the customer-facing reply
-      answer = answer.replace(ESCALATE_RE_G, "").trim();
-      if (!answer || answer.length < 15) {
-        answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
+      const result = await generateClassgridRagAnswer({
+        question: parsed.cleanBody,
+        channel: "email", // Use professional email channel rules
+        userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
+        fullName: parsed.senderName || undefined,
+        userEmail: parsed.senderEmail,
+        history: history.slice(0, -1), // Exclude the current message (it's the question)
+        isGuest: false, // Email senders are treated as authenticated for escalation purposes
+      });
+
+      answer = result.answer || "Thank you for reaching out. Our team will review your message and respond soon.";
+
+      console.log(`\n════════════════════ EMAIL AI RESPONSE ════════════════════`);
+      console.log(answer);
+      console.log(`═══════════════════════════════════════════════════════════\n`);
+
+      // 9. Handle escalation from RAG
+      console.log(`⚙️  [email-ai] State: LLM processing finished. Evaluating escalation rules...`);
+      const escalateMatch = answer.match(ESCALATE_RE);
+
+      if (escalateMatch) {
+        isEscalation = true;
+        aiSummary = escalateMatch[1].trim();
+        aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
+        rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
+        rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+
+        // Strip the [ESCALATE] tag from the customer-facing reply
+        answer = answer.replace(ESCALATE_RE_G, "").trim();
+        if (!answer || answer.length < 15) {
+          answer = "Your request has been forwarded to our support team. They will review your email and respond as soon as possible.";
+        }
       }
+    }
 
+    if (isEscalation) {
       // Create support ticket via Platform API
       try {
         const formData = new FormData();
