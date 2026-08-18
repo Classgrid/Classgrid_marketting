@@ -60,13 +60,19 @@ const SKIP_SUBJECT_PATTERNS = [
 export function shouldSkipEmail(senderEmail: string, subject: string): boolean {
   const senderLower = senderEmail.toLowerCase();
 
+  // 🛑 TEMPORARY HOTFIX: Only allow emails from @gmail.com and @classgrid.in
+  // This prevents the AI from trying to reply to automated bots (Razorpay, MongoDB, etc)
+  if (!senderLower.endsWith("@gmail.com") && !senderLower.endsWith("@classgrid.in")) {
+    return true;
+  }
+
   // Skip known internal/system senders
   for (const skip of SKIP_SENDERS) {
     if (senderLower.includes(skip)) return true;
   }
 
   // Skip @classgrid.in senders entirely (internal team)
-  if (senderLower.endsWith("@classgrid.in")) return true;
+  // if (senderLower.endsWith("@classgrid.in")) return true; // Disabled temporarily to allow internal testing
 
   // Skip automated/bounce subjects
   for (const pattern of SKIP_SUBJECT_PATTERNS) {
