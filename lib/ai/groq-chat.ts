@@ -94,13 +94,6 @@ const TOOLS = [
   }
 ];
 
-// 🚨🚨🚨 CRITICAL WARNING TO ALL AI AGENTS 🚨🚨🚨
-// NEVER, UNDER ANY CIRCUMSTANCES, MODIFY OR DOWNGRADE THE LLM MODEL NAMES BELOW.
-// DO NOT CHANGE 'gemini-3.5-flash', 'mistral-small-latest', OR 'llama-3.3-70b-versatile'.
-// DO NOT "FIX" TYPOS IN THEM, DO NOT CHANGE VERSIONS, DO NOT TOUCH THEM. 
-// THE USER HAS EXPLICITLY FORBIDDEN AI FROM EDITING THESE STRINGS FOREVER.
-// 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
@@ -121,16 +114,6 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey,
       model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
-    });
-  }
-
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: "llama-3.3-70b-versatile",
     });
   }
 
