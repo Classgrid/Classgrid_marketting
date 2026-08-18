@@ -128,12 +128,12 @@ export async function sendFailedEscalationEmail(
 
   try {
     await transporter.sendMail({
-      from: \`"Classgrid AI Alerts" <\${SENDER.address}>\`,
+      from: `"Classgrid AI Alerts" <${SENDER.address}>`,
       to: "team@classgrid.in",
       subject,
       html,
     });
-    console.log(\`[Email Alert] Sent failed escalation alert to team@classgrid.in for \${customerEmail}\`);
+    console.log(`[Email Alert] Sent failed escalation alert to team@classgrid.in for ${customerEmail}`);
   } catch (error) {
     console.error("[Email Alert] Failed to send alert email:", error);
   }
