@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { connectMongo } from "@/lib/mongodb";
 import { ModerationFlag } from "@/lib/models/ModerationFlag";
 import { AiRateLimit } from "../../../lib/models/AiRateLimit";
-import { sendSafetyEmail } from "@/lib/email";
+import { sendSafetyEmail, sendFailedEscalationEmail } from "@/lib/email";
 import { getRedisClient } from "@/lib/redis";
 
 import {
@@ -437,10 +437,26 @@ export async function POST(req: Request) {
                   const errorText = await res.text();
                   console.error("Ticket API failed with status", res.status, "body:", errorText);
                   ticketId = `ERROR: ${res.status} ${errorText.substring(0, 100)}`;
+                  
+                  await sendFailedEscalationEmail(
+                    email,
+                    body.userName || "Website AI User",
+                    aiSummary,
+                    "Website Marketing AI",
+                    question
+                  );
                 }
-              } catch (e) {
+              } catch (e: any) {
                 console.error("Failed to auto-create ticket:", e);
                 ticketId = `CATCH_ERROR: ${e.message}`;
+                
+                await sendFailedEscalationEmail(
+                  email,
+                  body.userName || "Website AI User",
+                  aiSummary,
+                  "Website Marketing AI (Error)",
+                  question
+                );
               }
             }
 

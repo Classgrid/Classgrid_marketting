@@ -22,6 +22,7 @@ import { getSmtpTransporter } from "../smtp-mailer";
 import { parseIncomingEmail } from "./email-parser";
 import { generateAIReplyEmail } from "./email-template";
 import { markEmailAsRead, type ZohoEmailContent } from "./zoho-mail";
+import { sendFailedEscalationEmail } from "../email";
 
 // ── Escalation regex (same as server.ts) ──────────────────────────────────────
 
@@ -300,10 +301,27 @@ export async function processIncomingEmail(
           const errorText = await ticketRes.text();
           console.error("[email-ai] Ticket creation failed:", ticketRes.status, errorText);
           ticketId = `ERROR: ${ticketRes.status} ${errorText.substring(0, 100)}`;
+          
+          // Alert the marketing team about the unregistered lead
+          await sendFailedEscalationEmail(
+            parsed.senderEmail,
+            parsed.senderName || "Unknown",
+            aiSummary,
+            "Email AI",
+            parsed.cleanBody
+          );
         }
       } catch (e: any) {
         console.error("[email-ai] Failed to create ticket:", e.message);
         ticketId = `CATCH_ERROR: ${e.message}`;
+        
+        await sendFailedEscalationEmail(
+          parsed.senderEmail,
+          parsed.senderName || "Unknown",
+          aiSummary,
+          "Email AI (Error)",
+          parsed.cleanBody
+        );
       }
 
       // Update conversation status

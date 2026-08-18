@@ -85,3 +85,51 @@ export async function sendSafetyEmail(
     console.error("[Safety Email] Failed to send email:", error);
   }
 }
+
+export async function sendFailedEscalationEmail(
+  customerEmail: string,
+  customerName: string,
+  aiSummary: string,
+  channel: string,
+  originalMessage: string
+) {
+  const subject = `⚠️ AI Escalation Failed (Unregistered User): ${customerEmail}`;
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
+      <h2 style="color: #ea580c; border-bottom: 2px solid #ea580c; padding-bottom: 10px;">New Lead / Unregistered Escalation</h2>
+      <p>An unregistered user tried to escalate an issue to support. Because they are not registered on the platform, a support ticket was <strong>not</strong> created.</p>
+      
+      <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0 0 10px 0;"><strong>Customer Name:</strong> ${customerName}</p>
+        <p style="margin: 0 0 10px 0;"><strong>Customer Email:</strong> <a href="mailto:${customerEmail}">${customerEmail}</a></p>
+        <p style="margin: 0 0 10px 0;"><strong>Source:</strong> ${channel}</p>
+      </div>
+
+      <h3 style="margin-top: 25px; color: #4b5563;">AI Summary</h3>
+      <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
+        ${aiSummary}
+      </div>
+
+      <h3 style="margin-top: 25px; color: #4b5563;">Original Message</h3>
+      <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
+        ${originalMessage}
+      </div>
+
+      <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
+        This incident was also logged to Sanity Studio under "AI Escalations".
+      </p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: \`"Classgrid AI Alerts" <\${SENDER.address}>\`,
+      to: "team@classgrid.in",
+      subject,
+      html,
+    });
+    console.log(\`[Email Alert] Sent failed escalation alert to team@classgrid.in for \${customerEmail}\`);
+  } catch (error) {
+    console.error("[Email Alert] Failed to send alert email:", error);
+  }
+}
