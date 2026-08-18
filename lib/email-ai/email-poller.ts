@@ -13,7 +13,7 @@ import { processIncomingEmail } from "./email-processor";
 
 // ── Configuration ─────────────────────────────────────────────────────────────
 
-const POLL_INTERVAL_MS = Number(process.env.EMAIL_POLL_INTERVAL_MS || 60_000); // Default: 60 seconds
+const POLL_INTERVAL_MS = Number(process.env.EMAIL_POLL_INTERVAL_MS || 45_000); // Default: 45 seconds
 const MAX_EMAILS_PER_POLL = Number(process.env.EMAIL_MAX_PER_POLL || 10);       // Max emails to process per cycle
 const PROCESSING_LOCK_KEY = "email-ai-processing";
 
