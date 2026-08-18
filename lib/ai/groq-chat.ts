@@ -103,7 +103,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "gemini",
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       apiKey: geminiKey,
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
     });
   }
 
@@ -123,7 +123,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "groq",
       url: "https://api.groq.com/openai/v1/chat/completions",
       apiKey: groqKey,
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
     });
   }
 
@@ -132,7 +132,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
 
 export function getGroqModel(channel?: "web" | "whatsapp" | "telegram") {
   const chain = getProviderChain(channel);
-  return chain.length > 0 ? chain[0].model : "gemini-3.5-flash";
+  return chain.length > 0 ? chain[0].model : "gemini-1.5-flash";
 }
 
 // ── Response Extraction ──────────────────────────────────────────────────────
