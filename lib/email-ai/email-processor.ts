@@ -219,7 +219,7 @@ export async function processIncomingEmail(
       isGuest: false, // Email senders are treated as authenticated for escalation purposes
     });
 
-      answer = result.answer || "Thank you for reaching out. Our team will review your message and respond soon.";
+      answer = result.answer || "";
 
       console.log(`\n════════════════════ EMAIL AI RESPONSE ════════════════════`);
       console.log(answer);
@@ -240,9 +240,6 @@ export async function processIncomingEmail(
         answer = answer.replace(ESCALATE_RE_G, "");
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();
-        if (!answer || answer.length < 15) {
-          answer = "Hello,\n\nI understand you are facing an issue. I have forwarded your request to our human support team. They will review your email and respond as soon as possible.";
-        }
       }
 
     if (isEscalation) {
