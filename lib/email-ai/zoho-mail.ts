@@ -193,7 +193,10 @@ export async function fetchUnreadEmails(limit: number = 20): Promise<ZohoEmailSu
   const messages = data.data || [];
 
   return messages.map((msg: any) => {
-    const { email, name } = parseSender(msg.sender || msg.fromAddress || "");
+    const parsed = parseSender(msg.sender || "");
+    const email = msg.fromAddress || parsed.email;
+    const name = parsed.name || (!msg.fromAddress ? "" : msg.sender);
+    
     return {
       messageId: msg.messageId,
       folderId: msg.folderId || folderId,
@@ -235,7 +238,9 @@ export async function fetchEmailContent(
   const data = await response.json();
   const content = data.data || {};
 
-  const { email, name } = parseSender(content.sender || content.fromAddress || "");
+  const parsed = parseSender(content.sender || "");
+  const email = content.fromAddress || parsed.email;
+  const name = parsed.name || (!content.fromAddress ? "" : content.sender);
 
   // Extract headers if available
   const headers: Record<string, string> = {};

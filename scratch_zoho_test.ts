@@ -1,20 +1,16 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+import { fetchUnreadEmails } from "./lib/email-ai/zoho-mail.js";
 
-import { getInboxFolderId, fetchUnreadEmails } from "./lib/email-ai/zoho-mail";
-
-async function test() {
+async function run() {
+  console.log("Fetching unread emails from Zoho...");
   try {
-    console.log("Fetching Inbox Folder ID using REAL Account ID...");
-    const folderId = await getInboxFolderId();
-    console.log("✅ Success! Folder ID:", folderId);
-    
-    console.log("\nFetching unread emails...");
-    const emails = await fetchUnreadEmails(5);
-    console.log(`✅ Success! Found ${emails.length} unread emails.`);
-  } catch (error) {
-    console.error("TEST FAILED:", error);
+    const emails = await fetchUnreadEmails(10);
+    console.log(`Found ${emails.length} unread emails.`);
+    emails.forEach(e => {
+      console.log(`- From: ${e.senderEmail} | Subject: ${e.subject}`);
+    });
+  } catch (err) {
+    console.error("Error:", err);
   }
 }
 
-test();
+run();

@@ -93,22 +93,41 @@ async function pollCycle(): Promise<void> {
         // Process through AI pipeline
         const result = await processIncomingEmail(fullEmail);
 
-        // Track result
-        addToProcessedCache(emailSummary.messageId);
-
         if (result.success) {
+          // Track result to prevent double processing
+          addToProcessedCache(emailSummary.messageId);
+          retryCounts.delete(emailSummary.messageId);
           totalProcessed++;
           if (result.action !== "skipped") {
             console.log(`✅ [email-poller] ${result.action}: ${emailSummary.senderEmail} — "${emailSummary.subject}"`);
           }
         } else {
           totalErrors++;
-          console.error(`❌ [email-poller] Error: ${result.error}`);
+          console.error(`❌ [email-poller] Error processing ${emailSummary.senderEmail}: ${result.error}`);
+          
+          const count = (retryCounts.get(emailSummary.messageId) || 0) + 1;
+          retryCounts.set(emailSummary.messageId, count);
+          
+          if (count >= MAX_RETRIES) {
+            console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as processed to skip permanently.`);
+            addToProcessedCache(emailSummary.messageId);
+            retryCounts.delete(emailSummary.messageId);
+          } else {
+            console.log(`⏳ [email-poller] Will retry email on next poll (Attempt ${count}/${MAX_RETRIES})`);
+          }
         }
       } catch (err) {
         totalErrors++;
         const msg = err instanceof Error ? err.message : String(err);
         console.error(`❌ [email-poller] Failed to process email ${emailSummary.messageId}:`, msg);
+        
+        const count = (retryCounts.get(emailSummary.messageId) || 0) + 1;
+        retryCounts.set(emailSummary.messageId, count);
+        
+        if (count >= MAX_RETRIES) {
+          addToProcessedCache(emailSummary.messageId);
+          retryCounts.delete(emailSummary.messageId);
+        }
       }
 
       // Small delay between emails to avoid rate limiting (SES allows 14/sec)
