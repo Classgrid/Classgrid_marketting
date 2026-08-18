@@ -24,7 +24,7 @@ export type ChatHistoryItem = {
   content: string;
 };
 
-export type RagAnswerChannel = "web" | "whatsapp" | "telegram";
+export type RagAnswerChannel = "web" | "whatsapp" | "telegram" | "email";
 
 export type GenerateRagAnswerOptions = {
   question: string;

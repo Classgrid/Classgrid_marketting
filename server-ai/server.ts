@@ -18,6 +18,8 @@ import { saveMessageToSession, getSessionHistory } from "../lib/ai/chat-memory";
 // @ts-ignore
 import leoProfanity from "leo-profanity";
 
+import { startEmailPoller, getEmailPollerStatus } from "../lib/email-ai/email-poller";
+
 // ── Profanity filter setup (identical to route.ts) ───────────────────────────
 leoProfanity.loadDictionary();
 
@@ -604,6 +606,10 @@ app.listen(PORT, () => {
   const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID;
   const hasGithubOAuth = !!process.env.GITHUB_CLIENT_ID;
 
+  // Start the Email AI Support poller
+  startEmailPoller();
+  const emailPollerStatus = getEmailPollerStatus();
+
   console.log(`🚀 Classgrid AI Server running on http://localhost:${PORT}`);
   console.log("----------------------------------------");
   console.log("✅ Groq API Key:      " + (process.env.GROQ_API_KEY ? "Connected" : "❌ Missing"));
@@ -630,5 +636,6 @@ app.listen(PORT, () => {
   console.log(`✅ Resend Email:      ${hasResend ? "Configured" : "❌ Missing"}`);
   console.log(`✅ Google OAuth:      ${hasGoogleOAuth ? "Configured" : "❌ Missing"}`);
   console.log(`✅ GitHub OAuth:      ${hasGithubOAuth ? "Configured" : "❌ Missing"}`);
+  console.log(`✅ Zoho Email AI:     ${emailPollerStatus.configured ? "Configured (Polling Support Inbox)" : "❌ Missing (Disabled)"}`);
   console.log("----------------------------------------");
 });
