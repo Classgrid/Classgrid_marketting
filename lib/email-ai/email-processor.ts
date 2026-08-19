@@ -193,10 +193,13 @@ export async function processIncomingEmail(
       return { success: true, action: "skipped" };
     }
 
+    // 5. Cap the email body to 15,000 characters to prevent LLM token overflow on massive emails
+    const safeBody = parsed.cleanBody.slice(0, 15000);
+
     // 6. Add user message to conversation
     conversation.messages.push({
       role: "user",
-      content: parsed.cleanBody,
+      content: safeBody,
       messageId: email.messageId,
       zohoMessageId: email.messageId,
       createdAt: new Date(),
@@ -239,7 +242,7 @@ export async function processIncomingEmail(
     console.log(`🧠 [email-ai] State: Passing customer message through RAG Pipeline & LLM... (isPlatformUser: ${isPlatformUser})`);
 
     const result = await generateClassgridRagAnswer({
-      question: parsed.cleanBody,
+      question: safeBody,
       channel: "email", // Use professional email channel rules
       userName: parsed.senderName ? parsed.senderName.split(" ")[0] : undefined,
       fullName: parsed.senderName || undefined,
