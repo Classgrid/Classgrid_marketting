@@ -437,27 +437,20 @@ export async function POST(req: Request) {
                   const errorText = await res.text();
                   console.error("Ticket API failed with status", res.status, "body:", errorText);
                   ticketId = `ERROR: ${res.status} ${errorText.substring(0, 100)}`;
-                  
-                  await sendFailedEscalationEmail(
-                    email,
-                    body.userName || "Website AI User",
-                    aiSummary,
-                    "Website Marketing AI",
-                    question
-                  );
                 }
               } catch (e: any) {
                 console.error("Failed to auto-create ticket:", e);
                 ticketId = `CATCH_ERROR: ${e.message}`;
-                
-                await sendFailedEscalationEmail(
-                  email,
-                  body.userName || "Website AI User",
-                  aiSummary,
-                  "Website Marketing AI (Error)",
-                  question
-                );
               }
+              
+              // ALWAYS send an email to the team when an escalation happens in the Chat AI
+              await sendFailedEscalationEmail(
+                email,
+                body.userName || "Website AI User",
+                aiSummary,
+                ticketCreated ? "Website Chat AI (Ticket Created)" : "Website Chat AI (Ticket Failed)",
+                question
+              );
             }
 
             if (!isGuest) {
