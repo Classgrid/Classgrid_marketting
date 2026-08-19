@@ -9,7 +9,7 @@ dotenv.config({ path: "../.env.local" });
 import { connectMongo } from "../lib/mongodb";
 import { ModerationFlag } from "../lib/models/ModerationFlag";
 import { AiRateLimit } from "../lib/models/AiRateLimit";
-import { sendSafetyEmail } from "../lib/email";
+import { sendSafetyEmail, sendFailedEscalationEmail } from "../lib/email";
 import { getRedisClient } from "../lib/redis";
 import { generateClassgridRagAnswer, type ChatHistoryItem } from "../lib/ai/rag-answer";
 import { normalizeText, type PageContext } from "../lib/ai/rag-content";
@@ -421,6 +421,15 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             console.error("Failed to auto-create ticket:", e);
             ticketId = `CATCH_ERROR: ${e.message}`;
           }
+          
+          // ALWAYS send an email to the team when an escalation happens in the Chat AI
+          await sendFailedEscalationEmail(
+            email,
+            body?.userName || "Website AI User",
+            aiSummary,
+            ticketCreated ? "Website Chat AI (Ticket Created)" : "Website Chat AI (Ticket Failed)",
+            question
+          );
         }
 
         // Log escalation to Sanity
