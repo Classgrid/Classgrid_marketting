@@ -253,7 +253,7 @@ async function fallbackCosineSearch(
       sourceUrl: 1,
     })
     .sort({ _id: -1 })
-    .limit(5000)
+    .limit(150)
     .lean();
 
   return docs
