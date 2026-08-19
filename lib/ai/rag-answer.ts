@@ -568,6 +568,10 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     "CLASSGRID KNOWLEDGE BASE:",
     retrievedContext || "No specific information matched this question.",
     "",
+    ...(retrievedContext 
+      ? [`[RAG→LLM] ✅ RAG context was INJECTED into this prompt (${retrievedContext.length} chars)`]
+      : [`[RAG→LLM] ⚠️ NO RAG context available! AI is using ONLY static knowledge!`]),
+    "",
     ...(staticKnowledge ? [
       "STATIC PLATFORM KNOWLEDGE (Use this alongside the RAG context to form deep, comprehensive answers):",
       staticKnowledge,
@@ -615,10 +619,34 @@ export async function generateClassgridRagAnswer(
 ): Promise<RagAnswerResult> {
   const question = normalizeText(options.question);
   const channel = options.channel;
+
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  🧠 generateClassgridRagAnswer() CALLED                  ║`);
+  console.log(`╠══════════════════════════════════════════════════════════╣`);
+  console.log(`║  Channel: ${channel}`);
+  console.log(`║  Question (${question.length} chars): "${question.slice(0, 100)}..."`);
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
+
   const retrieval = await retrieveClassgridContext(question, {
     topK: options.topK ?? (channel === "whatsapp" || channel === "telegram" ? 2 : 3), // Reduced to save tokens
     pageContext: options.pageContext,
   });
+
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  📋 RAG → LLM INJECTION SUMMARY                         ║`);
+  console.log(`╠══════════════════════════════════════════════════════════╣`);
+  console.log(`║  RAG Chunks Found: ${retrieval.chunks.length}`);
+  console.log(`║  RAG Context Length: ${retrieval.contextText.length} chars`);
+  console.log(`║  Fallback Used: ${retrieval.usedFallbackSearch}`);
+  if (retrieval.chunks.length > 0) {
+    console.log(`║  ✅ AI WILL use RAG data from MongoDB (Voyage AI 1024d)`);
+    retrieval.chunks.forEach((c, i) => {
+      console.log(`║    ${i+1}. ${c.documentId} → "${c.chunkText.slice(0, 60)}..."`);
+    });
+  } else {
+    console.log(`║  ❌ AI will NOT use RAG! Only static-knowledge.ts!`);
+  }
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
 
   const systemPrompt = buildSystemPrompt({
     channel: options.channel,

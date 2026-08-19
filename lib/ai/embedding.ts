@@ -41,10 +41,19 @@ function getVoyageKey() {
 
 export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
   const apiKey = getVoyageKey();
-  if (!apiKey) throw new Error("Missing VOYAGE_API_KEY");
+  if (!apiKey) {
+    console.error(`❌ [VOYAGE AI] FATAL: No VOYAGE_API_KEY found! Cannot generate embeddings!`);
+    throw new Error("Missing VOYAGE_API_KEY");
+  }
 
-  // Log only once per batch to avoid spamming the server logs
-  console.log(`🚀 [voyage-ai] Connecting to Voyage AI API with 1024-dimension embeddings...`);
+  const startTime = Date.now();
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  🚀 VOYAGE AI — Embedding Request Started                ║`);
+  console.log(`╠══════════════════════════════════════════════════════════╣`);
+  console.log(`║  Model: voyage-large-2-instruct (1024 dimensions)       ║`);
+  console.log(`║  Texts to embed: ${texts.length}                                    ║`);
+  console.log(`║  Input preview: "${texts[0]?.slice(0, 60)}..."`);
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
 
   const response = await fetch("https://api.voyageai.com/v1/embeddings", {
     method: "POST",
@@ -58,21 +67,44 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
     }),
   });
 
+  const elapsed = Date.now() - startTime;
+
   if (!response.ok) {
     const errorText = await response.text();
+    console.error(`\n╔══════════════════════════════════════════════════════════╗`);
+    console.error(`║  ❌ VOYAGE AI — EMBEDDING FAILED!                        ║`);
+    console.error(`╠══════════════════════════════════════════════════════════╣`);
+    console.error(`║  HTTP Status: ${response.status}                                    ║`);
+    console.error(`║  Error: ${errorText.slice(0, 200)}`);
+    console.error(`║  Time: ${elapsed}ms                                         ║`);
+    console.error(`╚══════════════════════════════════════════════════════════╝`);
     throw new Error(`Voyage AI Error: ${response.status} ${errorText}`);
   }
 
   const data = await response.json();
-  return data.data.map((item: any) => item.embedding);
+  const embeddings = data.data.map((item: any) => item.embedding);
+  const dims = embeddings[0]?.length || 0;
+
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  ✅ VOYAGE AI — Embedding SUCCESS!                       ║`);
+  console.log(`╠══════════════════════════════════════════════════════════╣`);
+  console.log(`║  Dimensions: ${dims}                                       ║`);
+  console.log(`║  Vectors returned: ${embeddings.length}                                  ║`);
+  console.log(`║  Time: ${elapsed}ms                                         ║`);
+  console.log(`║  Usage: ${JSON.stringify(data.usage || {})}`);
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
+
+  return embeddings;
 }
 
 export async function embedText(text: string): Promise<number[]> {
   if (getVoyageKey()) {
+    console.log(`[VOYAGE AI] embedText() → Using Voyage AI (NOT Xenova)`);
     const embeddings = await embedWithVoyage([text]);
     return embeddings[0];
   }
 
+  console.warn(`⚠️ [VOYAGE AI] embedText() → FALLBACK to Xenova (384d)! Voyage key missing!`);
   const embedder = await getEmbeddingModel();
   const output = await embedder(text, { pooling: "mean", normalize: true });
   return toNumberArray(output.data);

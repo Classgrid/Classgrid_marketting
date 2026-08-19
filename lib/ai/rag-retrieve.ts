@@ -230,6 +230,13 @@ async function vectorSearch(
     },
   ] as any[]);
 
+  console.log(`[VOYAGE AI + MONGODB] vectorSearch() returned ${rows.length} raw rows from Atlas Vector Search (index: ${VECTOR_INDEX_NAME})`);
+  if (rows.length > 0) {
+    rows.slice(0, 3).forEach((r: any, i: number) => {
+      console.log(`   [${i+1}] Score: ${r.score?.toFixed(4)} | DocID: ${r.documentId} | Title: ${r.pageTitle || 'N/A'} | Text: "${r.chunkText?.slice(0, 80)}..."`);
+    });
+  }
+
   return rows.map(toRetrievedChunk);
 }
 
@@ -377,28 +384,44 @@ export async function retrieveClassgridContext(
   question: string,
   options: RetrieveRagOptions = {}
 ): Promise<RagRetrievalResult> {
+  const ragStartTime = Date.now();
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  🔍 RAG PIPELINE STARTED                                ║`);
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
+  console.log(`[RAG STEP 1/6] Raw question received (${question.length} chars): "${question.slice(0, 120)}..."`);
+
   const query = normalizeText(question);
   if (!query) {
+    console.warn(`[RAG] ⚠️ Empty query after normalization. Aborting RAG.`);
     return { chunks: [], contextText: "", usedFallbackSearch: false };
   }
 
   // Skip RAG embedding when disabled (e.g. Vercel Hobby 10s timeout can't load @xenova/transformers)
   // AI still works via Groq + platform knowledge + guardrails, just without document-level context
   if (process.env.RAG_ENABLED !== "true") {
+    console.warn(`[RAG] ❌ RAG_ENABLED is NOT "true" (value: "${process.env.RAG_ENABLED}"). RAG is DISABLED! AI will use ONLY static knowledge!`);
     return { chunks: [], contextText: "", usedFallbackSearch: false };
   }
+  console.log(`[RAG STEP 2/6] RAG_ENABLED=true ✅ — Proceeding with Voyage AI vector search`);
 
   let retrievalQuery = expandRetrievalQueryForIntent(query);
+  console.log(`[RAG STEP 3/6] Intent-expanded query (${retrievalQuery.length} chars): "${retrievalQuery.slice(0, 120)}..."`);
+  
   retrievalQuery = await summarizeLongQuery(retrievalQuery);
+  console.log(`[RAG STEP 3b/6] Final search query after summarization: "${retrievalQuery.slice(0, 120)}"`);
 
   const topK = options.topK ?? DEFAULT_TOP_K;
   const limit = Math.max(topK * 4, topK);
   const numCandidates = options.numCandidates ?? DEFAULT_NUM_CANDIDATES;
   const minScore = options.minScore ?? 0;
   const contextSlug = normalizeContextSlug(options.pageContext);
+
+  console.log(`[RAG STEP 4/6] Calling Voyage AI to generate embedding vector for search query...`);
   const queryEmbedding = await embedText(retrievalQuery);
+  console.log(`[RAG STEP 4/6] ✅ Voyage AI returned embedding with ${queryEmbedding.length} dimensions`);
 
   await connectMongo();
+  console.log(`[RAG STEP 5/6] ✅ MongoDB connected. Starting Atlas Vector Search (index: ${VECTOR_INDEX_NAME}, topK: ${topK}, candidates: ${numCandidates})...`);
 
   let rows: RetrievedRagChunk[] = [];
   let usedFallbackSearch = false;
@@ -413,28 +436,33 @@ export async function retrieveClassgridContext(
   let vectorRows: RetrievedRagChunk[] = [];
   try {
     if (contextSlug) {
+      console.log(`[RAG] Page-specific search: pageSlug="${contextSlug}"`);
       const pageRows = await vectorSearch(queryEmbedding, Math.max(4, topK), numCandidates, {
         pageSlug: contextSlug,
       });
       vectorRows.push(...pageRows);
+      console.log(`[RAG] Page-specific results: ${pageRows.length} chunks`);
     }
 
     const filter = options.contentTypes?.length
       ? { contentType: { $in: options.contentTypes } }
       : undefined;
-    vectorRows.push(...(await vectorSearch(queryEmbedding, limit, numCandidates, filter)));
+    console.log(`[RAG] Global vector search starting...`);
+    const globalRows = await vectorSearch(queryEmbedding, limit, numCandidates, filter);
+    vectorRows.push(...globalRows);
+    console.log(`[RAG] Global vector search results: ${globalRows.length} chunks`);
   } catch (error) {
     usedFallbackSearch = true;
     const message = error instanceof Error ? error.message : String(error);
-    console.warn("[rag] Atlas vector search failed, using local cosine fallback:", message);
+    console.error(`[RAG] ❌❌❌ Atlas Vector Search CRASHED! Error: ${message}`);
   }
 
   // The M10 cluster is completely reliable, so we no longer need the brute-force fallback.
   // In fact, since Voyage vectors are 1024 dimensions, the fallback would crash the server anyway!
   if (vectorRows.length === 0) {
-    console.log(`⚠️ [rag] Atlas Vector Search returned 0 results. (Fallback disabled for M10)`);
+    console.log(`⚠️ [RAG] Atlas Vector Search returned 0 results. (Fallback disabled for M10)`);
   } else {
-    console.log(`🌐 [rag] Atlas Vector Search found ${vectorRows.length} chunks.`);
+    console.log(`🌐 [RAG] Atlas Vector Search found ${vectorRows.length} total chunks.`);
   }
   
   rows.push(...vectorRows);
@@ -442,18 +470,28 @@ export async function retrieveClassgridContext(
   const filtered = rows.filter((chunk) => chunk.score >= minScore && chunk.chunkText.trim());
   const ranked = rerankWithPageBoost(dedupeChunks(filtered), options.pageContext).slice(0, topK);
 
-  console.log(`\n==================================================`);
-  console.log(`🔍 [rag] SEARCH COMPLETED: "${query}"`);
+  const ragElapsed = Date.now() - ragStartTime;
+  console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+  console.log(`║  🔍 RAG PIPELINE COMPLETE (${ragElapsed}ms)`);
+  console.log(`╠══════════════════════════════════════════════════════════╣`);
+  console.log(`║  Search Query: "${retrievalQuery.slice(0, 80)}"`);
+  console.log(`║  Embedding Engine: VOYAGE AI (1024d)`);
+  console.log(`║  Vector Index: ${VECTOR_INDEX_NAME}`);
+  console.log(`║  Used Fallback: ${usedFallbackSearch}`);
   if (ranked.length > 0) {
-    console.log(`📑 [rag] Found ${ranked.length} chunks successfully! (Fallback: ${usedFallbackSearch})`);
+    console.log(`║  ✅ CHUNKS FOUND: ${ranked.length}`);
+    console.log(`╠══════════════════════════════════════════════════════════╣`);
     ranked.forEach((chunk, i) => {
-      console.log(`   ${i + 1}. [Score: ${chunk.score.toFixed(4)}] 📄 ID: ${chunk.documentId}`);
+      console.log(`║  ${i + 1}. [Score: ${chunk.score.toFixed(4)}] DocID: ${chunk.documentId}`);
+      console.log(`║     Title: ${chunk.pageTitle || 'N/A'} | Section: ${chunk.section || 'N/A'}`);
+      console.log(`║     Content: "${chunk.chunkText.slice(0, 100)}..."`);
+      console.log(`║     Source: ${chunk.sourceUrl || 'N/A'}`);
     });
   } else {
-    console.log(`⚠️ [rag] No relevant documents found in the database!`);
-    console.log(`❌ [rag] 0 Sources Available. The AI will answer without database context.`);
+    console.log(`║  ❌ NO CHUNKS FOUND! AI will answer WITHOUT RAG context!`);
+    console.log(`║  ❌ The AI will only use static-knowledge.ts (hardcoded)`);
   }
-  console.log(`==================================================\n`);
+  console.log(`╚══════════════════════════════════════════════════════════╝`);
 
   return {
     chunks: ranked,
