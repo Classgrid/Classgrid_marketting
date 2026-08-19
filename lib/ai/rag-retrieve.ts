@@ -37,7 +37,7 @@ export type RagRetrievalResult = {
 };
 
 const DEFAULT_TOP_K = 8;
-const DEFAULT_NUM_CANDIDATES = 80;
+const DEFAULT_NUM_CANDIDATES = 1000;
 const VECTOR_INDEX_NAME = process.env.RAG_VECTOR_INDEX || process.env.MONGODB_VECTOR_INDEX || "vector_index";
 
 function toRetrievedChunk(row: any): RetrievedRagChunk {
