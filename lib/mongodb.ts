@@ -19,9 +19,25 @@ function getMongoUri() {
   return uri;
 }
 
+/**
+ * Check if the current mongoose connection is alive and usable.
+ * readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+ */
+function isConnectionAlive(): boolean {
+  const state = mongoose.connection.readyState;
+  return state === 1; // Only "connected" is truly alive
+}
+
 export async function connectMongo() {
+  // If we have a cached connection, verify it's still alive
   if (cached.conn) {
-    return cached.conn;
+    if (isConnectionAlive()) {
+      return cached.conn;
+    }
+    // Connection is stale/dead — reset the cache so we reconnect
+    console.warn("⚠️ [mongodb] Stale connection detected (readyState:", mongoose.connection.readyState, "). Reconnecting...");
+    cached.conn = null;
+    cached.promise = null;
   }
 
   if (!cached.promise) {
@@ -30,6 +46,12 @@ export async function connectMongo() {
       serverSelectionTimeoutMS: 8000,  // fail in 8s instead of hanging
       connectTimeoutMS: 8000,
       socketTimeoutMS: 30000,
+    }).catch((err) => {
+      // If connection fails, reset the cache so next call tries again
+      console.error("❌ [mongodb] Connection failed:", err.message);
+      cached.conn = null;
+      cached.promise = null;
+      throw err;
     });
   }
 

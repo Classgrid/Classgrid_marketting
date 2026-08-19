@@ -119,13 +119,54 @@ async function pollCycle(): Promise<void> {
           }
         } else {
           totalErrors++;
-          console.error(`❌ [email-poller] Error processing ${emailSummary.senderEmail}: ${result.error}`);
+          const errorMsg = result.error || "";
+          console.error(`❌ [email-poller] Error processing ${emailSummary.senderEmail}: ${errorMsg}`);
           
+          // Don't count infrastructure errors (MongoDB timeout, DNS, network) toward retry limit
+          // These are temporary and the email should be retried indefinitely until infra recovers
+          const isInfraError = /timed out|ECONNREFUSED|ENOTFOUND|ETIMEDOUT|getaddrinfo|connection \d+/i.test(errorMsg);
+          
+          if (isInfraError) {
+            console.log(`⚠️ [email-poller] Infrastructure error detected — will retry without counting toward limit.`);
+            const delayMinutes = 3;
+            nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
+            console.log(`⏳ [email-poller] Scheduled infra retry in ${delayMinutes} minutes (retries NOT counted).`);
+          } else {
+            const count = (retryCounts.get(emailSummary.messageId) || 0) + 1;
+            retryCounts.set(emailSummary.messageId, count);
+            
+            if (count >= MAX_RETRIES) {
+              console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as read in Zoho and skipping permanently.`);
+              addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
+              // Mark as read in Zoho so it stops appearing in every poll cycle
+              await markEmailAsRead(emailSummary.messageId, emailSummary.folderId);
+              retryCounts.delete(emailSummary.messageId);
+              nextRetryTimes.delete(emailSummary.messageId);
+            } else {
+              const delays = [5, 7, 14];
+              const delayMinutes = delays[count - 1] || 5;
+              nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
+              console.log(`⏳ [email-poller] Scheduled retry ${count}/${MAX_RETRIES} in ${delayMinutes} minutes.`);
+            }
+          }
+        }
+      } catch (err) {
+        totalErrors++;
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`❌ [email-poller] Failed to process email ${emailSummary.messageId}:`, msg);
+        
+        // Don't count infrastructure errors toward retry limit
+        const isInfraError = /timed out|ECONNREFUSED|ENOTFOUND|ETIMEDOUT|getaddrinfo|connection \d+/i.test(msg);
+        
+        if (isInfraError) {
+          console.log(`⚠️ [email-poller] Infrastructure error detected — will retry without counting toward limit.`);
+          const delayMinutes = 3;
+          nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
+        } else {
           const count = (retryCounts.get(emailSummary.messageId) || 0) + 1;
           retryCounts.set(emailSummary.messageId, count);
           
           if (count >= MAX_RETRIES) {
-            console.error(`❌ [email-poller] Max retries (${MAX_RETRIES}) reached for ${emailSummary.messageId}. Marking as read in Zoho and skipping permanently.`);
             addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
             // Mark as read in Zoho so it stops appearing in every poll cycle
             await markEmailAsRead(emailSummary.messageId, emailSummary.folderId);
@@ -137,26 +178,6 @@ async function pollCycle(): Promise<void> {
             nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
             console.log(`⏳ [email-poller] Scheduled retry ${count}/${MAX_RETRIES} in ${delayMinutes} minutes.`);
           }
-        }
-      } catch (err) {
-        totalErrors++;
-        const msg = err instanceof Error ? err.message : String(err);
-        console.error(`❌ [email-poller] Failed to process email ${emailSummary.messageId}:`, msg);
-        
-        const count = (retryCounts.get(emailSummary.messageId) || 0) + 1;
-        retryCounts.set(emailSummary.messageId, count);
-        
-        if (count >= MAX_RETRIES) {
-          addToProcessedCache(emailSummary.messageId, emailSummary.receivedTime);
-          // Mark as read in Zoho so it stops appearing in every poll cycle
-          await markEmailAsRead(emailSummary.messageId, emailSummary.folderId);
-          retryCounts.delete(emailSummary.messageId);
-          nextRetryTimes.delete(emailSummary.messageId);
-        } else {
-          const delays = [5, 7, 14];
-          const delayMinutes = delays[count - 1] || 5;
-          nextRetryTimes.set(emailSummary.messageId, Date.now() + delayMinutes * 60 * 1000);
-          console.log(`⏳ [email-poller] Scheduled retry ${count}/${MAX_RETRIES} in ${delayMinutes} minutes.`);
         }
       }
 
