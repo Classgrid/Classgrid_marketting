@@ -43,6 +43,9 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
   const apiKey = getVoyageKey();
   if (!apiKey) throw new Error("Missing VOYAGE_API_KEY");
 
+  // Log only once per batch to avoid spamming the server logs
+  console.log(`🚀 [voyage-ai] Connecting to Voyage AI API with 1024-dimension embeddings...`);
+
   const response = await fetch("https://api.voyageai.com/v1/embeddings", {
     method: "POST",
     headers: {
