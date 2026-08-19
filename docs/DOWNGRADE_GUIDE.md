@@ -13,8 +13,8 @@ If you just downgrade the database without changing the code, **the AI will cras
 
 **AI EXECUTION STEPS:**
 1. Open `lib/ai/rag-retrieve.ts` and `lib/ai/rag-ingest.ts`.
-2. Delete the `Voyage AI` API calls.
-3. Restore the local `@xenova/transformers` pipeline (`Xenova/all-MiniLM-L6-v2`).
+2. Find the Voyage AI code blocks and comment them out (or turn off the `USE_VOYAGE_AI` flag).
+3. Uncomment the local `@xenova/transformers` pipeline (`Xenova/all-MiniLM-L6-v2`) that is already preserved in the file.
 4. Keep `DEFAULT_NUM_CANDIDATES = 1000` but ensure `.limit(150)` is on the `fallbackCosineSearch` so the M0 cluster doesn't crash on timeouts.
 5. Create a Node.js script (`scratch/re-embed-xenova.js`) that unsets the `1024-dimension` embeddings and regenerates all chunks using Xenova (384 dimensions). Run this script for the user.
 6. Provide the user with the JSON snippet below to recreate their MongoDB Atlas Vector Search Index.
@@ -26,7 +26,7 @@ Follow these steps while the AI assistant does the coding.
 
 ### Phase 1: Tell the AI to Revert the Code
 1. Upload this document to the AI.
-2. Tell the AI: *"My credits expired. Follow the AI MISSION in the downgrade guide to revert my code to Xenova."*
+2. Tell the AI: *"My credits expired. Follow the AI MISSION in the downgrade guide to switch my code back to Xenova."*
 3. The AI will push the code to GitHub. Wait for EC2 to deploy it.
 
 ### Phase 2: Downgrade the Database Cluster
