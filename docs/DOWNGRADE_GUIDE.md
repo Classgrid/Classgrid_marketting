@@ -4,37 +4,43 @@ When your $500 MongoDB Startup Credits expire in 9 months, you may want to downg
 
 If you just downgrade the database without changing the code, **the AI will crash** because the code will be looking for 1024-dimension Voyage AI math, but the free tier will only support 384-dimension Xenova math.
 
-Follow these exact steps to downgrade safely without breaking the system.
+---
 
-## Phase 1: Revert the Codebase
-Before you touch the database, you must tell the Node.js server to stop using Voyage AI and switch back to the free Xenova model.
+## 🤖 INSTRUCTIONS FOR THE AI ASSISTANT
+*(If you are an AI assistant reading this 9 months from now, follow these exact instructions to downgrade the user's system safely!)*
 
+**AI MISSION:** The user's M10 cluster credits have expired. You must revert their Voyage AI implementation back to local Xenova embeddings (384 dimensions) so they can run on an M0 free tier cluster without timing out.
+
+**AI EXECUTION STEPS:**
 1. Open `lib/ai/rag-retrieve.ts` and `lib/ai/rag-ingest.ts`.
-2. Find the Voyage AI API code (which expects `1024` dimensions).
-3. Delete the Voyage AI code and restore the `@xenova/transformers` code (which expects `384` dimensions). 
-4. Ensure `DEFAULT_NUM_CANDIDATES = 1000` and `limit(150)` are kept in the fallback to prevent memory crashes on the free tier.
-5. Push the code to GitHub and wait for EC2 to deploy it.
+2. Delete the `Voyage AI` API calls.
+3. Restore the local `@xenova/transformers` pipeline (`Xenova/all-MiniLM-L6-v2`).
+4. Keep `DEFAULT_NUM_CANDIDATES = 1000` but ensure `.limit(150)` is on the `fallbackCosineSearch` so the M0 cluster doesn't crash on timeouts.
+5. Create a Node.js script (`scratch/re-embed-xenova.js`) that unsets the `1024-dimension` embeddings and regenerates all chunks using Xenova (384 dimensions). Run this script for the user.
+6. Provide the user with the JSON snippet below to recreate their MongoDB Atlas Vector Search Index.
 
-## Phase 2: Downgrade the Database Cluster
-Now that the code is reverted, you can downgrade the infrastructure.
+---
 
+## 👨‍💻 INSTRUCTIONS FOR YOU (THE FOUNDER)
+Follow these steps while the AI assistant does the coding.
+
+### Phase 1: Tell the AI to Revert the Code
+1. Upload this document to the AI.
+2. Tell the AI: *"My credits expired. Follow the AI MISSION in the downgrade guide to revert my code to Xenova."*
+3. The AI will push the code to GitHub. Wait for EC2 to deploy it.
+
+### Phase 2: Downgrade the Database Cluster
 1. Log in to **MongoDB Atlas**.
 2. Go to your **Clusters** page.
-3. Click the `...` menu next to your M10 cluster and click **Terminate/Downgrade** (or create a new M0 cluster and migrate the data over). 
-   *(Note: MongoDB makes it hard to downgrade M10 directly to M0. You may need to create a fresh M0 cluster, dump the data from M10, and restore it to M0 using `mongodump` and `mongorestore`).*
+3. Click the `...` menu next to your M10 cluster and click **Terminate/Downgrade**. 
+   *(Note: MongoDB makes it hard to downgrade M10 directly to M0. You may need to create a fresh M0 cluster, dump the data from M10, and restore it to M0).*
 4. If you create a new M0 cluster, update your `MONGO_URI` in the `.env.local` file on your EC2 server to point to the new cluster.
 
-## Phase 3: Re-Embed the Data (Crucial Step)
-Your database currently holds 1024-dimension math (from Voyage AI). Your Xenova code cannot read this math. You must delete all the Voyage AI math and regenerate it with Xenova.
+### Phase 3: The AI Re-Embeds the Data
+1. Tell the AI: *"The database is downgraded. Please run the re-embedding script now."*
+2. The AI will delete all Voyage AI embeddings and regenerate them using Xenova.
 
-1. Connect to your MongoDB cluster and run this command to delete all the 1024-dimension Voyage embeddings:
-   ```javascript
-   db.collection('rag_chunks').updateMany({}, { $unset: { embedding: "" } })
-   ```
-2. Write a script to loop through all 2,673 documents and run them through the local Xenova pipeline to regenerate 384-dimension embeddings.
-3. Save the new 384-dimension embeddings back to the database.
-
-## Phase 4: Recreate the Vector Search Index
+### Phase 4: Recreate the Vector Search Index
 Now that the math is 384 dimensions again, you must recreate the MongoDB Atlas Vector Search Index.
 
 1. Go to **Atlas Search** in the MongoDB Dashboard.
