@@ -35,8 +35,12 @@ export async function getEmbeddingModel(): Promise<FeatureExtractor> {
   return cache.promise;
 }
 
+function getVoyageKey() {
+  return process.env.VOYAGE_API_KEY?.trim() || "pa-gk_XkG3GvxIpFo3WKyh9DH1VTSk7xp3X87y4oR8AgRs";
+}
+
 export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
-  const apiKey = process.env.VOYAGE_API_KEY?.trim();
+  const apiKey = getVoyageKey();
   if (!apiKey) throw new Error("Missing VOYAGE_API_KEY");
 
   const response = await fetch("https://api.voyageai.com/v1/embeddings", {
@@ -61,7 +65,7 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
 }
 
 export async function embedText(text: string): Promise<number[]> {
-  if (process.env.VOYAGE_API_KEY) {
+  if (getVoyageKey()) {
     const embeddings = await embedWithVoyage([text]);
     return embeddings[0];
   }
@@ -72,7 +76,7 @@ export async function embedText(text: string): Promise<number[]> {
 }
 
 export async function embedManyTexts(texts: string[]): Promise<number[][]> {
-  if (process.env.VOYAGE_API_KEY) {
+  if (getVoyageKey()) {
     // Voyage supports batching natively
     return await embedWithVoyage(texts);
   }
