@@ -570,7 +570,11 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error("[ask-ai:stream]", msg);
+      console.error(`[ask-ai:stream] ❌ SERVER CRASH LOG AT: ${new Date().toISOString()}`);
+      console.error("[ask-ai:stream] Error Message:", msg);
+      if (err instanceof Error && err.stack) {
+        console.error("[ask-ai:stream] Stack Trace:", err.stack);
+      }
       sendEvent({ type: "error", error: DEFAULT_ERROR_MESSAGE });
     } finally {
       res.end();
