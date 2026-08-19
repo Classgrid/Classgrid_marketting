@@ -171,7 +171,26 @@ export async function processIncomingEmail(
       });
       console.log(`🆕 [email-ai] Created new conversation for ${parsed.senderEmail}`);
     } else {
-      console.log(`🔄 [email-ai] Found existing conversation (${conversation.messages.length} messages)`);
+      console.log(`🔄 [email-ai] Found existing conversation (${conversation.messages.length} messages, status: ${conversation.status})`);
+    }
+
+    // ── DUPLICATE ESCALATION GUARD ──────────────────────────────────────────
+    // If this conversation was already escalated (real ticket or pending),
+    // do NOT re-escalate. Just reply normally or skip.
+    const alreadyEscalated = conversation.status === "escalated" || conversation.status === "pending_escalation";
+    if (alreadyEscalated) {
+      console.log(`⚠️  [email-ai] Conversation already escalated (status: ${conversation.status}). Skipping re-escalation for ${parsed.senderEmail}.`);
+    }
+
+    // ── DUPLICATE MESSAGE GUARD ─────────────────────────────────────────────
+    // If the exact same messageId was already added (poller retry), skip adding it again.
+    const messageAlreadyAdded = conversation.messages.some(
+      (m) => m.zohoMessageId === email.messageId || m.messageId === email.messageId
+    );
+    if (messageAlreadyAdded) {
+      console.log(`⏭️  [email-ai] Message ${email.messageId} already in conversation — marking as read and skipping.`);
+      await markEmailAsRead(email.messageId, email.folderId);
+      return { success: true, action: "skipped" };
     }
 
     // 6. Add user message to conversation
@@ -252,7 +271,7 @@ export async function processIncomingEmail(
       console.log(`⚙️  [email-ai] State: LLM processing finished. Evaluating escalation rules...`);
       const escalateMatch = answer.match(ESCALATE_RE);
 
-      if (escalateMatch) {
+      if (escalateMatch && !alreadyEscalated) {
         isEscalation = true;
         aiSummary = escalateMatch[1].trim();
         aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
@@ -270,6 +289,10 @@ export async function processIncomingEmail(
           console.error(`❌ [email-ai] Fatal error: AI outputted [ESCALATE] but failed to write the email body. Throwing error to trigger Poller retry...`);
           throw new Error("AI failed to generate email body alongside escalation tag. Triggering poller retry.");
         }
+      } else if (escalateMatch && alreadyEscalated) {
+        // AI wanted to escalate again but we already did — just strip the tag and reply normally.
+        console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
+        answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
       }
 
     if (isEscalation) {
