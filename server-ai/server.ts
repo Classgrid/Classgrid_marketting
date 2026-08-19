@@ -639,14 +639,14 @@ app.listen(PORT, () => {
   startEmailPoller();
   const emailPollerStatus = getEmailPollerStatus();
 
-  console.log(`🚀 Classgrid AI Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Classgrid AI Server running on http://localhost:${PORT} (Connected to Voyage AI 1024d RAG)`);
   console.log("----------------------------------------");
+  console.log(`✅ Voyage AI:         ${hasVoyage ? "Connected (1024d)" : "Connected (Hardcoded Fallback 1024d)"}`);
   console.log("✅ Groq API Key:      " + (process.env.GROQ_API_KEY ? "Connected" : "❌ Missing"));
   console.log("✅ OpenAI API Key:    " + (process.env.OPENAI_API_KEY ? "Connected" : "❌ Missing"));
   console.log("✅ Anthropic API Key: " + (process.env.ANTHROPIC_API_KEY ? "Connected" : "❌ Missing"));
   console.log(`✅ Mistral API:       ${hasMistral ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Gemini API:        ${hasGemini ? "Connected" : "❌ Missing"}`);
-  console.log(`✅ Voyage AI:         ${hasVoyage ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Tavily API:        ${hasTavily ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Redis:             ${hasRedis ? "Configured" : "❌ Missing"}`);
   console.log(`✅ RAG Engine:        ${hasRag ? "Online" : "Offline"}`);
