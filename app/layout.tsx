@@ -5,7 +5,6 @@ import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { AppChrome } from "@/components/layout/AppChrome";
 import { changelogFallbackEntries } from "@/content/changelog";
@@ -188,7 +187,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </PostHogProvider>
         </ThemeProvider>
         <Analytics />
-        <SpeedInsights />
+
         <Toaster position="bottom-right" offset={140} closeButton />
       </body>
     </html>
