@@ -85,35 +85,42 @@ export async function sendFailedEscalationEmail(
   channel: string,
   originalMessage: string
 ) {
-  const subject = `⚠️ AI Escalation Failed (Unregistered User): ${customerEmail}`;
+  const now = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const displayName = customerName && customerName !== "Unknown" ? customerName : customerEmail;
+  const subject = `📬 New Customer Inquiry via Email — ${customerEmail}`;
   const content = `
-    <p>An unregistered user tried to escalate an issue to support. Because they are not registered on the platform, a support ticket was <strong>not</strong> created.</p>
+    <p>The <strong>Classgrid Email AI Support Agent</strong> handled an inbound customer email and determined it requires human follow-up. A formal support ticket could not be automatically created for this customer — please reach out to them manually.</p>
     
     <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
-      <p style="margin: 0 0 10px 0;"><strong>Customer Name:</strong> ${customerName}</p>
-      <p style="margin: 0 0 10px 0;"><strong>Customer Email:</strong> <a href="mailto:${customerEmail}" style="color: #ea580c; text-decoration: none;">${customerEmail}</a></p>
-      <p style="margin: 0 0 10px 0;"><strong>Source:</strong> ${channel}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${displayName}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${customerEmail}" style="color: #ea580c; text-decoration: none;">${customerEmail}</a></p>
+      <p style="margin: 0 0 10px 0;"><strong>Received via:</strong> ${channel}</p>
+      <p style="margin: 0 0 0 0;"><strong>Date &amp; Time:</strong> ${now} (IST)</p>
     </div>
 
-    <h3 style="margin-top: 25px; color: #4b5563;">AI Summary</h3>
+    <h3 style="margin-top: 25px; color: #4b5563;">AI Summary of Issue</h3>
     <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
       ${aiSummary}
     </div>
 
-    <h3 style="margin-top: 25px; color: #4b5563;">Original Message</h3>
+    <h3 style="margin-top: 25px; color: #4b5563;">Customer's Original Message</h3>
     <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
       ${originalMessage}
     </div>
 
     <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
-      This incident was also logged to Sanity Studio under "AI Escalations".
+      This inquiry has also been logged to Sanity Studio under "AI Escalations" for your records.
     </p>
   `;
 
   const html = baseTemplate({
     content,
-    title: 'New Lead / Unregistered Escalation ⚠️',
-    ignoreText: 'Internal team notification for failed AI escalations.',
+    title: `New Customer Inquiry — ${customerEmail}`,
+    ignoreText: 'Internal team alert for customer email escalations.',
     hideSupportLink: true,
   });
 
