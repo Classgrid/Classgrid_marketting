@@ -239,22 +239,36 @@ async function fallbackCosineSearch(
   contentTypes?: string[]
 ): Promise<RetrievedRagChunk[]> {
   const query = contentTypes?.length ? { contentType: { $in: contentTypes } } : {};
-  const docs = await RagChunk.find(query as any)
-    .select({
-      documentId: 1,
-      documentType: 1,
-      chunkIndex: 1,
-      chunkText: 1,
-      embedding: 1,
-      pageSlug: 1,
-      pageTitle: 1,
-      section: 1,
-      contentType: 1,
-      sourceUrl: 1,
-    })
-    .sort({ _id: -1 })
-    .limit(5000)
-    .lean();
+  console.log(`[rag:fallback] Attempting to download ALL documents from MongoDB for brute-force search...`);
+  const startTime = Date.now();
+  
+  let docs;
+  try {
+    docs = await RagChunk.find(query as any)
+      .select({
+        documentId: 1,
+        documentType: 1,
+        chunkIndex: 1,
+        chunkText: 1,
+        embedding: 1,
+        pageSlug: 1,
+        pageTitle: 1,
+        section: 1,
+        contentType: 1,
+        sourceUrl: 1,
+      })
+      .sort({ _id: -1 })
+      .limit(5000)
+      .lean();
+      
+    const elapsed = Date.now() - startTime;
+    const estimatedSizeMB = (JSON.stringify(docs).length / 1024 / 1024).toFixed(2);
+    console.log(`[rag:fallback] ✅ Downloaded ${docs.length} documents in ${elapsed}ms. Estimated JSON size in memory: ${estimatedSizeMB} MB`);
+  } catch (e: any) {
+    const elapsed = Date.now() - startTime;
+    console.error(`[rag:fallback] ❌ CRASH: Failed to download documents! Database timed out after ${elapsed}ms. Error: ${e.message}`);
+    throw e;
+  }
 
   return docs
     .map((doc) =>
