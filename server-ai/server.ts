@@ -598,6 +598,7 @@ app.listen(PORT, () => {
   const hasMistral = !!process.env.MISTRAL_API_KEY;
   const hasGemini = !!process.env.GEMINI_API_KEY;
   const hasTavily = !!process.env.TAVILY_API_KEY;
+  const hasVoyage = !!process.env.VOYAGE_API_KEY;
   const hasRedis = !!process.env.REDIS_URL;
   const hasRag = process.env.RAG_ENABLED === "true";
   const hasMongo = !!process.env.MONGO_URI;
@@ -636,6 +637,7 @@ app.listen(PORT, () => {
   console.log("✅ Anthropic API Key: " + (process.env.ANTHROPIC_API_KEY ? "Connected" : "❌ Missing"));
   console.log(`✅ Mistral API:       ${hasMistral ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Gemini API:        ${hasGemini ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Voyage AI:         ${hasVoyage ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Tavily API:        ${hasTavily ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Redis:             ${hasRedis ? "Configured" : "❌ Missing"}`);
   console.log(`✅ RAG Engine:        ${hasRag ? "Online" : "Offline"}`);
