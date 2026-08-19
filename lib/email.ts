@@ -91,9 +91,13 @@ export async function sendFailedEscalationEmail(
     timeStyle: "short",
   });
   const displayName = customerName && customerName !== "Unknown" ? customerName : customerEmail;
-  const subject = `📬 New Customer Inquiry via Email — ${customerEmail}`;
+  const isChat = channel.toLowerCase().includes("chat");
+  const agentName = isChat ? "Classgrid Website Chat AI" : "Classgrid Email AI Support Agent";
+  const channelType = isChat ? "chat" : "email";
+
+  const subject = `📬 New Customer Inquiry via ${isChat ? 'Chat' : 'Email'} — ${customerEmail}`;
   const content = `
-    <p>The <strong>Classgrid Email AI Support Agent</strong> handled an inbound customer email and determined it requires human follow-up. A formal support ticket could not be automatically created for this customer — please reach out to them manually.</p>
+    <p>The <strong>${agentName}</strong> handled an inbound customer ${channelType} and determined it requires human follow-up. A formal support ticket could not be automatically created for this customer — please reach out to them manually.</p>
     
     <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${displayName}</p>
