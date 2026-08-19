@@ -92,7 +92,7 @@ export async function sendFailedEscalationEmail(
   });
   const displayName = customerName && customerName !== "Unknown" ? customerName : customerEmail;
   const isChat = channel.toLowerCase().includes("chat");
-  const agentName = isChat ? "Classgrid Website Chat AI" : "Classgrid Email AI Support Agent";
+  const agentName = isChat ? "Classgrid Website Chat Support AI Agent" : "Classgrid Email AI Support Agent";
   const channelType = isChat ? "chat" : "email";
 
   const subject = `📬 New Customer Inquiry via ${isChat ? 'Chat' : 'Email'} — ${customerEmail}`;
