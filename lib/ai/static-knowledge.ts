@@ -193,7 +193,7 @@ HELP CENTER vs DOCUMENTATION:
 - Documentation (/docs) is for official technical documentation, API references, and comprehensive platform guides. DO NOT mix these two up. If a user asks for technical docs, APIs, or developer guides, point them to /docs. If they ask for general help or how to use a feature, point them to /help-center.
 
 INTEGRATIONS:
-Classgrid integrates with: Razorpay (payments), Zoom (video), Google Classroom/Drive/Forms, Agora (video), Firebase (push notifications), Twilio (SMS), SendGrid/Brevo (email), and more.
+Classgrid integrates with: Razorpay (payments), Zoom (video), Google Classroom/Drive/Forms, Agora (video), Firebase (push notifications), AWS SES (Email Delivery), Brevo (Email & SMS Campaigns), Voyage AI (Embeddings), and Groq (LLM).
 
 SECURITY:
 - Zero data bleed architecture with tenant isolation
