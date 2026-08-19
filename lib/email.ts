@@ -1,15 +1,26 @@
 import nodemailer from 'nodemailer';
 import { baseTemplate } from "./email-templates";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
-  port: parseInt(process.env.AWS_SES_SMTP_PORT || "587"),
-  secure: false,
-  auth: {
-    user: process.env.AWS_SES_SMTP_USER,
-    pass: process.env.AWS_SES_SMTP_PASS,
-  },
-});
+let _transporter: nodemailer.Transporter | null = null;
+
+function getAlertTransporter(): nodemailer.Transporter | null {
+  if (!process.env.AWS_SES_SMTP_USER || !process.env.AWS_SES_SMTP_PASS) {
+    console.warn("[Email] ⚠️ AWS_SES_SMTP_USER or AWS_SES_SMTP_PASS is not set — skipping email send.");
+    return null;
+  }
+  if (!_transporter) {
+    _transporter = nodemailer.createTransport({
+      host: process.env.AWS_SES_SMTP_HOST || "email-smtp.eu-north-1.amazonaws.com",
+      port: parseInt(process.env.AWS_SES_SMTP_PORT || "587"),
+      secure: false,
+      auth: {
+        user: process.env.AWS_SES_SMTP_USER,
+        pass: process.env.AWS_SES_SMTP_PASS,
+      },
+    });
+  }
+  return _transporter;
+}
 
 const SENDER = {
   name: process.env.BREVO_SENDER_NAME || "Classgrid",
@@ -75,7 +86,9 @@ export async function sendSafetyEmail(
   `;
 
   try {
-    await transporter.sendMail({
+    const mailer = getAlertTransporter();
+    if (!mailer) return;
+    await mailer.sendMail({
       from: `"${SENDER.name}" <${SENDER.address}>`,
       to: toEmail,
       subject,
@@ -127,7 +140,9 @@ export async function sendFailedEscalationEmail(
   });
 
   try {
-    await transporter.sendMail({
+    const mailer = getAlertTransporter();
+    if (!mailer) return;
+    await mailer.sendMail({
       from: `"Classgrid AI Alerts" <${SENDER.address}>`,
       to: "team@classgrid.in",
       subject,

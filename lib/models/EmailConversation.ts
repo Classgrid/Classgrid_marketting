@@ -17,7 +17,7 @@ export interface IEmailConversation extends Document {
   threadId: string;                    // First Message-ID or Zoho thread ID
   subject: string;                     // Original email subject
   messages: EmailConversationMessage[];
-  status: "active" | "escalated" | "resolved" | "closed";
+  status: "active" | "escalated" | "pending_escalation" | "resolved" | "closed";
   escalatedTicketId?: string;          // Platform ticket ID if escalated
   sessionContext?: Record<string, unknown>;
   lastMessageAt: Date;
@@ -46,7 +46,7 @@ const EmailConversationSchema = new Schema<IEmailConversation>(
     messages: { type: [EmailConversationMessageSchema], default: [] },
     status: {
       type: String,
-      enum: ["active", "escalated", "resolved", "closed"],
+      enum: ["active", "escalated", "pending_escalation", "resolved", "closed"],
       default: "active",
       index: true,
     },
