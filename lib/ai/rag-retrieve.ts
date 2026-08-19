@@ -338,6 +338,41 @@ async function hybridKeywordSearch(
 }
 
 
+async function summarizeLongQuery(text: string): Promise<string> {
+  if (text.length <= 300) return text;
+  try {
+    console.log(`[rag] Query is massive (${text.length} chars). Extracting core search keywords via Groq...`);
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          { role: "system", content: "You are a search query extractor. Extract ONLY the core factual questions/intents from the user's message as a short Google search query (max 15 words). Do NOT answer the questions. Output ONLY the keywords. Do not use quotes." },
+          { role: "user", content: text.slice(0, 8000) } // Cap input to avoid token limits
+        ],
+        temperature: 0.1,
+        max_tokens: 30
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      let summary = data.choices?.[0]?.message?.content?.trim();
+      if (summary) {
+        summary = summary.replace(/^["']|["']$/g, ''); // Remove surrounding quotes
+        console.log(`[rag] 🎯 Extracted search query: "${summary}"`);
+        return summary;
+      }
+    }
+  } catch (e) {
+    console.error("[rag] Query extraction failed, using raw text.");
+  }
+  return text;
+}
+
 export async function retrieveClassgridContext(
   question: string,
   options: RetrieveRagOptions = {}
@@ -353,7 +388,8 @@ export async function retrieveClassgridContext(
     return { chunks: [], contextText: "", usedFallbackSearch: false };
   }
 
-  const retrievalQuery = expandRetrievalQueryForIntent(query);
+  let retrievalQuery = expandRetrievalQueryForIntent(query);
+  retrievalQuery = await summarizeLongQuery(retrievalQuery);
 
   const topK = options.topK ?? DEFAULT_TOP_K;
   const limit = Math.max(topK * 4, topK);
