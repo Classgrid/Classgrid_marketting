@@ -393,11 +393,10 @@ export async function retrieveClassgridContext(
     console.warn("[rag] Atlas vector search failed, using local cosine fallback:", message);
   }
 
-  // If Vector Search returned absolutely nothing (which happens if index is broken/syncing), we MUST use fallback
+  // The M10 cluster is completely reliable, so we no longer need the brute-force fallback.
+  // In fact, since Voyage vectors are 1024 dimensions, the fallback would crash the server anyway!
   if (vectorRows.length === 0) {
-    usedFallbackSearch = true;
-    console.log(`🔄 [rag] Atlas Vector Search returned 0 results. Running Local Cosine Fallback...`);
-    vectorRows = await fallbackCosineSearch(queryEmbedding, limit, options.contentTypes);
+    console.log(`⚠️ [rag] Atlas Vector Search returned 0 results. (Fallback disabled for M10)`);
   } else {
     console.log(`🌐 [rag] Atlas Vector Search found ${vectorRows.length} chunks.`);
   }
