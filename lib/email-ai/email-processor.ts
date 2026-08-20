@@ -295,6 +295,8 @@ export async function processIncomingEmail(
       } else if (escalateMatch && alreadyEscalated) {
         // AI wanted to escalate again but we already did — just strip the tag and reply normally.
         console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
+        
+        const followUpSummary = escalateMatch[1].trim();
         answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
         
         // Failsafe: If the AI output ONLY the escalate tag, provide a generic polite response
@@ -302,6 +304,32 @@ export async function processIncomingEmail(
         if (answer.length < 5) {
           answer = "I've added your latest notes to the support ticket. Our team is already looking into this and will get back to you shortly!";
           console.log(`⚠️  [email-ai] Re-escalation resulted in empty email body. Using fallback polite response.`);
+        }
+        
+        // Forward the follow-up alert to the team!
+        try {
+          const transporter = getSmtpTransporter();
+          await transporter.sendMail({
+            from: `"Classgrid AI Alerts" <support@classgrid.in>`,
+            to: "team@classgrid.in",
+            subject: `[FOLLOW-UP] Re: ${aiSubject}`,
+            html: `
+              <h2>User provided more details on an escalated ticket</h2>
+              <p><strong>Customer:</strong> ${parsed.senderName || parsed.senderEmail} (${parsed.senderEmail})</p>
+              ${conversation.escalatedTicketId ? `<p><strong>Platform Ticket ID:</strong> ${conversation.escalatedTicketId}</p>` : ""}
+              <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
+                <h3 style="margin-top:0;">AI Summary of Follow-up</h3>
+                <p>${followUpSummary}</p>
+              </div>
+              <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
+                <h3 style="margin-top:0;">Customer's Raw Follow-up Message</h3>
+                <pre style="white-space:pre-wrap; font-family:sans-serif;">${parsed.cleanBody}</pre>
+              </div>
+            `
+          });
+          console.log(`✅ [email-ai] Sent follow-up alert to team@classgrid.in`);
+        } catch(e) {
+          console.error(`❌ [email-ai] Failed to send follow-up alert to team:`, e);
         }
       }
 
