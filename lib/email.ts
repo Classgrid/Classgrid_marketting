@@ -108,7 +108,7 @@ export async function sendFailedEscalationEmail(
     </div>
 
     <div style="margin: 30px 0; text-align: center;">
-      <a href="https://www.classgrid.in/api/escalation/create-enquiry?escalationId=${escalationId}" 
+      <a href="${process.env.FRONTEND_URL || 'https://classgrid.in'}/api/escalation/create-enquiry?escalationId=${escalationId}" 
          style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
         🎫 Assign Me & Create Enquiry
       </a>
