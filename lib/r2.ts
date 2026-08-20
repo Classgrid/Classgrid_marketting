@@ -18,8 +18,8 @@ export const r2Client = new S3Client({
   },
 });
 
-export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'classgrid';
-export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL || 'https://pub-14d5af5a38c6456da3b086aeea5188e1.r2.dev';
+export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'classgrid-storage';
+export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL || 'https://pub-96a564393c0440f2bab37ad8bbe92398.r2.dev';
 
 /**
  * Upload a file Buffer directly to Cloudflare R2
