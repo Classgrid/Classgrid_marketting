@@ -547,7 +547,7 @@ function TicketDetailPageInner() {
                               <button
                                 key={`msg-att-${aIdx}`}
                                 onClick={() => setPreviewFile({ name: fileName, src: fileUrl })}
-                                className="group flex items-center gap-2 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 rounded-lg text-xs transition-all shadow-sm"
+                                className="group flex items-center gap-2 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 rounded-lg text-xs transition-all shadow-sm cursor-pointer"
                                 title="View attachment"
                               >
                                 <div className="w-6 h-6 rounded-md bg-muted group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
@@ -778,22 +778,19 @@ function TicketDetailPageInner() {
                             const fileUrl = path.startsWith('http') ? path : `${supabaseUrl}/storage/v1/object/public/support-attachments/${path}`;
 
                             return (
-                              <div
+                              <button
                                 key={`sidebar-att-${idx}`}
-                                className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs"
+                                onClick={() => setPreviewFile({ name: fileName, src: fileUrl })}
+                                className="group flex w-full items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border text-xs cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-colors text-left"
                               >
-                                <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
                                 <span className="truncate flex-1 text-foreground" title={fileName}>
                                   {fileName.length > 20 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName}
                                 </span>
-                                <button
-                                  onClick={() => setPreviewFile({ name: fileName, src: fileUrl })}
-                                  className="p-1 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-                                  title="View file"
-                                >
+                                <div className="p-1 rounded-md text-muted-foreground group-hover:text-primary transition-colors">
                                   <Eye className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
+                                </div>
+                              </button>
                             );
                           })}
                         </div>
