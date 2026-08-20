@@ -170,7 +170,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 8. Redirect to Support Tickets page (where AI draft is pre-loaded in the reply editor)
-    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
+    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk?ticketId=${ticketId}&autoAssign=true`);
     
   } catch (err: any) {
     console.error("Create enquiry error:", err);
