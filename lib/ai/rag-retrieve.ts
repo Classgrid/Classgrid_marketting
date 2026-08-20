@@ -417,8 +417,15 @@ export async function retrieveClassgridContext(
   const contextSlug = normalizeContextSlug(options.pageContext);
 
   console.log(`[RAG STEP 4/6] Calling Voyage AI to generate embedding vector for search query...`);
-  const queryEmbedding = await embedText(retrievalQuery);
-  console.log(`[RAG STEP 4/6] ✅ Voyage AI returned embedding with ${queryEmbedding.length} dimensions`);
+  let queryEmbedding: number[];
+  try {
+    queryEmbedding = await embedText(retrievalQuery);
+    console.log(`[RAG STEP 4/6] ✅ Voyage AI returned embedding with ${queryEmbedding.length} dimensions`);
+  } catch (err) {
+    console.error(`[RAG STEP 4/6] ❌ VOYAGE AI FAILED:`, err);
+    console.warn(`[RAG] Skipping RAG and falling back to static knowledge only due to embedding failure.`);
+    return { chunks: [], contextText: "", usedFallbackSearch: false };
+  }
 
   await connectMongo();
   console.log(`[RAG STEP 5/6] ✅ MongoDB connected. Starting Atlas Vector Search (index: ${VECTOR_INDEX_NAME}, topK: ${topK}, candidates: ${numCandidates})...`);
