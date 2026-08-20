@@ -185,7 +185,6 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
         const parsed = JSON.parse(cleanForJsonCheck);
         
         // It successfully parsed as JSON, meaning Mistral leaked JSON into the content block!
-        // 1. Force the entire raw JSON into the thinking block so it GUARANTEES it shows in the UI and logs!
         thinking = content;
         
         // 2. Extract ONLY the real answer text to show as the final reply
@@ -202,7 +201,20 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
           content = "I am processing your request.";
         }
       } catch (e) {
-        // Not valid JSON, ignore and leave content as normal text
+        // Not valid JSON, but still might be a leaked array with literal newlines
+        // Aggressively strip `[{"type": "text", "text": "` and `"}]`
+        let rawStr = cleanForJsonCheck;
+        // Strip prefix
+        rawStr = rawStr.replace(/^\[\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
+        // Strip suffix
+        rawStr = rawStr.replace(/"\s*\}\s*\]$/, "");
+        
+        // Replace escaped newlines if any
+        rawStr = rawStr.replace(/\\n/g, "\n");
+        // Replace escaped quotes
+        rawStr = rawStr.replace(/\\"/g, '"');
+        
+        content = rawStr;
       }
     }
   }
