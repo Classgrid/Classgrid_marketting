@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (doc.enquiryId) {
-      // Already created an enquiry, redirect to it
-      return NextResponse.redirect(`https://classgrid.in/dashboard/admin/support/view/${doc.enquiryId}`);
+      // Already created an enquiry, redirect to Support Tickets page
+      return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/support`);
     }
 
     const isEmail = doc.deviceInfo?.includes("Email Client");
@@ -134,8 +134,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // 8. Redirect back to Classgrid Talk Admin Dashboard
-    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
+    // 8. Redirect to Support Tickets page (where AI draft is pre-loaded in the reply editor)
+    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/support`);
     
   } catch (err: any) {
     console.error("Create enquiry error:", err);
