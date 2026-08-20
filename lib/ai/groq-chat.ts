@@ -174,10 +174,15 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
     }
     
     // Check for JSON leak style (Mistral often leaks `[{"type":"text"...` instead of calling the tool)
-    const trimmedContent = content.trim();
-    if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+    let cleanForJsonCheck = content.trim();
+    const codeBlockMatch = cleanForJsonCheck.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    if (codeBlockMatch) {
+      cleanForJsonCheck = codeBlockMatch[1].trim();
+    }
+
+    if (cleanForJsonCheck.startsWith('{') || cleanForJsonCheck.startsWith('[')) {
       try {
-        const parsed = JSON.parse(trimmedContent);
+        const parsed = JSON.parse(cleanForJsonCheck);
         
         // It successfully parsed as JSON, meaning Mistral leaked JSON into the content block!
         // 1. Force the entire raw JSON into the thinking block so it GUARANTEES it shows in the UI and logs!
