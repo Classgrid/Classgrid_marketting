@@ -110,8 +110,12 @@ export async function GET(req: NextRequest) {
     let draftContent = "";
     let llmSuccess = false;
 
+    console.log(`[create-enquiry] Starting AI Draft Generation. Available providers: ${providers.map(p => p.name).join(", ")}`);
+
     for (const provider of providers) {
+      console.log(`[create-enquiry] Attempting AI draft with [${provider.name}] (Model: ${provider.model})...`);
       try {
+        const startTime = Date.now();
         const llmRes = await fetch(provider.url, {
           method: "POST",
           headers: {
@@ -127,7 +131,8 @@ export async function GET(req: NextRequest) {
 
         if (!llmRes.ok) {
           const err = await llmRes.text();
-          console.error(`[create-enquiry] ${provider.name} failed: ${err}`);
+          console.error(`[create-enquiry] ❌ [${provider.name}] failed with status ${llmRes.status}: ${err}`);
+          console.log(`[create-enquiry] Falling back to next provider...`);
           continue;
         }
 
@@ -135,17 +140,21 @@ export async function GET(req: NextRequest) {
         draftContent = llmData.choices?.[0]?.message?.content || "";
         if (draftContent) {
           llmSuccess = true;
-          console.log(`[create-enquiry] AI draft generated via ${provider.name}`);
+          const duration = Date.now() - startTime;
+          console.log(`[create-enquiry] ✅ [${provider.name}] successfully generated AI draft in ${duration}ms.`);
           break;
+        } else {
+          console.warn(`[create-enquiry] ⚠️ [${provider.name}] returned empty content.`);
         }
       } catch (e: any) {
-        console.error(`[create-enquiry] ${provider.name} error: ${e.message}`);
+        console.error(`[create-enquiry] ❌ [${provider.name}] network error: ${e.message}`);
+        console.log(`[create-enquiry] Falling back to next provider...`);
         continue;
       }
     }
 
     if (!llmSuccess) {
-      console.warn("[create-enquiry] All LLM providers failed. Enquiry created without AI draft.");
+      console.error("[create-enquiry] ❌ All LLM providers failed. Enquiry created without AI draft.");
     }
 
     // 5. Save to MessageDrafts in MongoDB
