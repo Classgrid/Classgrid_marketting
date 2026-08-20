@@ -55,7 +55,9 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
   console.log(`║  Input preview: "${texts[0]?.slice(0, 60)}..."`);
   console.log(`╚══════════════════════════════════════════════════════════╝`);
 
-  const response = await fetch("https://api.voyageai.com/v1/embeddings", {
+  // Using MongoDB's unified Atlas AI API to bypass the legacy Voyage 3 RPM rate limit 
+  // and utilize the $500 Startup Credits directly!
+  const response = await fetch("https://ai.mongodb.com/v1/embeddings", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
