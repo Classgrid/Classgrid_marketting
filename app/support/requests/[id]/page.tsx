@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionAccentBar } from "@/components/ui/section-accent-bar";
+import { Button } from "@/components/ui/button";
 import RichReplyEditor, { type RichReplyEditorRef } from "@/app/support/components/RichReplyEditor";
 import { getPresignedUrlForSupportImage } from "@/app/actions/r2-actions";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
@@ -652,10 +653,12 @@ function TicketDetailPageInner() {
                     </p>
                     <div className="flex items-center gap-2 ml-auto">
                       {ticket.status === "resolved" && (
-                        <button
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={handleCloseTicket}
                           disabled={isSending || isClosing}
-                          className="inline-flex items-center gap-2 px-5 py-2 bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground text-sm font-semibold rounded-lg transition-colors disabled:opacity-40"
+                          className="h-9 px-4 cursor-pointer gap-2 disabled:cursor-not-allowed"
                         >
                           {isClosing ? (
                             <>
@@ -668,13 +671,15 @@ function TicketDetailPageInner() {
                               Close {entityNameCapitalized}
                             </>
                           )}
-                        </button>
+                        </Button>
                       )}
                       
-                      <button
+                      <Button
+                        type="button"
+                        variant="primary"
                         onClick={handleReply}
                         disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending || isClosing}
-                        className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                        className="h-9 px-5 cursor-pointer gap-2 disabled:cursor-not-allowed"
                       >
                         {isSending ? (
                           <>
@@ -687,7 +692,7 @@ function TicketDetailPageInner() {
                             Send Reply
                           </>
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   {replyError && (
