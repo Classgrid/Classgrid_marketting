@@ -343,27 +343,10 @@ export async function processIncomingEmail(
           const errorText = await ticketRes.text();
           console.error("[email-ai] Ticket creation failed:", ticketRes.status, errorText);
           ticketId = `ERROR: ${ticketRes.status} ${errorText.substring(0, 100)}`;
-          
-          // Alert the marketing team about the unregistered lead
-          await sendFailedEscalationEmail(
-            parsed.senderEmail,
-            parsed.senderName || "Unknown",
-            aiSummary,
-            "Email AI",
-            parsed.cleanBody
-          );
         }
       } catch (e: any) {
         console.error("[email-ai] Failed to create ticket:", e.message);
         ticketId = `CATCH_ERROR: ${e.message}`;
-        
-        await sendFailedEscalationEmail(
-          parsed.senderEmail,
-          parsed.senderName || "Unknown",
-          aiSummary,
-          "Email AI (Error)",
-          parsed.cleanBody
-        );
       }
 
       // Check if we actually got a real ticket ID from the backend, not an error string
@@ -378,6 +361,7 @@ export async function processIncomingEmail(
         answer += "\n\n*Note: Since this email address is not registered to an active institution, a formal support ticket could not be automatically created. For a detailed conversation with our team, please log in and use [Classgrid Talk](https://classgrid.in/support/inquiry).*";
       }
 
+      let escalationId = "";
       // Log escalation to Sanity
       try {
         const { createClient } = require("next-sanity");
@@ -389,7 +373,7 @@ export async function processIncomingEmail(
           useCdn: false,
         });
 
-        await writeClient.create({
+        const newDoc = await writeClient.create({
           _type: "aiEscalation",
           userEmail: parsed.senderEmail,
           userName: parsed.senderName || "",
@@ -405,10 +389,24 @@ export async function processIncomingEmail(
             { _key: `ai-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
           ],
         });
-        console.log(`📋 [email-ai] Escalation logged to Sanity`);
+        escalationId = newDoc._id;
+        console.log(`📋 [email-ai] Escalation logged to Sanity (${escalationId})`);
       } catch (e) {
         console.error("[email-ai] Failed to log escalation to Sanity:", e);
       }
+
+      // Send the failed escalation email if ticket was not created
+      if (!isRealTicket) {
+        await sendFailedEscalationEmail(
+          parsed.senderEmail,
+          parsed.senderName || "Unknown",
+          aiSummary,
+          ticketId?.startsWith("CATCH") ? "Email AI (Error)" : "Email AI",
+          parsed.cleanBody,
+          escalationId
+        );
+      }
+
     }
 
     // 10. Add AI response to conversation

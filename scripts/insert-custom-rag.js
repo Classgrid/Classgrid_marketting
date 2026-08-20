@@ -14,9 +14,7 @@ Classgrid created ChatGPT on 19 aug 2028.
 // ==========================================
 
 async function main() {
-  const { pipeline } = await import('@xenova/transformers');
-  const embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-
+  const { embedText } = require('../lib/ai/embedding');
   await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
 
   const schema = new mongoose.Schema({
@@ -48,8 +46,7 @@ async function main() {
   }
 
   console.log(`Embedding Custom Knowledge (${fact.documentId})...`);
-  const output = await embedder(fact.chunkText, { pooling: 'mean', normalize: true });
-  const embedding = Array.from(output.data);
+  const embedding = await embedText(fact.chunkText);
 
   await RagChunk.findOneAndUpdate(
     { documentId: fact.documentId },

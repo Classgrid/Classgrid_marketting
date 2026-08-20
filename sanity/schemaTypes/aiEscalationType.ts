@@ -76,6 +76,13 @@ export const aiEscalationType = defineType({
       readOnly: true,
     }),
     defineField({
+      name: "enquiryId",
+      title: "Enquiry ID (Platform)",
+      type: "string",
+      description: "The Classgrid Talk inquiry ID created from this escalation.",
+      readOnly: true,
+    }),
+    defineField({
       name: "chatTranscript",
       title: "Chat Transcript",
       type: "array",

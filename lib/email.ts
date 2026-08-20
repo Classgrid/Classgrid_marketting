@@ -83,7 +83,8 @@ export async function sendFailedEscalationEmail(
   customerName: string,
   aiSummary: string,
   channel: string,
-  originalMessage: string
+  originalMessage: string,
+  escalationId: string
 ) {
   const now = new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -97,13 +98,21 @@ export async function sendFailedEscalationEmail(
 
   const subject = `📬 New Customer Inquiry via ${isChat ? 'Chat' : 'Email'} — ${customerEmail}`;
   const content = `
-    <p>The <strong>${agentName}</strong> handled an inbound customer ${channelType} and determined it requires human follow-up. A formal support ticket could not be automatically created for this customer — please reach out to them manually.</p>
+    <p>The <strong>${agentName}</strong> handled an inbound customer ${channelType} and determined it requires human follow-up. A formal support ticket could not be automatically created for this customer — please review and create an inquiry manually.</p>
     
     <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${displayName}</p>
       <p style="margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${customerEmail}" style="color: #ea580c; text-decoration: none;">${customerEmail}</a></p>
       <p style="margin: 0 0 10px 0;"><strong>Received via:</strong> ${channel}</p>
       <p style="margin: 0 0 0 0;"><strong>Date &amp; Time:</strong> ${now} (IST)</p>
+    </div>
+
+    <div style="margin: 30px 0; text-align: center;">
+      <a href="https://www.classgrid.in/api/escalation/create-enquiry?escalationId=${escalationId}" 
+         style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
+        🎫 Assign Me & Create Enquiry
+      </a>
+      <p style="margin-top: 10px; font-size: 13px; color: #6b7280;">Clicking this will create a Classgrid Talk inquiry and draft an AI response.</p>
     </div>
 
     <h3 style="margin-top: 25px; color: #4b5563;">AI Summary of Issue</h3>

@@ -18,17 +18,18 @@ async function migrate() {
   console.log(`Total documents to migrate: ${total}`);
 
   // Fetch all documents that need migrating (batching to save memory)
-  const cursor = RagChunk.find().cursor();
+  const cursor = RagChunk.find({ $expr: { $eq: [ { $size: "$embedding" }, 384 ] } }).cursor();
   let batch: any[] = [];
   let processed = 0;
 
   for await (const doc of cursor) {
     batch.push(doc);
-    
-    if (batch.length >= 100) {
+
+    if (batch.length >= 15) {
       await processBatch(batch);
       processed += batch.length;
-      console.log(`Progress: ${processed} / ${total}`);
+      console.log(`Progress: ${processed} / ${total}. Waiting 22 seconds for rate limits...`);
+      await new Promise(r => setTimeout(r, 22000));
       batch = [];
     }
   }
@@ -47,7 +48,7 @@ async function processBatch(batch: any[]) {
   const texts = batch.map(d => d.chunkText);
   try {
     const embeddings = await embedManyTexts(texts);
-    
+
     // Bulk write back to Mongo
     const operations = batch.map((doc, i) => ({
       updateOne: {
