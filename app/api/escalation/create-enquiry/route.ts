@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     formData.append("name", doc.userName || "Unknown Visitor");
     formData.append("email", doc.userEmail || "anonymous@classgrid.in");
     formData.append("subject", doc.subject || "AI Escalation");
-    formData.append("message", `AI Problem Summary:\n${doc.aiSummary}\n\nOriginal Transcript Context:\n${JSON.stringify(doc.chatTranscript, null, 2)}`);
+    formData.append("message", `This conversation was automatically escalated by the AI Support Agent.\n\nAI Summary of the User's Problem:\n${doc.aiSummary}`);
     formData.append("institution", institutionSource); // Triggers Classgrid Talk fallback
 
     const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
