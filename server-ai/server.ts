@@ -466,6 +466,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             question,
             escalationId
           );
+        }
 
         if (ticketCreated) {
           const ticketLink = ticketId
