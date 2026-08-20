@@ -679,7 +679,7 @@ function TicketDetailPageInner() {
                         variant="primary"
                         onClick={handleReply}
                         disabled={(!replyText.trim() && (editorRef.current?.getFiles().length || 0) === 0) || isSending || isClosing}
-                        className="h-9 px-5 cursor-pointer gap-2 disabled:cursor-not-allowed"
+                        className="h-9 px-5 cursor-pointer gap-2 disabled:cursor-not-allowed shadow-none hover:shadow-none"
                       >
                         {isSending ? (
                           <>
