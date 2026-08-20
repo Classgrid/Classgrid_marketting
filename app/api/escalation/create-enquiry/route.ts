@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.1-70b-versatile",
+        model: "llama3-70b-8192",
         temperature: 0.2,
         messages: [{ role: "user", content: draftPrompt }]
       })
