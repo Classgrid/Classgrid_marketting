@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { connectMongo } from "@/lib/mongodb";
 import mongoose from "mongoose";
-import { ChatGroq } from "@langchain/groq";
 
 export async function GET(req: NextRequest) {
   const escalationId = req.nextUrl.searchParams.get("escalationId");
@@ -74,15 +73,7 @@ export async function GET(req: NextRequest) {
       ticketCreated: true
     }).commit();
 
-    // 4. Generate AI Draft response
-    const llm = new ChatGroq({
-      apiKey: process.env.GROQ_API_KEY,
-      modelName: "llama-3.1-70b-versatile",
-      temperature: 0.2,
-    });
-
-    const userTranscript = doc.chatTranscript?.map((t: any) => `${t.role}: ${t.content}`).join("\n") || "";
-    
+    // 4. Generate AI Draft response using standard fetch to avoid extra dependencies
     const draftPrompt = `
       You are an expert customer success manager for Classgrid (an educational SaaS platform).
       An AI support agent escalated this conversation to you. 
@@ -91,7 +82,7 @@ export async function GET(req: NextRequest) {
       User Email: ${doc.userEmail}
       AI Summary of Issue: ${doc.aiSummary}
       Transcript:
-      ${userTranscript}
+      ${doc.chatTranscript?.map((t: any) => `${t.role}: ${t.content}`).join("\n") || ""}
 
       Requirements:
       - Start with "Hi," or "Hello [name],"
@@ -101,8 +92,26 @@ export async function GET(req: NextRequest) {
       - Output ONLY the email body text. Do not include subject lines or extra commentary.
     `;
 
-    const aiRes = await llm.invoke(draftPrompt);
-    const draftContent = typeof aiRes.content === 'string' ? aiRes.content : JSON.stringify(aiRes.content);
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-70b-versatile",
+        temperature: 0.2,
+        messages: [{ role: "user", content: draftPrompt }]
+      })
+    });
+
+    if (!groqRes.ok) {
+      const err = await groqRes.text();
+      throw new Error(`Groq API Error: ${err}`);
+    }
+
+    const groqData = await groqRes.json();
+    const draftContent = groqData.choices?.[0]?.message?.content || "";
 
     // 5. Save to MessageDrafts in MongoDB
     await connectMongo();
