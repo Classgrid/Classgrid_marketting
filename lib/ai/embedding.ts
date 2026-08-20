@@ -36,7 +36,8 @@ export async function getEmbeddingModel(): Promise<FeatureExtractor> {
 }
 
 function getVoyageKey() {
-  return process.env.VOYAGE_API_KEY?.trim() || "pa-gk_XkG3GvxIpFo3WKyh9DH1VTSk7xp3X87y4oR8AgRs";
+  // Fallback to the new MongoDB Atlas API key
+  return process.env.VOYAGE_API_KEY?.trim() || "al-yo-c9o08Qka3wSbvQAoS44H363blyV7EBQbWrwdvgIW";
 }
 
 export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
