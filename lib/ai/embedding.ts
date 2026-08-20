@@ -50,7 +50,7 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
   console.log(`\n╔══════════════════════════════════════════════════════════╗`);
   console.log(`║  🚀 VOYAGE AI — Embedding Request Started                ║`);
   console.log(`╠══════════════════════════════════════════════════════════╣`);
-  console.log(`║  Model: voyage-large-2-instruct (1024 dimensions)       ║`);
+  console.log(`║  Model: voyage-3-large (1024 dimensions)               ║`);
   console.log(`║  Texts to embed: ${texts.length}                                    ║`);
   console.log(`║  Input preview: "${texts[0]?.slice(0, 60)}..."`);
   console.log(`╚══════════════════════════════════════════════════════════╝`);
@@ -65,7 +65,7 @@ export async function embedWithVoyage(texts: string[]): Promise<number[][]> {
     },
     body: JSON.stringify({
       input: texts,
-      model: "voyage-large-2-instruct",
+      model: "voyage-3-large",
     }),
   });
 
