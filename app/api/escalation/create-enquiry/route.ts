@@ -86,10 +86,12 @@ export async function GET(req: NextRequest) {
 
       Requirements:
       - Start with "Hi," or "Hello [name],"
+      - Introduce yourself using the exact placeholder [ADMIN_NAME] (e.g. "I am [ADMIN_NAME] from Classgrid...").
       - Acknowledge their issue clearly based on the summary.
       - Ask for any missing information or propose the next step.
       - Tone: Professional, helpful, concise.
       - Output ONLY the email body text. Do not include subject lines or extra commentary.
+      - End the email with "Best regards, [ADMIN_NAME]".
     `;
 
     const providers = [
