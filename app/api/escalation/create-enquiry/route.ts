@@ -135,7 +135,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 8. Redirect back to Classgrid Talk Admin Dashboard
-    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/support`);
+    return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
     
   } catch (err: any) {
     console.error("Create enquiry error:", err);
