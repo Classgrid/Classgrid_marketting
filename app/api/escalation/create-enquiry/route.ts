@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       ticketCreated: true
     }).commit();
 
-    // 4. Generate AI Draft response using standard fetch to avoid extra dependencies
+    // 4. Generate AI Draft response using Gemini (primary) + Mistral (fallback)
     const draftPrompt = `
       You are an expert customer success manager for Classgrid (an educational SaaS platform).
       An AI support agent escalated this conversation to you. 
@@ -92,26 +92,61 @@ export async function GET(req: NextRequest) {
       - Output ONLY the email body text. Do not include subject lines or extra commentary.
     `;
 
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-        "Content-Type": "application/json"
+    const providers = [
+      {
+        name: "gemini",
+        url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        apiKey: process.env.GEMINI_API_KEY?.trim() || "",
+        model: "gemini-3.5-flash",
       },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.2,
-        messages: [{ role: "user", content: draftPrompt }]
-      })
-    });
+      {
+        name: "mistral",
+        url: "https://api.mistral.ai/v1/chat/completions",
+        apiKey: process.env.MISTRAL_API_KEY?.trim() || "",
+        model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+      },
+    ].filter(p => p.apiKey);
 
-    if (!groqRes.ok) {
-      const err = await groqRes.text();
-      throw new Error(`Groq API Error: ${err}`);
+    let draftContent = "";
+    let llmSuccess = false;
+
+    for (const provider of providers) {
+      try {
+        const llmRes = await fetch(provider.url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${provider.apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: provider.model,
+            temperature: 0.2,
+            messages: [{ role: "user", content: draftPrompt }]
+          })
+        });
+
+        if (!llmRes.ok) {
+          const err = await llmRes.text();
+          console.error(`[create-enquiry] ${provider.name} failed: ${err}`);
+          continue;
+        }
+
+        const llmData = await llmRes.json();
+        draftContent = llmData.choices?.[0]?.message?.content || "";
+        if (draftContent) {
+          llmSuccess = true;
+          console.log(`[create-enquiry] AI draft generated via ${provider.name}`);
+          break;
+        }
+      } catch (e: any) {
+        console.error(`[create-enquiry] ${provider.name} error: ${e.message}`);
+        continue;
+      }
     }
 
-    const groqData = await groqRes.json();
-    const draftContent = groqData.choices?.[0]?.message?.content || "";
+    if (!llmSuccess) {
+      console.warn("[create-enquiry] All LLM providers failed. Enquiry created without AI draft.");
+    }
 
     // 5. Save to MessageDrafts in MongoDB
     await connectMongo();
