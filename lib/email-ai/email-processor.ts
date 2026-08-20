@@ -296,6 +296,13 @@ export async function processIncomingEmail(
         // AI wanted to escalate again but we already did — just strip the tag and reply normally.
         console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
         answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
+        
+        // Failsafe: If the AI output ONLY the escalate tag, provide a generic polite response
+        // instead of crashing with a Mongoose empty string validation error.
+        if (answer.length < 5) {
+          answer = "I've added your latest notes to the support ticket. Our team is already looking into this and will get back to you shortly!";
+          console.log(`⚠️  [email-ai] Re-escalation resulted in empty email body. Using fallback polite response.`);
+        }
       }
 
     if (isEscalation) {
