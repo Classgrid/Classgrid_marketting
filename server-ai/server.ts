@@ -656,12 +656,9 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
           usage = await WhatsAppUsage.create({ monthYear: currentMonth, messageCount: 0 });
         }
 
-        if (usage.messageCount === 950) {
+        if (usage.messageCount >= 950) {
           const { sendWhatsAppKillSwitchAlert } = require("../lib/email");
           await sendWhatsAppKillSwitchAlert(usage.messageCount, currentMonth);
-        }
-
-        if (usage.messageCount >= 950) {
           console.warn(`[WhatsApp] KILL SWITCH ACTIVATED! Dropping message. Usage: ${usage.messageCount}`);
           return res.sendStatus(200); // Don't reply, don't charge
         }
@@ -774,6 +771,46 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
   } catch (error) {
     console.error("[WhatsApp Webhook] Fatal Error:", error);
     if (!res.headersSent) res.sendStatus(500);
+  }
+});
+
+// ── Daily Usage Cron Job ──────────────────────────────────────────────────────
+// Runs exactly at 8:00 PM IST (14:30 UTC) every single day
+cron.schedule("30 14 * * *", async () => {
+  try {
+    console.log("[Cron] Running Daily WhatsApp Billing Tracker...");
+    await connectMongo();
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
+    const count = usage?.messageCount || 0;
+
+    console.log(`[Cron] Today's Usage Count: ${count} / 1000`);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.AWS_SES_SMTP_HOST || "email-smtp.ap-south-1.amazonaws.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.AWS_SES_SMTP_USER,
+        pass: process.env.AWS_SES_SMTP_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: "Classgrid AI <support@classgrid.in>",
+      to: "team@classgrid.in",
+      subject: `🛡️ WhatsApp API Billing Update (${count}/1000)`,
+      html: getWhatsAppDailyTrackerEmailHtml(count),
+    };
+
+    if (process.env.AWS_SES_SMTP_USER) {
+      await transporter.sendMail(mailOptions);
+      console.log("[Cron] Daily Usage report sent to team@classgrid.in");
+    } else {
+      console.warn("[Cron] Skipping email report because AWS_SES_SMTP_USER is not set.");
+    }
+  } catch (err) {
+    console.error("[Cron] Failed to run WhatsApp usage tracker:", err);
   }
 });
 
