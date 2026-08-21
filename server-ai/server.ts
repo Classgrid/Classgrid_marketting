@@ -778,15 +778,24 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
 });
 
 // ── Daily Usage Cron Job ──────────────────────────────────────────────────────
-cron.schedule("0 20 * * *", async () => {
+// Runs at 8:00 PM IST (14:30 UTC)
+cron.schedule("30 14 * * *", async () => {
   try {
-    console.log("[Cron] Running Daily WhatsApp Billing Tracker...");
+    console.log("[Cron] Checking if WhatsApp limit is reached...");
     await connectMongo();
     const currentMonth = new Date().toISOString().slice(0, 7);
     const usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
     const count = usage?.messageCount || 0;
 
     console.log(`[Cron] Today's Usage Count: ${count} / 1000`);
+
+    // ONLY send email if usage is 950 or above
+    if (count < 950) {
+      console.log("[Cron] Usage is safe. No email sent to avoid spam.");
+      return;
+    }
+
+    console.log("[Cron] LIMIT REACHED! Sending alert email...");
 
     const transporter = nodemailer.createTransport({
       host: process.env.AWS_SES_SMTP_HOST || "email-smtp.ap-south-1.amazonaws.com",
