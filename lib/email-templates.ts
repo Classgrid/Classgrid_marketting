@@ -511,7 +511,7 @@ export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
   return baseTemplate({
     content,
     title: "WhatsApp Daily Tracker",
-    ignoreText: "Automated report from Classgrid AI Server.",
+    ignoreText: "Automated email from Classgrid Admin System.",
     hideSupportLink: true
   });
 }

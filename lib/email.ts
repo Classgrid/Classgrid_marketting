@@ -172,7 +172,7 @@ export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentM
   const html = baseTemplate({
     content,
     title: "WhatsApp Kill Switch Activated",
-    ignoreText: "Automated report from Classgrid AI Server.",
+    ignoreText: "Automated email from Classgrid Admin System.",
     hideSupportLink: true,
   });
 
