@@ -648,7 +648,53 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         
         console.log(`[WhatsApp] Received message from ${userName} (${fromNumber}): "${text}"`);
         
-        // 1. Check Kill Switch
+        // 1. Check Rate Limit (Anti-Spam)
+        const { checkRateLimitWithCount } = require("../lib/rate-limit");
+        const rateLimit = checkRateLimitWithCount(`wa_${fromNumber}`, 34, 24 * 60 * 60 * 1000); // 34 messages allowed per 24 hours
+        
+        if (!rateLimit.allowed) {
+          if (rateLimit.count === 35) { // 35th message gets the exact error response
+            console.warn(`[WhatsApp] 🚨 Rate limit hit for ${fromNumber}. Sending exact 24-hour warning message.`);
+            const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
+            const token = process.env.WHATSAPP_ACCESS_TOKEN;
+            
+            const resetAt = new Date(rateLimit.resetAt);
+            const resetDateStr = resetAt.toLocaleDateString("en-IN", {
+              day: "numeric",
+              month: "short",
+              timeZone: "Asia/Kolkata",
+            }); // e.g. "23 Aug"
+            const resetTimeStr = resetAt.toLocaleTimeString("en-IN", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZone: "Asia/Kolkata",
+            }); // e.g. "8:30 PM"
+            
+            try {
+              await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  messaging_product: "whatsapp",
+                  to: fromNumber,
+                  type: "text",
+                  text: { body: `You have reached your daily message limit. Your limit will reset on ${resetDateStr} at ${resetTimeStr}.` }
+                })
+              });
+            } catch (err) {
+              console.error("[WhatsApp] Failed to send rate limit warning:", err);
+            }
+          } else {
+            console.warn(`[WhatsApp] 🚨 SPAM BLOCKED! Dropping message ${rateLimit.count} for ${fromNumber} silently.`);
+          }
+          return res.sendStatus(200); // Drop instantly without processing further
+        }
+        
+        // 2. Check Kill Switch
         await connectMongo();
         const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
         let usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
