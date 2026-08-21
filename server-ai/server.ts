@@ -688,11 +688,10 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
 
         console.log(`[WhatsApp] Generated Answer. Sending back to Meta...`);
         
-        // 3. Send back to WhatsApp Graph API
-        const phoneId = process.env.WHATSAPP_PHONE_ID;
+        const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
         const token = process.env.WHATSAPP_ACCESS_TOKEN;
         
-        const response = await fetch(`https://graph.facebook.com/v19.0/${phoneId}/messages`, {
+        const response = await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`,
