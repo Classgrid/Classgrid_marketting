@@ -155,7 +155,6 @@ export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentM
   const subject = `🚨 URGENT: WhatsApp Kill Switch Activated! (${messageCount} Messages)`;
   const content = `
     <h2 style="color: #ef4444;">WhatsApp Kill Switch Activated!</h2>
-    <p>This is an automated critical alert from your Classgrid AI Server.</p>
     <p>Your WhatsApp Business API usage for the month of <strong>${currentMonth}</strong> has reached <strong>${messageCount} messages</strong>.</p>
     <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0 0 10px 0; color: #991b1b;"><strong>Status:</strong> All incoming WhatsApp messages are now being automatically dropped by the server.</p>
