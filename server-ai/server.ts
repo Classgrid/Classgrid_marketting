@@ -718,8 +718,8 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         });
         // Convert **bold** to *bold*
         answerText = answerText.replace(/\*\*(.*?)\*\*/g, '*$1*');
-        // Convert ### Headings to *Headings*
-        answerText = answerText.replace(/^###\s+(.*)$/gm, '*$1*');
+        // Convert #, ##, ### Headings to *Headings*
+        answerText = answerText.replace(/^#{1,6}\s+(.*)$/gm, '*$1*');
         // -------------------------------
 
         if (answerText.length > 4000) {

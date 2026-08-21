@@ -139,8 +139,12 @@ function buildSystemPrompt(params: {
     channelRules = [
       "Channel: WhatsApp support.",
       "Keep replies under 120 words when possible.",
-      "Use plain text. You may use *bold* sparingly. Do not use markdown tables, code blocks, or long headings.",
-      "When mentioning a Classgrid page or resource, include the full URL in plain text.",
+      "WHATSAPP FORMATTING RULES (CRITICAL OVERRIDE): You are communicating on WhatsApp. WhatsApp DOES NOT support standard Markdown.",
+      "1. NO TABLES: NEVER use markdown tables under any circumstances. If you need to list data, use bullet points with a hyphen (-).",
+      "2. NO CODE BLOCKS: Do not use ``` code blocks.",
+      "3. NO NESTED LISTS: Keep bullet points simple.",
+      "4. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
+      "5. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
     ];
   } else if (isTelegram) {
     channelRules = [
