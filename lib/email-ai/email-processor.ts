@@ -392,9 +392,6 @@ export async function processIncomingEmail(
       conversation.status = isRealTicket ? "escalated" : "pending_escalation";
       if (isRealTicket) {
         conversation.escalatedTicketId = ticketId;
-      } else {
-        // If the ticket failed (likely unregistered user), append a manual fallback link to the email response
-        answer += "\n\n*Note: Since this email address is not registered to an active institution, a formal support ticket could not be automatically created. For a detailed conversation with our team, please log in and use [Classgrid Talk](https://classgrid.in/support/inquiry).*";
       }
 
       let escalationId = "";
