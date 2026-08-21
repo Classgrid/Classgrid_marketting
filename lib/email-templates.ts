@@ -491,7 +491,7 @@ export function getCareerApplicationConfirmationEmailHtml(firstName: string, rol
 
 // ------------- WHATSAPP DAILY TRACKER EMAIL -------------
 export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
-  const isBlocked = count >= 950;
+  const isBlocked = count >= 990;
   const content = `
     <h1>WhatsApp Usage Update</h1>
     <p>Here is your daily automated billing report for the WhatsApp API.</p>
@@ -506,7 +506,7 @@ export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
       </div>
     </div>
     
-    <p>This automated tracker guarantees you will not be billed by Meta. The kill switch engages automatically at 950 messages to protect your credit card.</p>
+    <p>This automated tracker guarantees you will not be billed by Meta. The kill switch engages automatically at 990 messages to protect your credit card.</p>
   `;
   return baseTemplate({
     content,

@@ -158,7 +158,7 @@ export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentM
     <p>Your WhatsApp Business API usage for the month of <strong>${currentMonth}</strong> has reached <strong>${messageCount} messages</strong>.</p>
     <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0 0 10px 0; color: #991b1b;"><strong>Status:</strong> All incoming WhatsApp messages are now being automatically dropped by the server.</p>
-      <p style="margin: 0; color: #991b1b;"><strong>Why?</strong> Meta charges for conversations after the first 1000 free tier limit. The Kill Switch fired at 950 to ensure you never pay unexpected bills.</p>
+      <p style="margin: 0; color: #991b1b;"><strong>Why?</strong> Meta charges for conversations after the first 1000 free tier limit. The Kill Switch fired at 990 to ensure you never pay unexpected bills.</p>
     </div>
     <p><strong>Next Steps:</strong></p>
     <ul>

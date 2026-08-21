@@ -656,9 +656,12 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
           usage = await WhatsAppUsage.create({ monthYear: currentMonth, messageCount: 0 });
         }
 
-        if (usage.messageCount >= 950) {
+        if (usage.messageCount === 990) {
           const { sendWhatsAppKillSwitchAlert } = require("../lib/email");
           await sendWhatsAppKillSwitchAlert(usage.messageCount, currentMonth);
+        }
+
+        if (usage.messageCount >= 990) {
           console.warn(`[WhatsApp] KILL SWITCH ACTIVATED! Dropping message. Usage: ${usage.messageCount}`);
           return res.sendStatus(200); // Don't reply, don't charge
         }
