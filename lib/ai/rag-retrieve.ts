@@ -444,18 +444,29 @@ export async function retrieveClassgridContext(
   try {
     if (contextSlug) {
       console.log(`[RAG] Page-specific search: pageSlug="${contextSlug}"`);
-      const pageRows = await vectorSearch(queryEmbedding, Math.max(4, topK), numCandidates, {
-        pageSlug: contextSlug,
-      });
-      vectorRows.push(...pageRows);
-      console.log(`[RAG] Page-specific results: ${pageRows.length} chunks`);
+      try {
+        const pageRows = await vectorSearch(queryEmbedding, Math.max(4, topK), numCandidates, {
+          pageSlug: contextSlug,
+        });
+        vectorRows.push(...pageRows);
+        console.log(`[RAG] Page-specific results: ${pageRows.length} chunks`);
+      } catch (err) {
+        console.warn(`[RAG] ⚠️ Page-specific search skipped due to index error:`, err instanceof Error ? err.message : String(err));
+      }
     }
 
     const filter = options.contentTypes?.length
       ? { contentType: { $in: options.contentTypes } }
       : undefined;
     console.log(`[RAG] Global vector search starting...`);
-    const globalRows = await vectorSearch(queryEmbedding, limit, numCandidates, filter);
+    
+    let globalRows: RetrievedRagChunk[] = [];
+    try {
+      globalRows = await vectorSearch(queryEmbedding, limit, numCandidates, filter);
+    } catch (err) {
+      console.warn(`[RAG] ⚠️ Global search with filter failed, retrying without filter. Error:`, err instanceof Error ? err.message : String(err));
+      globalRows = await vectorSearch(queryEmbedding, limit, numCandidates);
+    }
     vectorRows.push(...globalRows);
     console.log(`[RAG] Global vector search results: ${globalRows.length} chunks`);
   } catch (error) {
