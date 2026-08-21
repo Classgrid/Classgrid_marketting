@@ -667,7 +667,7 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
         const token = process.env.WHATSAPP_ACCESS_TOKEN;
 
-        // Send 'mark_as_read' status (Blue Ticks)
+        // Send 'mark_as_read' status (Blue Ticks) and 'typing_indicator' (Typing...)
         try {
           await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
             method: "POST",
@@ -678,10 +678,13 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
             body: JSON.stringify({
               messaging_product: "whatsapp",
               status: "read",
-              message_id: message.id
+              message_id: message.id,
+              typing_indicator: {
+                type: "text"
+              }
             })
           });
-          console.log(`[WhatsApp] Sent mark_as_read (Blue Ticks) for message ${message.id}`);
+          console.log(`[WhatsApp] Sent mark_as_read + typing_indicator for message ${message.id}`);
         } catch (err) {
           console.error(`[WhatsApp] Failed to send mark_as_read:`, err);
         }
