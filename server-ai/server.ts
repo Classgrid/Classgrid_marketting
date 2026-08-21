@@ -648,12 +648,36 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         
         console.log(`[WhatsApp] Received message from ${userName} (${fromNumber}): "${text}"`);
         // 1. Check Rate Limit (Anti-Spam)
-        const { checkRateLimit } = require("../lib/rate-limit");
-        const isAllowed = checkRateLimit(`wa_${fromNumber}`, 35, 2 * 60 * 1000); // 35 messages per 2 minutes
+        const { checkRateLimitWithCount } = require("../lib/rate-limit");
+        const rateLimit = checkRateLimitWithCount(`wa_${fromNumber}`, 35, 2 * 60 * 1000); // 35 messages per 2 minutes
         
-        if (!isAllowed) {
-          console.warn(`[WhatsApp] 🚨 SPAM BLOCKED! Rate limit exceeded for ${fromNumber}. Dropping message.`);
-          return res.sendStatus(200); // Drop instantly without replying
+        if (!rateLimit.allowed) {
+          if (rateLimit.count === 36) {
+            console.warn(`[WhatsApp] 🚨 Rate limit hit for ${fromNumber}. Sending ONE final warning message.`);
+            const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
+            const token = process.env.WHATSAPP_ACCESS_TOKEN;
+            
+            try {
+              await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  messaging_product: "whatsapp",
+                  to: fromNumber,
+                  type: "text",
+                  text: { body: "⏳ *Please slow down!*\nYou are sending messages too quickly. Please wait 2 minutes before sending another message." }
+                })
+              });
+            } catch (err) {
+              console.error("[WhatsApp] Failed to send rate limit warning:", err);
+            }
+          } else {
+            console.warn(`[WhatsApp] 🚨 SPAM BLOCKED! Dropping message ${rateLimit.count} for ${fromNumber} silently.`);
+          }
+          return res.sendStatus(200); // Drop instantly without processing further
         }
 
         // 2. Check Kill Switch
