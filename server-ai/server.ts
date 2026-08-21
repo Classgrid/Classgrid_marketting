@@ -664,6 +664,28 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         // 2. Generate RAG Answer
         res.sendStatus(200); // Instantly reply 200 OK to Meta so they don't retry
 
+        const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
+        const token = process.env.WHATSAPP_ACCESS_TOKEN;
+
+        // Send 'mark_as_read' status (Blue Ticks)
+        try {
+          await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              status: "read",
+              message_id: message.id
+            })
+          });
+          console.log(`[WhatsApp] Sent mark_as_read (Blue Ticks) for message ${message.id}`);
+        } catch (err) {
+          console.error(`[WhatsApp] Failed to send mark_as_read:`, err);
+        }
+
         console.log(`[WhatsApp] Generating RAG Answer for ${fromNumber}...`);
         
         // Use redis session history
@@ -691,9 +713,6 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         await saveMessageToSession(sessionId, { role: "assistant", content: answerText });
 
         console.log(`[WhatsApp] Generated Answer. Sending back to Meta...`);
-        
-        const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
-        const token = process.env.WHATSAPP_ACCESS_TOKEN;
         
         const response = await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
           method: "POST",
