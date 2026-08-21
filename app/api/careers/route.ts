@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
     </div>
   </div>
   <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #eaeaea;">
-    <p style="color:#888888;font-size:11px;margin:0;">Submitted via <a href="https://classgrid.in/careers" style="color:#10b981;text-decoration:none;">classgrid.in/careers</a></p>
+    <p style="color:#888888;font-size:11px;margin:0;">Automated email from Classgrid Admin System.</p>
   </div>
 </div>
 </body></html>`,

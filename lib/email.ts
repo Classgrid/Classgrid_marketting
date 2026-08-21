@@ -133,7 +133,7 @@ export async function sendFailedEscalationEmail(
   const html = baseTemplate({
     content,
     title: `New Customer Inquiry — ${customerEmail}`,
-    ignoreText: `Internal team alert for customer ${channelType} escalations.`,
+    ignoreText: "Automated email from Classgrid Admin System.",
     hideSupportLink: true,
   });
 

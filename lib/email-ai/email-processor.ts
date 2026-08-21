@@ -325,6 +325,7 @@ export async function processIncomingEmail(
                 <h3 style="margin-top:0;">Customer's Raw Follow-up Message</h3>
                 <pre style="white-space:pre-wrap; font-family:sans-serif;">${parsed.cleanBody}</pre>
               </div>
+              <p style="color:#6b7280; font-size:12px; margin-top:20px;">Automated email from Classgrid Admin System.</p>
             `
           });
           console.log(`✅ [email-ai] Sent follow-up alert to team@classgrid.in`);

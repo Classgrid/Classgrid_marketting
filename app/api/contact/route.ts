@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const html = baseTemplate({
       content,
       title: 'New Contact Form Submission 📬',
-      ignoreText: 'Internal team notification for contact form submissions.',
+      ignoreText: 'Automated email from Classgrid Admin System.',
       hideSupportLink: true,
     });
 

@@ -78,7 +78,7 @@ export async function POST(req: Request) {
       const html = baseTemplate({
         content,
         title: 'New Classgrid Review Submitted ⭐',
-        ignoreText: 'Internal team notification for new community reviews.',
+        ignoreText: 'Automated email from Classgrid Admin System.',
         hideSupportLink: true,
       });
 
