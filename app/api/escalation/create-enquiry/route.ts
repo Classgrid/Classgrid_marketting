@@ -75,25 +75,27 @@ export async function GET(req: NextRequest) {
     }).commit();
 
     // 4. Generate AI Draft response using Gemini (primary) + Mistral (fallback)
-    const draftPrompt = `
-      You are an expert customer success manager for Classgrid (an educational SaaS platform).
-      An AI support agent escalated this conversation to you. 
-      Write a highly professional, empathetic, and concise first response to the user.
+    const draftPrompt = \`
+      You are an expert customer success manager and support specialist for Classgrid (an educational SaaS platform for schools, colleges, and coaching institutes).
+      A user was just chatting with our AI Support Agent, and their conversation has now been assigned to YOU to officially solve as a human specialist.
       
-      User Email: ${doc.userEmail}
-      AI Summary of Issue: ${doc.aiSummary}
+      User Email: \${doc.userEmail}
+      AI Summary of Issue: \${doc.aiSummary}
       Transcript:
-      ${doc.chatTranscript?.map((t: any) => `${t.role}: ${t.content}`).join("\n") || ""}
+      \${doc.chatTranscript?.map((t: any) => \`\${t.role}: \${t.content}\`).join("\\n") || ""}
 
       Requirements:
       - Start with "Hi," or "Hello [name],"
       - Introduce yourself using the exact placeholder [ADMIN_NAME] (e.g. "I am [ADMIN_NAME] from Classgrid...").
-      - Acknowledge their issue clearly based on the summary.
-      - Ask for any missing information or propose the next step.
-      - Tone: Professional, helpful, concise.
+      - CAREFULLY read the attached Transcript. Our AI agent already retrieved RAG knowledge and platform details to answer the user. Use that exact knowledge and context to formulate your response!
+      - Provide the ACTUAL solution/answer to their problem directly in the email. Solve it right now based on the transcript's context.
+      - NEVER say "I am forwarding this to our internal team," "I am escalating this," or "I will pass this to a specialist." The ticket is ALREADY escalated, and YOU are the specialist solving it.
+      - Do not apologize for the AI or mention the AI handing it over. Just seamlessly pick up the conversation and provide the fix.
+      - If you truly need more information to solve it, ask for it clearly.
+      - Tone: Professional, highly knowledgeable, empathetic, and concise.
       - Output ONLY the email body text. Do not include subject lines or extra commentary.
       - End the email with "Best regards, [ADMIN_NAME]".
-    `;
+    \`;
 
     const providers = [
       {
