@@ -633,13 +633,14 @@ export async function generateClassgridRagAnswer(
   });
 
   console.log(`\n╔══════════════════════════════════════════════════════════╗`);
-  console.log(`║  📋 RAG → LLM INJECTION SUMMARY                         ║`);
+  console.log(`║  📋 [${channel.toUpperCase()}] RAG → LLM INJECTION SUMMARY                      ║`);
   console.log(`╠══════════════════════════════════════════════════════════╣`);
   console.log(`║  RAG Chunks Found: ${retrieval.chunks.length}`);
   console.log(`║  RAG Context Length: ${retrieval.contextText.length} chars`);
   console.log(`║  Fallback Used: ${retrieval.usedFallbackSearch}`);
   if (retrieval.chunks.length > 0) {
-    console.log(`║  ✅ AI WILL use RAG data from MongoDB (Voyage AI 1024d)`);
+    console.log(`║  ✅ EXPLICIT PROOF: ${channel.toUpperCase()} IS USING REAL RAG!`);
+    console.log(`║  ✅ FETCHED FROM MONGODB USING VOYAGE AI 1024D EMBEDDINGS`);
     retrieval.chunks.forEach((c, i) => {
       console.log(`║    ${i+1}. ${c.documentId} → "${c.chunkText.slice(0, 60)}..."`);
     });
