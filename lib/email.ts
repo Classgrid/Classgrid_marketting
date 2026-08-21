@@ -150,3 +150,42 @@ export async function sendFailedEscalationEmail(
     console.error("[Email Alert] Failed to send alert email:", error);
   }
 }
+
+export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentMonth: string) {
+  const subject = `🚨 URGENT: WhatsApp Kill Switch Activated! (${messageCount} Messages)`;
+  const content = `
+    <h2 style="color: #ef4444;">WhatsApp Kill Switch Activated!</h2>
+    <p>This is an automated critical alert from your Classgrid AI Server.</p>
+    <p>Your WhatsApp Business API usage for the month of <strong>${currentMonth}</strong> has reached <strong>${messageCount} messages</strong>.</p>
+    <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px 0; color: #991b1b;"><strong>Status:</strong> All incoming WhatsApp messages are now being automatically dropped by the server.</p>
+      <p style="margin: 0; color: #991b1b;"><strong>Why?</strong> Meta charges for conversations after the first 1000 free tier limit. The Kill Switch fired at 950 to ensure you never pay unexpected bills.</p>
+    </div>
+    <p><strong>Next Steps:</strong></p>
+    <ul>
+      <li>If you want to resume WhatsApp services, you must manually increase the Kill Switch limit in <code>server.ts</code>.</li>
+      <li>If you do nothing, the bot will remain offline on WhatsApp until the 1st of next month when the counter resets to 0.</li>
+    </ul>
+    <p>Stay safe!</p>
+  `;
+
+  const html = baseTemplate({
+    content,
+    title: "WhatsApp Kill Switch Activated",
+    ignoreText: "Internal infrastructure billing alert.",
+    hideSupportLink: true,
+  });
+
+  try {
+    const transporter = getSmtpTransporter();
+    await transporter.sendMail({
+      from: `"Classgrid AI Alerts" <${SENDER.address}>`,
+      to: "nikhil.shinde@classgrid.in", // The user's main email
+      subject,
+      html,
+    });
+    console.log(`[Email Alert] Sent WhatsApp Kill Switch Alert to nikhil.shinde@classgrid.in`);
+  } catch (error) {
+    console.error("[Email Alert] Failed to send Kill Switch alert email:", error);
+  }
+}
