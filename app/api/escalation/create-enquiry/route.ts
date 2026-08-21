@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
     if (doc.enquiryId) {
       // Already created an enquiry, redirect to Support Tickets page
-      return NextResponse.redirect(`https://classgrid.in/superadmin/talk`);
+      return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
     }
 
     const isEmail = doc.deviceInfo?.includes("Email Client");
