@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'server-ai/**'
-      - 'lib/**'
-      - 'tsconfig.json'
-      - '.github/workflows/deploy-ai.yml'
   workflow_dispatch:
 
 jobs:
