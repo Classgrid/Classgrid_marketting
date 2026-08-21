@@ -706,6 +706,19 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         });
 
         let answerText = result.answer || "I'm sorry, I cannot answer right now. Please email support@classgrid.in.";
+        
+        // --- WHATSAPP FORMATTING FIX ---
+        // Convert Markdown Links to Text (URL)
+        answerText = answerText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+          const fullUrl = url.startsWith("/") ? `https://classgrid.in${url}` : url;
+          return `${text} (${fullUrl})`;
+        });
+        // Convert **bold** to *bold*
+        answerText = answerText.replace(/\*\*(.*?)\*\*/g, '*$1*');
+        // Convert ### Headings to *Headings*
+        answerText = answerText.replace(/^###\s+(.*)$/gm, '*$1*');
+        // -------------------------------
+
         if (answerText.length > 4000) {
           console.warn(`[WhatsApp] Answer too long (${answerText.length} chars). Truncating to 4000...`);
           answerText = answerText.slice(0, 4000) + "...\n\n(Message truncated due to WhatsApp limits. Please email support@classgrid.in for full details.)";
