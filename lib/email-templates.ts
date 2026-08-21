@@ -488,3 +488,30 @@ export function getCareerApplicationConfirmationEmailHtml(firstName: string, rol
     ignoreText: null
   });
 }
+
+// ------------- WHATSAPP DAILY TRACKER EMAIL -------------
+export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
+  const isBlocked = count >= 950;
+  const content = `
+    <h1>WhatsApp Usage Update</h1>
+    <p>Here is your daily automated billing report for the WhatsApp API.</p>
+    
+    <div class="box">
+      <div class="meta">Current Month Usage</div>
+      <div style="font-size: 24px; font-weight: bold; color: ${isBlocked ? '#dc2626' : '#10b981'}; margin-bottom: 12px;">${count} / 1,000</div>
+      
+      <div class="meta">API Status</div>
+      <div style="font-size: 14px; margin-bottom: 16px; font-weight: bold;">
+        ${isBlocked ? "⚠️ KILL SWITCH ACTIVATED. API IS PAUSED." : "✅ Active and Safe"}
+      </div>
+    </div>
+    
+    <p>This automated tracker guarantees you will not be billed by Meta. The kill switch engages automatically at 950 messages to protect your credit card.</p>
+  `;
+  return baseTemplate({
+    content,
+    title: "WhatsApp Daily Tracker",
+    ignoreText: "Automated report from Classgrid AI Server.",
+    hideSupportLink: true
+  });
+}

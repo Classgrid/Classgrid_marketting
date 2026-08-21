@@ -17,6 +17,10 @@ import { saveMessageToSession, getSessionHistory } from "../lib/ai/chat-memory";
 
 // @ts-ignore
 import leoProfanity from "leo-profanity";
+import cron from "node-cron";
+import nodemailer from "nodemailer";
+import { WhatsAppUsage } from "../lib/models/WhatsAppUsage";
+import { getWhatsAppDailyTrackerEmailHtml } from "../lib/email-templates";
 
 import { startEmailPoller, getEmailPollerStatus } from "../lib/email-ai/email-poller";
 
@@ -605,6 +609,170 @@ app.post("/api/ai/chat", aiChatHandler);
 app.post("/api/ask-ai", aiChatHandler);
 
 
+// ── WhatsApp Webhook & API ────────────────────────────────────────────────────
+app.get("/api/whatsapp-webhook", (req, res) => {
+  const verify_token = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode && token) {
+    if (mode === "subscribe" && token === verify_token) {
+      console.log(`[WhatsApp] Webhook verified successfully!`);
+      return res.status(200).send(challenge);
+    } else {
+      console.warn(`[WhatsApp] Webhook verification failed. Expected: ${verify_token}, Got: ${token}`);
+      return res.sendStatus(403);
+    }
+  }
+  return res.sendStatus(400);
+});
+
+app.post("/api/whatsapp-webhook", async (req, res) => {
+  try {
+    const body = req.body;
+    console.log(`\n📱 ════════════ INCOMING WHATSAPP EVENT ════════════`);
+    console.log(JSON.stringify(body, null, 2));
+
+    if (body.object === "whatsapp_business_account") {
+      const entry = body.entry?.[0];
+      const changes = entry?.changes?.[0];
+      const value = changes?.value;
+      const message = value?.messages?.[0];
+      const contact = value?.contacts?.[0];
+
+      if (message && message.type === "text") {
+        const fromNumber = message.from; // User's phone number
+        const text = message.text.body;
+        const userName = contact?.profile?.name || "WhatsApp User";
+        
+        console.log(`[WhatsApp] Received message from ${userName} (${fromNumber}): "${text}"`);
+        
+        // 1. Check Kill Switch
+        await connectMongo();
+        const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+        let usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
+        if (!usage) {
+          usage = await WhatsAppUsage.create({ monthYear: currentMonth, messageCount: 0 });
+        }
+
+        if (usage.messageCount >= 950) {
+          console.warn(`[WhatsApp] KILL SWITCH ACTIVATED! Dropping message. Usage: ${usage.messageCount}`);
+          return res.sendStatus(200); // Don't reply, don't charge
+        }
+
+        // 2. Generate RAG Answer
+        res.sendStatus(200); // Instantly reply 200 OK to Meta so they don't retry
+
+        console.log(`[WhatsApp] Generating RAG Answer for ${fromNumber}...`);
+        
+        // Use redis session history
+        const sessionId = `wa-${fromNumber}`;
+        const redisHistory = await getSessionHistory(sessionId);
+        await saveMessageToSession(sessionId, { role: "user", content: text });
+
+        const result = await generateClassgridRagAnswer({
+          question: text,
+          channel: "whatsapp",
+          userName: userName.split(" ")[0],
+          fullName: userName,
+          userEmail: `${fromNumber}@whatsapp.com`,
+          isGuest: true,
+          history: redisHistory,
+          onStatus: () => {},
+          onThought: () => {},
+        });
+
+        const answerText = result.answer || "I'm sorry, I cannot answer right now. Please email support@classgrid.in.";
+        await saveMessageToSession(sessionId, { role: "assistant", content: answerText });
+
+        console.log(`[WhatsApp] Generated Answer. Sending back to Meta...`);
+        
+        // 3. Send back to WhatsApp Graph API
+        const phoneId = process.env.WHATSAPP_PHONE_ID;
+        const token = process.env.WHATSAPP_ACCESS_TOKEN;
+        
+        const response = await fetch(`https://graph.facebook.com/v19.0/${phoneId}/messages`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: fromNumber,
+            type: "text",
+            text: {
+              preview_url: false,
+              body: answerText
+            }
+          })
+        });
+
+        const respData = await response.json();
+        if (response.ok) {
+          console.log(`[WhatsApp] ✅ Message sent successfully! Msg ID: ${respData?.messages?.[0]?.id}`);
+          // Increment tracking
+          usage.messageCount += 1;
+          await usage.save();
+          console.log(`[WhatsApp Tracker] Month usage is now: ${usage.messageCount} / 1000`);
+        } else {
+          console.error(`[WhatsApp] ❌ Failed to send message!`, JSON.stringify(respData));
+        }
+
+      } else {
+        // Just a status update (read/delivered/sent) or unsupported message type
+        res.sendStatus(200);
+      }
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.error("[WhatsApp Webhook] Fatal Error:", error);
+    if (!res.headersSent) res.sendStatus(500);
+  }
+});
+
+// ── Daily Usage Cron Job ──────────────────────────────────────────────────────
+cron.schedule("0 20 * * *", async () => {
+  try {
+    console.log("[Cron] Running Daily WhatsApp Billing Tracker...");
+    await connectMongo();
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
+    const count = usage?.messageCount || 0;
+
+    console.log(`[Cron] Today's Usage Count: ${count} / 1000`);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.AWS_SES_SMTP_HOST || "email-smtp.ap-south-1.amazonaws.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.AWS_SES_SMTP_USER,
+        pass: process.env.AWS_SES_SMTP_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: "Classgrid AI <support@classgrid.in>",
+      to: "team@classgrid.in",
+      subject: `🛡️ WhatsApp API Billing Update (${count}/1000)`,
+      html: getWhatsAppDailyTrackerEmailHtml(count),
+    };
+
+    if (process.env.AWS_SES_SMTP_USER) {
+      await transporter.sendMail(mailOptions);
+      console.log("[Cron] Usage report sent to team@classgrid.in");
+    } else {
+      console.warn("[Cron] Skipping email report because AWS_SES_SMTP_USER is not set.");
+    }
+  } catch (err) {
+    console.error("[Cron] Failed to run WhatsApp usage tracker:", err);
+  }
+});
+
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   const hasMistral = !!process.env.MISTRAL_API_KEY;
@@ -629,6 +797,11 @@ app.listen(PORT, () => {
   const hasBrevo = !!process.env.BREVO_SMTP_HOST;
   const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID;
   const hasGithubOAuth = !!process.env.GITHUB_CLIENT_ID;
+
+  const hasWaToken = !!process.env.WHATSAPP_ACCESS_TOKEN;
+  const hasWaPhoneId = !!process.env.WHATSAPP_PHONE_ID;
+  const hasWaAccountId = !!process.env.WHATSAPP_BUSINESS_ACCOUNT_ID;
+  const hasWaWebhook = !!process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
 
   // ── DETAILED ZOHO ENV CONNECTION LOGS ──
   console.log(`\n📧 ════════════ ZOHO ENV CONNECTION LOGS ════════════`);
@@ -670,5 +843,11 @@ app.listen(PORT, () => {
   console.log(`✅ Google OAuth:      ${hasGoogleOAuth ? "Configured" : "❌ Missing"}`);
   console.log(`✅ GitHub OAuth:      ${hasGithubOAuth ? "Configured" : "❌ Missing"}`);
   console.log(`✅ Zoho Email AI:     ${emailPollerStatus.configured ? "Configured (Polling Support Inbox)" : "❌ Missing (Disabled)"}`);
+  console.log("----------------------------------------");
+  console.log(`🟢 WhatsApp Graph API Status:`);
+  console.log(`   - Access Token:    ${hasWaToken ? "✅ Connected" : "❌ Missing"}`);
+  console.log(`   - Phone ID:        ${hasWaPhoneId ? "✅ Configured" : "❌ Missing"}`);
+  console.log(`   - Account ID:      ${hasWaAccountId ? "✅ Configured" : "❌ Missing"}`);
+  console.log(`   - Webhook Secret:  ${hasWaWebhook ? "✅ Configured" : "❌ Missing"}`);
   console.log("----------------------------------------");
 });
