@@ -683,7 +683,11 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
           onThought: () => {},
         });
 
-        const answerText = result.answer || "I'm sorry, I cannot answer right now. Please email support@classgrid.in.";
+        let answerText = result.answer || "I'm sorry, I cannot answer right now. Please email support@classgrid.in.";
+        if (answerText.length > 4000) {
+          console.warn(`[WhatsApp] Answer too long (${answerText.length} chars). Truncating to 4000...`);
+          answerText = answerText.slice(0, 4000) + "...\n\n(Message truncated due to WhatsApp limits. Please email support@classgrid.in for full details.)";
+        }
         await saveMessageToSession(sessionId, { role: "assistant", content: answerText });
 
         console.log(`[WhatsApp] Generated Answer. Sending back to Meta...`);
