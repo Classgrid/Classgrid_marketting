@@ -649,13 +649,22 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         console.log(`[WhatsApp] Received message from ${userName} (${fromNumber}): "${text}"`);
         // 1. Check Rate Limit (Anti-Spam)
         const { checkRateLimitWithCount } = require("../lib/rate-limit");
-        const rateLimit = checkRateLimitWithCount(`wa_${fromNumber}`, 35, 2 * 60 * 1000); // 35 messages per 2 minutes
+        const rateLimit = checkRateLimitWithCount(`wa_${fromNumber}`, 34, 24 * 60 * 60 * 1000); // 34 messages allowed per 24 hours
         
         if (!rateLimit.allowed) {
-          if (rateLimit.count === 36) {
-            console.warn(`[WhatsApp] 🚨 Rate limit hit for ${fromNumber}. Sending ONE final warning message.`);
+          if (rateLimit.count === 35) { // 35th message gets the exact error response
+            console.warn(`[WhatsApp] 🚨 Rate limit hit for ${fromNumber}. Sending exact 24-hour warning message.`);
             const incomingPhoneId = value?.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_ID;
             const token = process.env.WHATSAPP_ACCESS_TOKEN;
+            
+            const resetAt = new Date(rateLimit.resetAt);
+            const resetTimeStr = resetAt.toLocaleTimeString("en-IN", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZone: "Asia/Kolkata",
+            });
+            const minutesLeft = Math.max(1, Math.ceil((resetAt.getTime() - Date.now()) / 60000));
             
             try {
               await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
@@ -668,7 +677,7 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
                   messaging_product: "whatsapp",
                   to: fromNumber,
                   type: "text",
-                  text: { body: "⏳ *Please slow down!*\nYou are sending messages too quickly. Please wait 2 minutes before sending another message." }
+                  text: { body: `You have reached your message limit. Your limit resets at ${resetTimeStr} (in ~${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}).` }
                 })
               });
             } catch (err) {
