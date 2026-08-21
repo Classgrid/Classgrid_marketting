@@ -848,7 +848,10 @@ app.listen(PORT, () => {
   console.log(`✅ Zoho Email AI:     ${emailPollerStatus.configured ? "Configured (Polling Support Inbox)" : "❌ Missing (Disabled)"}`);
   console.log("----------------------------------------");
   console.log(`🟢 WhatsApp Graph API Status:`);
-  console.log(`   - Access Token:    ${hasWaToken ? "✅ Connected" : "❌ Missing"}`);
+  const tokenPreview = process.env.WHATSAPP_ACCESS_TOKEN 
+    ? `${process.env.WHATSAPP_ACCESS_TOKEN.substring(0, 15)}...${process.env.WHATSAPP_ACCESS_TOKEN.slice(-5)}` 
+    : "❌ Missing";
+  console.log(`   - Access Token:    ${hasWaToken ? `✅ Connected (${tokenPreview})` : "❌ Missing"}`);
   console.log(`   - Phone ID:        ${hasWaPhoneId ? "✅ Configured" : "❌ Missing"}`);
   console.log(`   - Account ID:      ${hasWaAccountId ? "✅ Configured" : "❌ Missing"}`);
   console.log(`   - Webhook Secret:  ${hasWaWebhook ? "✅ Configured" : "❌ Missing"}`);
