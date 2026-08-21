@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
     formData.append("subject", doc.subject || "AI Escalation");
     formData.append("message", `This conversation was automatically escalated by the AI Support Agent.\n\nAI Summary of the User's Problem:\n${doc.aiSummary}`);
     formData.append("institution", institutionSource); // Triggers Classgrid Talk fallback
+    formData.append("skipEmail", "true");
 
     const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
     const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
