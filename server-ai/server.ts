@@ -785,7 +785,7 @@ app.listen(PORT, () => {
   const hasRedis = !!process.env.REDIS_URL;
   const hasRag = process.env.RAG_ENABLED === "true";
   const hasMongo = !!process.env.MONGO_URI;
-  const hasSanity = !!process.env.SANITY_API_TOKEN;
+  const hasSanity = !!process.env.SANITY_API_WRITE_TOKEN || !!process.env.SANITY_API_TOKEN;
   const hasAwsS3 = !!process.env.AWS_S3_BUCKET_NAME && !!process.env.AWS_REGION;
   const hasAwsSes = !!process.env.AWS_SES_SMTP_USER && !!process.env.AWS_SES_SMTP_PASS;
   const hasCloudflareR2 = !!process.env.NEW_R2_ACCESS_KEY_ID && !!process.env.NEW_R2_SECRET_ACCESS_KEY;
