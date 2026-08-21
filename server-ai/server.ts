@@ -647,8 +647,16 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         const userName = contact?.profile?.name || "WhatsApp User";
         
         console.log(`[WhatsApp] Received message from ${userName} (${fromNumber}): "${text}"`);
+        // 1. Check Rate Limit (Anti-Spam)
+        const { checkRateLimit } = require("../lib/rate-limit");
+        const isAllowed = checkRateLimit(`wa_${fromNumber}`, 35, 2 * 60 * 1000); // 35 messages per 2 minutes
         
-        // 1. Check Kill Switch
+        if (!isAllowed) {
+          console.warn(`[WhatsApp] 🚨 SPAM BLOCKED! Rate limit exceeded for ${fromNumber}. Dropping message.`);
+          return res.sendStatus(200); // Drop instantly without replying
+        }
+
+        // 2. Check Kill Switch
         await connectMongo();
         const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
         let usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
