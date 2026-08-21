@@ -154,19 +154,19 @@ export async function sendFailedEscalationEmail(
 export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentMonth: string) {
   const subject = `🚨 URGENT: WhatsApp Kill Switch Activated! (${messageCount} Messages)`;
   const content = `
-    <h2 style="color: #ef4444;">WhatsApp Kill Switch Activated!</h2>
-    <p>This is an automated critical alert from your Classgrid AI Server.</p>
-    <p>Your WhatsApp Business API usage for the month of <strong>${currentMonth}</strong> has reached <strong>${messageCount} messages</strong>.</p>
+    <h2 style="color: #ef4444;">WhatsApp Infrastructure: System Halted</h2>
+    <p>This is an automated critical alert from the Classgrid Systems Monitor.</p>
+    <p>The WhatsApp Business API outbound messaging volume for the month of <strong>${currentMonth}</strong> has reached the defined threshold of <strong>${messageCount} messages</strong>.</p>
     <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
-      <p style="margin: 0 0 10px 0; color: #991b1b;"><strong>Status:</strong> All incoming WhatsApp messages are now being automatically dropped by the server.</p>
-      <p style="margin: 0; color: #991b1b;"><strong>Why?</strong> Meta charges for conversations after the first 1000 free tier limit. The Kill Switch fired at 950 to ensure you never pay unexpected bills.</p>
+      <p style="margin: 0 0 10px 0; color: #991b1b;"><strong>Status:</strong> The internal safeguard (Kill Switch) has been successfully engaged. All subsequent outbound WhatsApp messages are currently being dropped by the server.</p>
+      <p style="margin: 0; color: #991b1b;"><strong>Reason:</strong> To prevent unauthorized quota overruns beyond the free 1,000 conversational tier limit.</p>
     </div>
-    <p><strong>Next Steps:</strong></p>
+    <p><strong>Required Action:</strong></p>
     <ul>
-      <li>If you want to resume WhatsApp services, you must manually increase the Kill Switch limit in <code>server.ts</code>.</li>
-      <li>If you do nothing, the bot will remain offline on WhatsApp until the 1st of next month when the counter resets to 0.</li>
+      <li>To restore outbound WhatsApp capabilities prior to the next billing cycle, the system threshold must be manually updated by an administrator in <code>server.ts</code>.</li>
+      <li>If no action is taken, the safeguard will remain active until the 1st of next month, at which point the counter resets and operations resume automatically.</li>
     </ul>
-    <p>Stay safe!</p>
+    <p>System Monitor (Classgrid AI Server)</p>
   `;
 
   const html = baseTemplate({
