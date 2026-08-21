@@ -75,14 +75,14 @@ export async function GET(req: NextRequest) {
     }).commit();
 
     // 4. Generate AI Draft response using Gemini (primary) + Mistral (fallback)
-    const draftPrompt = \`
+    const draftPrompt = `
       You are an expert customer success manager and support specialist for Classgrid (an educational SaaS platform for schools, colleges, and coaching institutes).
       A user was just chatting with our AI Support Agent, and their conversation has now been assigned to YOU to officially solve as a human specialist.
       
-      User Email: \${doc.userEmail}
-      AI Summary of Issue: \${doc.aiSummary}
+      User Email: ${doc.userEmail}
+      AI Summary of Issue: ${doc.aiSummary}
       Transcript:
-      \${doc.chatTranscript?.map((t: any) => \`\${t.role}: \${t.content}\`).join("\\n") || ""}
+      ${doc.chatTranscript?.map((t: any) => `${t.role}: ${t.content}`).join("\n") || ""}
 
       Requirements:
       - Start with "Hi," or "Hello [name],"
@@ -95,7 +95,7 @@ export async function GET(req: NextRequest) {
       - Tone: Professional, highly knowledgeable, empathetic, and concise.
       - Output ONLY the email body text. Do not include subject lines or extra commentary.
       - End the email with "Best regards, [ADMIN_NAME]".
-    \`;
+    `;
 
     const providers = [
       {
