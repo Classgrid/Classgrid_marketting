@@ -393,7 +393,7 @@ export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl
   return baseTemplate({
     content,
     title: "New Demo Booked",
-    ignoreText: "Automated notification from Classgrid Admin System.",
+    ignoreText: "Automated email from Classgrid Admin System.",
     hideSupportLink: true
   });
 }
@@ -511,7 +511,7 @@ export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
   return baseTemplate({
     content,
     title: "WhatsApp Daily Tracker",
-    ignoreText: "Automated report from Classgrid AI Server.",
+    ignoreText: "Automated email from Classgrid Admin System.",
     hideSupportLink: true
   });
 }

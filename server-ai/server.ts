@@ -777,54 +777,6 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
   }
 });
 
-// ── Daily Usage Cron Job ──────────────────────────────────────────────────────
-// Runs at 8:00 PM IST (14:30 UTC)
-cron.schedule("30 14 * * *", async () => {
-  try {
-    console.log("[Cron] Checking if WhatsApp limit is reached...");
-    await connectMongo();
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    const usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
-    const count = usage?.messageCount || 0;
-
-    console.log(`[Cron] Today's Usage Count: ${count} / 1000`);
-
-    // ONLY send email if usage is 950 or above
-    if (count < 950) {
-      console.log("[Cron] Usage is safe. No email sent to avoid spam.");
-      return;
-    }
-
-    console.log("[Cron] LIMIT REACHED! Sending alert email...");
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.AWS_SES_SMTP_HOST || "email-smtp.ap-south-1.amazonaws.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.AWS_SES_SMTP_USER,
-        pass: process.env.AWS_SES_SMTP_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: "Classgrid AI <support@classgrid.in>",
-      to: "team@classgrid.in",
-      subject: `🛡️ WhatsApp API Billing Update (${count}/1000)`,
-      html: getWhatsAppDailyTrackerEmailHtml(count),
-    };
-
-    if (process.env.AWS_SES_SMTP_USER) {
-      await transporter.sendMail(mailOptions);
-      console.log("[Cron] Usage report sent to team@classgrid.in");
-    } else {
-      console.warn("[Cron] Skipping email report because AWS_SES_SMTP_USER is not set.");
-    }
-  } catch (err) {
-    console.error("[Cron] Failed to run WhatsApp usage tracker:", err);
-  }
-});
-
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   const hasMistral = !!process.env.MISTRAL_API_KEY;
