@@ -72,8 +72,8 @@ type AskAiRequestBody = {
 const DEFAULT_ERROR_MESSAGE = "Unable to answer right now. Please try again.";
 
 // ── ESCALATE regex ────────────────────────────────────────────────────────────
-const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/;
-const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g;
+const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
+const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
 
 // ── Page context normalizer (identical to route.ts) ───────────────────────────
 function normalizePageContext(input: unknown): PageContext | undefined {

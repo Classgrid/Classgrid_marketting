@@ -27,8 +27,8 @@ import { sendFailedEscalationEmail, sendTicketCreatedEscalationEmail } from "../
 
 // ── Escalation regex (same as server.ts) ──────────────────────────────────────
 
-const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/;
-const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g;
+const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
+const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
 
 // ── Sender filter: skip internal/automated emails ─────────────────────────────
 
@@ -316,7 +316,7 @@ export async function processIncomingEmail(
         // Failsafe: Strip malformed/broken escalation tags (e.g. missing the [ESCALATE: prefix)
         // If the AI outputs `some text | SUBJECT: ... | CATEGORY: ... | PRIORITY: ...]`, strip it.
         // We match exactly the broken metadata block to avoid deleting the actual email body.
-        answer = answer.replace(/(?:\[ESCALATE:[\s\S]*?)?\|\s*SUBJECT:[\s\S]*?\|\s*CATEGORY:[\s\S]*?\|\s*PRIORITY:[\s\S]*?\]/g, "");
+        answer = answer.replace(/(?:\[ESCALATE:[\s\S]*?)?\|\s*SUBJECT:[\s\S]*?\|\s*CATEGORY:[\s\S]*?\|\s*PRIORITY:[\s\S]*?(?:\|\s*DRAFT:[\s\S]*?)?\]/g, "");
 
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();

@@ -329,7 +329,9 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          let escalateMatch = answer.match(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/);
+          const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
+          const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
+          let escalateMatch = answer.match(ESCALATE_RE);
 
           // HARD PROGRAMMATIC FAILSAFE: Prevent AI from auto-escalating prematurely
           if (escalateMatch) {
@@ -360,7 +362,7 @@ export async function POST(req: Request) {
 
             if (isNoContext) {
               // The AI jumped the gun despite prompt instructions. Strip the code and cancel escalation.
-              answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
+              answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
               // Check if the remaining text falsely claims an escalation happened
               // (e.g., "Let me escalate this", "I'll forward this to the team", "I've sent this to support")
@@ -396,7 +398,7 @@ export async function POST(req: Request) {
             };
             const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
 
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
@@ -511,7 +513,7 @@ export async function POST(req: Request) {
           } else if (escalateMatch && alreadyEscalated) {
             // AI tried to escalate again — instead of blocking, ADD the new context to the existing ticket
             const newContext = escalateMatch[1]?.trim() || question;
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
             // Try to add the new context as a reply to the existing ticket
             let updatedTicket = false;
