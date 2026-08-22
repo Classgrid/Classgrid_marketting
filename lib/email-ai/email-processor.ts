@@ -235,6 +235,7 @@ export async function processIncomingEmail(
     let aiSubject = parsed.subject;
     let rawCategory = "general";
     let rawPriority = "medium";
+    let aiDraft = "";
 
     // 8. Check if user is a registered platform user
     let isPlatformUser = false;
@@ -289,10 +290,11 @@ export async function processIncomingEmail(
       answer.includes("The AI is currently receiving too many requests") ||
       answer.includes("I am processing your request") ||
       answer.includes("[RATE_LIMITED]") ||
+      answer.trim().startsWith("[ERROR:") ||
       answer.trim().length < 5
     ) {
-      console.error(`❌ [email-ai] Fatal error: LLM failed or hit a rate limit. Throwing error to trigger Poller retry...`);
-      throw new Error("LLM Rate Limit or Generation Failure. Triggering poller retry.");
+      console.error(`❌ [email-ai] Fatal error: LLM failed, outputted an error, or hit a rate limit. Throwing error to trigger Poller retry...`);
+      throw new Error("LLM Error or Generation Failure. Triggering poller retry.");
     }
 
       console.log(`\n════════════════════ EMAIL AI RESPONSE ════════════════════`);
@@ -309,7 +311,7 @@ export async function processIncomingEmail(
         aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
         rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
         rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
-        const aiDraft = escalateMatch[5]?.trim() || "";
+        aiDraft = escalateMatch[5]?.trim() || "";
 
         // Strip the [ESCALATE] tag from the customer-facing reply
         answer = answer.replace(ESCALATE_RE_G, "");
