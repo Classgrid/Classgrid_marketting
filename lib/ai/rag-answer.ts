@@ -523,6 +523,70 @@ If you have any questions before your demo, feel free to reply to this email or 
 Best regards,
 Classgrid Support Team
 
+### Example 4: Escalating a highly specific data query (Includes Draft Reply)
+
+Hello,
+
+Thank you for reaching out! I understand you need to track down your official fee receipt for your scholarship application. 
+
+Because I do not have direct access to your personal database records to download this specific receipt, I have created a formal Support Ticket on your behalf so our finance team can pull the exact document for you. They will review your payment history and email the receipt directly to you.
+
+Here are some helpful resources while you wait:
+- Help Center: https://classgrid.in/help-center
+- System Status: https://classgrid.in/system-status
+- Docs: https://classgrid.in/docs
+
+Best regards,
+Classgrid Support Team
+
+[ESCALATE: Student needs copy of specific fee receipt for scholarship application | SUBJECT: Missing Fee Receipt | CATEGORY: Payment & Billing | PRIORITY: High | DRAFT: Hello Swaroop,
+
+I am Nikhil Shinde from Classgrid, and I am personally handling your inquiry to ensure you receive verified, human-backed details tailored specifically for Green Valley International School.
+
+Managing an institution with 3,200 students, 250 teachers, and two campuses requires absolute precision, and Classgrid is fully equipped to support your scale.
+
+Below is the verified, detailed breakdown of how we address your core requirements:
+
+### 1. Data Migration from Your Existing ERP
+
+We routinely handle complex migrations from legacy ERPs to Classgrid.
+
+* **What we migrate:** We will migrate all your historical and active data, including student records, teacher profiles, attendance history, academic/gradebook data, and fee structures.
+* **What we require from you:** To begin, we will need sample data exports from your current ERP (typically in CSV or Excel format).
+* **The Process:** Your dedicated Classgrid Implementation Specialist will map your existing data fields to our system, run validation checks to prevent duplicates or errors, and perform test runs in a secure sandbox environment. We execute the final migration in phases to ensure zero downtime and a seamless transition.
+
+### 2. Multi-Campus Data Separation & Access Control
+
+Classgrid is built natively for multi-campus operations. You can manage both campuses under a single, unified Classgrid organization while maintaining strict boundaries.
+
+* **Data Separation:** Using robust Role-Based Access Control (RBAC) and tenant isolation, we ensure that teachers, students, and campus-specific administrators only see and interact with data relevant to their specific location. Campus-specific timetables, attendance policies, and fee structures can be configured independently.
+* **Centralized Administration:** As the Administrator, you and your central management team will have a global super-admin dashboard. This allows you to view consolidated financial and academic reports, manage organization-wide settings, and send unified announcements across both campuses when needed.
+
+### 3. WhatsApp, SMS, Email, and Push Notifications
+
+We offer a multi-channel communication engine to keep parents engaged and informed.
+
+* **Supported Channels:** Classgrid supports automated and manual communications via WhatsApp, SMS, email, and mobile push notifications.
+* **Automated Triggers:** You can configure automated triggers for daily attendance updates, emergency alerts, and automated fee reminders.
+* **Targeted Segmentation:** You can segment communications by campus, grade, division, or custom student groups to ensure parents only receive relevant updates.
+* **Parent Portal:** Parents also get access to a dedicated mobile app and web portal where they can view real-time attendance, academic progress, fee receipts, and school announcements in one centralized place.
+
+### 4. Implementation Process & Support Commitments
+
+For an institution of your size, we structure a comprehensive **4-to-8 week onboarding and deployment plan** to guarantee success:
+
+* **Phase 1: Discovery & Setup (Week 1–2):** We analyze your current workflows, map your data, and configure your two campuses on Classgrid.
+* **Phase 2: Data Migration & Validation (Week 3–4):** We migrate your data into a secure sandbox environment and verify its accuracy with your team.
+* **Phase 3: Role-Specific Training (Week 5–6):** We conduct hands-on, department-specific training sessions for your administrators, finance teams, and your 250 teachers to ensure high adoption.
+* **Phase 4: Parallel Run & Go-Live (Week 7–8):** We provide a 30-day demo/sandbox environment for your team to practice before officially transitioning to the live platform.
+* **Our Support Commitment:** You will be assigned a dedicated Account Manager and an Implementation Specialist. Post-launch, Green Valley International School will have access to our priority support, including 24/7 technical assistance for critical issues, a comprehensive help center, and ongoing training for new staff.
+
+To help you visualize how this works in practice, I would love to set up a personalized video demonstration where we can walk through the multi-campus dashboard and discuss your current ERP's data structure.
+
+Please let me know a convenient date and time for a brief call this week.
+
+Best regards,
+**Nikhil Shinde**]
 CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generating a NEW subject. The server code handles the subject line insertion.`
     ];
 
