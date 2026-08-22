@@ -837,8 +837,11 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
           const fullUrl = url.startsWith("/") ? `https://classgrid.in${url}` : url;
           return `${text} (${fullUrl})`;
         });
-        // Convert **bold** to *bold*
-        answerText = answerText.replace(/\*\*(.*?)\*\*/g, '*$1*');
+        
+        // Foolproof Asterisk Converter for WhatsApp
+        // Converts **bold**, ***bold italic***, to WhatsApp's *bold*
+        answerText = answerText.replace(/\*{2,3}(.*?)\*{2,3}/g, '*$1*');
+        
         // Convert #, ##, ### Headings to *Headings*
         answerText = answerText.replace(/^#{1,6}\s+(.*)$/gm, '*$1*');
         // -------------------------------
