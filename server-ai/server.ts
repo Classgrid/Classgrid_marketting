@@ -846,9 +846,15 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         answerText = answerText.replace(/^#{1,6}\s+(.*)$/gm, '*$1*');
         // -------------------------------
 
+        // BACKEND SAFETY NET: Strip any [ESCALATE] tags from WhatsApp answers.
+        // WhatsApp is NOT a support channel. If the AI somehow generates an [ESCALATE] tag, silently remove it.
+        answerText = answerText.replace(/\[ESCALATE:.*?\]/g, "").trim();
+        // Also strip broken metadata fragments (e.g. | SUBJECT: ... | CATEGORY: ... | PRIORITY: ...])
+        answerText = answerText.replace(/\|\s*SUBJECT:.*?\|\s*CATEGORY:.*?\|\s*PRIORITY:.*?\]/g, "").trim();
+
         if (answerText.length > 4000) {
           console.warn(`[WhatsApp] Answer too long (${answerText.length} chars). Truncating to 4000...`);
-          answerText = answerText.slice(0, 4000) + "...\n\n(Message truncated due to WhatsApp limits. Please email support@classgrid.in for full details.)";
+          answerText = answerText.slice(0, 4000).trimEnd();
         }
         await saveMessageToSession(sessionId, { role: "assistant", content: answerText });
 
