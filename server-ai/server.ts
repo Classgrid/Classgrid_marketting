@@ -988,6 +988,7 @@ app.listen(PORT, () => {
   console.log(`✅ Mistral API:       ${hasMistral ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Gemini API:        ${hasGemini ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Tavily API:        ${hasTavily ? "Connected" : "❌ Missing"}`);
+  console.log(`✅ Hugging Face API:  ${process.env.HF_API_TOKEN ? "Connected" : "❌ Missing"}`);
   console.log(`✅ Redis:             ${hasRedis ? "Configured" : "❌ Missing"}`);
   console.log(`✅ RAG Engine:        ${hasRag ? "Online" : "Offline"}`);
   console.log(`✅ MongoDB:           ${hasMongo ? "Configured" : "❌ Missing"}`);
