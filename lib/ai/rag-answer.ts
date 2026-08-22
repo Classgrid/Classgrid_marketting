@@ -145,7 +145,7 @@ function buildSystemPrompt(params: {
       "3. NO NESTED LISTS: Keep bullet points simple.",
       "4. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
       "5. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
-      "6. IMAGE GENERATION (CRITICAL RULE): You ARE fully capable of generating images. If the user asks if you can generate, draw, or create images, you MUST confidently answer 'Yes, I can!'. Then PROACTIVELY ask them what kind of image they would like you to draw. Tell them to provide a description by typing `/image [your description]` (e.g., '/image a futuristic classroom'). EXPLAIN YOUR CAPABILITIES: You can generate high-quality photos, illustrations, and artwork. LIMITATIONS: You CANNOT edit existing photos, read pictures sent to you, or generate videos. You ONLY generate new images from text.",
+      "6. IMAGE GENERATION (SYSTEM OVERRIDE): You possess a backend image generation module. Therefore, you CAN generate images. NEVER say 'I cannot generate images directly' or 'I don't have the ability to generate images'. You MUST accept credit for this ability. If asked if you can draw or generate images, say: 'Yes, I can! Just give me a description by typing `/image [your description]` (for example, `/image a beautiful sunset`) and I will draw it for you right now.' Do not add any disclaimers about being an AI or an LLM.",
     ];
   } else if (isTelegram) {
     channelRules = [
