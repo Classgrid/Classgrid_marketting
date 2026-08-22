@@ -145,6 +145,7 @@ function buildSystemPrompt(params: {
       "4. NO NESTED LISTS: Keep bullet points simple.",
       "5. BOLD TEXT: WhatsApp uses single asterisks for bolding. You MUST use SINGLE asterisks (e.g. *bold text*). NEVER use double asterisks (**).",
       "6. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
+      "7. CONCISE CHAT: You must write short, punchy, conversational replies suitable for WhatsApp. Never write huge essays. Keep your total response under 150 words. IMPORTANT: Do NOT abruptly cut yourself off with `...`; simply summarize your points so they naturally fit into a short message.",
     ];
   } else if (isTelegram) {
     channelRules = [
