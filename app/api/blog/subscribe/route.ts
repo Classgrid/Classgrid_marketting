@@ -1,3 +1,9 @@
+/**
+ * CRITICAL RULE: DO NOT ADD <h1> OR ANY LARGE HEADINGS TO EMAIL TEMPLATES.
+ * The Classgrid design system requires all emails to rely solely on the Classgrid Logo at the top.
+ * Adding huge static or dynamic headings (e.g. <h1>Re: Subject</h1> or <h1>Welcome</h1>) is COMPLETELY BANNED.
+ * This applies to all human developers and AI agents.
+ */
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dns from "dns";
@@ -503,7 +509,6 @@ export async function POST(req: Request) {
 <tr>
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
-<h1 style="color:#111111;margin:0;font-size:24px;font-weight:700;letter-spacing:-0.3px;">${escapeHtml(headerTitle)}</h1>
 <p style="color:#6b7280;margin-top:10px;font-size:13px;line-height:1.6;margin-bottom:0;">${escapeHtml(subheaderText)}</p>
 </td>
 </tr>

@@ -1,3 +1,9 @@
+/**
+ * CRITICAL RULE: DO NOT ADD <h1> OR ANY LARGE HEADINGS TO EMAIL TEMPLATES.
+ * The Classgrid design system requires all emails to rely solely on the Classgrid Logo at the top.
+ * Adding huge static or dynamic headings (e.g. <h1>Re: Subject</h1> or <h1>Welcome</h1>) is COMPLETELY BANNED.
+ * This applies to all human developers and AI agents.
+ */
 const FRONTEND_URL = process.env.NEXTAUTH_URL ?? "https://classgrid.in";
 const PLATFORM_LOGO_URL = "https://bumxgscngzjadyozdpce.supabase.co/storage/v1/object/public/LOGO%20AND%20%20SVG/android-chrome-512x512.png";
 
@@ -156,7 +162,6 @@ ${ignoreText ? `<p style="margin-bottom:12px;color:#9ca3af;font-size:12px;">${ig
 // ------------- PASSWORD RESET -------------
 export function getForumPasswordResetEmailHtml(resetLink: string): string {
   const content = `
-    <h1>Reset your password</h1>
     <p>We received a request to reset the password for your Classgrid account. This link expires in <strong>5 minutes</strong>.</p>
     <a href="${resetLink}" class="btn">Reset Password</a>
     <p style="margin-top:20px;font-size:13px;color:#6b7280;">If you did not request this password reset, you can safely ignore this email. Your password will remain unchanged.</p>
@@ -183,7 +188,6 @@ export function getForumWelcomeEmailHtml(userName: string, dashboardUrl: string)
 <tr>
 <td style="padding:30px;border-bottom:1px solid #eaeaea;text-align:center;">
 <img src="${PLATFORM_LOGO_URL}" alt="Classgrid" height="42" style="display:block;margin:0 auto 16px;height:42px;width:auto;border:none;" />
-<h1 style="color:#111111;margin:0;font-size:22px;">Welcome to the Classgrid Community</h1>
 <p style="color:#6b7280;margin-top:8px;font-size:13px;">
 Ready to start your academic journey
 </p>
@@ -239,7 +243,6 @@ export function getForumLoginNotificationHtml(user: { name: string; email: strin
   const config = providerConfig[provider] || providerConfig.manual;
   const firstName = user.name.trim().split(/\s+/)[0] || 'there';
   const content = `
-    <h1>New login to your account</h1>
     <p>Hi ${firstName},</p>
     <p>We noticed a new sign-in to your Classgrid Community account (${user.email}) on ${formatDate()} using ${config.name}.</p>
     <a href="${FRONTEND_URL}/login/reset-password" class="btn btn-danger">Secure My Account</a>
@@ -255,7 +258,6 @@ export function getForumLoginNotificationHtml(user: { name: string; email: strin
 export function getForumVerificationEmailHtml(name: string, verifyLink: string): string {
   const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
-    <h1>Verify your email</h1>
     <p>Hi ${firstName},</p>
     <p>Please verify your email address to complete your setup. This link expires in 24 hours.</p>
     <a href="${verifyLink}" class="btn">Verify Email</a>
@@ -270,7 +272,6 @@ export function getForumVerificationEmailHtml(name: string, verifyLink: string):
 // ------------- OTP EMAIL -------------
 export function getForumOtpEmailHtml(otp: string): string {
   const content = `
-    <h1>Your Classgrid Login Code</h1>
     <p>Use the following code to sign in to your Classgrid Community account. This code expires in <strong>60 seconds</strong>.</p>
     
     <div class="box">
@@ -291,7 +292,6 @@ export function getForumOtpEmailHtml(otp: string): string {
 export function getDemoOtpEmailHtml(name: string, otp: string): string {
   const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
-    <h1>Verify your email</h1>
     <p>Hi ${firstName},</p>
     <p>Use the following verification code to unlock the calendar and schedule your Classgrid demo. This code expires in <strong>60 seconds</strong>.</p>
     
@@ -315,7 +315,6 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
   const buttonText = provider === "zoom" ? "Join Zoom Meet" : "Join Google Meet";
   const firstName = name.trim().split(/\s+/)[0] || 'there';
   const content = `
-    <h1>Your Demo is Confirmed!</h1>
     <p>Hi ${firstName},</p>
     <p>Your 30-minute Classgrid Platform demo has been successfully scheduled.</p>
     
@@ -357,7 +356,6 @@ export function getDemoConfirmationEmailHtml(name: string, dateStr: string, meet
 // ------------- ADMIN DEMO NOTIFICATION -------------
 export function getAdminDemoNotificationHtml(lead: any, dateStr: string, meetUrl: string): string {
   const content = `
-    <h1>New Demo Scheduled!</h1>
     <p>A new demo has been booked and confirmed by <strong>${lead.adminName}</strong>.</p>
     
     <div class="box">
@@ -493,7 +491,6 @@ export function getCareerApplicationConfirmationEmailHtml(firstName: string, rol
 export function getWhatsAppDailyTrackerEmailHtml(count: number): string {
   const isBlocked = count >= 990;
   const content = `
-    <h1>WhatsApp Usage Update</h1>
     <p>Here is your daily automated billing report for the WhatsApp API.</p>
     
     <div class="box">
