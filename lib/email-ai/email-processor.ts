@@ -23,7 +23,7 @@ import { getSmtpTransporter } from "../smtp-mailer";
 import { parseIncomingEmail } from "./email-parser";
 import { generateAIReplyEmail } from "./email-template";
 import { markEmailAsRead, type ZohoEmailContent } from "./zoho-mail";
-import { sendFailedEscalationEmail } from "../email";
+import { sendFailedEscalationEmail, sendTicketCreatedEscalationEmail } from "../email";
 
 // ── Escalation regex (same as server.ts) ──────────────────────────────────────
 
@@ -436,6 +436,16 @@ export async function processIncomingEmail(
           ticketId?.startsWith("CATCH") ? "Email AI (Error)" : "Email AI",
           parsed.cleanBody,
           escalationId
+        );
+      } else {
+        // Send success escalation email for platform users
+        await sendTicketCreatedEscalationEmail(
+          parsed.senderEmail,
+          parsed.senderName || "Unknown",
+          aiSummary,
+          "Email AI",
+          parsed.cleanBody,
+          ticketId
         );
       }
 

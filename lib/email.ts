@@ -78,6 +78,76 @@ export async function sendSafetyEmail(
   }
 }
 
+export async function sendTicketCreatedEscalationEmail(
+  customerEmail: string,
+  customerName: string,
+  aiSummary: string,
+  channel: string,
+  originalMessage: string,
+  ticketId: string
+) {
+  const now = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const displayName = customerName && customerName !== "Unknown" ? customerName : customerEmail;
+  const isChat = channel.toLowerCase().includes("chat");
+  const agentName = isChat ? "Classgrid Website Chat Support AI Agent" : "Classgrid Email AI Support Agent";
+  const channelType = isChat ? "chat" : "email";
+
+  const subject = `🎫 Support Ticket Auto-Created via ${isChat ? 'Chat' : 'Email'} — ${customerEmail}`;
+  const content = `
+    <p>The <strong>${agentName}</strong> handled an inbound customer ${channelType} and determined it requires human follow-up. A formal Support Ticket (ID: ${ticketId}) was successfully auto-created for this registered platform user.</p>
+    
+    <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${displayName}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${customerEmail}" style="color: #16a34a; text-decoration: none;">${customerEmail}</a></p>
+      <p style="margin: 0 0 10px 0;"><strong>Ticket ID:</strong> ${ticketId}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Received via:</strong> ${channel}</p>
+      <p style="margin: 0 0 0 0;"><strong>Date &amp; Time:</strong> ${now} (IST)</p>
+    </div>
+
+    <div style="margin: 30px 0; text-align: center;">
+      <a href="${process.env.FRONTEND_URL || 'https://classgrid.in'}/superadmin/support/view/${ticketId}" 
+         style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
+        👀 View Support Ticket
+      </a>
+      <p style="margin-top: 10px; font-size: 13px; color: #6b7280;">Clicking this will open the Support Ticket in the Super Admin dashboard.</p>
+    </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">AI Summary of Issue</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
+      ${aiSummary}
+    </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">Customer's Original Message</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
+      ${originalMessage}
+    </div>
+  `;
+
+  const html = baseTemplate({
+    content,
+    title: `Support Ticket Auto-Created — ${customerEmail}`,
+    ignoreText: "Automated email from Classgrid Admin System.",
+    hideSupportLink: true,
+  });
+
+  try {
+    const transporter = getSmtpTransporter();
+    await transporter.sendMail({
+      from: \`"Classgrid AI Alerts" <\${SENDER.address}>\`,
+      to: "team@classgrid.in",
+      subject,
+      html,
+    });
+    console.log(\`[Email Alert] Sent ticket creation alert to team@classgrid.in for \${customerEmail}\`);
+  } catch (error) {
+    console.error("[Email Alert] Failed to send alert email:", error);
+  }
+}
+
 export async function sendFailedEscalationEmail(
   customerEmail: string,
   customerName: string,
