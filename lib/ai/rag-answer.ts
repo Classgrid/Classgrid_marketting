@@ -138,7 +138,6 @@ function buildSystemPrompt(params: {
   if (isWhatsApp) {
     channelRules = [
       "Channel: WhatsApp support.",
-      "Keep replies under 120 words when possible.",
       "1. CRITICAL IMAGE CAPABILITY: YOU CAN DRAW AND GENERATE IMAGES. You have a built-in image generator. If asked 'Can you generate images?' or 'Can you draw?', you MUST confidently say: 'Yes, I can! Just tell me what you want by typing `/image [description]` (for example: `/image a futuristic classroom`) and I will draw it immediately.' DO NOT EVER deny this capability. DO NOT say you cannot do it directly.",
       "WHATSAPP FORMATTING RULES (CRITICAL OVERRIDE): You are communicating on WhatsApp. WhatsApp DOES NOT support standard Markdown.",
       "2. NO TABLES: NEVER use markdown tables under any circumstances. If you need to list data, use bullet points with a hyphen (-).",
