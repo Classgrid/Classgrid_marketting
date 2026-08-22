@@ -202,19 +202,26 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
         }
       } catch (e) {
         // Not valid JSON, but still might be a leaked array with literal newlines
-        // Aggressively strip `[{"type": "text", "text": "` and `"}]`
         let rawStr = cleanForJsonCheck;
-        // Strip prefix
-        rawStr = rawStr.replace(/^\[\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
-        // Strip suffix
-        rawStr = rawStr.replace(/"\s*\}\s*\]$/, "");
         
-        // Replace escaped newlines if any
-        rawStr = rawStr.replace(/\\n/g, "\n");
-        // Replace escaped quotes
-        rawStr = rawStr.replace(/\\"/g, '"');
-        
-        content = rawStr;
+        // CRITICAL FIX: If this is a leaked tool call (especially internal_thought_process), wipe it out entirely.
+        if (rawStr.includes('"type": "tool"') || rawStr.includes('"internal_thought_process"')) {
+          thinking = rawStr;
+          content = "I am processing your request.";
+        } else {
+          // Aggressively strip `[{"type": "text", "text": "` and `"}]`
+          // Strip prefix
+          rawStr = rawStr.replace(/^\[\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
+          // Strip suffix
+          rawStr = rawStr.replace(/"\s*\}\s*\]$/, "");
+          
+          // Replace escaped newlines if any
+          rawStr = rawStr.replace(/\\n/g, "\n");
+          // Replace escaped quotes
+          rawStr = rawStr.replace(/\\"/g, '"');
+          
+          content = rawStr;
+        }
       }
     }
   }
