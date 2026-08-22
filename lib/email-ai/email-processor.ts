@@ -335,10 +335,11 @@ export async function processIncomingEmail(
       }
 
     if (isEscalation) {
-      // Create support ticket via Platform API
-      try {
-        const formData = new FormData();
-        formData.append("name", parsed.senderName || "Email Support User");
+      if (isPlatformUser) {
+        // Create support ticket via Platform API for registered users only
+        try {
+          const formData = new FormData();
+          formData.append("name", parsed.senderName || "Email Support User");
         formData.append("email", parsed.senderEmail);
         formData.append("subject", aiSubject);
         formData.append("message", [
@@ -384,9 +385,10 @@ export async function processIncomingEmail(
         console.error("[email-ai] Failed to create ticket:", e.message);
         ticketId = `CATCH_ERROR: ${e.message}`;
       }
+    }
 
-      // Check if we actually got a real ticket ID from the backend, not an error string
-      const isRealTicket = ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH");
+    // Check if we actually got a real ticket ID from the backend, not an error string
+    const isRealTicket = ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH");
 
       // Update conversation status
       conversation.status = isRealTicket ? "escalated" : "pending_escalation";

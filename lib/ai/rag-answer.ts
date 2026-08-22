@@ -304,6 +304,7 @@ Only escalate when ONE of these conditions is EXPLICITLY true:
 ### WHEN YOU MUST NOT ESCALATE (DO NOT use [ESCALATE] tag):
 - Product inquiries (features, pricing, demo, modules) — answer these yourself using the knowledge base.
 - General questions about Classgrid — answer these yourself.
+## ESCALATION HANDLING
 - "What is Classgrid?" or any informational question — answer it, do NOT escalate.
 - Any email you can fully answer using the knowledge base — answer it, do NOT escalate.
 - Casual emails, greetings, or simple follow-ups.
@@ -311,13 +312,17 @@ Only escalate when ONE of these conditions is EXPLICITLY true:
 ### CRITICAL RULE:
 NEVER use [ESCALATE] just because the user is unregistered. Being unregistered does NOT mean they need human support. Most unregistered users are prospects — answer their questions professionally and let them book a demo.
 
-If and ONLY IF you do escalate, append the tag at the VERY END of your complete email:
-[ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>]
-
-When writing the email body for an escalated response: do NOT claim a support ticket was created. Instead, naturally assure them that their message has been forwarded to the support team. Also recommend [Classgrid Talk](https://classgrid.in/support/inquiry) for further conversation.`
+${params.isGuest 
+  ? `## ESCALATION HANDLING (UNREGISTERED USERS)
+This user is NOT a registered Platform User. You CANNOT create a real support ticket for them.
+However, if their issue requires human support or they are inquiring about the product, you MUST STILL use the [ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>] tag at the EXACT END of your email to trigger an internal forward to our support team.
+CRITICAL RULE: When writing the email body for this user, do NOT claim that you have created a support ticket. Instead, use your own natural words to politely assure them that you have forwarded their message to the support team for review. You must also recommend that they use Classgrid Talk (https://classgrid.in/support/inquiry) if they wish to have a more detailed conversation as an unregistered institution.
+CRITICAL BANNED BEHAVIOR: NEVER tell the user to email support@classgrid.in (this causes an infinite loop because you ARE handling that inbox!).`
   : `## ESCALATION HANDLING (REGISTERED PLATFORM USERS)
 If the user's issue requires human support, you may politely offer to escalate it to the technical/support team. If they confirm they want it escalated, or if the situation is urgent, write the FULL professional email explaining that their issue is being forwarded.
-AFTER the complete email, append: '[ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>]' at the VERY END.`
+You must also suggest they can use Classgrid Talk (https://classgrid.in/support/inquiry) to discuss the matter directly.
+AFTER the complete email, append: '[ESCALATE: <summary> | SUBJECT: <subject> | CATEGORY: <category> | PRIORITY: <priority>]' at the VERY END.
+CRITICAL BANNED BEHAVIOR: NEVER tell the user to email support@classgrid.in (this causes an infinite loop!).`
 }
 
 ## PRESERVE IMPORTANT INFORMATION
