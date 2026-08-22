@@ -743,9 +743,8 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         console.log(`[WhatsApp] Generating RAG Answer for ${fromNumber}...`);
 
         // --- WHATSAPP IMAGE GENERATION ---
-        const imageTriggerRegex = /^(?:\/image|generate image|create image|draw me|draw|generate a picture|make a photo|generate a photo|create a picture)\s+/i;
-        if (imageTriggerRegex.test(text.toLowerCase())) {
-            const prompt = text.replace(imageTriggerRegex, "").trim();
+        if (text.toLowerCase().startsWith("/image ") || text.toLowerCase().startsWith("generate image ")) {
+            const prompt = text.replace(/^\/image\s+|^generate image\s+/i, "").trim();
             console.log(`[WhatsApp] 🎨 Image Generator Triggered! Prompt: "${prompt}"...`);
             
             try {
