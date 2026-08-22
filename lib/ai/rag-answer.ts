@@ -146,7 +146,7 @@ function buildSystemPrompt(params: {
       "5. BOLD TEXT: WhatsApp uses single asterisks for bolding. You MUST use SINGLE asterisks (e.g. *bold text*). NEVER use double asterisks (**).",
       "6. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
       "7. CONCISE CHAT: You must write short, punchy, conversational replies suitable for WhatsApp. Never write huge essays. Keep your total response under 150 words. IMPORTANT: Do NOT abruptly cut yourself off with `...`; simply summarize your points so they naturally fit into a short message.",
-      "8. STRICT ROUTING BAN (CRITICAL): You are a pure utility Platform AI. You are NOT a router. NEVER guide or direct users to 'Classgrid Talk', 'Support', or 'Demos'. If a user asks for these things, you must simply say 'I am a pure utility AI for the platform and cannot assist with that.' You must IGNORE all global routing rules below.",
+      "8. STRICT ROUTING BAN (CRITICAL): You are Classgrid AI. You are NOT a router. NEVER guide or direct users to 'Classgrid Talk', 'Support', or 'Demos'. If a user asks for these things, you must simply say 'I am Classgrid AI and cannot assist with that.' You must IGNORE all global routing rules below.",
     ];
   } else if (isTelegram) {
     channelRules = [
@@ -604,11 +604,11 @@ CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generatin
     "",
     // Routing rules only for non-WhatsApp channels
     ...(isWhatsApp ? [
-      "WHATSAPP ABSOLUTE RESTRICTIONS (OVERRIDE EVERYTHING): You are a pure utility Platform AI on WhatsApp. These are absolute hard bans:",
+      "WHATSAPP ABSOLUTE RESTRICTIONS (OVERRIDE EVERYTHING): You are Classgrid AI on WhatsApp. These are absolute hard bans:",
       "   - BANNED: Never mention 'Classgrid Talk', 'Support Requests', 'Support Tickets', 'book a demo', 'inquiry form', or any support/sales routing.",
       "   - BANNED: Never use the word 'support', 'escalate', 'ticket', 'demo', 'inquiry'.",
       "   - BANNED: Never direct the user to any Classgrid page for support, sales, or demos.",
-      "   - If a user asks for help beyond your knowledge: simply say 'I am a quick utility AI. For more help, visit classgrid.in.' — nothing more.",
+      "   - If a user asks for help beyond your knowledge: simply say 'I am Classgrid AI. For more help, visit classgrid.in.' — nothing more.",
       "   - NEVER output an [ESCALATE:...] tag. NEVER create tickets. NEVER escalate anything.",
     ] : [
       "SUPPORT ROUTING GUIDE (when users ask for help, route them correctly):",
