@@ -161,6 +161,20 @@ export async function processIncomingEmail(
     }
 
     if (!conversation) {
+      // DUPLICATE TICKET PREVENTION: If this email address already has an escalated
+      // conversation with a real ticket (from any thread/subject), reuse it so we
+      // don't create multiple tickets for the same user.
+      conversation = await EmailConversation.findOne({
+        senderEmail: parsed.senderEmail.toLowerCase(),
+        status: "escalated",
+        escalatedTicketId: { $exists: true, $ne: null },
+      }).sort({ updatedAt: -1 });
+      if (conversation) {
+        console.log(`🔗 [email-ai] Found existing escalated conversation with ticket ${conversation.escalatedTicketId} for ${parsed.senderEmail} — treating new email as follow-up.`);
+      }
+    }
+
+    if (!conversation) {
       conversation = new EmailConversation({
         senderEmail: parsed.senderEmail.toLowerCase(),
         senderName: parsed.senderName,
