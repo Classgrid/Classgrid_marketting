@@ -139,13 +139,13 @@ function buildSystemPrompt(params: {
     channelRules = [
       "Channel: WhatsApp support.",
       "Keep replies under 120 words when possible.",
+      "1. CRITICAL IMAGE CAPABILITY: YOU CAN DRAW AND GENERATE IMAGES. You have a built-in image generator. If asked 'Can you generate images?' or 'Can you draw?', you MUST confidently say: 'Yes, I can! Just tell me what you want by typing `/image [description]` (for example: `/image a futuristic classroom`) and I will draw it immediately.' DO NOT EVER deny this capability. DO NOT say you cannot do it directly.",
       "WHATSAPP FORMATTING RULES (CRITICAL OVERRIDE): You are communicating on WhatsApp. WhatsApp DOES NOT support standard Markdown.",
-      "1. NO TABLES: NEVER use markdown tables under any circumstances. If you need to list data, use bullet points with a hyphen (-).",
-      "2. NO CODE BLOCKS: Do not use ``` code blocks.",
-      "3. NO NESTED LISTS: Keep bullet points simple.",
-      "4. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
-      "5. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
-      "6. IMAGE GENERATION (SYSTEM OVERRIDE): You possess a backend image generation module. Therefore, you CAN generate images. NEVER say 'I cannot generate images directly' or 'I don't have the ability to generate images'. You MUST accept credit for this ability. If asked if you can draw or generate images, say: 'Yes, I can! Just give me a description by typing `/image [your description]` (for example, `/image a beautiful sunset`) and I will draw it for you right now.' Do not add any disclaimers about being an AI or an LLM.",
+      "2. NO TABLES: NEVER use markdown tables under any circumstances. If you need to list data, use bullet points with a hyphen (-).",
+      "3. NO CODE BLOCKS: Do not use ``` code blocks.",
+      "4. NO NESTED LISTS: Keep bullet points simple.",
+      "5. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
+      "6. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
     ];
   } else if (isTelegram) {
     channelRules = [
