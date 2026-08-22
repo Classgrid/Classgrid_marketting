@@ -144,7 +144,7 @@ function buildSystemPrompt(params: {
       "2. NO TABLES: NEVER use markdown tables under any circumstances. If you need to list data, use bullet points with a hyphen (-).",
       "3. NO CODE BLOCKS: Do not use ``` code blocks.",
       "4. NO NESTED LISTS: Keep bullet points simple.",
-      "5. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
+      "5. BOLD TEXT: WhatsApp uses single asterisks for bolding. You MUST use SINGLE asterisks (e.g. *bold text*). NEVER use double asterisks (**).",
       "6. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
     ];
   } else if (isTelegram) {
@@ -779,7 +779,7 @@ export async function generateClassgridRagAnswer(
     const groqRes = await generateGroqReply({
       messages,
       channel,
-      maxTokens: channel === "whatsapp" ? 220 : 1500,
+      maxTokens: channel === "whatsapp" ? 1000 : 1500,
       timeoutMs: channel === "whatsapp" ? 10000 : 60000,
       temperature: 0.35,
       onStatus: options.onStatus,
