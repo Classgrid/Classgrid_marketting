@@ -238,7 +238,7 @@ export async function processIncomingEmail(
 
     // 8. Check if user is a registered platform user
     let isPlatformUser = false;
-    let platformUserDetails = { role: "N/A", orgId: "N/A", type: "N/A" };
+    let platformUserDetails = { role: "N/A", orgId: "N/A", orgName: "N/A", status: "N/A" };
     try {
       await connectMongo();
       const db = mongoose.connection.db;
@@ -248,10 +248,17 @@ export async function processIncomingEmail(
         });
         isPlatformUser = !!(platformUser && platformUser.organization_id);
         if (platformUser) {
+          let orgName = "Unknown";
+          if (platformUser.organization_id && platformUser.organization_id !== "platform") {
+             const org = await db.collection("organizations").findOne({ organization_id: platformUser.organization_id });
+             if (org && org.name) orgName = org.name;
+          }
+          
           platformUserDetails = {
             role: platformUser.role || "N/A",
             orgId: platformUser.organization_id || "N/A",
-            type: platformUser.type || "N/A"
+            orgName: orgName,
+            status: platformUser.status || platformUser.accountStatus || "active"
           };
         }
       }
@@ -341,7 +348,8 @@ export async function processIncomingEmail(
               ${conversation.escalatedTicketId ? `<p><strong>Platform Ticket ID:</strong> ${conversation.escalatedTicketId}</p>` : ""}
               <p><strong>Is Registered Platform User:</strong> ${isPlatformUser ? "Yes" : "No"}</p>
               ${isPlatformUser ? `<p><strong>Platform Role:</strong> ${platformUserDetails.role}</p>
-              <p><strong>Org ID:</strong> ${platformUserDetails.orgId}</p>` : ""}
+              <p><strong>Account Status:</strong> <span style="text-transform:capitalize;">${platformUserDetails.status}</span></p>
+              <p><strong>Institution:</strong> ${platformUserDetails.orgName} (${platformUserDetails.orgId})</p>` : ""}
               <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
                 <h3 style="margin-top:0;">AI Summary of Follow-up</h3>
                 <p>${followUpSummary}</p>
