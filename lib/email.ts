@@ -109,7 +109,7 @@ export async function sendTicketCreatedEscalationEmail(
     </div>
 
     <div style="margin: 30px 0; text-align: center;">
-      <a href="${process.env.FRONTEND_URL || 'https://classgrid.in'}/superadmin/support/view/${ticketId}" 
+      <a href="https://superadmin.classgrid.in/superadmin/support/view/${ticketId}" 
          style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
         🎫 Assign & View Ticket
       </a>
