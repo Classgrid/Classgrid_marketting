@@ -60,6 +60,9 @@ const EmailConversationSchema = new Schema<IEmailConversation>(
 // Compound index: lookup by sender email + thread
 EmailConversationSchema.index({ senderEmail: 1, threadId: 1 }, { unique: true });
 
+// TTL index: Automatically delete conversations that have not been updated in 4 months (120 days = 10368000 seconds)
+EmailConversationSchema.index({ updatedAt: 1 }, { expireAfterSeconds: 10368000 });
+
 export const EmailConversation =
   (mongoose.models.EmailConversation as Model<IEmailConversation>) ||
   mongoose.model<IEmailConversation>("EmailConversation", EmailConversationSchema);

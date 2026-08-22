@@ -174,6 +174,29 @@ export async function processIncomingEmail(
       }
     }
 
+    // ── TICKET RESOLUTION CHECK ─────────────────────────────────────────────
+    // If we found a conversation that was escalated to a real platform ticket,
+    // we must check the actual ticket status. If the ticket was resolved or closed
+    // by the admin, we should NOT append to it. We must create a brand new ticket.
+    if (conversation && conversation.escalatedTicketId) {
+      await connectMongo();
+      const db = mongoose.connection.db;
+      if (db && mongoose.isValidObjectId(conversation.escalatedTicketId)) {
+         try {
+           const ObjectId = mongoose.Types.ObjectId;
+           const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(conversation.escalatedTicketId) });
+           if (ticket && (ticket.status === "closed" || ticket.status === "resolved")) {
+              console.log(`🔒 [email-ai] Existing conversation is linked to a CLOSED/RESOLVED ticket (${conversation.escalatedTicketId}). Forcing creation of a new ticket.`);
+              conversation = null;
+              // Mutate threadId so we don't violate the {senderEmail, threadId} unique index
+              threadId = `${threadId}_new_${Date.now()}`;
+           }
+         } catch (e) {
+           console.error("[email-ai] Failed to verify ticket status:", e);
+         }
+      }
+    }
+
     if (!conversation) {
       conversation = new EmailConversation({
         senderEmail: parsed.senderEmail.toLowerCase(),
