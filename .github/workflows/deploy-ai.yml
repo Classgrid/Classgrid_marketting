@@ -58,3 +58,4 @@ jobs:
             pm2 restart classgrid-ai 2>/dev/null || pm2 start npm --name "classgrid-ai" --cwd /var/www/classgrid_ai/server-ai -- run start
             pm2 save
           EOF
+
