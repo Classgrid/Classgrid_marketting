@@ -789,17 +789,9 @@ export async function generateClassgridRagAnswer(
   }
 
   if (answer === "[RATE_LIMITED]") {
-    const rateLimitMsg = channel === "whatsapp"
-      ? "The system is currently processing a high volume of requests. Please try again in a few minutes."
-      : channel === "email"
-        ? "Our support systems are currently receiving a high volume of requests. Please try again in a few minutes, or email support@classgrid.in if it's urgent."
-        : "The AI is currently receiving too many requests. Please try again in a minute.";
-    
-    return {
-      answer: rateLimitMsg,
-      retrieval,
-      sources: retrieval.chunks,
-    };
+    // DO NOT SEND BACKEND ERRORS TO THE USER.
+    // If we are rate-limited, silently fall back to the default fallback message for that channel so the user doesn't see a system error.
+    answer = null; 
   }
 
   const fallback =
