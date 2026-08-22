@@ -315,7 +315,8 @@ export async function processIncomingEmail(
         
         // Failsafe: Strip malformed/broken escalation tags (e.g. missing the [ESCALATE: prefix)
         // If the AI outputs `some text | SUBJECT: ... | CATEGORY: ... | PRIORITY: ...]`, strip it.
-        answer = answer.replace(/(?:\[ESCALATE:)?.*?\|\s*SUBJECT:.*?\|\s*CATEGORY:.*?\|\s*PRIORITY:.*?\]/g, "");
+        // We match exactly the broken metadata block to avoid deleting the actual email body.
+        answer = answer.replace(/(?:\[ESCALATE:[\s\S]*?)?\|\s*SUBJECT:[\s\S]*?\|\s*CATEGORY:[\s\S]*?\|\s*PRIORITY:[\s\S]*?\]/g, "");
 
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();
