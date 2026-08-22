@@ -748,19 +748,15 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
             console.log(`[WhatsApp] 🎨 Hugging Face Connected! Generating image for prompt: "${prompt}"...`);
             
             try {
-                // Call Hugging Face
-                const hfRes = await fetch("https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${process.env.HF_API_TOKEN}`
-                    },
-                    body: JSON.stringify({ inputs: prompt })
-                });
-
-                if (!hfRes.ok) throw new Error(`HF API failed: ${hfRes.status}`);
+                // Call Pollinations AI (Flux)
+                // We use this because this server has DNS resolution issues with api-inference.huggingface.co
+                const encodedPrompt = encodeURIComponent(prompt);
+                const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true`;
                 
-                const imageBuffer = await hfRes.arrayBuffer();
+                const imageRes = await fetch(pollinationsUrl);
+                if (!imageRes.ok) throw new Error(`Image API failed: ${imageRes.status}`);
+                
+                const imageBuffer = await imageRes.arrayBuffer();
                 const blob = new Blob([imageBuffer], { type: 'image/jpeg' });
                 
                 // Upload to Meta
