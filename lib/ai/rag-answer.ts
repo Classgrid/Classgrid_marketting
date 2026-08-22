@@ -789,9 +789,11 @@ export async function generateClassgridRagAnswer(
   }
 
   if (answer === "[RATE_LIMITED]") {
-    const rateLimitMsg = channel === "whatsapp" || channel === "email"
-      ? "Our support systems are currently receiving a high volume of requests. Please try again in a few minutes, or email support@classgrid.in if it's urgent."
-      : "The AI is currently receiving too many requests. Please try again in a minute.";
+    const rateLimitMsg = channel === "whatsapp"
+      ? "The system is currently processing a high volume of requests. Please try again in a few minutes."
+      : channel === "email"
+        ? "Our support systems are currently receiving a high volume of requests. Please try again in a few minutes, or email support@classgrid.in if it's urgent."
+        : "The AI is currently receiving too many requests. Please try again in a minute.";
     
     return {
       answer: rateLimitMsg,
