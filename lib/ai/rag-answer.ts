@@ -528,7 +528,23 @@ If you have any questions before your demo, feel free to reply to this email or 
 Best regards,
 Classgrid Support Team
 
-CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generating a NEW subject. The server code handles the subject line insertion.`
+CRITICAL: DO NOT output 'Subject: ...' in your response unless you are generating a NEW subject. The server code handles the subject line insertion.
+
+### Example 4: User explicitly asks for a human
+Hello,
+
+Thank you for reaching out to us! I understand you would like to speak directly with our team to discuss custom pricing for your institution.
+
+I am passing your request and details directly to our sales specialists right now. They will review your requirements and reach out to you shortly to schedule a personalized meeting.
+
+Here are some helpful resources while you wait:
+- Pricing Overview: https://classgrid.in/pricing
+- Product Modules: https://classgrid.in/product/modules
+- Help Center: https://classgrid.in/help-center
+
+Best regards,
+Classgrid Support Team
+[ESCALATE: User from large institution requested a human sales rep for custom pricing | SUBJECT: Demo Request - Large School Chain | CATEGORY: billing | PRIORITY: high | DRAFT: Hi [ADMIN_NAME], I have reviewed your request for custom pricing...]`
     ];
 
   } else {
