@@ -210,10 +210,8 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
           content = "I am processing your request.";
         } else {
           // Aggressively strip `[{"type": "text", "text": "` and `"}]`
-          // Strip prefix
-          rawStr = rawStr.replace(/^\[\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
-          // Strip suffix
-          rawStr = rawStr.replace(/"\s*\}\s*\]$/, "");
+          rawStr = rawStr.replace(/^\[?\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
+          rawStr = rawStr.replace(/"\s*\}\s*\]?$/, "");
           
           // Replace escaped newlines if any
           rawStr = rawStr.replace(/\\n/g, "\n");

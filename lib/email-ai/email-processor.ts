@@ -312,6 +312,11 @@ export async function processIncomingEmail(
 
         // Strip the [ESCALATE] tag from the customer-facing reply
         answer = answer.replace(ESCALATE_RE_G, "");
+        
+        // Failsafe: Strip malformed/broken escalation tags (e.g. missing the [ESCALATE: prefix)
+        // If the AI outputs `some text | SUBJECT: ... | CATEGORY: ... | PRIORITY: ...]`, strip it.
+        answer = answer.replace(/(?:\[ESCALATE:)?.*?\|\s*SUBJECT:.*?\|\s*CATEGORY:.*?\|\s*PRIORITY:.*?\]/g, "");
+
         // Clean up any leftover markdown garbage at the end (like --- or ****)
         answer = answer.replace(/[\s\-*]+$/, "").trim();
         
