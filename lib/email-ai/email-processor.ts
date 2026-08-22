@@ -309,6 +309,7 @@ export async function processIncomingEmail(
         aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
         rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
         rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+        const aiDraft = escalateMatch[5]?.trim() || "";
 
         // Strip the [ESCALATE] tag from the customer-facing reply
         answer = answer.replace(ESCALATE_RE_G, "");
@@ -395,6 +396,7 @@ export async function processIncomingEmail(
         ].join("<br/>"));
         formData.append("category", rawCategory);
         formData.append("priority", rawPriority);
+        if (aiDraft) formData.append("aiDraft", aiDraft);
 
         const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
         const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
