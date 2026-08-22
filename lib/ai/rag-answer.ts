@@ -779,7 +779,7 @@ export async function generateClassgridRagAnswer(
     const groqRes = await generateGroqReply({
       messages,
       channel,
-      maxTokens: channel === "whatsapp" ? 1000 : 1500,
+      maxTokens: 4096,
       timeoutMs: channel === "whatsapp" ? 10000 : 60000,
       temperature: 0.35,
       onStatus: options.onStatus,
