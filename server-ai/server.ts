@@ -741,6 +741,80 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         }
 
         console.log(`[WhatsApp] Generating RAG Answer for ${fromNumber}...`);
+
+        // --- WHATSAPP IMAGE GENERATION ---
+        if (text.toLowerCase().startsWith("/image ") || text.toLowerCase().startsWith("generate image ")) {
+            const prompt = text.replace(/^\/image\s+|^generate image\s+/i, "").trim();
+            console.log(`[WhatsApp] 🎨 Hugging Face Connected! Generating image for prompt: "${prompt}"...`);
+            
+            try {
+                // Call Hugging Face
+                const hfRes = await fetch("https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${process.env.HF_API_TOKEN}`
+                    },
+                    body: JSON.stringify({ inputs: prompt })
+                });
+
+                if (!hfRes.ok) throw new Error(`HF API failed: ${hfRes.status}`);
+                
+                const imageBuffer = await hfRes.arrayBuffer();
+                const blob = new Blob([imageBuffer], { type: 'image/jpeg' });
+                
+                // Upload to Meta
+                const formData = new FormData();
+                formData.append('messaging_product', 'whatsapp');
+                formData.append('file', blob, 'generated.jpg');
+                
+                console.log(`[WhatsApp] Uploading generated image to Meta...`);
+                const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/media`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData as any
+                });
+                
+                const mediaData = await mediaRes.json();
+                
+                if (mediaData.id) {
+                    // Send Image to User
+                    await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            messaging_product: "whatsapp",
+                            recipient_type: "individual",
+                            to: fromNumber,
+                            type: "image",
+                            image: { id: mediaData.id }
+                        })
+                    });
+                    console.log(`[WhatsApp] Successfully sent generated image to ${fromNumber}!`);
+                    return; // Terminate execution so it doesn't trigger RAG
+                } else {
+                    throw new Error("No media ID returned from Meta");
+                }
+            } catch (err) {
+                console.error("[WhatsApp] Image generation failed:", err);
+                await fetch(`https://graph.facebook.com/v19.0/${incomingPhoneId}/messages`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        messaging_product: "whatsapp",
+                        recipient_type: "individual",
+                        to: fromNumber,
+                        type: "text",
+                        text: { body: "Sorry, I couldn't generate the image right now. Hugging Face free API might be overloaded!" }
+                    })
+                });
+                return; // Terminate execution
+            }
+        }
+        // ---------------------------------
         
         // Use redis session history
         const sessionId = `wa-${fromNumber}`;
