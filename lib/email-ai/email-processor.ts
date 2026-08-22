@@ -166,7 +166,7 @@ export async function processIncomingEmail(
       // don't create multiple tickets for the same user.
       conversation = await EmailConversation.findOne({
         senderEmail: parsed.senderEmail.toLowerCase(),
-        status: "escalated",
+        status: { $in: ["escalated", "pending_escalation"] },
         escalatedTicketId: { $exists: true, $ne: null },
       }).sort({ updatedAt: -1 });
       if (conversation) {
@@ -191,7 +191,7 @@ export async function processIncomingEmail(
     // ── DUPLICATE ESCALATION GUARD ──────────────────────────────────────────
     // If this conversation was already escalated (real ticket or pending),
     // do NOT re-escalate. Just reply normally or skip.
-    const alreadyEscalated = conversation.status === "escalated" || conversation.status === "pending_escalation";
+    const alreadyEscalated = conversation.status === "escalated" || conversation.status === "pending_escalation" || !!conversation.escalatedTicketId;
     if (alreadyEscalated) {
       console.log(`⚠️  [email-ai] Conversation already escalated (status: ${conversation.status}). Skipping re-escalation for ${parsed.senderEmail}.`);
     }
