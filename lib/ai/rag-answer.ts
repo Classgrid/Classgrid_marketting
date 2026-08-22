@@ -145,6 +145,7 @@ function buildSystemPrompt(params: {
       "3. NO NESTED LISTS: Keep bullet points simple.",
       "4. BOLD TEXT: Use standard markdown **bold** (the backend will convert it).",
       "5. LINKS: Ignore the 'EXTREMELY STRICT LINK RULE' below. You MUST write links in plain text. Example: Contact Page (https://classgrid.in/contact).",
+      "6. IMAGE GENERATION: If the user asks if you can generate or create images, answer YES with enthusiasm! Tell them to type `/image [description]` and the system will instantly generate it and send it to them right here in the WhatsApp chat.",
     ];
   } else if (isTelegram) {
     channelRules = [
