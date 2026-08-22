@@ -185,8 +185,11 @@ export async function processIncomingEmail(
          try {
            const ObjectId = mongoose.Types.ObjectId;
            const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(conversation.escalatedTicketId) });
-           if (ticket && (ticket.status === "closed" || ticket.status === "resolved")) {
-              console.log(`🔒 [email-ai] Existing conversation is linked to a CLOSED/RESOLVED ticket (${conversation.escalatedTicketId}). Forcing creation of a new ticket.`);
+           
+           // If the ticket was hard-deleted (doesn't exist) OR its status is "closed", force a new ticket.
+           // We allow "resolved" tickets to receive follow-ups in case the user needs them reopened.
+           if (!ticket || ticket.status === "closed") {
+              console.log(`🔒 [email-ai] Existing conversation is linked to a DELETED/CLOSED ticket (${conversation.escalatedTicketId}). Forcing creation of a new ticket.`);
               conversation = null;
               // Mutate threadId so we don't violate the {senderEmail, threadId} unique index
               threadId = `${threadId}_new_${Date.now()}`;
