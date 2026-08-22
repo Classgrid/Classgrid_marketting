@@ -111,7 +111,7 @@ export async function sendTicketCreatedEscalationEmail(
     <div style="margin: 30px 0; text-align: center;">
       <a href="${process.env.FRONTEND_URL || 'https://classgrid.in'}/superadmin/support/view/${ticketId}" 
          style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
-        👀 View Support Ticket
+        🎫 Assign & View Ticket
       </a>
       <p style="margin-top: 10px; font-size: 13px; color: #6b7280;">Clicking this will open the Support Ticket in the Super Admin dashboard.</p>
     </div>
