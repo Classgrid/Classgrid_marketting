@@ -353,9 +353,6 @@ export async function processIncomingEmail(
           "",
           `<strong>Original Email Subject:</strong>`,
           parsed.subject,
-          "",
-          `<strong>Customer's Email:</strong>`,
-          parsed.cleanBody,
         ].join("<br/>"));
         formData.append("category", rawCategory);
         formData.append("priority", rawPriority);
