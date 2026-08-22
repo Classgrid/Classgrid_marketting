@@ -238,6 +238,7 @@ export async function processIncomingEmail(
 
     // 8. Check if user is a registered platform user
     let isPlatformUser = false;
+    let platformUserDetails = { role: "N/A", orgId: "N/A", type: "N/A" };
     try {
       await connectMongo();
       const db = mongoose.connection.db;
@@ -246,6 +247,13 @@ export async function processIncomingEmail(
           email: { $regex: new RegExp(`^${parsed.senderEmail}$`, 'i') }
         });
         isPlatformUser = !!(platformUser && platformUser.organization_id);
+        if (platformUser) {
+          platformUserDetails = {
+            role: platformUser.role || "N/A",
+            orgId: platformUser.organization_id || "N/A",
+            type: platformUser.type || "N/A"
+          };
+        }
       }
     } catch (e) {
       console.error("[email-ai] Failed to check platform user status", e);
@@ -331,6 +339,9 @@ export async function processIncomingEmail(
               <h2>User provided more details on an escalated ticket</h2>
               <p><strong>Customer:</strong> ${parsed.senderName || parsed.senderEmail} (${parsed.senderEmail})</p>
               ${conversation.escalatedTicketId ? `<p><strong>Platform Ticket ID:</strong> ${conversation.escalatedTicketId}</p>` : ""}
+              <p><strong>Is Registered Platform User:</strong> ${isPlatformUser ? "Yes" : "No"}</p>
+              ${isPlatformUser ? `<p><strong>Platform Role:</strong> ${platformUserDetails.role}</p>
+              <p><strong>Org ID:</strong> ${platformUserDetails.orgId}</p>` : ""}
               <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
                 <h3 style="margin-top:0;">AI Summary of Follow-up</h3>
                 <p>${followUpSummary}</p>
