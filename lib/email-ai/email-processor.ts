@@ -191,6 +191,13 @@ export async function processIncomingEmail(
            // We allow "resolved" tickets to receive follow-ups in case the user needs them reopened.
            if (!ticket || ticket.status === "closed") {
               console.log(`🔒 [email-ai] Existing conversation is linked to a DELETED/CLOSED ticket (${conversation.escalatedTicketId}). Forcing creation of a new ticket.`);
+              
+              // CRITICAL FIX: If the platform ticket is closed, we must mark the EmailConversation as closed
+              // and mutate its threadId so that future emails in the same thread do not find it again.
+              conversation.status = "closed";
+              conversation.threadId = `${conversation.threadId}_closed_${Date.now()}`;
+              await conversation.save();
+
               conversation = null;
               wasTicketClosed = true;
               // Mutate threadId so we don't violate the {senderEmail, threadId} unique index
