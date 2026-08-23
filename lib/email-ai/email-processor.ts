@@ -167,7 +167,6 @@ export async function processIncomingEmail(
       conversation = await EmailConversation.findOne({
         senderEmail: parsed.senderEmail.toLowerCase(),
         status: { $in: ["escalated", "pending_escalation"] },
-        escalatedTicketId: { $exists: true, $ne: null },
       }).sort({ updatedAt: -1 });
       if (conversation) {
         console.log(`🔗 [email-ai] Found existing escalated conversation with ticket ${conversation.escalatedTicketId} for ${parsed.senderEmail} — treating new email as follow-up.`);
@@ -178,6 +177,7 @@ export async function processIncomingEmail(
     // If we found a conversation that was escalated to a real platform ticket,
     // we must check the actual ticket status. If the ticket was resolved or closed
     // by the admin, we should NOT append to it. We must create a brand new ticket.
+    let wasTicketClosed = false;
     if (conversation && conversation.escalatedTicketId) {
       await connectMongo();
       const db = mongoose.connection.db;
@@ -191,6 +191,7 @@ export async function processIncomingEmail(
            if (!ticket || ticket.status === "closed") {
               console.log(`🔒 [email-ai] Existing conversation is linked to a DELETED/CLOSED ticket (${conversation.escalatedTicketId}). Forcing creation of a new ticket.`);
               conversation = null;
+              wasTicketClosed = true;
               // Mutate threadId so we don't violate the {senderEmail, threadId} unique index
               threadId = `${threadId}_new_${Date.now()}`;
            }
@@ -331,7 +332,14 @@ export async function processIncomingEmail(
       console.log(`⚙️  [email-ai] State: LLM processing finished. Evaluating escalation rules...`);
       const escalateMatch = answer.match(ESCALATE_RE);
 
-      if (escalateMatch && !alreadyEscalated) {
+      if (wasTicketClosed && !escalateMatch) {
+        isEscalation = true;
+        aiSummary = "Customer replied to a closed ticket.";
+        aiSubject = parsed.subject;
+        rawCategory = "general";
+        rawPriority = "medium";
+        aiDraft = "";
+      } else if (escalateMatch && !alreadyEscalated) {
         isEscalation = true;
         aiSummary = escalateMatch[1].trim();
         aiSubject = escalateMatch[2]?.trim() || `AI Email Escalation: ${parsed.subject}`;
@@ -384,56 +392,70 @@ export async function processIncomingEmail(
               `<br/><br/><strong>Customer's Raw Email:</strong><br/><pre style="white-space:pre-wrap;">${parsed.cleanBody}</pre>`,
             ].join(""));
 
-            const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${conversation.escalatedTicketId}/reply`, {
-              method: "POST",
-              body: replyFormData,
-              headers: {
-                "x-proxy-auth-email": parsed.senderEmail,
-                "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
-              },
-            });
+            // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
+            let isStillOpen = true;
+            try {
+              const db = mongoose.connection.db;
+              if (db && mongoose.isValidObjectId(conversation.escalatedTicketId)) {
+                const ObjectId = mongoose.Types.ObjectId;
+                const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(conversation.escalatedTicketId) });
+                if (!ticket || ticket.status === "closed") {
+                  isStillOpen = false;
+                  console.log(`[email-ai] ⚠️ Ticket ${conversation.escalatedTicketId} was CLOSED while AI was thinking. Skipping reply.`);
+                }
+              }
+            } catch (e) {}
 
-            if (replyRes.ok) {
-              console.log(`✅ [email-ai] Appended follow-up to platform ticket ${conversation.escalatedTicketId}`);
+            if (isStillOpen) {
+              const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${conversation.escalatedTicketId}/reply`, {
+                method: "POST",
+                body: replyFormData,
+                headers: {
+                  "x-proxy-auth-email": parsed.senderEmail,
+                  "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                },
+              });
+
+              if (replyRes.ok) {
+                console.log(`✅ [email-ai] Appended follow-up to platform ticket ${conversation.escalatedTicketId}`);
+              } else {
+                console.error("[email-ai] Ticket reply API failed:", replyRes.status, await replyRes.text());
+              }
             } else {
-              console.error("[email-ai] Ticket reply API failed:", replyRes.status, await replyRes.text());
+              console.log(`[email-ai] Creating replacement ticket because original was closed during generation...`);
+              const createFormData = new FormData();
+              createFormData.append("email", parsed.senderEmail);
+              createFormData.append("name", parsed.senderName || "Email Support User");
+              createFormData.append("subject", "Follow-up to closed issue");
+              createFormData.append("message", `<strong>Follow-up to a closed issue:</strong><br/>${parsed.cleanBody}`);
+              createFormData.append("category", "general");
+              createFormData.append("priority", "medium");
+              const createRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
+                method: "POST",
+                body: createFormData,
+                headers: {
+                  "x-proxy-auth-email": parsed.senderEmail,
+                  "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                },
+              });
+              if (createRes.ok) {
+                const ticketResponse = await createRes.json();
+                const newTicketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id || ticketResponse?.data?._id || ticketResponse?.data?.id || ticketResponse?._id || ticketResponse?.id || null;
+                conversation.escalatedTicketId = newTicketId;
+                conversation.status = "escalated";
+                ticketId = newTicketId;
+                isEscalation = true;
+                answer = `\n\n*✅ Your previous ticket was closed, so I created a new one (#${newTicketId?.slice(0, 8)}). The support team will see the updated information.*\n\n` + answer;
+              }
             }
+
+            // Dangling code removed
           } catch (e: any) {
             console.error("[email-ai] Failed to append follow-up to ticket:", e.message);
           }
         }
 
-        // ── PATCH SANITY ENQUIRY DOCUMENT (Non-Platform Users) ────────────────
-        if (!isPlatformUser) {
-          try {
-            const { createClient } = require("next-sanity");
-            const writeClient = createClient({
-              projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-              dataset: process.env.SANITY_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-              apiVersion: "2024-01-01",
-              token: process.env.SANITY_API_WRITE_TOKEN,
-              useCdn: false,
-            });
-            // Find the most recent open enquiry for this email
-            const existingEnquiry = await writeClient.fetch(
-              `*[_type == "aiEscalation" && userEmail == $email && status in ["pending", "enquiry_created"]] | order(_createdAt desc)[0]`,
-              { email: parsed.senderEmail.toLowerCase() }
-            );
-            if (existingEnquiry) {
-              await writeClient
-                .patch(existingEnquiry._id)
-                .setIfMissing({ chatTranscript: [] })
-                .append("chatTranscript", [
-                  { _key: `followup-email-user-${Date.now()}`, role: "user", content: parsed.cleanBody, timestamp: new Date().toISOString() },
-                  { _key: `followup-email-ai-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
-                ])
-                .commit();
-              console.log(`✅ [email-ai] Patched Sanity enquiry ${existingEnquiry._id} with email follow-up`);
-            }
-          } catch (e) {
-            console.error("[email-ai] Failed to patch Sanity enquiry with follow-up:", e);
-          }
-        }
+
 
         // Forward the follow-up alert to the team!
         try {

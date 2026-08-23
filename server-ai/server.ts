@@ -383,6 +383,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       const escalationRedis = getRedisClient();
       const escalationKey = `ai:escalated:${sessionId}`;
       let alreadyEscalated = null;
+      let wasClosedFlag = false;
       try {
         alreadyEscalated = escalationRedis ? await escalationRedis.get(escalationKey) : null;
       } catch (err) {
@@ -414,6 +415,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
                   const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(recentEscalation.ticketId) });
                   if (!ticket || ticket.status === "closed") {
                     isTicketClosed = true;
+                    wasClosedFlag = true;
                     console.log(`[ask-ai] Ticket ${recentEscalation.ticketId} is closed in MongoDB. Forcing new ticket.`);
                   }
                 }
@@ -423,6 +425,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             } else if (recentEscalation.status === "handled") {
               // Non-platform enquiry that was handled -> consider it closed
               isTicketClosed = true;
+              wasClosedFlag = true;
               console.log(`[ask-ai] Non-platform enquiry ${recentEscalation._id} is handled. Forcing new enquiry.`);
             }
 
@@ -444,12 +447,13 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         }
       }
 
-      // ── ALWAYS verify ticket status in MongoDB (even for Redis-cached sessions) ──
-      // This prevents appending to a ticket that was closed by admin while Redis still had it cached.
+      // ── ALWAYS verify ticket/enquiry status (even for Redis-cached sessions) ──
+      // This prevents appending to a ticket or enquiry closed/handled by admin while Redis still had it cached.
       if (alreadyEscalated) {
         try {
           const parsed = typeof alreadyEscalated === "string" ? JSON.parse(alreadyEscalated) : alreadyEscalated;
           if (parsed.ticketId) {
+            // PLATFORM USER: verify in MongoDB
             const db = mongoose.connection.db;
             if (db && mongoose.isValidObjectId(parsed.ticketId)) {
               const ObjectId = mongoose.Types.ObjectId;
@@ -457,10 +461,36 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               if (!ticket || ticket.status === "closed") {
                 console.log(`[ask-ai] ⚠️ Cached ticket ${parsed.ticketId} is CLOSED in MongoDB. Clearing session to force new ticket.`);
                 alreadyEscalated = null;
+                wasClosedFlag = true;
                 if (escalationRedis) {
                   await escalationRedis.del(escalationKey).catch(() => {});
                 }
               }
+            }
+          } else if (parsed.escalationId) {
+            // NON-PLATFORM USER: verify in Sanity that enquiry is still open
+            try {
+              const { createClient } = require("next-sanity");
+              const readClient = createClient({
+                projectId: process.env.SANITY_PROJECT_ID,
+                dataset: "production",
+                apiVersion: "2023-01-01",
+                useCdn: false,
+              });
+              const enquiry = await readClient.fetch(
+                `*[_id == $id][0]{ status }`,
+                { id: parsed.escalationId }
+              );
+              if (!enquiry || enquiry.status === "handled") {
+                console.log(`[ask-ai] ⚠️ Cached enquiry ${parsed.escalationId} is HANDLED in Sanity. Clearing session to force new enquiry.`);
+                alreadyEscalated = null;
+                wasClosedFlag = true;
+                if (escalationRedis) {
+                  await escalationRedis.del(escalationKey).catch(() => {});
+                }
+              }
+            } catch (sanityErr) {
+              console.error("[ask-ai:sanity] Failed to re-check enquiry status:", sanityErr);
             }
           }
         } catch (e) {
@@ -482,6 +512,10 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         } catch (e) {
           console.error("[ask-ai] Failed to check platform user status:", e);
         }
+      }
+
+      if (wasClosedFlag && !escalateMatch) {
+        escalateMatch = ["[ESCALATE: User replied to a closed ticket]", "User replied to a closed ticket", "Follow-up to closed issue", "general", "medium", ""];
       }
 
       if (escalateMatch && !alreadyEscalated) {
@@ -666,20 +700,63 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               replyFormData.append("name", body?.userName || "User");
               replyFormData.append("message", `<strong>Additional Context (via AI Chat):</strong><br/>${newContext}<br/><br/><strong>User's Message:</strong><br/>${question}`);
 
-              const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
-                method: "POST",
-                body: replyFormData,
-                headers: {
-                  "x-proxy-auth-email": email,
-                  "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
-                },
-              });
+              // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
+              let isStillOpen = true;
+              try {
+                const db = mongoose.connection.db;
+                if (db && mongoose.isValidObjectId(savedTicketId)) {
+                  const ObjectId = mongoose.Types.ObjectId;
+                  const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(savedTicketId) });
+                  if (!ticket || ticket.status === "closed") {
+                    isStillOpen = false;
+                    console.log(`[ask-ai] ⚠️ Ticket ${savedTicketId} was CLOSED while AI was thinking. Skipping reply.`);
+                  }
+                }
+              } catch (e) {}
 
-              if (replyRes.ok) {
-                updatedTicket = true;
+              if (isStillOpen) {
+                const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
+                  method: "POST",
+                  body: replyFormData,
+                  headers: {
+                    "x-proxy-auth-email": email,
+                    "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                  },
+                });
+
+                if (replyRes.ok) {
+                  updatedTicket = true;
+                } else {
+                  console.error("[AI Update Ticket] Reply API failed:", replyRes.status, await replyRes.text());
+                }
               } else {
-                console.error("[AI Update Ticket] Reply API failed:", replyRes.status, await replyRes.text());
+                 console.log(`[ask-ai] Creating replacement ticket because original was closed during generation...`);
+                 const createFormData = new FormData();
+                 createFormData.append("email", email);
+                 createFormData.append("name", body?.userName || "User");
+                 createFormData.append("subject", "Follow-up to closed issue");
+                 createFormData.append("message", `<strong>Follow-up to a closed issue:</strong><br/>${question}`);
+                 createFormData.append("category", "general");
+                 createFormData.append("priority", "medium");
+                 const createRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
+                   method: "POST",
+                   body: createFormData,
+                   headers: {
+                     "x-proxy-auth-email": email,
+                     "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                   },
+                 });
+                 if (createRes.ok) {
+                   const ticketResponse = await createRes.json();
+                   const newTicketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id || ticketResponse?.data?._id || ticketResponse?.data?.id || ticketResponse?._id || ticketResponse?.id || null;
+                   answer = `\n\n*✅ Your previous ticket was closed, so I created a new one (#${newTicketId?.slice(0, 8)}). The support team will see the updated information.*`;
+                   if (escalationRedis) {
+                     await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: newTicketId, escalationId: null }), "EX", 3600).catch(() => {});
+                   }
+                 }
+                 updatedTicket = false;
               }
+              // Dangling code removed
             } catch (e: any) {
               console.error("[AI Update Ticket] Failed to update ticket:", e.message);
             }
@@ -695,16 +772,57 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               token: process.env.SANITY_API_WRITE_TOKEN,
               useCdn: false,
             });
-            await writeClient
-              .patch(savedEscalationId)
-              .setIfMissing({ chatTranscript: [] })
-              .append("chatTranscript", [
-                { _key: `followup-user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
-                { _key: `followup-ai-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
-              ])
-              .commit();
-            updatedTicket = true;
-            console.log(`[ask-ai] ✅ Patched Sanity enquiry ${savedEscalationId} with follow-up context`);
+
+            // ── SPLIT-SECOND RE-CHECK: Did admin handle the enquiry while AI was thinking? ──
+            let isStillOpen = true;
+            try {
+              const enquiry = await writeClient.fetch(
+                `*[_id == $id][0]{ status }`,
+                { id: savedEscalationId }
+              );
+              if (!enquiry || enquiry.status === "handled") {
+                isStillOpen = false;
+                console.log(`[ask-ai] ⚠️ Enquiry ${savedEscalationId} was HANDLED while AI was thinking. Skipping patch.`);
+              }
+            } catch (sanityErr) {}
+
+            if (isStillOpen) {
+              await writeClient
+                .patch(savedEscalationId)
+                .setIfMissing({ chatTranscript: [] })
+                .append("chatTranscript", [
+                  { _key: `followup-user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                  { _key: `followup-ai-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
+                ])
+                .commit();
+              updatedTicket = true;
+              console.log(`[ask-ai] ✅ Patched Sanity enquiry ${savedEscalationId} with follow-up context`);
+            } else {
+              console.log(`[ask-ai] Creating replacement enquiry because original was closed during generation...`);
+              const deviceLog = req.headers["user-agent"] || "Unknown Device";
+              const newDoc = await writeClient.create({
+                _type: "aiEscalation",
+                userEmail: userEmail || "",
+                userName: body?.userName || "",
+                ipAddress: ip,
+                deviceInfo: deviceLog,
+                status: "enquiry_created",
+                ticketCreated: false,
+                enquiryCreated: true,
+                aiSummary: "Follow-up to closed issue",
+                subject: "Follow-up to closed issue",
+                ticketId: "",
+                chatTranscript: [
+                  { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                  { _key: `assistant-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
+                ],
+              });
+              answer = `\n\n*🎫 Your previous enquiry was closed, so I created a new one for you. The team will see it shortly.*`;
+              if (escalationRedis) {
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: null, escalationId: newDoc._id }), "EX", 3600).catch(() => {});
+              }
+              updatedTicket = false;
+            }
           } catch (e) {
             console.error("[ask-ai] Failed to patch Sanity enquiry with follow-up:", e);
           }
