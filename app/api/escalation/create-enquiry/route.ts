@@ -3,6 +3,11 @@ import { createClient } from "next-sanity";
 import { connectMongo } from "@/lib/mongodb";
 import mongoose from "mongoose";
 
+// ── Helper: Detect if an ID is a MongoDB ObjectId (24-char hex) ─────────────
+function isMongoObjectId(id: string): boolean {
+  return /^[0-9a-fA-F]{24}$/.test(id);
+}
+
 export async function GET(req: NextRequest) {
   const escalationId = req.nextUrl.searchParams.get("escalationId");
   const adminEmail = req.nextUrl.searchParams.get("adminEmail"); // Optional
@@ -12,23 +17,71 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // 1. Fetch Sanity doc
-    const writeClient = createClient({
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-      apiVersion: "2024-01-01",
-      token: process.env.SANITY_API_WRITE_TOKEN,
-      useCdn: false,
-    });
+    // ── Determine source: MongoDB (Email AI) vs Sanity (Chat AI) ────────────
+    const isFromMongoDB = isMongoObjectId(escalationId);
 
-    const doc = await writeClient.getDocument(escalationId);
-    if (!doc) {
-      return new NextResponse("Escalation not found", { status: 404 });
-    }
+    let doc: any = null;
+    let updateSource: "mongodb" | "sanity" = "sanity";
 
-    if (doc.enquiryId) {
-      // Already created an enquiry, redirect to Support Tickets page
-      return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
+    if (isFromMongoDB) {
+      // ── EMAIL AI PATH: Fetch from MongoDB EmailConversation ──────────────
+      updateSource = "mongodb";
+      await connectMongo();
+      const db = mongoose.connection.db;
+      if (!db) {
+        return new NextResponse("Database connection failed", { status: 500 });
+      }
+
+      const conversation = await db.collection("emailconversations").findOne({
+        _id: new mongoose.Types.ObjectId(escalationId),
+      });
+
+      if (!conversation) {
+        return new NextResponse("Escalation not found", { status: 404 });
+      }
+
+      // If already has a ticket, redirect
+      if (conversation.escalatedTicketId) {
+        return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
+      }
+
+      // Normalize MongoDB EmailConversation to match the shape the rest of the code expects
+      doc = {
+        _id: conversation._id.toString(),
+        userName: conversation.senderName || "",
+        userEmail: conversation.senderEmail || "",
+        aiSummary: conversation.sessionContext?.aiSummary || "Email escalation (no AI summary available)",
+        subject: conversation.sessionContext?.aiSubject || conversation.subject || "AI Email Escalation",
+        deviceInfo: "Email Client",
+        chatTranscript: (conversation.messages || []).map((m: any) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      };
+
+      console.log(`[create-enquiry] Source: MongoDB EmailConversation (${escalationId})`);
+    } else {
+      // ── CHAT AI PATH: Fetch from Sanity (unchanged) ──────────────────────
+      updateSource = "sanity";
+      const writeClient = createClient({
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+        apiVersion: "2024-01-01",
+        token: process.env.SANITY_API_WRITE_TOKEN,
+        useCdn: false,
+      });
+
+      doc = await writeClient.getDocument(escalationId);
+      if (!doc) {
+        return new NextResponse("Escalation not found", { status: 404 });
+      }
+
+      if (doc.enquiryId) {
+        // Already created an enquiry, redirect to Support Tickets page
+        return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk`);
+      }
+
+      console.log(`[create-enquiry] Source: Sanity (${escalationId})`);
     }
 
     const isEmail = doc.deviceInfo?.includes("Email Client");
@@ -67,12 +120,40 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Inquiry created but no ID returned from platform", { status: 500 });
     }
 
-    // 3. Update Sanity
-    await writeClient.patch(escalationId).set({
-      status: "handled",
-      enquiryId: ticketId,
-      ticketCreated: true
-    }).commit();
+    // 3. Update the source (MongoDB or Sanity) to mark as handled
+    if (updateSource === "mongodb") {
+      // Update MongoDB EmailConversation
+      await connectMongo();
+      const db = mongoose.connection.db;
+      if (db) {
+        await db.collection("emailconversations").updateOne(
+          { _id: new mongoose.Types.ObjectId(escalationId) },
+          {
+            $set: {
+              status: "escalated",
+              escalatedTicketId: ticketId,
+              updatedAt: new Date(),
+            },
+          }
+        );
+        console.log(`[create-enquiry] ✅ Updated MongoDB EmailConversation ${escalationId} → ticket ${ticketId}`);
+      }
+    } else {
+      // Update Sanity (existing Chat AI path)
+      const writeClient = createClient({
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+        apiVersion: "2024-01-01",
+        token: process.env.SANITY_API_WRITE_TOKEN,
+        useCdn: false,
+      });
+      await writeClient.patch(escalationId).set({
+        status: "handled",
+        enquiryId: ticketId,
+        ticketCreated: true
+      }).commit();
+      console.log(`[create-enquiry] ✅ Updated Sanity ${escalationId} → ticket ${ticketId}`);
+    }
 
     // 4. Generate AI Draft response using Gemini (primary) + Mistral (fallback)
     const formattedTranscript = doc.chatTranscript?.map((t: any) => `${t.role}: ${t.content}`).join("\n") || "";
@@ -184,7 +265,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // 8. Redirect to Support Tickets page (where AI draft is pre-loaded in the reply editor)
+    // 6. Redirect to Support Tickets page (where AI draft is pre-loaded in the reply editor)
     return NextResponse.redirect(`https://superadmin.classgrid.in/superadmin/talk?ticketId=${ticketId}&autoAssign=true`);
   } catch (err: any) {
     console.error("Create enquiry error:", err);

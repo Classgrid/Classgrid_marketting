@@ -196,7 +196,7 @@ export async function sendFailedEscalationEmail(
     </div>
 
     <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
-      This inquiry has also been logged to Sanity Studio under "AI Escalations" for your records.
+      This inquiry has been logged and is awaiting manual review.
     </p>
   `;
 
