@@ -23,6 +23,7 @@ import { getSmtpTransporter } from "../smtp-mailer";
 import { parseIncomingEmail } from "./email-parser";
 import { generateAIReplyEmail } from "./email-template";
 import { markEmailAsRead, type ZohoEmailContent } from "./zoho-mail";
+import { generateGroqReply } from "../ai/groq-chat";
 import { sendFailedEscalationEmail, sendTicketCreatedEscalationEmail } from "../email";
 
 // ── Escalation regex (same as server.ts) ──────────────────────────────────────
@@ -379,7 +380,19 @@ export async function processIncomingEmail(
           console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
           answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
         }
-        const followUpSummary = escalateMatch?.[1]?.trim() || "Follow-up reply";
+        let followUpSummary = escalateMatch?.[1]?.trim();
+        if (!followUpSummary && parsed.cleanBody.length > 50) {
+          console.log(`🧠 [email-ai] Generating quick summary for follow-up email...`);
+          const summaryRes = await generateGroqReply({
+            messages: [{ role: "user", content: `Write a very brief 1-sentence summary of this follow-up email from a customer. DO NOT include any greetings or sign-offs, just the summary:\n\n${parsed.cleanBody.slice(0, 2000)}` }],
+            temperature: 0.2,
+            maxTokens: 100
+          });
+          if (summaryRes && summaryRes !== "[RATE_LIMITED]") {
+            followUpSummary = summaryRes.trim();
+          }
+        }
+        followUpSummary = followUpSummary || "Follow-up reply";
         
         // Failsafe: If the AI output ONLY the escalate tag, provide a generic polite response
         // instead of crashing with a Mongoose empty string validation error.
