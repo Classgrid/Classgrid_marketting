@@ -386,15 +386,52 @@ export async function processIncomingEmail(
         answer = answer.replace(/\[internal_thought_process\][\s\S]*?(?=\n\n|\n[A-Z]|$)/g, "").trim();
 
         let followUpSummary = escalateMatch?.[1]?.trim();
-        if (!followUpSummary && parsed.cleanBody.length > 50) {
+        if (!followUpSummary && parsed.cleanBody.length > 20) {
           console.log(`🧠 [email-ai] Generating quick summary for follow-up email...`);
-          const summaryRes = await generateGroqReply({
-            messages: [{ role: "user", content: `Write a very brief 1-sentence summary of this follow-up email from a customer. DO NOT include any greetings or sign-offs, just the summary:\n\n${parsed.cleanBody.slice(0, 2000)}` }],
+          
+          // ── Attempt 1: Call LLM for a smart summary ──
+          const summaryPrompt = `You are a support ticket summarizer. Write a very brief 1-2 sentence summary of this follow-up email from a customer. Focus ONLY on what the customer is asking or reporting. DO NOT include any greetings, sign-offs, or filler words. Just the core message.\n\n${parsed.cleanBody.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2000)}`;
+          let summaryRes = await generateGroqReply({
+            messages: [{ role: "user", content: summaryPrompt }],
             temperature: 0.2,
-            maxTokens: 100
+            maxTokens: 120
           });
+          
           if (summaryRes && summaryRes !== "[RATE_LIMITED]") {
             followUpSummary = summaryRes.trim();
+            console.log(`✅ [email-ai] AI summary generated (attempt 1): "${followUpSummary.slice(0, 80)}..."`);
+          } else {
+            // ── Attempt 2: Wait 3 seconds and retry (rate limits are usually short-lived) ──
+            console.log(`⚠️ [email-ai] Summary LLM rate-limited. Waiting 3s and retrying...`);
+            await new Promise(r => setTimeout(r, 3000));
+            summaryRes = await generateGroqReply({
+              messages: [{ role: "user", content: summaryPrompt }],
+              temperature: 0.2,
+              maxTokens: 120
+            });
+            
+            if (summaryRes && summaryRes !== "[RATE_LIMITED]") {
+              followUpSummary = summaryRes.trim();
+              console.log(`✅ [email-ai] AI summary generated (attempt 2): "${followUpSummary.slice(0, 80)}..."`);
+            } else {
+              // ── Attempt 3: Extract first 1-2 sentences from the raw email as a basic summary ──
+              console.log(`⚠️ [email-ai] All LLM providers still rate-limited. Using text extraction fallback.`);
+              const plainText = parsed.cleanBody
+                .replace(/<[^>]*>/g, ' ')       // strip HTML tags
+                .replace(/&nbsp;/g, ' ')         // strip HTML entities
+                .replace(/\s+/g, ' ')            // collapse whitespace
+                .trim();
+              // Extract first 1-2 sentences (split on period, question mark, or exclamation)
+              const sentences = plainText.split(/(?<=[.!?])\s+/).filter(s => s.length > 10);
+              if (sentences.length >= 2) {
+                followUpSummary = sentences.slice(0, 2).join(' ').slice(0, 250);
+              } else if (sentences.length === 1) {
+                followUpSummary = sentences[0].slice(0, 250);
+              } else {
+                followUpSummary = plainText.slice(0, 200);
+              }
+              console.log(`✅ [email-ai] Text extraction summary: "${followUpSummary.slice(0, 80)}..."`);
+            }
           }
         }
         followUpSummary = followUpSummary || "Follow-up reply";
