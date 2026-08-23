@@ -856,7 +856,9 @@ export async function generateClassgridRagAnswer(
     isGuest: options.isGuest,
   });
 
-  let userMessageContent: string = question;
+  let userMessageContent: string = channel === "email" 
+    ? `INCOMING EMAIL FROM CUSTOMER:\n${question}\n\nYOUR RESPONSE EMAIL:` 
+    : question;
 
   // Check if we have any images. If so, we will bypass Mistral completely and use Gemini Native.
   let imageToProcessNatively = null;
