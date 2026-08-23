@@ -73,8 +73,26 @@ type AskAiRequestBody = {
 const DEFAULT_ERROR_MESSAGE = "Unable to answer right now. Please try again.";
 
 // ── ESCALATE regex ────────────────────────────────────────────────────────────
-const ESCALATE_RE = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
-const ESCALATE_RE_G = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
+// Uses negative lookahead so the summary group stops at | SUBJECT: / | CATEGORY: / | PRIORITY: / | DRAFT:
+// This prevents ] inside AI summary (e.g. "[number]") from breaking the match.
+const ESCALATE_SUMMARY_GROUP = `((?:(?!\\s*\\|\\s*(?:SUBJECT|CATEGORY|PRIORITY|DRAFT):)[\\s\\S])+?)`;
+const ESCALATE_RE = new RegExp(
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*DRAFT:\\s*([\\s\\S]+?))?\\]`
+);
+const ESCALATE_RE_G = new RegExp(
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*DRAFT:\\s*([\\s\\S]+?))?\\]`,
+  "g"
+);
+
+// Helper: strip ESCALATE blocks + any leaked fragments (e.g. "students) | SUBJECT: ...]")
+function stripEscalateBlocks(text: string): string {
+  // First pass: remove full ESCALATE blocks
+  let cleaned = text.replace(ESCALATE_RE_G, "").trim();
+  // Second pass: remove any leaked tail fragments that contain | SUBJECT: ... ]
+  // This catches cases where ] inside the summary (e.g. [number]) caused a partial match
+  cleaned = cleaned.replace(/[^\n\[]*\|\s*SUBJECT:[\s\S]*?\]/g, "").trim();
+  return cleaned;
+}
 
 // ── Page context normalizer (identical to route.ts) ───────────────────────────
 function normalizePageContext(input: unknown): PageContext | undefined {
@@ -352,7 +370,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         const isNoContext = summaryLacksContext || tooShortNoHistory || vagueEscalation || aiAskingForDetails;
 
         if (isNoContext) {
-          answer = answer.replace(ESCALATE_RE_G, "").trim();
+          answer = stripEscalateBlocks(answer);
           const falseEscalationClaim = /\b(let me escalate|i('ll| will) (escalate|forward|send|share|summarize)|i('ve| have) (escalated|forwarded|sent|shared)|escalat(ed|ing) (this|your|it)|support team can prioritize)\b/i.test(answer);
           if (!answer || answer.length < 10 || falseEscalationClaim) {
             answer = "I completely understand your frustration, and I want to make sure we get this resolved for you. 🙏 Could you please describe the specific problem you are facing? Once I know the details, I'll escalate it to the support team right away.";
@@ -400,7 +418,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
 
         let usedFallback = false;
-        answer = answer.replace(ESCALATE_RE_G, "").trim();
+        answer = stripEscalateBlocks(answer);
         if (!answer || answer.length < 15) {
           answer = "Your request has been forwarded to the Classgrid support team! They will review it and get back to you shortly.";
           usedFallback = true;
@@ -546,7 +564,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       } else if (escalateMatch && alreadyEscalated) {
         // AI tried to escalate again — prevent duplicate, add context instead
         const newContext = escalateMatch[1]?.trim() || question;
-        answer = answer.replace(ESCALATE_RE_G, "").trim();
+        answer = stripEscalateBlocks(answer);
 
         let updatedTicket = false;
         let savedTicketId: string | null = null;
