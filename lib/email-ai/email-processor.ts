@@ -399,12 +399,11 @@ export async function processIncomingEmail(
         }
         followUpSummary = followUpSummary || "Follow-up reply";
         
-        // Failsafe: If the AI output ONLY the escalate tag, provide a generic polite response
-        // instead of crashing with a Mongoose empty string validation error.
-        if (answer.length < 5) {
-          answer = "I've added your latest notes to the support ticket. Our team is already looking into this and will get back to you shortly!";
-          console.log(`⚠️  [email-ai] Re-escalation resulted in empty email body. Using fallback polite response.`);
-        }
+        // Override any AI RAG answers on follow-ups to an open ticket.
+        // We don't want the AI trying to troubleshoot a P0 crash with generic documentation,
+        // nor do we want to send the user "I couldn't find this in the knowledge base".
+        answer = "I've added your latest notes to the support ticket. Our team is reviewing the updated information and will get back to you shortly!";
+        console.log(`⚠️  [email-ai] Overriding AI RAG response with polite follow-up acknowledgment.`);
         
         // ── APPEND FOLLOW-UP TO EXISTING TICKET (Platform Users) ──────────────
         if (conversation.escalatedTicketId && isPlatformUser) {
