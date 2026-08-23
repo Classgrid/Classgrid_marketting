@@ -310,6 +310,15 @@ export async function processIncomingEmail(
 
     answer = result.answer || "";
 
+    // Cleanup leaked <thought> tags from Claude Thinking models
+    answer = answer.replace(/<thought>[\s\S]*?<\/thought>/gi, "").trim();
+    
+    // Cleanup leaked "thought: ..." plaintext blocks from Claude Thinking models
+    // This removes everything from the start of the string up until a greeting or escalate tag
+    const thoughtPlaintextMatch = answer.match(/^(?:thought|thinking):[\s\S]*?(?=(?:Hello|Hi|Dear|Greetings|\[ESCALATE\]))/i);
+    if (thoughtPlaintextMatch) {
+      answer = answer.slice(thoughtPlaintextMatch[0].length).trim();
+    }
     // 8.5. Catch AI Rate Limits and Crashes
     // If the LLM provider crashes or hits a 429, it outputs a fallback string.
     // We MUST NOT send this string to the user. We must throw an error so the poller retries in 2 minutes.
