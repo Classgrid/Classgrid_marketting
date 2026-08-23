@@ -9,7 +9,7 @@ async function run() {
 
   // 1. Flush Redis
   try {
-    const redis = new Redis(process.env.REDIS_URL);
+    const redis = new Redis(process.env.REDIS_URL || "redis://127.0.0.1:6379", { maxRetriesPerRequest: 0 });
     await redis.flushdb();
     console.log("✅ Redis: Flushed (chat history + escalation flags).");
     redis.disconnect();
@@ -18,8 +18,8 @@ async function run() {
   // 2. Clear Sanity
   try {
     const sanity = createClient({
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+      projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      dataset: process.env.SANITY_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
       useCdn: false, apiVersion: "2024-01-01",
       token: process.env.SANITY_API_WRITE_TOKEN,
     });
@@ -30,11 +30,12 @@ async function run() {
 
   // 3. Clear MongoDB
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
     const db = mongoose.connection;
     const r1 = await db.collection("airatelimits").deleteMany({});
-    const r2 = await db.collection("supporttickets").deleteMany({ submitterEmail: "quantumchem25@gmail.com" });
-    console.log(`✅ MongoDB: ${r1.deletedCount} rate limits, ${r2.deletedCount} test tickets deleted.`);
+    const r2 = await db.collection("supporttickets").deleteMany({});
+    const r3 = await db.collection("emailconversations").deleteMany({});
+    console.log(`✅ MongoDB: ${r1.deletedCount} limits, ${r2.deletedCount} tickets, ${r3.deletedCount} email threads deleted.`);
     await mongoose.disconnect();
   } catch (err) { console.error("❌ MongoDB:", err.message); }
 

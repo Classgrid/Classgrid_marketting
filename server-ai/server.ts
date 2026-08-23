@@ -514,6 +514,11 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         }
       }
 
+      const email = userEmail || body?.userEmail;
+      let ticketCreated = false;
+      let ticketId: string | null = null;
+      let escalationId = "";
+
       if (wasClosedFlag && !escalateMatch) {
         escalateMatch = ["[ESCALATE: User replied to a closed ticket]", "User replied to a closed ticket", "Follow-up to closed issue", "general", "medium", ""];
       }
@@ -534,11 +539,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           answer = "Your request has been forwarded to the Classgrid support team! They will review it and get back to you shortly.";
           usedFallback = true;
         }
-
-        const email = userEmail || body?.userEmail;
-        let ticketCreated = false;
-        let ticketId: string | null = null;
-        let escalationId = "";
 
         if (email) {
           if (isPlatformUser) {
