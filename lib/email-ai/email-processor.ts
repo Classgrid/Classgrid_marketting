@@ -558,41 +558,17 @@ export async function processIncomingEmail(
         conversation.escalatedTicketId = ticketId;
       }
 
-      let escalationId = "";
-      // Log escalation to Sanity
-      try {
-        const { createClient } = require("next-sanity");
-        const writeClient = createClient({
-          projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-          dataset: process.env.SANITY_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-          apiVersion: "2024-01-01",
-          token: process.env.SANITY_API_WRITE_TOKEN,
-          useCdn: false,
-        });
-
-        const newDoc = await writeClient.create({
-          _type: "aiEscalation",
-          userEmail: parsed.senderEmail,
-          userName: parsed.senderName || "",
-          ipAddress: "email-inbound",
-          deviceInfo: "Email Client",
-          status: isRealTicket ? "handled" : "pending",
-          ticketCreated: !!isRealTicket,
-          aiSummary,
-          subject: aiSubject,
-          ticketId: ticketId || "",
-          chatTranscript: [
-            { _key: `user-${Date.now()}`, role: "user", content: parsed.cleanBody, timestamp: new Date().toISOString() },
-            { _key: `ai-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
-          ],
-        });
-        escalationId = newDoc._id;
-        console.log(`📋 [email-ai] Escalation logged to Sanity (${escalationId})`);
-      } catch (e) {
-        console.error("[email-ai] Failed to log escalation to Sanity:", e);
+      // Save AI context into MongoDB so /api/escalation/create-enquiry can access it
+      if (!conversation.sessionContext) {
+        conversation.sessionContext = {};
       }
+      conversation.sessionContext.aiSummary = aiSummary;
+      conversation.sessionContext.aiSubject = aiSubject;
+      conversation.sessionContext.aiCategory = rawCategory;
+      conversation.sessionContext.aiPriority = rawPriority;
+      if (aiDraft) conversation.sessionContext.aiDraft = aiDraft;
 
-      // Send the failed escalation email if ticket was not created
+      // Send the failed escalation email if ticket was not created (Non-Platform Users)
       if (!isRealTicket) {
         await sendFailedEscalationEmail(
           parsed.senderEmail,
@@ -600,7 +576,7 @@ export async function processIncomingEmail(
           aiSummary,
           ticketId?.startsWith("CATCH") ? "Email AI (Error)" : "Email AI",
           parsed.cleanBody,
-          escalationId
+          conversation._id.toString()
         );
       } else {
         // Send success escalation email for platform users
