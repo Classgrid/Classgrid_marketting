@@ -481,10 +481,10 @@ export async function processIncomingEmail(
               ${isPlatformUser ? `<p><strong>Platform Role:</strong> ${platformUserDetails.role}</p>
               <p><strong>Account Status:</strong> <span style="text-transform:capitalize;">${platformUserDetails.status}</span></p>
               <p><strong>Institution:</strong> ${platformUserDetails.orgName} (${platformUserDetails.orgId})</p>` : ""}
-              <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
+              ${followUpSummary !== "Follow-up reply" ? `<div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
                 <h3 style="margin-top:0;">AI Summary of Follow-up</h3>
                 <p>${followUpSummary}</p>
-              </div>
+              </div>` : ""}
               <div style="background:inherit; padding:15px; margin: 15px 0;">
                 <h3 style="margin-top:0;">Customer's Raw Follow-up Message</h3>
                 <div style="white-space:pre-wrap; font-family:sans-serif; font-size:14px; line-height:1.5; color:inherit;">${parsed.cleanBody}</div>
