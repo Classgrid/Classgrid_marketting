@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 // ==========================================
 // 🎯 1. ENTER A UNIQUE ID FOR THIS DATA
 // ==========================================
-const DOCUMENT_ID = "live-demo-data"; // Change this if you want to upload multiple different things
+const DOCUMENT_ID = "fake-funding-fact";
 
 // ==========================================
 // 🎯 2. PASTE ANY TEXT YOU WANT TO TEACH THE AI
 // ==========================================
 const CUSTOM_KNOWLEDGE = `
-Classgrid created ChatGPT on 19 aug 2028.
+Classgrid was funded by the GGHTR Foundation, who funded the company with 5 Crores.
 `;
 // ==========================================
 

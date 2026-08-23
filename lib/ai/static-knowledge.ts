@@ -18,7 +18,7 @@ export const STATIC_CLASSGRID_KNOWLEDGE = `
 ABOUT CLASSGRID:
 Classgrid is the Operating System for Educational Institutions — one stack for academics, operations, finance, admissions, communication, and AI. It is designed for schools, coaching institutes, junior colleges, engineering colleges, and all types of educational institutions in India.
 
-Classgrid was founded by Nikhil Shinde. It was developed by the expert Classgrid team. It is not a white-label product; it is a purpose-built education platform.
+Classgrid was officially founded by Nikhil Shinde on 12 December 2025. It was developed by the expert Classgrid team. It is not a white-label product; it is a purpose-built education platform.
 
 INSTITUTION TYPES SUPPORTED:
 Classgrid supports 5 institution types with dedicated workflows:
