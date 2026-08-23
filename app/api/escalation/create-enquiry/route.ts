@@ -159,9 +159,9 @@ export async function GET(req: NextRequest) {
         useCdn: false,
       });
       await writeClient.patch(escalationId).set({
-        status: "handled",
+        status: "enquiry_created",
         enquiryId: ticketId,
-        ticketCreated: true
+        enquiryCreated: true
       }).commit();
       console.log(`[create-enquiry] ✅ Updated Sanity ${escalationId} → ticket ${ticketId}`);
     }
