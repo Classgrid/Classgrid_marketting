@@ -356,12 +356,13 @@ export async function processIncomingEmail(
           console.error(`❌ [email-ai] Fatal error: AI outputted [ESCALATE] but failed to write the email body. Throwing error to trigger Poller retry...`);
           throw new Error("AI failed to generate email body alongside escalation tag. Triggering poller retry.");
         }
-      } else if (escalateMatch && alreadyEscalated) {
-        // AI wanted to escalate again but we already did — just strip the tag and reply normally.
-        console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
-        
-        const followUpSummary = escalateMatch[1].trim();
-        answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
+      } else if (alreadyEscalated) {
+        // AI is following up on an existing open ticket
+        if (escalateMatch) {
+          console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
+          answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
+        }
+        const followUpSummary = escalateMatch?.[1]?.trim() || "Follow-up reply";
         
         // Failsafe: If the AI output ONLY the escalate tag, provide a generic polite response
         // instead of crashing with a Mongoose empty string validation error.

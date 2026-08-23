@@ -406,7 +406,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           if (recentEscalation) {
             let isTicketClosed = false;
 
-            // If it's a platform user, verify the ticket status in MongoDB
             if (recentEscalation.ticketId) {
               try {
                 const db = mongoose.connection.db;
@@ -421,6 +420,10 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               } catch (err) {
                 console.error("[ask-ai:mongo] Failed to verify ticket status:", err);
               }
+            } else if (recentEscalation.status === "handled") {
+              // Non-platform enquiry that was handled -> consider it closed
+              isTicketClosed = true;
+              console.log(`[ask-ai] Non-platform enquiry ${recentEscalation._id} is handled. Forcing new enquiry.`);
             }
 
             if (!isTicketClosed) {
@@ -501,6 +504,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         const email = userEmail || body?.userEmail;
         let ticketCreated = false;
         let ticketId: string | null = null;
+        let escalationId = "";
 
         if (email) {
           if (isPlatformUser) {
@@ -548,7 +552,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             console.log(`[ask-ai] Non-platform user ${email} — skipping ticket creation, sending enquiry email`);
           }
           
-          let escalationId = "";
           // Log escalation to Sanity first so we can include the ID in the email
           try {
             const { createClient } = require("next-sanity");
@@ -632,10 +635,13 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           }
         }
 
-      } else if (escalateMatch && alreadyEscalated) {
-        // AI tried to escalate again — prevent duplicate, add context instead
-        const newContext = escalateMatch[1]?.trim() || question;
-        answer = stripEscalateBlocks(answer);
+      } else if (alreadyEscalated) {
+        // AI is following up on an existing open ticket/enquiry
+        if (escalateMatch) {
+          console.log(`⚠️  [ask-ai] AI tried to re-escalate. Stripping tag and appending as follow-up.`);
+          answer = stripEscalateBlocks(answer);
+        }
+        const newContext = escalateMatch?.[1]?.trim() || question;
 
         let updatedTicket = false;
         let savedTicketId: string | null = null;
