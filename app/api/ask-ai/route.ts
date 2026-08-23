@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { connectMongo } from "@/lib/mongodb";
 import { ModerationFlag } from "@/lib/models/ModerationFlag";
 import { AiRateLimit } from "../../../lib/models/AiRateLimit";
-import { sendSafetyEmail, sendFailedEscalationEmail } from "@/lib/email";
+import { sendSafetyEmail, sendFailedEscalationEmail, sendTicketCreatedEscalationEmail } from "@/lib/email";
 import { getRedisClient } from "@/lib/redis";
 
 import {
@@ -446,13 +446,25 @@ export async function POST(req: Request) {
               }
               
               // ALWAYS send an email to the team when an escalation happens in the Chat AI
-              await sendFailedEscalationEmail(
-                email,
-                body.userName || "Website AI User",
-                aiSummary,
-                ticketCreated ? "Website Chat AI (Ticket Created)" : "Website Chat AI (Ticket Failed)",
-                question
-              );
+              if (ticketCreated && ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH_ERROR")) {
+                await sendTicketCreatedEscalationEmail(
+                  email,
+                  body.userName || "Website AI User",
+                  aiSummary,
+                  "Website Chat AI (Ticket Created)",
+                  question,
+                  ticketId
+                );
+              } else {
+                await sendFailedEscalationEmail(
+                  email,
+                  body.userName || "Website AI User",
+                  aiSummary,
+                  "Website Chat AI (Ticket Failed)",
+                  question,
+                  sessionId
+                );
+              }
             }
 
             if (!isGuest) {
