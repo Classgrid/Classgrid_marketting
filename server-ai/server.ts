@@ -86,13 +86,18 @@ const ESCALATE_RE_G = new RegExp(
 
 // Helper: strip ESCALATE blocks + any leaked fragments
 function stripEscalateBlocks(text: string): string {
-  // First pass: remove full ESCALATE blocks
+  // First pass: remove full ESCALATE blocks (with closing bracket)
   let cleaned = text.replace(ESCALATE_RE_G, "").trim();
   // Second pass: remove any leaked tail fragments that contain | SUBJECT: ... ]
   cleaned = cleaned.replace(/[^\n\[]*\|\s*SUBJECT:[\s\S]*?\]/g, "").trim();
   // Third pass: Strip raw hallucinated 'Thought' blocks or JSON tool calls
   cleaned = cleaned.replace(/^Thought[\s\S]*?SUBJECT:[\s\S]*?(?:\]|\n\n)/g, "").trim();
   cleaned = cleaned.replace(/\[internal_thought_process\][\s\S]*?(?=\n\n|\n[A-Z]|$)/g, "").trim();
+  // Fourth pass (CRITICAL): Strip truncated/unclosed [ESCALATE: tags that have no closing ]
+  // This happens when the DRAFT content is very long and the AI's output is cut off mid-tag.
+  cleaned = cleaned.replace(/\[ESCALATE:[\s\S]*/g, "").trim();
+  // Fifth pass: Also strip any leaked | SUBJECT: | CATEGORY: | PRIORITY: | DRAFT: fragments
+  cleaned = cleaned.replace(/\|\s*(?:SUBJECT|CATEGORY|PRIORITY|DRAFT):[\s\S]*/g, "").trim();
   return cleaned;
 }
 
