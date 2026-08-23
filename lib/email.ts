@@ -258,3 +258,83 @@ export async function sendWhatsAppKillSwitchAlert(messageCount: number, currentM
     console.error("[Email Alert] Failed to send Kill Switch alert email:", error);
   }
 }
+
+export async function sendFollowUpAlertEmail({
+  customerEmail,
+  customerName,
+  followUpMessage,
+  aiSummary,
+  originalSubject,
+  ticketId,
+  escalationId,
+  isPlatformUser,
+}: {
+  customerEmail: string;
+  customerName: string;
+  followUpMessage: string;
+  aiSummary: string;
+  originalSubject: string;
+  ticketId: string | null;
+  escalationId: string | null;
+  isPlatformUser: boolean;
+}) {
+  const now = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const displayName = customerName && customerName !== "Unknown" ? customerName : customerEmail;
+
+  const subject = `🔄 [FOLLOW-UP] Re: ${originalSubject} — ${customerEmail}`;
+  const content = `
+    <h2 style="color: #1e40af;">Customer sent a follow-up via Website Chat AI</h2>
+    <p>The customer sent an additional message after their original escalation was already forwarded to the team. Their follow-up has been ${ticketId ? "added to the existing Support Ticket" : "logged to the existing Sanity enquiry"}.</p>
+
+    <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${displayName}</p>
+      <p style="margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${customerEmail}" style="color: #2563eb; text-decoration: none;">${customerEmail}</a></p>
+      <p style="margin: 0 0 10px 0;"><strong>Registered Platform User:</strong> ${isPlatformUser ? "Yes ✅" : "No (Non-Platform User)"}</p>
+      ${ticketId ? `<p style="margin: 0 0 10px 0;"><strong>Platform Ticket ID:</strong> ${ticketId}</p>` : ""}
+      ${escalationId && !ticketId ? `<p style="margin: 0 0 10px 0;"><strong>Sanity Enquiry ID:</strong> ${escalationId}</p>` : ""}
+      <p style="margin: 0 0 0 0;"><strong>Date &amp; Time:</strong> ${now} (IST)</p>
+    </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">Customer's Follow-up Message</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937; white-space: pre-wrap;">
+      ${followUpMessage}
+    </div>
+
+    <h3 style="margin-top: 25px; color: #4b5563;">AI Summary of Original Issue</h3>
+    <div style="background-color: #f3f4f6; padding: 12px; border-radius: 4px; color: #1f2937;">
+      ${aiSummary}
+    </div>
+
+    ${ticketId ? `
+    <div style="margin: 30px 0; text-align: center;">
+      <a href="https://superadmin.classgrid.in/superadmin/support/view/${ticketId}" 
+         style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; border: 1px solid #4338ca;">
+        🎫 View Ticket
+      </a>
+    </div>` : ""}
+  `;
+
+  const html = baseTemplate({
+    content,
+    title: `[FOLLOW-UP] ${originalSubject} — ${customerEmail}`,
+    ignoreText: "Automated email from Classgrid Admin System.",
+    hideSupportLink: true,
+  });
+
+  try {
+    const transporter = getSmtpTransporter();
+    await transporter.sendMail({
+      from: `"Classgrid AI Alerts" <${SENDER.address}>`,
+      to: "team@classgrid.in",
+      subject,
+      html,
+    });
+    console.log(`[Email Alert] Sent follow-up alert to team@classgrid.in for ${customerEmail}`);
+  } catch (error) {
+    console.error("[Email Alert] Failed to send follow-up alert:", error);
+  }
+}

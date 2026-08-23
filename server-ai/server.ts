@@ -9,7 +9,8 @@ dotenv.config({ path: "../.env.local" });
 import { connectMongo } from "../lib/mongodb";
 import { ModerationFlag } from "../lib/models/ModerationFlag";
 import { AiRateLimit } from "../lib/models/AiRateLimit";
-import { sendSafetyEmail, sendFailedEscalationEmail } from "../lib/email";
+import { sendSafetyEmail, sendFailedEscalationEmail, sendTicketCreatedEscalationEmail, sendFollowUpAlertEmail } from "../lib/email";
+import mongoose from "mongoose";
 import { getRedisClient } from "../lib/redis";
 import { generateClassgridRagAnswer, type ChatHistoryItem } from "../lib/ai/rag-answer";
 import { normalizeText, type PageContext } from "../lib/ai/rag-content";
@@ -370,6 +371,24 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         console.error("[ask-ai:redis] Failed to check escalation key:", err);
       }
 
+
+      // ── Check if user is a registered platform user (mirrors email-processor.ts) ──
+      let isPlatformUser = false;
+      if (userEmail) {
+        try {
+          const db = mongoose.connection.db;
+          if (db) {
+            const platformUserDoc = await db.collection("users").findOne({
+              email: { $regex: new RegExp(`^${userEmail}$`, 'i') }
+            });
+            isPlatformUser = !!(platformUserDoc && platformUserDoc.organization_id);
+            console.log(`[ask-ai] Platform user check for ${userEmail}: ${isPlatformUser}`);
+          }
+        } catch (e) {
+          console.error("[ask-ai] Failed to check platform user status:", e);
+        }
+      }
+
       if (escalateMatch && !alreadyEscalated) {
         const aiSummary = escalateMatch[1].trim();
         const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
@@ -392,42 +411,49 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         let ticketId: string | null = null;
 
         if (email) {
-          try {
-            const formData = new FormData();
-            formData.append("name", body?.userName || "AI Escalated User");
-            formData.append("email", email);
-            formData.append("subject", aiSubject);
-            formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}`);
-            formData.append("category", aiCategory);
-            formData.append("priority", aiPriority);
-            if (aiDraft) formData.append("aiDraft", aiDraft);
+          if (isPlatformUser) {
+            // ── PLATFORM USER: Create Support Ticket ─────────────────────────
+            try {
+              const formData = new FormData();
+              formData.append("name", body?.userName || "AI Escalated User");
+              formData.append("email", email);
+              formData.append("subject", aiSubject);
+              formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}`);
+              formData.append("category", aiCategory);
+              formData.append("priority", aiPriority);
+              if (aiDraft) formData.append("aiDraft", aiDraft);
 
-            const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
-            const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, { 
-              method: "POST", 
-              body: formData,
-              headers: {
-                "x-proxy-auth-email": email,
-                "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
-              },
-            });
+              const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+              const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, { 
+                method: "POST", 
+                body: formData,
+                headers: {
+                  "x-proxy-auth-email": email,
+                  "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                },
+              });
 
-            if (ticketRes.ok) {
-              ticketCreated = true;
-              try {
-                const ticketResponse = await ticketRes.json();
-                ticketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id
-                  || ticketResponse?.data?._id || ticketResponse?.data?.id
-                  || ticketResponse?._id || ticketResponse?.id || null;
-              } catch (_) { }
-            } else {
-              const errorText = await ticketRes.text();
-              console.error("Ticket API failed with status", ticketRes.status, "body:", errorText);
-              ticketId = `ERROR: ${ticketRes.status} ${errorText.substring(0, 100)}`;
+              if (ticketRes.ok) {
+                ticketCreated = true;
+                try {
+                  const ticketResponse = await ticketRes.json();
+                  ticketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id
+                    || ticketResponse?.data?._id || ticketResponse?.data?.id
+                    || ticketResponse?._id || ticketResponse?.id || null;
+                  console.log(`[ask-ai] ✅ Support ticket created for platform user: ${ticketId}`);
+                } catch (_) { }
+              } else {
+                const errorText = await ticketRes.text();
+                console.error("[ask-ai] Ticket API failed:", ticketRes.status, errorText);
+                ticketId = `ERROR: ${ticketRes.status} ${errorText.substring(0, 100)}`;
+              }
+            } catch (e: any) {
+              console.error("[ask-ai] Failed to auto-create ticket:", e);
+              ticketId = `CATCH_ERROR: ${e.message}`;
             }
-          } catch (e: any) {
-            console.error("Failed to auto-create ticket:", e);
-            ticketId = `CATCH_ERROR: ${e.message}`;
+          } else {
+            // ── NON-PLATFORM USER: Skip ticket creation entirely ──────────────
+            console.log(`[ask-ai] Non-platform user ${email} — skipping ticket creation, sending enquiry email`);
           }
           
           let escalationId = "";
@@ -464,7 +490,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           }
 
           if (ticketCreated && ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH_ERROR")) {
-            const { sendTicketCreatedEscalationEmail } = require("../lib/email");
             await sendTicketCreatedEscalationEmail(
               email || "unknown@guest.com",
               body?.userName || "Website AI User",
@@ -474,7 +499,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               ticketId
             );
           } else {
-            const { sendFailedEscalationEmail } = require("../lib/email");
             await sendFailedEscalationEmail(
               email || "unknown@guest.com",
               body?.userName || "Website AI User",
@@ -487,25 +511,28 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         }
 
         if (ticketCreated) {
+          // PLATFORM USER — ticket was created
           const ticketLink = ticketId
             ? `\n\n*✅ Support Ticket created! Your Ticket ID is **${ticketId}**. Track it here: [Support Requests](/support/requests/${ticketId}?email=${encodeURIComponent(email || "")})*`
             : "\n\n*✅ Support Ticket created! Track your request at [Support Requests](/support/requests).*";
           answer += ticketLink;
           if (escalationRedis) {
             try {
-              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId, escalationId }), "EX", 3600);
             } catch (err) {
               console.error("[ask-ai:redis] Failed to set escalation key:", err);
             }
           }
         } else {
           if (email && email !== "anonymous@classgrid.in") {
+            // NON-PLATFORM USER — enquiry created (not a ticket)
             if (!usedFallback) {
-              answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
+              answer += "\n\n*🎫 An enquiry has been created and our team has been notified. They will review it and get back to you shortly.* 🙏";
             }
             if (escalationRedis) {
               try {
-                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
+                // Store escalationId (Sanity doc ID) so follow-up messages can update the enquiry
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId: null, escalationId }), "EX", 3600);
               } catch (err) {
                 console.error("[ask-ai:redis] Failed to set escalation key:", err);
               }
@@ -516,21 +543,24 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         }
 
       } else if (escalateMatch && alreadyEscalated) {
-        // AI tried to escalate again — ADD new context to existing ticket as a reply
+        // AI tried to escalate again — prevent duplicate, add context instead
         const newContext = escalateMatch[1]?.trim() || question;
         answer = answer.replace(ESCALATE_RE_G, "").trim();
 
         let updatedTicket = false;
         let savedTicketId: string | null = null;
+        let savedEscalationId: string | null = null;
         try {
           const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
           if (savedEscalation && savedEscalation !== "true") {
             const parsed = JSON.parse(savedEscalation);
             savedTicketId = parsed.ticketId || null;
+            savedEscalationId = parsed.escalationId || null;
           }
         } catch (_) { }
 
         if (savedTicketId) {
+          // PLATFORM USER follow-up: add reply to existing ticket
           const email = userEmail || body?.userEmail;
           if (email) {
             try {
@@ -543,6 +573,10 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
                 method: "POST",
                 body: replyFormData,
+                headers: {
+                  "x-proxy-auth-email": email,
+                  "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                },
               });
 
               if (replyRes.ok) {
@@ -554,13 +588,70 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               console.error("[AI Update Ticket] Failed to update ticket:", e.message);
             }
           }
+        } else if (savedEscalationId) {
+          // NON-PLATFORM USER follow-up: patch the Sanity enquiry document with new context
+          try {
+            const { createClient } = require("next-sanity");
+            const writeClient = createClient({
+              projectId: process.env.SANITY_PROJECT_ID,
+              dataset: process.env.SANITY_DATASET || "production",
+              apiVersion: "2024-01-01",
+              token: process.env.SANITY_API_WRITE_TOKEN,
+              useCdn: false,
+            });
+            await writeClient
+              .patch(savedEscalationId)
+              .setIfMissing({ chatTranscript: [] })
+              .append("chatTranscript", [
+                { _key: `followup-user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                { _key: `followup-ai-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
+              ])
+              .commit();
+            updatedTicket = true;
+            console.log(`[ask-ai] ✅ Patched Sanity enquiry ${savedEscalationId} with follow-up context`);
+          } catch (e) {
+            console.error("[ask-ai] Failed to patch Sanity enquiry with follow-up:", e);
+          }
         }
 
         if (updatedTicket) {
           if (!answer || answer.length < 15) {
-            answer = "I've added your additional details to the existing support ticket. The team now has the full context of your issue! 🙏";
+            answer = savedTicketId
+              ? "I've added your additional details to the existing support ticket. The team now has the full context of your issue! 🙏"
+              : "I've added your follow-up message to your existing enquiry. The team will see the updated information! 🙏";
           } else {
-            answer += `\n\n*✅ Your additional details have been added to your existing ticket (#${savedTicketId?.slice(0, 8)}). The support team will see the updated information.*`;
+            answer += savedTicketId
+              ? `\n\n*✅ Your additional details have been added to your existing ticket (#${savedTicketId?.slice(0, 8)}). The support team will see the updated information.*`
+              : `\n\n*🎫 Your follow-up has been added to your existing enquiry. The team will see it shortly.*`;
+          }
+
+          // Send follow-up alert to team (for both platform and non-platform users)
+          try {
+            const followUpEmail = userEmail || body?.userEmail;
+            if (followUpEmail) {
+              const savedEscalationRaw = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+              let storedSummary = aiSummary || newContext;
+              let storedSubject = "Support Escalation";
+              try {
+                if (savedEscalationRaw && savedEscalationRaw !== "true") {
+                  const p = JSON.parse(savedEscalationRaw);
+                  storedSummary = p.summary || storedSummary;
+                  storedSubject = p.subject || storedSubject;
+                }
+              } catch (_) {}
+              await sendFollowUpAlertEmail({
+                customerEmail: followUpEmail,
+                customerName: body?.userName || followUpEmail,
+                followUpMessage: question,
+                aiSummary: storedSummary,
+                originalSubject: storedSubject,
+                ticketId: savedTicketId,
+                escalationId: savedEscalationId,
+                isPlatformUser: !!savedTicketId,
+              });
+            }
+          } catch (e) {
+            console.error("[ask-ai] Failed to send follow-up alert email:", e);
           }
         } else {
           if (!answer || answer.length < 15) {
@@ -572,7 +663,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
                 escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
               }
             } catch (_) { }
-            answer = `Your issue has already been escalated to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
+            answer = `Your issue has already been forwarded to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
           }
         }
       }
