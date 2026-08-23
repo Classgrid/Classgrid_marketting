@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     // ── Determine source: MongoDB (Email AI) vs Sanity (Chat AI) ────────────
     const isFromMongoDB = isMongoObjectId(escalationId);
+    console.log(`[create-enquiry] escalationId=${escalationId}, isMongoObjectId=${isFromMongoDB}`);
 
     let doc: any = null;
     let updateSource: "mongodb" | "sanity" = "sanity";
@@ -26,18 +27,28 @@ export async function GET(req: NextRequest) {
     if (isFromMongoDB) {
       // ── EMAIL AI PATH: Fetch from MongoDB EmailConversation ──────────────
       updateSource = "mongodb";
-      await connectMongo();
+      console.log(`[create-enquiry] Connecting to MongoDB...`);
+      try {
+        await connectMongo();
+      } catch (mongoErr: any) {
+        console.error(`[create-enquiry] MongoDB connection FAILED:`, mongoErr.message);
+        return new NextResponse(`MongoDB connection failed: ${mongoErr.message}`, { status: 500 });
+      }
       const db = mongoose.connection.db;
       if (!db) {
-        return new NextResponse("Database connection failed", { status: 500 });
+        console.error(`[create-enquiry] mongoose.connection.db is null after connectMongo()`);
+        return new NextResponse("Database connection failed - db is null", { status: 500 });
       }
+      console.log(`[create-enquiry] MongoDB connected. Querying emailconversations for ${escalationId}...`);
 
       const conversation = await db.collection("emailconversations").findOne({
         _id: new mongoose.Types.ObjectId(escalationId),
       });
 
+      console.log(`[create-enquiry] Query result: ${conversation ? 'FOUND' : 'NOT FOUND'}`);
+
       if (!conversation) {
-        return new NextResponse("Escalation not found", { status: 404 });
+        return new NextResponse(`Escalation not found in MongoDB (id: ${escalationId})`, { status: 404 });
       }
 
       // If already has a ticket, redirect
