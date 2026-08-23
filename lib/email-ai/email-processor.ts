@@ -173,6 +173,20 @@ export async function processIncomingEmail(
       }
     }
 
+    if (!conversation) {
+      // DUPLICATE ENQUIRY PREVENTION: Even if no escalated conversation exists yet,
+      // if the same email already has ANY active conversation (AI answered but user
+      // sends a completely new email about the same issue), reuse the most recent
+      // one so we don't create a brand new enquiry email for each new email thread.
+      conversation = await EmailConversation.findOne({
+        senderEmail: parsed.senderEmail.toLowerCase(),
+        status: "active",
+      }).sort({ updatedAt: -1 });
+      if (conversation) {
+        console.log(`🔗 [email-ai] Found existing active conversation for ${parsed.senderEmail} — merging new email thread into it to prevent duplicate enquiry.`);
+      }
+    }
+
     // ── TICKET RESOLUTION CHECK ─────────────────────────────────────────────
     // If we found a conversation that was escalated to a real platform ticket,
     // we must check the actual ticket status. If the ticket was resolved or closed
