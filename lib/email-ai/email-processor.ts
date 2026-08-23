@@ -161,6 +161,7 @@ export async function processIncomingEmail(
       });
     }
 
+    let foundViaDuplicatePrevention = false;
     if (!conversation) {
       // DUPLICATE TICKET PREVENTION: If this email address already has an escalated
       // conversation with a real ticket (from any thread/subject), reuse it so we
@@ -170,6 +171,7 @@ export async function processIncomingEmail(
         status: { $in: ["escalated", "pending_escalation", "active"] },
       }).sort({ updatedAt: -1 });
       if (conversation) {
+        foundViaDuplicatePrevention = true;
         console.log(`🔗 [email-ai] Found existing escalated conversation with ticket ${conversation.escalatedTicketId} for ${parsed.senderEmail} — treating new email as follow-up.`);
       }
     }
@@ -199,7 +201,13 @@ export async function processIncomingEmail(
               await conversation.save();
 
               conversation = null;
-              wasTicketClosed = true;
+              
+              if (foundViaDuplicatePrevention) {
+                console.log(`[email-ai] Conversation was found via duplicate prevention (new thread). Ignoring wasTicketClosed flag to treat as fresh inquiry.`);
+              } else {
+                wasTicketClosed = true;
+              }
+              
               // Mutate threadId so we don't violate the {senderEmail, threadId} unique index
               threadId = `${threadId}_new_${Date.now()}`;
            }

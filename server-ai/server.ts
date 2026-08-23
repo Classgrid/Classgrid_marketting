@@ -521,10 +521,8 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       let ticketId: string | null = null;
       let escalationId = "";
 
-      if (wasClosedFlag && !escalateMatch) {
-        escalateMatch = ["[ESCALATE: User replied to a closed ticket]", "User replied to a closed ticket", "Follow-up to closed issue", "general", "medium", ""];
-      }
-
+      // 6. Failsafe: if the user's previous ticket was closed, we cleared alreadyEscalated above.
+      // This allows the AI to start a fresh chat session naturally.
       if (escalateMatch && !alreadyEscalated) {
         const aiSummary = escalateMatch[1].trim();
         const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
