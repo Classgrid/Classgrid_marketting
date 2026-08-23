@@ -380,9 +380,11 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         const VALID_PRIORITIES: Record<string, string> = { low: "low", medium: "medium", high: "high", urgent: "high", critical: "high" };
         const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
 
+        let usedFallback = false;
         answer = answer.replace(ESCALATE_RE_G, "").trim();
         if (!answer || answer.length < 15) {
           answer = "Your request has been forwarded to the Classgrid support team! They will review it and get back to you shortly.";
+          usedFallback = true;
         }
 
         const email = userEmail || body?.userEmail;
@@ -498,7 +500,9 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           }
         } else {
           if (email && email !== "anonymous@classgrid.in") {
-            answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
+            if (!usedFallback) {
+              answer += "\n\n*Your request has been securely forwarded to the Classgrid team! They will review it shortly.* 🙏";
+            }
             if (escalationRedis) {
               try {
                 await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId }), "EX", 3600);
