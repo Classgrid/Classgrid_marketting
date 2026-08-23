@@ -459,9 +459,9 @@ export async function processIncomingEmail(
             const replyFormData = new FormData();
             replyFormData.append("email", parsed.senderEmail);
             replyFormData.append("name", parsed.senderName || "Email Support User");
-            const messageParts = [`<strong>Follow-up via Email AI:</strong>`];
+            const messageParts = [`<strong>Follow-up via Email:</strong>`];
             if (followUpSummary !== "Follow-up reply") {
-              messageParts.push(`<br/><br/><strong>AI Summary:</strong><br/>${followUpSummary}`);
+              messageParts.push(`<br/><br/><strong>Summary:</strong><br/>${followUpSummary}`);
             }
             messageParts.push(`<br/><br/><strong>Customer's Email:</strong><br/><div style="white-space:pre-wrap; color:inherit;">${parsed.cleanBody}</div>`);
             replyFormData.append("message", messageParts.join(""));
@@ -547,7 +547,7 @@ export async function processIncomingEmail(
               <p><strong>Account Status:</strong> <span style="text-transform:capitalize;">${platformUserDetails.status}</span></p>
               <p><strong>Institution:</strong> ${platformUserDetails.orgName} (${platformUserDetails.orgId})</p>` : ""}
               ${followUpSummary !== "Follow-up reply" ? `<div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
-                <h3 style="margin-top:0;">AI Summary of Follow-up</h3>
+                <h3 style="margin-top:0;">Summary of Follow-up</h3>
                 <p>${followUpSummary}</p>
               </div>` : ""}
               <div style="background:inherit; padding:15px; margin: 15px 0;">
