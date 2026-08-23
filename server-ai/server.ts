@@ -389,7 +389,81 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         console.error("[ask-ai:redis] Failed to check escalation key:", err);
       }
 
+      // ── Sanity Fallback: Recover session if user cleared chat but has recent open ticket/enquiry ──
+      if (!alreadyEscalated && userEmail) {
+        try {
+          const { createClient } = require("next-sanity");
+          const readClient = createClient({
+            projectId: process.env.SANITY_PROJECT_ID,
+            dataset: "production",
+            apiVersion: "2023-01-01",
+            useCdn: false,
+          });
+          const recentEscalation = await readClient.fetch(
+            `*[_type == "aiEscalation" && userEmail == $email && status in ["pending", "enquiry_created", "handled"]] | order(_createdAt desc)[0]`,
+            { email: userEmail }
+          );
+          if (recentEscalation) {
+            let isTicketClosed = false;
 
+            // If it's a platform user, verify the ticket status in MongoDB
+            if (recentEscalation.ticketId) {
+              try {
+                const db = mongoose.connection.db;
+                if (db && mongoose.isValidObjectId(recentEscalation.ticketId)) {
+                  const ObjectId = mongoose.Types.ObjectId;
+                  const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(recentEscalation.ticketId) });
+                  if (!ticket || ticket.status === "closed") {
+                    isTicketClosed = true;
+                    console.log(`[ask-ai] Ticket ${recentEscalation.ticketId} is closed in MongoDB. Forcing new ticket.`);
+                  }
+                }
+              } catch (err) {
+                console.error("[ask-ai:mongo] Failed to verify ticket status:", err);
+              }
+            }
+
+            if (!isTicketClosed) {
+              alreadyEscalated = JSON.stringify({
+                summary: recentEscalation.aiSummary || "Recent enquiry",
+                subject: recentEscalation.subject || "Support Escalation",
+                ticketId: recentEscalation.ticketId || null,
+                escalationId: recentEscalation._id
+              });
+              console.log(`[ask-ai] Recovered broken session ${sessionId} to Sanity doc ${recentEscalation._id}`);
+              if (escalationRedis) {
+                await escalationRedis.set(escalationKey, alreadyEscalated, "EX", 3600).catch(() => {});
+              }
+            }
+          }
+        } catch (e) {
+          console.error("[ask-ai:sanity] Failed to check recent escalations:", e);
+        }
+      }
+
+      // ── ALWAYS verify ticket status in MongoDB (even for Redis-cached sessions) ──
+      // This prevents appending to a ticket that was closed by admin while Redis still had it cached.
+      if (alreadyEscalated) {
+        try {
+          const parsed = typeof alreadyEscalated === "string" ? JSON.parse(alreadyEscalated) : alreadyEscalated;
+          if (parsed.ticketId) {
+            const db = mongoose.connection.db;
+            if (db && mongoose.isValidObjectId(parsed.ticketId)) {
+              const ObjectId = mongoose.Types.ObjectId;
+              const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(parsed.ticketId) });
+              if (!ticket || ticket.status === "closed") {
+                console.log(`[ask-ai] ⚠️ Cached ticket ${parsed.ticketId} is CLOSED in MongoDB. Clearing session to force new ticket.`);
+                alreadyEscalated = null;
+                if (escalationRedis) {
+                  await escalationRedis.del(escalationKey).catch(() => {});
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.error("[ask-ai:mongo] Failed to re-check ticket status:", e);
+        }
+      }
       // ── Check if user is a registered platform user (mirrors email-processor.ts) ──
       let isPlatformUser = false;
       if (userEmail) {
@@ -537,7 +611,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           answer += ticketLink;
           if (escalationRedis) {
             try {
-              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId, escalationId: savedTicketId }), "EX", 3600);
+              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId, escalationId }), "EX", 3600);
             } catch (err) {
               console.error("[ask-ai:redis] Failed to set escalation key:", err);
             }
@@ -545,13 +619,10 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         } else {
           if (email && email !== "anonymous@classgrid.in") {
             // NON-PLATFORM USER — enquiry created (not a ticket)
-            if (!usedFallback) {
-              answer += "\n\n*🎫 An enquiry has been created and our team has been notified. They will review it and get back to you shortly.* 🙏";
-            }
             if (escalationRedis) {
               try {
                 // Store escalationId (Sanity doc ID) so follow-up messages can update the enquiry
-                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId: null, escalationId: savedTicketId }), "EX", 3600);
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId: null, escalationId }), "EX", 3600);
               } catch (err) {
                 console.error("[ask-ai:redis] Failed to set escalation key:", err);
               }

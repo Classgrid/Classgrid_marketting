@@ -145,7 +145,7 @@ export async function processIncomingEmail(
 
     // 5. Look up or create conversation
     console.log(`🔍 [email-ai] State: Searching for existing conversation thread for ${parsed.senderEmail}...`);
-    const threadId = email.threadId || email.messageId || `thread-${Date.now()}`;
+    let threadId = email.threadId || email.messageId || `thread-${Date.now()}`;
     let conversation = await EmailConversation.findOne({
       senderEmail: parsed.senderEmail.toLowerCase(),
       threadId,
@@ -370,6 +370,70 @@ export async function processIncomingEmail(
           console.log(`⚠️  [email-ai] Re-escalation resulted in empty email body. Using fallback polite response.`);
         }
         
+        // ── APPEND FOLLOW-UP TO EXISTING TICKET (Platform Users) ──────────────
+        if (conversation.escalatedTicketId && isPlatformUser) {
+          try {
+            const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+            const replyFormData = new FormData();
+            replyFormData.append("email", parsed.senderEmail);
+            replyFormData.append("name", parsed.senderName || "Email Support User");
+            replyFormData.append("message", [
+              `<strong>Follow-up via Email AI:</strong>`,
+              `<br/><br/><strong>AI Summary:</strong><br/>${followUpSummary}`,
+              `<br/><br/><strong>Customer's Raw Email:</strong><br/><pre style="white-space:pre-wrap;">${parsed.cleanBody}</pre>`,
+            ].join(""));
+
+            const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${conversation.escalatedTicketId}/reply`, {
+              method: "POST",
+              body: replyFormData,
+              headers: {
+                "x-proxy-auth-email": parsed.senderEmail,
+                "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+              },
+            });
+
+            if (replyRes.ok) {
+              console.log(`✅ [email-ai] Appended follow-up to platform ticket ${conversation.escalatedTicketId}`);
+            } else {
+              console.error("[email-ai] Ticket reply API failed:", replyRes.status, await replyRes.text());
+            }
+          } catch (e: any) {
+            console.error("[email-ai] Failed to append follow-up to ticket:", e.message);
+          }
+        }
+
+        // ── PATCH SANITY ENQUIRY DOCUMENT (Non-Platform Users) ────────────────
+        if (!isPlatformUser) {
+          try {
+            const { createClient } = require("next-sanity");
+            const writeClient = createClient({
+              projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+              dataset: process.env.SANITY_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+              apiVersion: "2024-01-01",
+              token: process.env.SANITY_API_WRITE_TOKEN,
+              useCdn: false,
+            });
+            // Find the most recent open enquiry for this email
+            const existingEnquiry = await writeClient.fetch(
+              `*[_type == "aiEscalation" && userEmail == $email && status in ["pending", "enquiry_created"]] | order(_createdAt desc)[0]`,
+              { email: parsed.senderEmail.toLowerCase() }
+            );
+            if (existingEnquiry) {
+              await writeClient
+                .patch(existingEnquiry._id)
+                .setIfMissing({ chatTranscript: [] })
+                .append("chatTranscript", [
+                  { _key: `followup-email-user-${Date.now()}`, role: "user", content: parsed.cleanBody, timestamp: new Date().toISOString() },
+                  { _key: `followup-email-ai-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
+                ])
+                .commit();
+              console.log(`✅ [email-ai] Patched Sanity enquiry ${existingEnquiry._id} with email follow-up`);
+            }
+          } catch (e) {
+            console.error("[email-ai] Failed to patch Sanity enquiry with follow-up:", e);
+          }
+        }
+
         // Forward the follow-up alert to the team!
         try {
           const transporter = getSmtpTransporter();
