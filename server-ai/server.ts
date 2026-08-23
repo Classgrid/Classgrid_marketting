@@ -672,213 +672,214 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       } else if (alreadyEscalated) {
         // AI is following up on an existing open ticket/enquiry
         if (escalateMatch) {
-          console.log(`⚠️  [ask-ai] AI tried to re-escalate. Stripping tag and appending as follow-up.`);
+          console.log(`⚠️  [ask-ai] AI outputted [ESCALATE] on an open ticket. Stripping tag and appending as follow-up.`);
           answer = stripEscalateBlocks(answer);
-        }
-        const newContext = escalateMatch?.[1]?.trim() || question;
+          const newContext = escalateMatch[1].trim();
 
-        let updatedTicket = false;
-        let savedTicketId: string | null = null;
-        let savedEscalationId: string | null = null;
-        try {
-          const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
-          if (savedEscalation && savedEscalation !== "true") {
-            const parsed = JSON.parse(savedEscalation);
-            savedTicketId = parsed.ticketId || null;
-            savedEscalationId = parsed.escalationId || null;
-          }
-        } catch (_) { }
+          let updatedTicket = false;
+          let savedTicketId: string | null = null;
+          let savedEscalationId: string | null = null;
+          try {
+            const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+            if (savedEscalation && savedEscalation !== "true") {
+              const parsed = JSON.parse(savedEscalation);
+              savedTicketId = parsed.ticketId || null;
+              savedEscalationId = parsed.escalationId || null;
+            }
+          } catch (_) { }
 
-        if (savedTicketId) {
-          // PLATFORM USER follow-up: add reply to existing ticket
-          const email = userEmail || body?.userEmail;
-          if (email) {
+          if (savedTicketId) {
+            // PLATFORM USER follow-up: add reply to existing ticket
+            const email = userEmail || body?.userEmail;
+            if (email) {
+              try {
+                const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
+                const replyFormData = new FormData();
+                replyFormData.append("email", email);
+                replyFormData.append("name", body?.userName || "User");
+                replyFormData.append("message", `<strong>Additional Context (via AI Chat):</strong><br/>${newContext}<br/><br/><strong>User's Message:</strong><br/>${question}`);
+
+                // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
+                let isStillOpen = true;
+                try {
+                  const db = mongoose.connection.db;
+                  if (db && mongoose.isValidObjectId(savedTicketId)) {
+                    const ObjectId = mongoose.Types.ObjectId;
+                    const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(savedTicketId) });
+                    if (!ticket || ticket.status === "closed") {
+                      isStillOpen = false;
+                      console.log(`[ask-ai] ⚠️ Ticket ${savedTicketId} was CLOSED while AI was thinking. Skipping reply.`);
+                    }
+                  }
+                } catch (e) {}
+
+                if (isStillOpen) {
+                  const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
+                    method: "POST",
+                    body: replyFormData,
+                    headers: {
+                      "x-proxy-auth-email": email,
+                      "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                    },
+                  });
+
+                  if (replyRes.ok) {
+                    updatedTicket = true;
+                  } else {
+                    console.error("[AI Update Ticket] Reply API failed:", replyRes.status, await replyRes.text());
+                  }
+                } else {
+                   console.log(`[ask-ai] Creating replacement ticket because original was closed during generation...`);
+                   const createFormData = new FormData();
+                   createFormData.append("email", email);
+                   createFormData.append("name", body?.userName || "User");
+                   createFormData.append("subject", "Follow-up to closed issue");
+                   createFormData.append("message", `<strong>Follow-up to a closed issue:</strong><br/>${question}`);
+                   createFormData.append("category", "general");
+                   createFormData.append("priority", "medium");
+                   const createRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
+                     method: "POST",
+                     body: createFormData,
+                     headers: {
+                       "x-proxy-auth-email": email,
+                       "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
+                     },
+                   });
+                   if (createRes.ok) {
+                     const ticketResponse = await createRes.json();
+                     const newTicketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id || ticketResponse?.data?._id || ticketResponse?.data?.id || ticketResponse?._id || ticketResponse?.id || null;
+                     answer = `\n\n*✅ Your previous ticket was closed, so I created a new one (#${newTicketId?.slice(0, 8)}). The support team will see the updated information.*`;
+                     if (escalationRedis) {
+                       await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: newTicketId, escalationId: null }), "EX", 3600).catch(() => {});
+                     }
+                   }
+                   updatedTicket = false;
+                }
+              } catch (e: any) {
+                console.error("[AI Update Ticket] Failed to update ticket:", e.message);
+              }
+            }
+          } else if (savedEscalationId) {
+            // NON-PLATFORM USER follow-up: patch the Sanity enquiry document with new context
             try {
-              const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
-              const replyFormData = new FormData();
-              replyFormData.append("email", email);
-              replyFormData.append("name", body?.userName || "User");
-              replyFormData.append("message", `<strong>Additional Context (via AI Chat):</strong><br/>${newContext}<br/><br/><strong>User's Message:</strong><br/>${question}`);
+              const { createClient } = require("next-sanity");
+              const writeClient = createClient({
+                projectId: process.env.SANITY_PROJECT_ID,
+                dataset: process.env.SANITY_DATASET || "production",
+                apiVersion: "2024-01-01",
+                token: process.env.SANITY_API_WRITE_TOKEN,
+                useCdn: false,
+              });
 
-              // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
+              // ── SPLIT-SECOND RE-CHECK: Did admin handle the enquiry while AI was thinking? ──
               let isStillOpen = true;
               try {
-                const db = mongoose.connection.db;
-                if (db && mongoose.isValidObjectId(savedTicketId)) {
-                  const ObjectId = mongoose.Types.ObjectId;
-                  const ticket = await db.collection("supporttickets").findOne({ _id: new ObjectId(savedTicketId) });
-                  if (!ticket || ticket.status === "closed") {
-                    isStillOpen = false;
-                    console.log(`[ask-ai] ⚠️ Ticket ${savedTicketId} was CLOSED while AI was thinking. Skipping reply.`);
-                  }
+                const enquiry = await writeClient.fetch(
+                  `*[_id == $id][0]{ status }`,
+                  { id: savedEscalationId }
+                );
+                if (!enquiry || enquiry.status === "handled") {
+                  isStillOpen = false;
+                  console.log(`[ask-ai] ⚠️ Enquiry ${savedEscalationId} was HANDLED while AI was thinking. Skipping patch.`);
                 }
-              } catch (e) {}
+              } catch (sanityErr) {}
 
               if (isStillOpen) {
-                const replyRes = await fetch(`${backendUrl}/api/support/public/tickets/${savedTicketId}/reply`, {
-                  method: "POST",
-                  body: replyFormData,
-                  headers: {
-                    "x-proxy-auth-email": email,
-                    "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
-                  },
-                });
-
-                if (replyRes.ok) {
-                  updatedTicket = true;
-                } else {
-                  console.error("[AI Update Ticket] Reply API failed:", replyRes.status, await replyRes.text());
-                }
+                await writeClient
+                  .patch(savedEscalationId)
+                  .setIfMissing({ chatTranscript: [] })
+                  .append("chatTranscript", [
+                    { _key: `followup-user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                    { _key: `followup-ai-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
+                  ])
+                  .commit();
+                updatedTicket = true;
+                console.log(`[ask-ai] ✅ Patched Sanity enquiry ${savedEscalationId} with follow-up context`);
               } else {
-                 console.log(`[ask-ai] Creating replacement ticket because original was closed during generation...`);
-                 const createFormData = new FormData();
-                 createFormData.append("email", email);
-                 createFormData.append("name", body?.userName || "User");
-                 createFormData.append("subject", "Follow-up to closed issue");
-                 createFormData.append("message", `<strong>Follow-up to a closed issue:</strong><br/>${question}`);
-                 createFormData.append("category", "general");
-                 createFormData.append("priority", "medium");
-                 const createRes = await fetch(`${backendUrl}/api/support/public/tickets`, {
-                   method: "POST",
-                   body: createFormData,
-                   headers: {
-                     "x-proxy-auth-email": email,
-                     "x-proxy-auth-secret": process.env.PLATFORM_JWT_SECRET || process.env.JWT_SECRET || "",
-                   },
-                 });
-                 if (createRes.ok) {
-                   const ticketResponse = await createRes.json();
-                   const newTicketId = ticketResponse?.ticket?._id || ticketResponse?.ticket?.id || ticketResponse?.data?._id || ticketResponse?.data?.id || ticketResponse?._id || ticketResponse?.id || null;
-                   answer = `\n\n*✅ Your previous ticket was closed, so I created a new one (#${newTicketId?.slice(0, 8)}). The support team will see the updated information.*`;
-                   if (escalationRedis) {
-                     await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: newTicketId, escalationId: null }), "EX", 3600).catch(() => {});
-                   }
-                 }
-                 updatedTicket = false;
-              }
-              // Dangling code removed
-            } catch (e: any) {
-              console.error("[AI Update Ticket] Failed to update ticket:", e.message);
-            }
-          }
-        } else if (savedEscalationId) {
-          // NON-PLATFORM USER follow-up: patch the Sanity enquiry document with new context
-          try {
-            const { createClient } = require("next-sanity");
-            const writeClient = createClient({
-              projectId: process.env.SANITY_PROJECT_ID,
-              dataset: process.env.SANITY_DATASET || "production",
-              apiVersion: "2024-01-01",
-              token: process.env.SANITY_API_WRITE_TOKEN,
-              useCdn: false,
-            });
-
-            // ── SPLIT-SECOND RE-CHECK: Did admin handle the enquiry while AI was thinking? ──
-            let isStillOpen = true;
-            try {
-              const enquiry = await writeClient.fetch(
-                `*[_id == $id][0]{ status }`,
-                { id: savedEscalationId }
-              );
-              if (!enquiry || enquiry.status === "handled") {
-                isStillOpen = false;
-                console.log(`[ask-ai] ⚠️ Enquiry ${savedEscalationId} was HANDLED while AI was thinking. Skipping patch.`);
-              }
-            } catch (sanityErr) {}
-
-            if (isStillOpen) {
-              await writeClient
-                .patch(savedEscalationId)
-                .setIfMissing({ chatTranscript: [] })
-                .append("chatTranscript", [
-                  { _key: `followup-user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
-                  { _key: `followup-ai-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
-                ])
-                .commit();
-              updatedTicket = true;
-              console.log(`[ask-ai] ✅ Patched Sanity enquiry ${savedEscalationId} with follow-up context`);
-            } else {
-              console.log(`[ask-ai] Creating replacement enquiry because original was closed during generation...`);
-              const deviceLog = req.headers["user-agent"] || "Unknown Device";
-              const newDoc = await writeClient.create({
-                _type: "aiEscalation",
-                userEmail: userEmail || "",
-                userName: body?.userName || "",
-                ipAddress: ip,
-                deviceInfo: deviceLog,
-                status: "enquiry_created",
-                ticketCreated: false,
-                enquiryCreated: true,
-                aiSummary: "Follow-up to closed issue",
-                subject: "Follow-up to closed issue",
-                ticketId: "",
-                chatTranscript: [
-                  { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
-                  { _key: `assistant-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
-                ],
-              });
-              answer = `\n\n*🎫 Your previous enquiry was closed, so I created a new one for you. The team will see it shortly.*`;
-              if (escalationRedis) {
-                await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: null, escalationId: newDoc._id }), "EX", 3600).catch(() => {});
-              }
-              updatedTicket = false;
-            }
-          } catch (e) {
-            console.error("[ask-ai] Failed to patch Sanity enquiry with follow-up:", e);
-          }
-        }
-
-        if (updatedTicket) {
-          if (!answer || answer.length < 15) {
-            answer = savedTicketId
-              ? "I've added your additional details to the existing support ticket. The team now has the full context of your issue! 🙏"
-              : "I've added your follow-up message to your existing enquiry. The team will see the updated information! 🙏";
-          } else {
-            answer += savedTicketId
-              ? `\n\n*✅ Your additional details have been added to your existing ticket (#${savedTicketId?.slice(0, 8)}). The support team will see the updated information.*`
-              : `\n\n*🎫 Your follow-up has been added to your existing enquiry. The team will see it shortly.*`;
-          }
-
-          // Send follow-up alert to team (for both platform and non-platform users)
-          try {
-            const followUpEmail = userEmail || body?.userEmail;
-            if (followUpEmail) {
-              const savedEscalationRaw = escalationRedis ? await escalationRedis.get(escalationKey) : null;
-              let storedSummary = newContext;
-              let storedSubject = "Support Escalation";
-              try {
-                if (savedEscalationRaw && savedEscalationRaw !== "true") {
-                  const p = JSON.parse(savedEscalationRaw);
-                  storedSummary = p.summary || storedSummary;
-                  storedSubject = p.subject || storedSubject;
+                console.log(`[ask-ai] Creating replacement enquiry because original was closed during generation...`);
+                const deviceLog = req.headers["user-agent"] || "Unknown Device";
+                const newDoc = await writeClient.create({
+                  _type: "aiEscalation",
+                  userEmail: userEmail || "",
+                  userName: body?.userName || "",
+                  ipAddress: ip,
+                  deviceInfo: deviceLog,
+                  status: "enquiry_created",
+                  ticketCreated: false,
+                  enquiryCreated: true,
+                  aiSummary: "Follow-up to closed issue",
+                  subject: "Follow-up to closed issue",
+                  ticketId: "",
+                  chatTranscript: [
+                    { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                    { _key: `assistant-${Date.now() + 1}`, role: "assistant", content: answer || newContext, timestamp: new Date().toISOString() },
+                  ],
+                });
+                answer = `\n\n*🎫 Your previous enquiry was closed, so I created a new one for you. The team will see it shortly.*`;
+                if (escalationRedis) {
+                  await escalationRedis.set(escalationKey, JSON.stringify({ summary: "Follow-up to closed issue", subject: "Follow-up to closed issue", ticketId: null, escalationId: newDoc._id }), "EX", 3600).catch(() => {});
                 }
-              } catch (_) {}
-              await sendFollowUpAlertEmail({
-                customerEmail: followUpEmail,
-                customerName: body?.userName || followUpEmail,
-                followUpMessage: question,
-                aiSummary: storedSummary,
-                originalSubject: storedSubject,
-                ticketId: savedTicketId,
-                escalationId: savedEscalationId,
-                isPlatformUser: !!savedTicketId,
-              });
+                updatedTicket = false;
+              }
+            } catch (e) {
+              console.error("[ask-ai] Failed to patch Sanity enquiry with follow-up:", e);
             }
-          } catch (e) {
-            console.error("[ask-ai] Failed to send follow-up alert email:", e);
+          }
+
+          if (updatedTicket) {
+            if (!answer || answer.length < 15) {
+              answer = savedTicketId
+                ? "I've added your additional details to the existing support ticket. The team now has the full context of your issue! 🙏"
+                : "I've added your follow-up message to your existing enquiry. The team will see the updated information! 🙏";
+            } else {
+              answer += savedTicketId
+                ? `\n\n*✅ Your additional details have been added to your existing ticket (#${savedTicketId?.slice(0, 8)}). The support team will see the updated information.*`
+                : `\n\n*🎫 Your follow-up has been added to your existing enquiry. The team will see it shortly.*`;
+            }
+
+            // Send follow-up alert to team (for both platform and non-platform users)
+            try {
+              const followUpEmail = userEmail || body?.userEmail;
+              if (followUpEmail) {
+                const savedEscalationRaw = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+                let storedSummary = newContext;
+                let storedSubject = "Support Escalation";
+                try {
+                  if (savedEscalationRaw && savedEscalationRaw !== "true") {
+                    const p = JSON.parse(savedEscalationRaw);
+                    storedSummary = p.summary || storedSummary;
+                    storedSubject = p.subject || storedSubject;
+                  }
+                } catch (_) {}
+                await sendFollowUpAlertEmail({
+                  customerEmail: followUpEmail,
+                  customerName: body?.userName || followUpEmail,
+                  followUpMessage: question,
+                  aiSummary: storedSummary,
+                  originalSubject: storedSubject,
+                  ticketId: savedTicketId,
+                  escalationId: savedEscalationId,
+                  isPlatformUser: !!savedTicketId,
+                });
+              }
+            } catch (e) {
+              console.error("[ask-ai] Failed to send follow-up alert email:", e);
+            }
+          } else {
+            if (!answer || answer.length < 15) {
+              let escalationContext = "";
+              try {
+                const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
+                if (savedEscalation && savedEscalation !== "true") {
+                  const parsed = JSON.parse(savedEscalation);
+                  escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
+                }
+              } catch (_) { }
+              answer = `Your issue has already been forwarded to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
+            }
           }
         } else {
-          if (!answer || answer.length < 15) {
-            let escalationContext = "";
-            try {
-              const savedEscalation = escalationRedis ? await escalationRedis.get(escalationKey) : null;
-              if (savedEscalation && savedEscalation !== "true") {
-                const parsed = JSON.parse(savedEscalation);
-                escalationContext = parsed.summary ? ` The problem I reported was: **${parsed.summary}**` : "";
-              }
-            } catch (_) { }
-            answer = `Your issue has already been forwarded to our support team! They are reviewing it now.${escalationContext} Is there anything else I can help you with? 😊`;
-          }
+          console.log(`[ask-ai] AI did not escalate open ticket follow-up. Normal conversation appended to session memory only.`);
         }
       }
       // ── END ESCALATE PROCESSING ───────────────────────────────────────────────
