@@ -537,7 +537,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           answer += ticketLink;
           if (escalationRedis) {
             try {
-              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId, escalationId }), "EX", 3600);
+              await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId, escalationId: savedTicketId }), "EX", 3600);
             } catch (err) {
               console.error("[ask-ai:redis] Failed to set escalation key:", err);
             }
@@ -551,7 +551,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             if (escalationRedis) {
               try {
                 // Store escalationId (Sanity doc ID) so follow-up messages can update the enquiry
-                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId: null, escalationId }), "EX", 3600);
+                await escalationRedis.set(escalationKey, JSON.stringify({ summary: aiSummary, subject: aiSubject, ticketId: null, escalationId: savedTicketId }), "EX", 3600);
               } catch (err) {
                 console.error("[ask-ai:redis] Failed to set escalation key:", err);
               }
@@ -649,7 +649,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             const followUpEmail = userEmail || body?.userEmail;
             if (followUpEmail) {
               const savedEscalationRaw = escalationRedis ? await escalationRedis.get(escalationKey) : null;
-              let storedSummary = aiSummary || newContext;
+              let storedSummary = newContext;
               let storedSubject = "Support Escalation";
               try {
                 if (savedEscalationRaw && savedEscalationRaw !== "true") {
