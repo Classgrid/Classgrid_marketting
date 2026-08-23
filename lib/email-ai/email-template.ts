@@ -17,19 +17,36 @@ export type EmailTemplateParams = {
 };
 
 function markdownToHtml(markdown: string): string {
-  return markdown
+  let html = markdown.replace(/\r\n/g, "\n");
+  
+  html = html
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/__(.+?)__/g, "<strong>$1</strong>")
     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>')
-    .replace(/(?<!href="|src="|>)(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color: #2563eb; text-decoration: underline;">$1</a>')
-    .replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>")
-    .replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>")
-    .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul style="padding-left: 20px; margin: 0 0 20px;">$1</ul>')
-    .replace(/^#{1,6}\s+(.+)$/gm, '<strong style="display: block; margin-top: 16px; margin-bottom: 8px;">$1</strong>')
-    .replace(/^---$/gm, '<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />')
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/\n/g, "<br/>");
+    .replace(/(?<!href="|src="|>)(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color: #2563eb; text-decoration: underline;">$1</a>');
+    
+  // Handle lists safely
+  html = html.replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>");
+  html = html.replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>");
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul style="padding-left: 20px; margin: 16px 0;">$1</ul>');
+  
+  // Clean up \n inside lists so they don't become <br/>
+  html = html.replace(/<\/li>\n/g, "</li>");
+  
+  html = html.replace(/^#{1,6}\s+(.+)$/gm, '<strong style="display: block; margin-top: 16px; margin-bottom: 8px;">$1</strong>');
+    
+  // For other newlines, just use <br/>
+  html = html.replace(/\n{2,}/g, "<br/><br/>");
+  html = html.replace(/\n/g, "<br/>");
+  
+  // Clean up rogue <br/> tags around block elements
+  html = html.replace(/<br\/><br\/><ul/g, "<ul");
+  html = html.replace(/<br\/><ul/g, "<ul");
+  html = html.replace(/<\/ul><br\/><br\/>/g, "</ul><br/>"); // Leave one gap after a list
+  html = html.replace(/<\/ul><br\/>/g, "</ul><br/>");
+
+  return html;
 }
 
 /**

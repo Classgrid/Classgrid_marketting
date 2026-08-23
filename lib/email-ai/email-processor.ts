@@ -398,7 +398,7 @@ export async function processIncomingEmail(
             replyFormData.append("message", [
               `<strong>Follow-up via Email AI:</strong>`,
               `<br/><br/><strong>AI Summary:</strong><br/>${followUpSummary}`,
-              `<br/><br/><strong>Customer's Raw Email:</strong><br/><pre style="white-space:pre-wrap;">${parsed.cleanBody}</pre>`,
+              `<br/><br/><strong>Customer's Raw Email:</strong><br/><div style="white-space:pre-wrap;">${parsed.cleanBody}</div>`,
             ].join(""));
 
             // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
@@ -487,7 +487,7 @@ export async function processIncomingEmail(
               </div>
               <div style="background:#f3f4f6; padding:15px; margin: 15px 0;">
                 <h3 style="margin-top:0;">Customer's Raw Follow-up Message</h3>
-                <pre style="white-space:pre-wrap; font-family:sans-serif;">${parsed.cleanBody}</pre>
+                <div style="white-space:pre-wrap; font-family:sans-serif; font-size:14px; line-height:1.5;">${parsed.cleanBody}</div>
               </div>
               <p style="color:#6b7280; font-size:12px; margin-top:20px;">Automated email from Classgrid Admin System.</p>
             `
