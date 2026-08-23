@@ -436,11 +436,21 @@ export async function processIncomingEmail(
         }
         followUpSummary = followUpSummary || "Follow-up reply";
         
-        // Override any AI RAG answers on follow-ups to an open ticket.
-        // We don't want the AI trying to troubleshoot a P0 crash with generic documentation,
-        // nor do we want to send the user "I couldn't find this in the knowledge base".
-        answer = "I've added your latest notes to the support ticket. Our team is reviewing the updated information and will get back to you shortly!";
-        console.log(`⚠️  [email-ai] Overriding AI RAG response with polite follow-up acknowledgment.`);
+        // Only override the AI's response if it gave a bad fallback (e.g. "I could not find..." or rate-limited).
+        // Otherwise, let the AI write its normal professional email to the customer.
+        const BAD_FALLBACKS = [
+          "I could not find the exact detail",
+          "I could not find",
+          "[RATE_LIMITED]",
+          "I am processing your request",
+        ];
+        const isAIResponseBad = !answer || answer.length < 30 || BAD_FALLBACKS.some(f => answer.toLowerCase().includes(f.toLowerCase()));
+        if (isAIResponseBad) {
+          answer = "Thank you for the additional information. I've added your latest notes directly to the support ticket so our specialists have the full picture. They are reviewing your case and will follow up with you shortly.\n\nIn the meantime, if you have any other details or updates, feel free to reply to this email and they will be added to your ticket automatically.\n\nHere are some helpful resources:\n- [Help Center](https://classgrid.in/help-center)\n- [Documentation](https://classgrid.in/docs)\n- [System Status](https://status.classgrid.in)\n- [Changelog](https://classgrid.in/changelog)\n\nBest regards,\nClassgrid Support Team";
+          console.log(`⚠️  [email-ai] AI gave a bad/fallback response for follow-up. Using polite acknowledgment instead.`);
+        } else {
+          console.log(`✅ [email-ai] AI wrote a proper follow-up email response (${answer.length} chars). Using it as-is.`);
+        }
         
         // ── APPEND FOLLOW-UP TO EXISTING TICKET (Platform Users) ──────────────
         if (conversation.escalatedTicketId && isPlatformUser) {
