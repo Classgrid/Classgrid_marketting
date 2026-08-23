@@ -412,11 +412,12 @@ export async function processIncomingEmail(
             const replyFormData = new FormData();
             replyFormData.append("email", parsed.senderEmail);
             replyFormData.append("name", parsed.senderName || "Email Support User");
-            replyFormData.append("message", [
-              `<strong>Follow-up via Email AI:</strong>`,
-              `<br/><br/><strong>AI Summary:</strong><br/>${followUpSummary}`,
-              `<br/><br/><strong>Customer's Raw Email:</strong><br/><div style="white-space:pre-wrap; color:inherit;">${parsed.cleanBody}</div>`,
-            ].join(""));
+            const messageParts = [`<strong>Follow-up via Email AI:</strong>`];
+            if (followUpSummary !== "Follow-up reply") {
+              messageParts.push(`<br/><br/><strong>AI Summary:</strong><br/>${followUpSummary}`);
+            }
+            messageParts.push(`<br/><br/><strong>Customer's Raw Email:</strong><br/><div style="white-space:pre-wrap; color:inherit;">${parsed.cleanBody}</div>`);
+            replyFormData.append("message", messageParts.join(""));
 
             // ── SPLIT-SECOND RE-CHECK: Did admin close the ticket while AI was thinking? ──
             let isStillOpen = true;
