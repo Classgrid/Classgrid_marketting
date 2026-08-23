@@ -329,8 +329,8 @@ export async function POST(req: Request) {
 
           let answer = result.answer || DEFAULT_ERROR_MESSAGE;
 
-          const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
-          const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
+          const ESCALATE_RE = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
+          const ESCALATE_RE_G = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
           let escalateMatch = answer.match(ESCALATE_RE);
 
           // HARD PROGRAMMATIC FAILSAFE: Prevent AI from auto-escalating prematurely
@@ -362,7 +362,7 @@ export async function POST(req: Request) {
 
             if (isNoContext) {
               // The AI jumped the gun despite prompt instructions. Strip the code and cancel escalation.
-              answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
+              answer = answer.replace(/\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
               // Check if the remaining text falsely claims an escalation happened
               // (e.g., "Let me escalate this", "I'll forward this to the team", "I've sent this to support")
@@ -397,8 +397,9 @@ export async function POST(req: Request) {
               "critical": "high",
             };
             const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
+            const aiDraft = escalateMatch[5]?.trim();
 
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
             // Backend safeguard: if AI only output the code with no polite text, add a fallback
             if (!answer || answer.length < 15) {
@@ -419,6 +420,7 @@ export async function POST(req: Request) {
                 formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}`);
                 formData.append("category", aiCategory);
                 formData.append("priority", aiPriority);
+                if (aiDraft) formData.append("aiDraft", aiDraft);
 
                 const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
                 const res = await fetch(`${backendUrl}/api/support/public/tickets`, {
@@ -533,7 +535,7 @@ export async function POST(req: Request) {
           } else if (escalateMatch && alreadyEscalated) {
             // AI tried to escalate again — instead of blocking, ADD the new context to the existing ticket
             const newContext = escalateMatch[1]?.trim() || question;
-            answer = answer.replace(/\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
+            answer = answer.replace(/\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g, "").trim();
 
             // Try to add the new context as a reply to the existing ticket
             let updatedTicket = false;

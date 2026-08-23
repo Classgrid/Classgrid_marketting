@@ -72,8 +72,8 @@ type AskAiRequestBody = {
 const DEFAULT_ERROR_MESSAGE = "Unable to answer right now. Please try again.";
 
 // ── ESCALATE regex ────────────────────────────────────────────────────────────
-const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
-const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
+const ESCALATE_RE = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/;
+const ESCALATE_RE_G = /\[ESCALATE:\s*([\s\S]+?)(?:\s*\|\s*SUBJECT:\s*([\s\S]+?))?(?:\s*\|\s*CATEGORY:\s*([\s\S]+?))?(?:\s*\|\s*PRIORITY:\s*([\s\S]+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+?))?\]/g;
 
 // ── Page context normalizer (identical to route.ts) ───────────────────────────
 function normalizePageContext(input: unknown): PageContext | undefined {
@@ -375,6 +375,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         const aiSubject = escalateMatch[2]?.trim() || `AI Escalation: ${aiSummary.slice(0, 80)}`;
         const rawCategory = escalateMatch[3]?.trim().toLowerCase() || "general";
         const rawPriority = escalateMatch[4]?.trim().toLowerCase() || "medium";
+        const aiDraft = escalateMatch[5]?.trim();
         const aiCategory = rawCategory;
         const VALID_PRIORITIES: Record<string, string> = { low: "low", medium: "medium", high: "high", urgent: "high", critical: "high" };
         const aiPriority = VALID_PRIORITIES[rawPriority] || "medium";
@@ -397,6 +398,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             formData.append("message", `Auto-escalated from AI Chat.<br/><br/><strong>Original AI Categorization:</strong><br/>Category: ${rawCategory} | Priority: ${rawPriority}<br/><br/><strong>Problem Summary:</strong><br/>${aiSummary}<br/><br/><strong>Last User Message:</strong><br/>${question}`);
             formData.append("category", aiCategory);
             formData.append("priority", aiPriority);
+            if (aiDraft) formData.append("aiDraft", aiDraft);
 
             const backendUrl = process.env.NEXT_PUBLIC_PLATFORM_API_URL || "https://api.classgrid.in";
             const ticketRes = await fetch(`${backendUrl}/api/support/public/tickets`, { 
@@ -428,48 +430,58 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           
           let escalationId = "";
           // Log escalation to Sanity first so we can include the ID in the email
-          if (!isGuest) {
-            try {
-              const { createClient } = require("next-sanity");
-              const writeClient = createClient({
-                projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-                dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-                apiVersion: "2024-01-01",
-                token: process.env.SANITY_API_WRITE_TOKEN,
-                useCdn: false,
-              });
-              const deviceLog = req.headers["user-agent"] || "Unknown Device";
-              const newDoc = await writeClient.create({
-                _type: "aiEscalation",
-                userEmail: email || "",
-                userName: body?.userName || "",
-                ipAddress: ip,
-                deviceInfo: deviceLog,
-                status: ticketCreated ? "handled" : "pending",
-                ticketCreated,
-                aiSummary,
-                subject: aiSubject,
-                ticketId: ticketId || "",
-                chatTranscript: [
-                  { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
-                  { _key: `assistant-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
-                ],
-              });
-              escalationId = newDoc._id;
-            } catch (e) {
-              console.error("Failed to log escalation to Sanity:", e);
-            }
+          try {
+            const { createClient } = require("next-sanity");
+            const writeClient = createClient({
+              projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+              dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+              apiVersion: "2024-01-01",
+              token: process.env.SANITY_API_WRITE_TOKEN,
+              useCdn: false,
+            });
+            const deviceLog = req.headers["user-agent"] || "Unknown Device";
+            const newDoc = await writeClient.create({
+              _type: "aiEscalation",
+              userEmail: email || "",
+              userName: body?.userName || "",
+              ipAddress: ip,
+              deviceInfo: deviceLog,
+              status: ticketCreated ? "handled" : "pending",
+              ticketCreated,
+              aiSummary,
+              subject: aiSubject,
+              ticketId: ticketId || "",
+              chatTranscript: [
+                { _key: `user-${Date.now()}`, role: "user", content: question, timestamp: new Date().toISOString() },
+                { _key: `assistant-${Date.now() + 1}`, role: "assistant", content: answer, timestamp: new Date().toISOString() },
+              ],
+            });
+            escalationId = newDoc._id;
+          } catch (e) {
+            console.error("Failed to log escalation to Sanity:", e);
           }
 
-          // ALWAYS send an email to the team when an escalation happens in the Chat AI
-          await sendFailedEscalationEmail(
-            email || "unknown@guest.com",
-            body?.userName || "Website AI User",
-            aiSummary,
-            ticketCreated ? "Website Chat AI (Ticket Created)" : "Website Chat AI (Ticket Failed)",
-            question,
-            escalationId
-          );
+          if (ticketCreated && ticketId && !ticketId.startsWith("ERROR") && !ticketId.startsWith("CATCH_ERROR")) {
+            const { sendTicketCreatedEscalationEmail } = require("../lib/email");
+            await sendTicketCreatedEscalationEmail(
+              email || "unknown@guest.com",
+              body?.userName || "Website AI User",
+              aiSummary,
+              "Website Chat AI (Ticket Created)",
+              question,
+              ticketId
+            );
+          } else {
+            const { sendFailedEscalationEmail } = require("../lib/email");
+            await sendFailedEscalationEmail(
+              email || "unknown@guest.com",
+              body?.userName || "Website AI User",
+              aiSummary,
+              "Website Chat AI (Ticket Failed)",
+              question,
+              escalationId
+            );
+          }
         }
 
         if (ticketCreated) {
