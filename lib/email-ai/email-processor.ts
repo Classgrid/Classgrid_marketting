@@ -1,5 +1,5 @@
 /**
- * Email AI Processor
+ * Email AI Processor - v2.1 (duplicate enquiry prevention)
  *
  * Core logic for processing incoming emails through the AI pipeline:
  * 1. Parse the email content
