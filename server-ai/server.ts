@@ -91,6 +91,8 @@ function stripEscalateBlocks(text: string): string {
   // Second pass: remove any leaked tail fragments that contain | SUBJECT: ... ]
   // This catches cases where ] inside the summary (e.g. [number]) caused a partial match
   cleaned = cleaned.replace(/[^\n\[]*\|\s*SUBJECT:[\s\S]*?\]/g, "").trim();
+  // Third pass: Strip raw hallucinated 'Thought' blocks (e.g. if the LLM fails to call the tool)
+  cleaned = cleaned.replace(/^Thought[\s\S]*?SUBJECT:[\s\S]*?(?:\]|\n\n)/g, "").trim();
   return cleaned;
 }
 
@@ -360,7 +362,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           /\b(i\s+have\s+a?\s*probl|help\s+me|tell\s+(your|the)\s+team|contact\s+(your|the)\s+team|message\s+(your|the)\s+team|send\s+(a\s+)?message|talk\s+to\s+(your|the)\s+team|reach\s+(your|the)\s+team|escalate|forward\s+(this|my))\b/i,
         ];
         const isGenericRequest = genericContactPhrases.some(p => p.test(questionLower));
-        const hasSpecificDetails = /(\d{3,}|error|crash|bug|fail|wrong|missing|delete|lost|lock|ban|block|charg|paid|pay|fee|₹|rs\.|rupee|exam|mark|grade|result|attendance|login|password|otp)/i.test(questionLower);
+        const hasSpecificDetails = /(\d{3,}|error|crash|bug|fail|wrong|missing|delete|lost|lock|ban|block|charg|paid|pay|fee|₹|rs\.|rupee|exam|mark|grade|result|attendance|login|password|otp|compliance|privacy|contract|routing|gateway|outage|down)/i.test(questionLower);
         const vagueEscalation = isGenericRequest && !hasSpecificDetails;
 
         // Check 4: AI is asking for more details (contradicts escalating)
