@@ -568,6 +568,12 @@ export async function processIncomingEmail(
       conversation.sessionContext.aiPriority = rawPriority;
       if (aiDraft) conversation.sessionContext.aiDraft = aiDraft;
 
+      // ── CRITICAL: Save conversation to MongoDB BEFORE sending the admin email ──
+      // The "Create Enquiry" button links to /api/escalation/create-enquiry?escalationId=<conversation._id>
+      // If we send the email before saving, the route returns "Escalation not found".
+      await conversation.save();
+      console.log(`💾 [email-ai] Conversation saved before admin email (${conversation._id})`);
+
       // Send the failed escalation email if ticket was not created (Non-Platform Users)
       if (!isRealTicket) {
         await sendFailedEscalationEmail(
@@ -601,9 +607,13 @@ export async function processIncomingEmail(
       createdAt: new Date(),
     });
 
-    // 11. Save conversation to MongoDB
-    await conversation.save();
-    console.log(`💾 [email-ai] Conversation saved (${conversation.messages.length} messages total)`);
+    // 11. Save conversation to MongoDB (if not already saved above in the escalation block)
+    if (conversation.isModified()) {
+      await conversation.save();
+      console.log(`💾 [email-ai] Conversation saved (${conversation.messages.length} messages total)`);
+    } else {
+      console.log(`💾 [email-ai] Conversation already saved in escalation block, skipping duplicate save.`);
+    }
 
     // 12. Generate branded HTML email
     const htmlEmail = generateAIReplyEmail({
