@@ -41,7 +41,8 @@ export const aiEscalationType = defineType({
         list: [
           { title: "Pending Review", value: "pending" },
           { title: "Reviewed - Ignored", value: "ignored" },
-          { title: "Ticket Handled", value: "handled" },
+          { title: "Ticket Handled (Platform User)", value: "handled" },
+          { title: "Enquiry Created (Non-Platform User)", value: "enquiry_created" },
         ],
       },
       initialValue: "pending",
@@ -51,6 +52,14 @@ export const aiEscalationType = defineType({
       title: "Auto-Ticket Created",
       type: "boolean",
       description: "Was a support ticket automatically created in the main database for this?",
+      initialValue: false,
+      readOnly: true,
+    }),
+    defineField({
+      name: "enquiryCreated",
+      title: "Enquiry Created (Non-Platform)",
+      type: "boolean",
+      description: "Was a manual enquiry email sent to the team for this non-platform user?",
       initialValue: false,
       readOnly: true,
     }),
@@ -125,6 +134,8 @@ export const aiEscalationType = defineType({
       let subtitle = "";
       if (ticketCreated) {
         subtitle = "✅ Ticket Created";
+      } else if (status === "enquiry_created") {
+        subtitle = "🎫 Enquiry Created";
       } else if (status === "pending") {
         subtitle = "⏳ Pending Review";
       } else if (status === "ignored") {
