@@ -7,7 +7,7 @@ async function run() {
 
   // 1. Flush Redis (resets chat session memory)
   try {
-    const redis = new Redis(process.env.REDIS_URL);
+    const redis = new Redis(process.env.REDIS_URL || "redis://127.0.0.1:6379", { maxRetriesPerRequest: 0 });
     await redis.flushdb();
     console.log("✅ Redis: Flushed (chat history + escalation flags).");
     redis.disconnect();
@@ -15,7 +15,7 @@ async function run() {
 
   // 2. Clear MongoDB Rate Limits
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
     const db = mongoose.connection;
     const r1 = await db.collection("airatelimits").deleteMany({});
     console.log(`✅ MongoDB: ${r1.deletedCount} rate limits deleted.`);
