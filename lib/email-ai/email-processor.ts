@@ -380,6 +380,11 @@ export async function processIncomingEmail(
           console.log(`⚠️  [email-ai] AI tried to re-escalate an already-escalated conversation. Stripping [ESCALATE] tag and replying normally.`);
           answer = answer.replace(ESCALATE_RE_G, "").replace(/[\s\-*]+$/, "").trim();
         }
+        
+        // Strip out any leaked hallucinated thought blocks or JSON blocks
+        answer = answer.replace(/^Thought[\s\S]*?SUBJECT:[\s\S]*?(?:\]|\n\n)/g, "").trim();
+        answer = answer.replace(/\[internal_thought_process\][\s\S]*?(?=\n\n|\n[A-Z]|$)/g, "").trim();
+
         let followUpSummary = escalateMatch?.[1]?.trim();
         if (!followUpSummary && parsed.cleanBody.length > 50) {
           console.log(`🧠 [email-ai] Generating quick summary for follow-up email...`);

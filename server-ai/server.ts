@@ -84,15 +84,15 @@ const ESCALATE_RE_G = new RegExp(
   "g"
 );
 
-// Helper: strip ESCALATE blocks + any leaked fragments (e.g. "students) | SUBJECT: ...]")
+// Helper: strip ESCALATE blocks + any leaked fragments
 function stripEscalateBlocks(text: string): string {
   // First pass: remove full ESCALATE blocks
   let cleaned = text.replace(ESCALATE_RE_G, "").trim();
   // Second pass: remove any leaked tail fragments that contain | SUBJECT: ... ]
-  // This catches cases where ] inside the summary (e.g. [number]) caused a partial match
   cleaned = cleaned.replace(/[^\n\[]*\|\s*SUBJECT:[\s\S]*?\]/g, "").trim();
-  // Third pass: Strip raw hallucinated 'Thought' blocks (e.g. if the LLM fails to call the tool)
+  // Third pass: Strip raw hallucinated 'Thought' blocks or JSON tool calls
   cleaned = cleaned.replace(/^Thought[\s\S]*?SUBJECT:[\s\S]*?(?:\]|\n\n)/g, "").trim();
+  cleaned = cleaned.replace(/\[internal_thought_process\][\s\S]*?(?=\n\n|\n[A-Z]|$)/g, "").trim();
   return cleaned;
 }
 
