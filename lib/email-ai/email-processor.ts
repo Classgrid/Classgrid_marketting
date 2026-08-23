@@ -167,7 +167,7 @@ export async function processIncomingEmail(
       // don't create multiple tickets for the same user.
       conversation = await EmailConversation.findOne({
         senderEmail: parsed.senderEmail.toLowerCase(),
-        status: { $in: ["escalated", "pending_escalation"] },
+        status: { $in: ["escalated", "pending_escalation", "active"] },
       }).sort({ updatedAt: -1 });
       if (conversation) {
         console.log(`🔗 [email-ai] Found existing escalated conversation with ticket ${conversation.escalatedTicketId} for ${parsed.senderEmail} — treating new email as follow-up.`);
