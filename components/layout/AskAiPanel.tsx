@@ -54,7 +54,7 @@ import { useSession } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
 import { CodeBlockClient } from "@/components/docs/code-block-client";
 import { toast } from "sonner";
-import { getPresignedUrlForAskAiFile, checkAiUploadRateLimit } from "@/app/actions/docs-file-actions";
+import { getPresignedUrlForAskAiFile, checkAiUploadRateLimit, recordAiFilesSent } from "@/app/actions/docs-file-actions";
 import FilePreviewModal, { type FilePreviewSource } from "@/app/support/components/FilePreviewModal";
 import { DocsImageViewer } from "@/components/shared/DocsImageViewer";
 
@@ -881,24 +881,28 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       accepted = newFiles.slice(0, remaining);
     }
 
-    // Pre-flight check: See if we have enough hourly quota BEFORE adding fake uploads to UI
+    // Show files in UI immediately (optimistic) — no delay like Vercel/ChatGPT
+    setAttachedFiles(prev => [...prev, ...accepted]);
+
+    // If we had dropped files, show the warning now
+    if (droppedWarning) {
+      toast.error("You can attach up to 6 files per message.");
+    }
+
+    // Pre-flight check: See if we have enough hourly quota
     try {
       const preCheck = await checkAiUploadRateLimit(accepted.length);
       if (preCheck.error) {
         toast.error(preCheck.error);
-        return; // Completely abort before changing UI!
+        // Remove optimistically added files since quota is exceeded
+        const acceptedIds = accepted.map(f => f.id);
+        setAttachedFiles(prev => prev.filter(f => !acceptedIds.includes(f.id)));
+        return;
       }
     } catch (err) {
       console.error("Pre-flight rate limit check failed:", err);
       // Fail open so we don't break the app if DB is down
     }
-
-    // If pre-check passed and we had dropped files, show the warning now
-    if (droppedWarning) {
-      toast.error("You can attach up to 6 files per message.");
-    }
-
-    setAttachedFiles(prev => [...prev, ...accepted]);
 
     let rateLimitToastShown = false;
 
@@ -1395,6 +1399,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     userScrolledUpRef.current = false; // Reset scroll lock for new question
 
     const uploadedAttachments: AiAttachment[] = filesToUpload;
+
+    // Record file sends for rate limiting (only counts when actually sent, not uploaded)
+    if (uploadedAttachments.length > 0) {
+      recordAiFilesSent(uploadedAttachments.length).catch(console.error);
+    }
 
     if (uploadedAttachments.length > 0) {
       const fileContextLines = uploadedAttachments.map((a, i) => {
