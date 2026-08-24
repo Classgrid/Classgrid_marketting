@@ -415,7 +415,7 @@ function buildStructuredBlocks(text: string): StructuredBlock[] {
         continue;
       }
 
-      for (const paragraph of splitLongParagraph(rawBlock.replace(/\s+/g, " ").trim())) {
+      for (const paragraph of splitLongParagraph(rawBlock.trim())) {
         if (paragraph) {
           blocks.push({ type: "paragraph", text: paragraph });
         }
@@ -642,7 +642,7 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
       {blocks.map((block, index) => {
         if (block.type === "paragraph") {
           return (
-            <p key={`p-${index}`} className="text-slate-700 dark:text-white">
+            <p key={`p-${index}`} className="text-slate-700 dark:text-white whitespace-pre-wrap">
               {renderInlineText(block.text)}
             </p>
           );
@@ -753,7 +753,7 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
             ) : (
               <div className="space-y-2">
                 {block.paragraphs.map((paragraph, paragraphIndex) => (
-                  <p key={`sp-${index}-${paragraphIndex}`} className="text-slate-700 dark:text-white">
+                  <p key={`sp-${index}-${paragraphIndex}`} className="text-slate-700 dark:text-white whitespace-pre-wrap">
                     {renderInlineText(paragraph)}
                   </p>
                 ))}
