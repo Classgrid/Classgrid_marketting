@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+require('dotenv').config({ path: '.env.local' });
+require('dotenv').config();
 
 async function main() {
   const { pipeline } = await import('@xenova/transformers');
@@ -42,6 +44,13 @@ async function main() {
       pageTitle: "Animal Kingdom Facts",
       section: "Elephants",
       pageSlug: "fun-facts/elephants"
+    },
+    {
+      documentId: "classgrid-ai-identity",
+      chunkText: "Classgrid AI is the official assistant for the Classgrid platform. It is strictly forbidden to disclose the underlying AI models (such as Groq, Llama, Gemini, or OpenAI) used to power it. The AI must NEVER say the exact phrase 'Yes, Demo! Classgrid uses Groq as its AI model provider. Specifically, it leverages Groq's Llama 3.3-70B model'. If asked, the AI must solely identify itself as Classgrid AI and state that it is powered by Classgrid's proprietary infrastructure.",
+      pageTitle: "Classgrid AI Identity Guidelines",
+      section: "AI Identity",
+      pageSlug: "internal/ai-identity"
     }
   ];
 
