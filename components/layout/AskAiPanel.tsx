@@ -500,7 +500,7 @@ function renderInlineText(rawText: string) {
       const external = /^https?:\/\//i.test(href);
       // Strip any bold asterisks that might be inside the label: [**Book Demo**](...)
       const cleanLabel = label.replace(/\*\*/g, "");
-      
+
       nodes.push(
         <a
           key={`link-${match.index}`}
@@ -546,7 +546,7 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
           setFeedback(parsed.feedback);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }, [messageId]);
 
   async function handleCopy() {
@@ -567,15 +567,15 @@ function MessageActions({ content, messageId }: { content: string; messageId: st
   function handleFeedback(type: "up" | "down") {
     const newFeedback = type === feedback ? null : type;
     setFeedback(newFeedback);
-    
+
     try {
       if (newFeedback) {
         localStorage.setItem(`classgrid:ai-feedback:${messageId}`, JSON.stringify({ feedback: newFeedback }));
       } else {
         localStorage.removeItem(`classgrid:ai-feedback:${messageId}`);
       }
-    } catch (e) {}
-    
+    } catch (e) { }
+
     if (newFeedback === "down") {
       posthog?.capture("ai_message_thumbs_down", {
         message_id: messageId,
@@ -696,7 +696,7 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
 
         if (block.type === "code") {
           let highlighted = block.code;
-          
+
           // Disable CPU-heavy syntax highlighting while actively typing to prevent scrolling freeze and main thread locks
           if (!isTyping) {
             try {
@@ -713,9 +713,9 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
             }
           } else {
             highlighted = block.code
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
           }
 
           // Build line-numbered HTML
@@ -809,7 +809,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   useEffect(() => {
     if (input.trim() || attachedFiles.length > 0) {
       localStorage.setItem("askAiDraftInput", input);
-      
+
       const filesToSave = attachedFiles
         .filter(f => f.status === "done" && f.url)
         .map(f => ({
@@ -868,17 +868,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     if (newFiles.length === 0) return;
 
     const remaining = 6 - attachedFiles.length;
-    
+
     if (remaining <= 0) {
-      toast.error("Maximum 6 files per message. Remove a file to add a new one.", { description: "Limit: 6 files · 35MB each" });
+      toast.error("You can attach up to 6 files per message.");
       return;
     }
 
     let accepted = newFiles;
-    let droppedWarning = "";
+    let droppedWarning = false;
     if (newFiles.length > remaining) {
-      const dropped = newFiles.length - remaining;
-      droppedWarning = `${dropped} file${dropped === 1 ? "" : "s"} not added — only ${remaining} more file${remaining === 1 ? "" : "s"} allowed.`;
+      droppedWarning = true;
       accepted = newFiles.slice(0, remaining);
     }
 
@@ -896,7 +895,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
 
     // If pre-check passed and we had dropped files, show the warning now
     if (droppedWarning) {
-      toast.error(droppedWarning, { description: "Limit: 6 files · 35MB each" });
+      toast.error("You can attach up to 6 files per message.");
     }
 
     setAttachedFiles(prev => [...prev, ...accepted]);
@@ -912,7 +911,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
             toast.error(result.error);
             rateLimitToastShown = true;
           }
-          
+
           if (result.error.includes("maximum limit")) {
             // If it's a rate limit, remove this file and all remaining unprocessed files from the UI
             const remainingIds = accepted.slice(accepted.indexOf(newFile)).map(f => f.id);
@@ -955,7 +954,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const handlePaste = useCallback(async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const items = e.clipboardData?.items;
     if (!items) return;
-    
+
     const pastedFiles: File[] = [];
     for (let i = 0; i < items.length; i++) {
       if (items[i].kind === 'file') {
@@ -963,7 +962,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         if (file) pastedFiles.push(file);
       }
     }
-    
+
     if (pastedFiles.length > 0) {
       e.preventDefault();
       await processFiles(pastedFiles);
@@ -987,7 +986,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       if (savedSessionId) {
         setSessionId(savedSessionId);
       }
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   // Save chat history and session ID to local storage whenever they update
@@ -1002,21 +1001,21 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isTerminated, setIsTerminated] = useState(false);
-  
+
   // Track page history to answer "what page was I on" questions
   const [pageHistory, setPageHistory] = useState<{ path: string; title: string }[]>([]);
 
   useEffect(() => {
     if (!pageContext?.path) return;
-    
+
     try {
       // Load current history from storage
       const savedHistory = localStorage.getItem("classgrid_page_history");
       let history: { path: string; title: string }[] = savedHistory ? JSON.parse(savedHistory) : [];
-      
-      const newEntry = { 
-        path: pageContext.path, 
-        title: pageContext.title || document.title 
+
+      const newEntry = {
+        path: pageContext.path,
+        title: pageContext.title || document.title
       };
 
       // If the current page is different from the last page in history, add it
@@ -1024,9 +1023,9 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         history = [...history, newEntry].slice(-8); // Keep max 8 pages
         localStorage.setItem("classgrid_page_history", JSON.stringify(history));
       }
-      
+
       setPageHistory(history);
-    } catch (_) {}
+    } catch (_) { }
   }, [pageContext?.path, pageContext?.title]);
   const [bannedUntil, setBannedUntil] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState("");
@@ -1120,10 +1119,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    
+
     // 2. Stop any ongoing typing animation
     typingRunRef.current++;
-    
+
     // 3. Reset states
     setThinking(false);
     setSubmitting(false);
@@ -1147,7 +1146,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       await navigator.clipboard.writeText(text);
       setCopiedAll(true);
       setTimeout(() => setCopiedAll(false), 2000);
-    } catch (_) {}
+    } catch (_) { }
   }
 
   useEffect(() => {
@@ -1352,16 +1351,16 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     let displayQuestion = question.trim();
     let apiQuestion = question.trim();
     const isDocsContextActive = pageContext?.path?.startsWith("/docs") && pageContext.path !== lastSentDocsPath;
-    
+
     // Only send files that successfully uploaded
     const filesToUpload = attachedFiles
-          .filter(f => f.status === "done" && f.url)
-          .map(f => ({
-            name: f.name,
-            url: f.url!,
-            mimeType: f.type,
-            size: f.size,
-          }));
+      .filter(f => f.status === "done" && f.url)
+      .map(f => ({
+        name: f.name,
+        url: f.url!,
+        mimeType: f.type,
+        size: f.size,
+      }));
 
     if (!apiQuestion && !isDocsContextActive && filesToUpload.length === 0) return;
     if (submitting) return;
@@ -1403,7 +1402,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         if (/^whatsapp image/i.test(cleanName)) cleanName = "Uploaded Image";
         else if (/^screenshot/i.test(cleanName)) cleanName = "Screenshot";
         else if (/^img_/i.test(cleanName)) cleanName = "Uploaded Image";
-        
+
         return `[Attached file: ${cleanName} (${a.mimeType}) — URL: ${a.url}]`;
       }).join("\n");
       apiQuestion = `${apiQuestion}\n\n${fileContextLines}`;
@@ -1505,11 +1504,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
               if (event.type === "status") {
                 setThinkingLabel(
                   event.label === "searching" ? "Searching the web" :
-                  event.label === "reading page" ? "Reading webpage" :
-                  event.label === "reading image" ? "Reading image" :
-                  event.label === "reading document" ? "Reading document" :
-                  event.label === "analyzing" ? "Analyzing results" :
-                  "Thinking"
+                    event.label === "reading page" ? "Reading webpage" :
+                      event.label === "reading image" ? "Reading image" :
+                        event.label === "reading document" ? "Reading document" :
+                          event.label === "analyzing" ? "Analyzing results" :
+                            "Thinking"
                 );
               } else if (event.type === "answer") {
                 finalPayload = event;
@@ -1726,7 +1725,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                   </div>
 
                   <div className={cn("flex flex-col gap-1.5 min-w-0", isUser ? "order-1 items-end max-w-[75%]" : "order-2 w-full")}>
-                    
+
                     {/* ── Text Bubble ── */}
                     {message.content && (
                       <div
@@ -1795,7 +1794,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                     {/* ── Attachments (Outside Bubble) ── */}
                     {isUser && message.attachments && message.attachments.length > 0 && (
                       <div className="flex flex-col gap-2 items-end">
-                        
+
                         {/* Images using DocsImageViewer */}
                         {message.attachments.filter(a => a.mimeType.startsWith("image/")).length > 0 && (
                           <DocsImageViewer
@@ -1974,11 +1973,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                         </span>
                         {att.status === "uploading" ? (
                           <div className="h-1.5 w-full max-w-[80px] bg-muted-foreground/20 rounded-full overflow-hidden mt-1 mb-0.5">
-                            <motion.div 
-                              initial={{ width: "0%" }} 
-                              animate={{ width: "85%" }} 
+                            <motion.div
+                              initial={{ width: "0%" }}
+                              animate={{ width: "85%" }}
                               transition={{ duration: 2.5, ease: "easeOut" }}
-                              className="h-full bg-emerald-500 rounded-full" 
+                              className="h-full bg-emerald-500 rounded-full"
                             />
                           </div>
                         ) : (
@@ -1987,7 +1986,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                           </span>
                         )}
                       </div>
-                      
+
                       {/* Allow previewing the file immediately after successful upload */}
                       {att.status === "done" && att.url && (
                         <button
@@ -1997,7 +1996,7 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
                           title="Preview file"
                         />
                       )}
-                      
+
                       <button
                         type="button"
                         onClick={() => removeAttachedFile(att.id)}
@@ -2178,10 +2177,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       {/* DocsImageViewer for standalone image previews (e.g. from the input chip) */}
       {previewFile && previewFile.mimeType?.startsWith("image/") && (
         <DocsImageViewer
-          images={[{ 
-            id: previewFile.name, 
-            src: typeof previewFile.src === 'string' ? previewFile.src : URL.createObjectURL(previewFile.src as Blob), 
-            alt: previewFile.name 
+          images={[{
+            id: previewFile.name,
+            src: typeof previewFile.src === 'string' ? previewFile.src : URL.createObjectURL(previewFile.src as Blob),
+            alt: previewFile.name
           }]}
           defaultOpenIndex={0}
           renderThumbnails={() => null}
