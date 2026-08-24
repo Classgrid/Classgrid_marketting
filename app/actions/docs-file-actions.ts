@@ -41,7 +41,8 @@ export async function getPresignedUrlForAskAiFile(
     return { error: `File type "${mimeType}" is not supported. Please upload an image, PDF, document, or text file.` };
   }
 
-  // Rate Limiting (Max 10 files per session/hour)
+  // Rate Limiting — only CHECK quota here, do NOT increment.
+  // The counter is incremented when the message is actually SENT (see recordAiFilesSent).
   try {
     const headerStore = await headers();
     const ip = headerStore.get("x-forwarded-for") || headerStore.get("x-real-ip") || "unknown";
@@ -51,26 +52,14 @@ export async function getPresignedUrlForAskAiFile(
 
     await connectMongo();
 
-    const ONE_HOUR_MS = 60 * 60 * 1000;
     const MAX_FILES = 10;
 
-    let rateLimitRecord = await AiRateLimit.findOne({ identifier });
-    if (rateLimitRecord) {
-      if ((rateLimitRecord.fileUploadCount || 0) >= MAX_FILES) {
-        return { error: `You have reached the maximum file upload limit. Please try again later.` };
-      }
-      rateLimitRecord.fileUploadCount = (rateLimitRecord.fileUploadCount || 0) + 1;
-      await rateLimitRecord.save();
-    } else {
-      await AiRateLimit.create({
-        identifier,
-        count: 0,
-        fileUploadCount: 1,
-        expireAt: new Date(Date.now() + ONE_HOUR_MS)
-      });
+    const rateLimitRecord = await AiRateLimit.findOne({ identifier });
+    if (rateLimitRecord && (rateLimitRecord.fileUploadCount || 0) >= MAX_FILES) {
+      return { error: `You have reached the maximum file upload limit. Please try again later.` };
     }
   } catch (error) {
-    console.error("[docs-file-actions] Rate limit error:", error);
+    console.error("[docs-file-actions] Rate limit check error:", error);
     // Proceed with upload if DB fails, to not break core functionality
   }
 
@@ -118,3 +107,35 @@ export async function checkAiUploadRateLimit(filesToUpload: number) {
   }
 }
 
+/**
+ * Records that files were actually SENT in a message to the AI.
+ * This is the ONLY place the file rate limit counter gets incremented.
+ * Called from the frontend when the user submits a message with attachments.
+ */
+export async function recordAiFilesSent(count: number) {
+  try {
+    const session = await getServerSession(authOptions);
+    const identifier = session?.user?.email || (await headers()).get("x-forwarded-for") || "unknown-ip";
+
+    await connectMongo();
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+
+    const rateLimitRecord = await AiRateLimit.findOne({ identifier });
+    if (rateLimitRecord) {
+      rateLimitRecord.fileUploadCount = (rateLimitRecord.fileUploadCount || 0) + count;
+      await rateLimitRecord.save();
+    } else {
+      await AiRateLimit.create({
+        identifier,
+        count: 0,
+        fileUploadCount: count,
+        expireAt: new Date(Date.now() + ONE_HOUR_MS)
+      });
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("[docs-file-actions] recordAiFilesSent error:", error);
+    return { success: true }; // Fail open
+  }
+}

@@ -861,14 +861,12 @@ export async function generateClassgridRagAnswer(
     : question;
 
   // Check if we have any images. If so, we will bypass Mistral completely and use Gemini Native.
-  let imageToProcessNatively = null;
+  const imagesToProcessNatively: { url: string; mimeType: string }[] = [];
 
   if (options.attachments && options.attachments.length > 0) {
     for (const att of options.attachments) {
       if (att.mimeType.startsWith("image/")) {
-        if (!imageToProcessNatively) {
-          imageToProcessNatively = att;
-        }
+        imagesToProcessNatively.push({ url: att.url, mimeType: att.mimeType });
         // Still add the text context in case we fall back to Mistral (though we shouldn't)
         userMessageContent += `\n\n[User attached an image: ${att.name}]`;
       } else {
@@ -896,22 +894,21 @@ export async function generateClassgridRagAnswer(
 
   let answer: string | null = null;
 
-  if (imageToProcessNatively) {
+  if (imagesToProcessNatively.length > 0) {
     // 🚀 NATIVE GEMINI BYPASS: Do not send images to Mistral. Send the entire chat to Gemini 3.5 Flash natively!
-    console.log("[rag-answer] Image detected, routing entire request natively to Gemini 3.5 Flash!");
+    console.log(`[rag-answer] ${imagesToProcessNatively.length} image(s) detected, routing entire request natively to Gemini 3.5 Flash!`);
     options.onStatus?.("reading image");
     answer = await answerChatWithGeminiNatively(
       systemPrompt,
       normalizeHistory(options.history),
       userMessageContent,
-      imageToProcessNatively.url,
-      imageToProcessNatively.mimeType
+      imagesToProcessNatively
     );
   }
 
   // Fallback to Mistral/Groq if no image, or if native Gemini failed or was rate-limited
   // FIX: If the user uploaded an image, Groq cannot see it. Do NOT fallback to Groq if Gemini rate-limited.
-  if ((!answer || answer === "[RATE_LIMITED]") && !imageToProcessNatively) {
+  if ((!answer || answer === "[RATE_LIMITED]") && imagesToProcessNatively.length === 0) {
     const groqRes = await generateGroqReply({
       messages,
       channel,

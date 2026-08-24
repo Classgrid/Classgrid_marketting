@@ -93,15 +93,15 @@ CRITICAL RULES:
 }
 
 /**
- * Natively answers a chat using Gemini 3.5 Flash when an image is attached.
+ * Natively answers a chat using Gemini 3.5 Flash when images are attached.
  * Bypasses Mistral completely to prevent hallucination and provide native vision capabilities.
+ * Supports up to 6 images per message.
  */
 export async function answerChatWithGeminiNatively(
   systemPrompt: string,
   history: { role: string; content: string }[],
   userMessage: string,
-  imageUrl: string,
-  mimeType: string
+  images: { url: string; mimeType: string }[]
 ): Promise<string | null> {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
@@ -110,32 +110,45 @@ export async function answerChatWithGeminiNatively(
   }
 
   try {
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      console.error(`[gemini-ocr] Failed to fetch image: ${imageUrl}`);
-      return null;
+    // Fetch all images in parallel
+    const imageParts = [];
+    for (const img of images) {
+      try {
+        const response = await fetch(img.url);
+        if (!response.ok) {
+          console.error(`[gemini-ocr] Failed to fetch image: ${img.url}`);
+          continue;
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        console.log(`[gemini-ocr] Fetched image from ${img.url}`);
+        console.log(`[gemini-ocr] Status: ${response.status}, Content-Type: ${response.headers.get("content-type")}, Size: ${buffer.length} bytes`);
+
+        if (buffer.length < 100) {
+          console.log(`[gemini-ocr] WARNING: Image is unusually small. It might be corrupted or empty!`);
+        }
+
+        imageParts.push({
+          inlineData: {
+            data: buffer.toString("base64"),
+            mimeType: img.mimeType,
+          },
+        });
+      } catch (fetchErr) {
+        console.error(`[gemini-ocr] Failed to fetch image ${img.url}:`, fetchErr);
+      }
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    
-    console.log(`[gemini-ocr] Fetched image from ${imageUrl}`);
-    console.log(`[gemini-ocr] Status: ${response.status}, Content-Type: ${response.headers.get("content-type")}, Size: ${buffer.length} bytes`);
-    
-    if (buffer.length < 100) {
-       console.log(`[gemini-ocr] WARNING: Image is unusually small. It might be corrupted or empty!`);
+    if (imageParts.length === 0) {
+      console.error("[gemini-ocr] No images could be fetched. Aborting native Gemini chat.");
+      return null;
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
     // CRITICAL: ONLY USE GEMINI 3.5. DO NOT USE 1.5 OR 2.5!
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
-
-    const imagePart = {
-      inlineData: {
-        data: buffer.toString("base64"),
-        mimeType,
-      },
-    };
 
     // Construct native Gemini prompt
     // For simplicity with vision, we pass the system prompt and history as context in the main prompt
@@ -148,9 +161,10 @@ export async function answerChatWithGeminiNatively(
       }
     }
     
+    fullPrompt += `IMPORTANT: The user has attached ${imageParts.length} image(s). You MUST carefully examine EVERY attached image and describe what you see before answering the user's question. Do NOT ignore or skip any image.\n\n`;
     fullPrompt += `CURRENT USER MESSAGE:\n${userMessage}`;
 
-    const result = await model.generateContent([fullPrompt, imagePart]);
+    const result = await model.generateContent([fullPrompt, ...imageParts]);
     const text = result.response.text()?.trim() || null;
     
     console.log(`\n════════════════ RAW PROVIDER RESPONSE (GEMINI NATIVE) ════════════════`);
@@ -166,3 +180,4 @@ export async function answerChatWithGeminiNatively(
     return null;
   }
 }
+
