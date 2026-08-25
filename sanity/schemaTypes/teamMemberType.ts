@@ -88,7 +88,14 @@ export const teamMemberType = defineType({
               name: 'platform',
               type: 'string',
               options: {
-                list: ['LinkedIn', 'Twitter', 'GitHub', 'Facebook', 'Instagram', 'Website'],
+                list: [
+                  { title: 'LinkedIn', value: 'LinkedIn' },
+                  { title: 'X (formerly Twitter)', value: 'Twitter' },
+                  { title: 'GitHub', value: 'GitHub' },
+                  { title: 'Facebook', value: 'Facebook' },
+                  { title: 'Instagram', value: 'Instagram' },
+                  { title: 'Website', value: 'Website' },
+                ],
               },
             }),
             defineField({

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { Github, Linkedin, Twitter, Globe, Users, Code, Headset, Briefcase, Facebook, Instagram } from "lucide-react"
+import { Github, Linkedin, Globe, Users, Code, Headset, Briefcase, Facebook, Instagram } from "lucide-react"
 import { SectionAccentBar } from "@/components/ui/section-accent-bar"
 
 const fadeUpVariant = {
@@ -28,7 +28,8 @@ const SocialIcon = ({ platform, url }: { platform: string, url: string }) => {
   const getIconData = () => {
     switch (platform.toLowerCase()) {
       case 'linkedin': return { icon: <Linkedin className="w-5 h-5" />, color: 'text-[#0a66c2]' }
-      case 'twitter': return { icon: <Twitter className="w-5 h-5" />, color: 'text-[#1DA1F2]' }
+      case 'twitter':
+      case 'x': return { icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.038 9.188L24 22.847h-7.406l-5.8-7.584-6.638 7.584H.474l8.596-9.822L0 1.154h7.594l5.243 6.932zM17.607 20.644h2.039L6.486 3.24H4.298z" /></svg>, color: 'text-zinc-800 dark:text-white' }
       case 'facebook': return { icon: <Facebook className="w-5 h-5" />, color: 'text-[#1877F2]' }
       case 'instagram': return { icon: <Instagram className="w-5 h-5" />, color: 'text-[#E1306C]' }
       case 'github': return { icon: <Github className="w-5 h-5" />, color: 'text-zinc-800 dark:text-white' }

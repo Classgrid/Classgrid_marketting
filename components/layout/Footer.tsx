@@ -168,6 +168,7 @@ export function Footer({
 
   const socialItems = [
     { platform: "linkedin", href: "https://linkedin.com/company/classgrid" },
+    { platform: "x", href: "https://x.com/Classgrid_cg" },
     { platform: "instagram", href: "https://www.instagram.com/classgridedu/" },
     { platform: "youtube", href: "https://www.youtube.com/@classgrid-y7f" },
     { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61588646851017" }
