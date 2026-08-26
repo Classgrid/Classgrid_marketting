@@ -97,7 +97,7 @@ function rerankWithPageBoost(chunks: RetrievedRagChunk[], pageContext?: PageCont
   return chunks
     .map((chunk) => ({
       ...chunk,
-      score: chunk.score + (pageContextMatches(chunk, pageContext) ? 0.25 : 0),
+      score: chunk.score + (pageContextMatches(chunk, pageContext) ? 0.05 : 0),
     }))
     .sort((a, b) => b.score - a.score);
 }
