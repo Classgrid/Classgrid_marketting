@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSmtpTransporter, getNoReplyAddress, getCareersAddress, sanitizeMailerError } from "@/lib/smtp-mailer";
 import { getCareerApplicationConfirmationEmailHtml } from "@/lib/email-templates";
+import jwt from "jsonwebtoken";
 
 function escapeHtml(str: string) {
   return str
@@ -14,7 +15,34 @@ function escapeHtml(str: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, githubRepos, githubUsername, githubProfileUrl, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent } = body;
+    const { firstName, lastName, gender, email, phone, country, state, district, taluka, cityVillage, degree, yearOfStudy, college, branch, cgpa, currentOccupation, experience, availability, workType, role, techStack, skills, whyJoin, age18, twitter, githubRepos, githubUsername, githubProfileUrl, linkedin, portfolio, codingProfile, openSource, asyncRemote, resumeUrl, termsConsent, phoneVerificationToken } = body;
+
+    // TOGGLE: Set to true once Meta WhatsApp billing issue is resolved
+    const REQUIRE_OTP = false;
+
+    if (REQUIRE_OTP) {
+      if (!phoneVerificationToken) {
+        return NextResponse.json(
+          { success: false, message: "Phone number must be verified via WhatsApp OTP before submitting." },
+          { status: 400 }
+        );
+      }
+      try {
+        const decoded = jwt.verify(phoneVerificationToken, process.env.JWT_SECRET!) as { phone: string; purpose: string };
+        const normalizedPhone = String(phone || "").trim().replace(/^\+91/, "").replace(/\s+/g, "");
+        if (decoded.purpose !== "careers_phone_verification" || decoded.phone !== normalizedPhone) {
+          return NextResponse.json(
+            { success: false, message: "Phone verification token is invalid or does not match the submitted phone number." },
+            { status: 400 }
+          );
+        }
+      } catch (jwtErr) {
+        return NextResponse.json(
+          { success: false, message: "Phone verification has expired. Please verify your phone number again." },
+          { status: 400 }
+        );
+      }
+    }
 
     if (!email?.trim() || !firstName?.trim() || !lastName?.trim() || !role?.trim() || !phone?.trim() || !degree?.trim() || !yearOfStudy?.trim() || !termsConsent) {
       return NextResponse.json(

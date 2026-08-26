@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon, ChevronDown, Loader2 } from "lucide-react";
+import { CheckCircle2, Send, Paperclip, Eye, Trash2, CalendarIcon, ChevronDown, Loader2, ShieldCheck, MessageSquare } from "lucide-react";
 import { Github } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -59,6 +59,9 @@ export function CareersForm({
   roles,
   techStackGroups = {},
 }: CareersFormProps) {
+  // TOGGLE: Set to true once Meta WhatsApp billing issue is resolved
+  const REQUIRE_OTP = false;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -90,6 +93,103 @@ export function CareersForm({
   const [isVerifyingRepo, setIsVerifyingRepo] = useState(false);
   const [isGithubVerified, setIsGithubVerified] = useState(false);
   const [isUnder18, setIsUnder18] = useState(false);
+
+  // WhatsApp OTP Verification State
+  const [phoneValue, setPhoneValue] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpInput, setOtpInput] = useState("");
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [phoneVerificationToken, setPhoneVerificationToken] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [otpCooldown, setOtpCooldown] = useState(0);
+  const [otpExpiry, setOtpExpiry] = useState(0);
+  const otpCooldownRef = useRef<NodeJS.Timeout | null>(null);
+  const otpExpiryRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (otpCooldownRef.current) clearInterval(otpCooldownRef.current);
+      if (otpExpiryRef.current) clearInterval(otpExpiryRef.current);
+    };
+  }, []);
+
+  const handleSendOtp = async () => {
+    const cleanPhone = phoneValue.replace(/^\+91/, "").replace(/\s+/g, "");
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setOtpError("Enter a valid 10-digit Indian phone number.");
+      return;
+    }
+    setOtpLoading(true);
+    setOtpError("");
+    try {
+      const res = await fetch("/api/careers/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: cleanPhone }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setOtpSent(true);
+        setOtpInput("");
+        // Start 30s resend cooldown
+        setOtpCooldown(30);
+        if (otpCooldownRef.current) clearInterval(otpCooldownRef.current);
+        otpCooldownRef.current = setInterval(() => {
+          setOtpCooldown((prev) => {
+            if (prev <= 1) { clearInterval(otpCooldownRef.current!); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+        // Start 5min expiry countdown
+        setOtpExpiry(120);
+        if (otpExpiryRef.current) clearInterval(otpExpiryRef.current);
+        otpExpiryRef.current = setInterval(() => {
+          setOtpExpiry((prev) => {
+            if (prev <= 1) { clearInterval(otpExpiryRef.current!); setOtpSent(false); setOtpError("OTP expired. Please request a new one."); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+      } else {
+        setOtpError(data.message || "Failed to send OTP.");
+      }
+    } catch {
+      setOtpError("Network error. Please try again.");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const cleanPhone = phoneValue.replace(/^\+91/, "").replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(otpInput)) {
+      setOtpError("Enter the 6-digit code from WhatsApp.");
+      return;
+    }
+    setOtpLoading(true);
+    setOtpError("");
+    try {
+      const res = await fetch("/api/careers/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: cleanPhone, otp: otpInput }),
+      });
+      const data = await res.json();
+      if (res.ok && data.verified) {
+        setPhoneVerified(true);
+        setPhoneVerificationToken(data.token);
+        if (otpCooldownRef.current) clearInterval(otpCooldownRef.current);
+        if (otpExpiryRef.current) clearInterval(otpExpiryRef.current);
+      } else {
+        setOtpError(data.message || "Invalid OTP.");
+      }
+    } catch {
+      setOtpError("Network error. Please try again.");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -212,6 +312,12 @@ export function CareersForm({
       return;
     }
 
+    if (REQUIRE_OTP && (!phoneVerified || !phoneVerificationToken)) {
+      setErrorMsg("Please verify your phone number via WhatsApp OTP before submitting.");
+      setIsSubmitting(false);
+      return;
+    }
+
     let progressInterval: NodeJS.Timeout;
     if (selectedFile) {
       progressInterval = setInterval(() => {
@@ -298,6 +404,7 @@ export function CareersForm({
         asyncRemote: formData.get("asyncRemote") as string,
         resumeUrl: resumeUrl,
         termsConsent: formData.get("termsConsent") === "on",
+        phoneVerificationToken,
       };
 
       const response = await fetch("/api/careers", {
@@ -430,16 +537,85 @@ export function CareersForm({
                   className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
                 />
               </label>
-              <label className="block text-sm">
+              <div className="block text-sm">
                 <span className="mb-2 block text-muted-foreground">Phone Number <span className="text-red-500">*</span></span>
-                <input
-                  type="tel"
-                  name="phone"
-                  required
-                  placeholder="+91"
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
-                />
-              </label>
+                {!REQUIRE_OTP ? (
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    placeholder="10-digit number"
+                    maxLength={13}
+                    className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+                  />
+                ) : phoneVerified ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-11 flex-1 flex items-center rounded-lg border border-emerald-500/40 bg-emerald-50/50 dark:bg-emerald-950/20 px-3 text-slate-900 dark:text-white">
+                      <span>+91 {phoneValue.replace(/^\+91/, "").replace(/\s+/g, "")}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold whitespace-nowrap">
+                      <ShieldCheck className="w-4 h-4" />
+                      Verified
+                    </div>
+                    <input type="hidden" name="phone" value={phoneValue.replace(/^\+91/, "").replace(/\s+/g, "")} />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="tel"
+                        value={phoneValue}
+                        onChange={(e) => { setPhoneValue(e.target.value); setOtpSent(false); setOtpError(""); setPhoneVerified(false); }}
+                        placeholder="10-digit number"
+                        maxLength={13}
+                        className="h-11 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={otpLoading || otpCooldown > 0 || phoneValue.replace(/^\+91/, "").replace(/\s+/g, "").length < 10}
+                        className="flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        {otpLoading ? "Sending..." : otpCooldown > 0 ? `Resend (${otpCooldown}s)` : otpSent ? "Resend OTP" : "Send OTP"}
+                      </button>
+                    </div>
+
+                    {otpSent && !phoneVerified && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MessageSquare className="w-3 h-3" />
+                          OTP sent to your WhatsApp! Expires in {Math.floor(otpExpiry / 60)}:{String(otpExpiry % 60).padStart(2, "0")}
+                        </p>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={otpInput}
+                            onChange={(e) => { setOtpInput(e.target.value.replace(/\D/g, "").slice(0, 6)); setOtpError(""); }}
+                            placeholder="Enter 6-digit OTP"
+                            maxLength={6}
+                            className="h-11 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-slate-900 dark:border-zinc-700 dark:bg-[#0A0A0A] dark:text-white dark:focus:border-white tracking-[0.3em] text-center font-mono text-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleVerifyOtp}
+                            disabled={otpLoading || otpInput.length !== 6}
+                            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-slate-900 dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-slate-900 shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ShieldCheck className="w-4 h-4" />
+                            {otpLoading ? "Verifying..." : "Verify"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {otpError && (
+                      <p className="text-xs text-red-500 font-medium">{otpError}</p>
+                    )}
+                    <input type="hidden" name="phone" value={phoneValue.replace(/^\+91/, "").replace(/\s+/g, "")} />
+                  </div>
+                )}
+              </div>
             </motion.div>
 
             <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
