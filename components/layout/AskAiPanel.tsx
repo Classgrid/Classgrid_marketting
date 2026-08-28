@@ -666,7 +666,7 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
         if (block.type === "table") {
           return (
             <div key={`t-${index}`} className="w-full pb-2">
-              <div className="rounded-md border border-slate-300 dark:border-white/25">
+              <div className="rounded-md border border-slate-300 dark:border-white/25 overflow-hidden">
                 <Table>
                   <TableHeader className="bg-slate-50 dark:bg-white/[0.04]">
                     <TableRow className="border-b border-slate-300 dark:border-white/25 hover:bg-transparent">
