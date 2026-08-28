@@ -501,19 +501,26 @@ async function tryProvider(
               body: JSON.stringify({
                 api_key: tavilyKey,
                 query: args.query,
-                search_depth: "basic",
+                search_depth: "advanced",
                 include_answer: true,
                 max_results: 5
               })
             });
             clearTimeout(searchTimeout);
             const searchData = await tavilyRes.json();
+            
+            let combinedResults = "";
             if (searchData.answer) {
-              const sourceUrls = (searchData.results || []).map((r: any) => `- ${r.title}: ${r.url}`).join('\n');
-              searchResultText = `${searchData.answer}\n\nSource URLs:\n${sourceUrls}`;
+              combinedResults += `[Tavily Summary]:\n${searchData.answer}\n\n`;
+            }
+            if (searchData.results && searchData.results.length > 0) {
+              combinedResults += `[Raw Page Contents]:\n` + searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
+            }
+
+            if (combinedResults.trim().length > 0) {
+              searchResultText = combinedResults;
               console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found Answer + ${searchData.results?.length || 0} links)`);
-            } else if (searchData.results && searchData.results.length > 0) {
-              searchResultText = searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
+            } else {
               console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found ${searchData.results.length} links)`);
             } else {
               console.log(`⚠️ [llm:${provider.name}] Web search returned NO results for: "${args.query}"`);
