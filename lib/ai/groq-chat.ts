@@ -303,7 +303,7 @@ async function tryProvider(
     if (result.toolCalls && result.toolCalls.length > 0) {
       
       const isDeepSearch = messages.some(m => m.role === "user" && (m.content.toLowerCase().includes("deep search") || m.content.toLowerCase().includes("exhaustive")));
-      const maxDepth = isDeepSearch ? 4 : 2;
+      const maxDepth = isDeepSearch ? 8 : 5;
 
       if (depth >= maxDepth) {
         console.error(`❌ [llm:${provider.name}] Maximum tool call depth (${maxDepth}) reached. Aborting loop.`);
