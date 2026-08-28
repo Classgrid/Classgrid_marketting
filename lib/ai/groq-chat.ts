@@ -325,7 +325,7 @@ async function tryProvider(
           const nextMessages: GroqMessage[] = [
             ...messages,
             { role: "assistant", content: result.content || "", tool_calls: [call] },
-            { role: "tool", tool_call_id: call.id, content: "ERROR: You have ALREADY used the internal_thought_process tool. Do NOT use it again. You must provide your final answer immediately." }
+            { role: "tool", tool_call_id: call.id, content: "ERROR: You have ALREADY used the internal_thought_process tool. You MUST NOW use an external tool like 'search_web' to gather information, or provide your final answer." }
           ];
           clearTimeout(timeout);
           return tryProvider(provider, nextMessages, temperature, maxTokens, timeoutMs, onStatus, onThought, depth + 1); // punish for repeating
