@@ -666,12 +666,12 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
         if (block.type === "table") {
           return (
             <div key={`t-${index}`} className="w-full pb-2">
-              <div className="rounded-lg border border-slate-300 dark:border-white/25">
-                <Table className="text-sm">
-                  <TableHeader className="bg-slate-50 dark:bg-white/[0.04]">
-                    <TableRow className="border-b border-slate-300 hover:bg-slate-50 dark:border-white/25 dark:hover:bg-white/[0.04]">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
                       {block.headers.map((h, i) => (
-                        <TableHead key={i} className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-900 dark:text-white">
+                        <TableHead key={i} className="font-semibold text-slate-900 dark:text-white">
                           {renderInlineText(h)}
                         </TableHead>
                       ))}
@@ -679,22 +679,9 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
                   </TableHeader>
                   <TableBody>
                     {block.rows.map((row, rIndex) => (
-                      <TableRow 
-                        key={rIndex}
-                        className={cn(
-                          "border-b border-slate-200 dark:border-white/20",
-                          rIndex === block.rows.length - 1 && "border-0 font-medium",
-                          rIndex % 2 === 1 && "bg-slate-50/50 dark:bg-white/[0.02]"
-                        )}
-                      >
+                      <TableRow key={rIndex}>
                         {row.map((cell, cIndex) => (
-                          <TableCell 
-                            key={cIndex}
-                            className={cn(
-                              "px-4 py-3 text-slate-600 dark:text-slate-300",
-                              rIndex === block.rows.length - 1 && "text-slate-900 dark:text-white"
-                            )}
-                          >
+                          <TableCell key={cIndex} className="text-muted-foreground">
                             {renderInlineText(cell)}
                           </TableCell>
                         ))}
