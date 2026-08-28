@@ -250,6 +250,13 @@ async function tryProvider(
   console.log(`\n🚀 [llm] Requesting answer from ${provider.name.toUpperCase()} (${provider.model})...`);
 
   try {
+    const alreadyThought = messages.some(m => 
+      m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'internal_thought_process')
+    );
+    const currentTools = alreadyThought 
+      ? TOOLS.filter(t => t.function.name !== 'internal_thought_process') 
+      : TOOLS;
+
     const response = await fetch(provider.url, {
       method: "POST",
       signal: controller.signal,
@@ -263,7 +270,7 @@ async function tryProvider(
         temperature,
         ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
         reasoning_effort: "high", // Tell capable models to think hard
-        tools: TOOLS,
+        tools: currentTools,
       }),
     });
 
