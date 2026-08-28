@@ -133,11 +133,11 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
   if (!Array.isArray(choices) || choices.length === 0) return { content: null, thinking: null };
   const first = choices[0] as any;
   const message = first.message || {};
-  
+
   // 1. Check standard API fields for universal thinking extraction
   let thinking = message.reasoning_content || message.thinking || message.thought || message.thinkingContent || message.reasoning || null;
   let content = message.content;
-  
+
   // 2. Handle Anthropic / OpenRouter Array Format
   if (Array.isArray(content)) {
     let textParts: string[] = [];
@@ -172,7 +172,7 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
       if (!thinking) thinking = thinkMatch[1].trim();
       content = content.replace(/<think>[\s\S]*?<\/think>\n?/g, "").trim();
     }
-    
+
     // Check for JSON leak style (Mistral often leaks `[{"type":"text"...` instead of calling the tool)
     let cleanForJsonCheck = content.trim();
     const codeBlockMatch = cleanForJsonCheck.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
@@ -183,10 +183,10 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
     if (cleanForJsonCheck.startsWith('{') || cleanForJsonCheck.startsWith('[')) {
       try {
         const parsed = JSON.parse(cleanForJsonCheck);
-        
+
         // It successfully parsed as JSON, meaning Mistral leaked JSON into the content block!
         thinking = content;
-        
+
         // 2. Extract ONLY the real answer text to show as the final reply
         if (Array.isArray(parsed)) {
           const textBlocks = parsed.filter(b => (b.type === "text" || b.type === "answer") && b.text);
@@ -203,7 +203,7 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
       } catch (e) {
         // Not valid JSON, but still might be a leaked array with literal newlines
         let rawStr = cleanForJsonCheck;
-        
+
         // CRITICAL FIX: If this is a leaked tool call (especially internal_thought_process), wipe it out entirely.
         if (rawStr.includes('"type": "tool"') || rawStr.includes('"internal_thought_process"')) {
           thinking = rawStr;
@@ -212,12 +212,12 @@ function extractResponse(data: unknown): { content: string | null; toolCalls?: a
           // Aggressively strip `[{"type": "text", "text": "` and `"}]`
           rawStr = rawStr.replace(/^\[?\s*\{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/i, "");
           rawStr = rawStr.replace(/"\s*\}\s*\]?$/, "");
-          
+
           // Replace escaped newlines if any
           rawStr = rawStr.replace(/\\n/g, "\n");
           // Replace escaped quotes
           rawStr = rawStr.replace(/\\"/g, '"');
-          
+
           content = rawStr;
         }
       }
@@ -250,11 +250,11 @@ async function tryProvider(
   console.log(`\n🚀 [llm] Requesting answer from ${provider.name.toUpperCase()} (${provider.model})...`);
 
   try {
-    const alreadyThought = messages.some(m => 
+    const alreadyThought = messages.some(m =>
       m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'internal_thought_process')
     );
-    const currentTools = alreadyThought 
-      ? TOOLS.filter(t => t.function.name !== 'internal_thought_process') 
+    const currentTools = alreadyThought
+      ? TOOLS.filter(t => t.function.name !== 'internal_thought_process')
       : TOOLS;
 
     const response = await fetch(provider.url, {
@@ -288,12 +288,12 @@ async function tryProvider(
     }
 
     const data = await response.json();
-    
+
     // ── ADDED BY AI: PRINT THE RAW PROVIDER JSON TO SERVER LOGS ──────────
     console.log(`\n════════════════ RAW PROVIDER RESPONSE ════════════════`);
     console.log(JSON.stringify(data, null, 2));
     console.log(`═══════════════════════════════════════════════════════\n`);
-    
+
     const result = extractResponse(data);
     const usage = (data as any).usage ? `[Tokens: ${(data as any).usage.total_tokens || 'Unknown'}]` : '';
 
@@ -308,7 +308,7 @@ async function tryProvider(
 
     // Handle Tool Calling
     if (result.toolCalls && result.toolCalls.length > 0) {
-      
+
       const isDeepSearch = messages.some(m => m.role === "user" && (m.content.toLowerCase().includes("deep search") || m.content.toLowerCase().includes("exhaustive")));
       const maxDepth = isDeepSearch ? 8 : 5;
 
@@ -324,7 +324,7 @@ async function tryProvider(
 
       if (call.function.name === 'internal_thought_process') {
         // DUPLICATE THOUGHT BLOCKER
-        const alreadyThought = messages.some(m => 
+        const alreadyThought = messages.some(m =>
           m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'internal_thought_process')
         );
         if (alreadyThought) {
@@ -419,7 +419,7 @@ async function tryProvider(
         }
 
         // DUPLICATE URL BLOCKER
-        const alreadyRead = messages.some(m => 
+        const alreadyRead = messages.some(m =>
           m.tool_calls && m.tool_calls.some(tc => tc.function.name === 'read_url' && tc.function.arguments.includes(args.url))
         );
         if (alreadyRead) {
@@ -440,7 +440,7 @@ async function tryProvider(
         try {
           const scrapeController = new AbortController();
           const scrapeTimeout = setTimeout(() => scrapeController.abort(), 20000); // 20 second strict timeout
-          
+
           const res = await fetch(args.url, {
             signal: scrapeController.signal,
             headers: {
@@ -450,7 +450,7 @@ async function tryProvider(
             },
           });
           clearTimeout(scrapeTimeout);
-          
+
           if (res.ok) {
             const html = await res.text();
             const $ = cheerio.load(html);
@@ -498,7 +498,7 @@ async function tryProvider(
         try {
           const searchController = new AbortController();
           const searchTimeout = setTimeout(() => searchController.abort(), 20000); // 20 second strict timeout
-          
+
           const tavilyKey = process.env.TAVILY_API_KEY?.trim();
           if (tavilyKey) {
             const tavilyRes = await fetch("https://api.tavily.com/search", {
@@ -515,11 +515,11 @@ async function tryProvider(
             });
             clearTimeout(searchTimeout);
             const searchData = await tavilyRes.json();
-            
+
             console.log(`\n================ TAVILY SEARCH LOG ================`);
             console.log(`🔍 Query: "${args.query}"`);
             console.log(`📡 Status: ${tavilyRes.status}`);
-            
+
             let combinedResults = "";
             if (searchData.answer) {
               combinedResults += `[Tavily Summary]:\n${searchData.answer}\n\n`;
@@ -527,7 +527,8 @@ async function tryProvider(
             }
             if (searchData.results && searchData.results.length > 0) {
               console.log(`📄 Found ${searchData.results.length} organic results.`);
-              combinedResults += `[Raw Page Contents]:\n` + searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
+              // [AI FIX]: Commented out to prevent massive 25k+ character token explosions. Testing Option 1 (Tavily Summary Only).
+              // combinedResults += `[Raw Page Contents]:\n` + searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
             }
 
             if (combinedResults.trim().length > 0) {
