@@ -521,8 +521,6 @@ async function tryProvider(
               searchResultText = combinedResults;
               console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found Answer + ${searchData.results?.length || 0} links)`);
             } else {
-              console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found ${searchData.results.length} links)`);
-            } else {
               console.log(`⚠️ [llm:${provider.name}] Web search returned NO results for: "${args.query}"`);
             }
           } else {
