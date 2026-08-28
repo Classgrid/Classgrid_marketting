@@ -516,19 +516,27 @@ async function tryProvider(
             clearTimeout(searchTimeout);
             const searchData = await tavilyRes.json();
             
+            console.log(`\n================ TAVILY SEARCH LOG ================`);
+            console.log(`🔍 Query: "${args.query}"`);
+            console.log(`📡 Status: ${tavilyRes.status}`);
+            
             let combinedResults = "";
             if (searchData.answer) {
               combinedResults += `[Tavily Summary]:\n${searchData.answer}\n\n`;
+              console.log(`📝 Tavily AI Answer:`, searchData.answer);
             }
             if (searchData.results && searchData.results.length > 0) {
+              console.log(`📄 Found ${searchData.results.length} organic results.`);
               combinedResults += `[Raw Page Contents]:\n` + searchData.results.map((r: any) => `${r.title} (${r.url})\n${r.content}`).join('\n\n');
             }
 
             if (combinedResults.trim().length > 0) {
               searchResultText = combinedResults;
-              console.log(`✅ [llm:${provider.name}] Successfully searched web: "${args.query}" (Found Answer + ${searchData.results?.length || 0} links)`);
+              console.log(`✅ [llm:${provider.name}] Successfully searched web. Passing ${searchResultText.length} characters of text to Mistral.`);
+              console.log(`===================================================\n`);
             } else {
               console.log(`⚠️ [llm:${provider.name}] Web search returned NO results for: "${args.query}"`);
+              console.log(`===================================================\n`);
             }
           } else {
             console.error(`❌ [llm:${provider.name}] TAVILY_API_KEY is missing. Cannot perform live search.`);
