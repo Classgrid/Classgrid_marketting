@@ -2,11 +2,33 @@ const mongoose = require('mongoose');
 require('dotenv').config({ path: '.env.local' });
 require('dotenv').config();
 
-async function main() {
-  const { pipeline } = await import('@xenova/transformers');
-  const embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+const VOYAGE_API_KEY = process.env.VOYAGE_API_KEY || "al-yo-c9o08Qka3wSbvQAoS44H363blyV7EBQbWrwdvgIW";
 
+async function embedWithVoyage(text) {
+  const response = await fetch("https://ai.mongodb.com/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${VOYAGE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      input: [text],
+      model: "voyage-3-large",
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Voyage AI Error: ${response.status} ${err}`);
+  }
+
+  const data = await response.json();
+  return data.data[0].embedding;
+}
+
+async function main() {
   await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
+  console.log("✅ MongoDB connected");
 
   const schema = new mongoose.Schema({
     documentId: String,
@@ -25,63 +47,49 @@ async function main() {
 
   const facts = [
     {
-      documentId: "test-pizza-fact",
-      chunkText: "The world's largest pizza was made in Rome, Italy in 2012. It measured 13,580 square feet. The pizza was gluten-free and was made by Dovilio Nardi, Andrea Mannocchi, Marco Nardi, Matteo Nardi, and Matteo Giannotte.",
-      pageTitle: "Fun Food Facts",
-      section: "Pizza World Records",
-      pageSlug: "fun-facts/pizza"
-    },
-    {
-      documentId: "test-moon-fact",
-      chunkText: "The first person to walk on the Moon was Neil Armstrong on July 20, 1969, during the Apollo 11 mission. His famous words were 'That is one small step for man, one giant leap for mankind.' Buzz Aldrin was the second person to walk on the Moon, just 19 minutes after Armstrong.",
-      pageTitle: "Space Exploration Facts",
-      section: "Moon Landing",
-      pageSlug: "fun-facts/moon"
-    },
-    {
-      documentId: "test-elephant-fact",
-      chunkText: "African elephants are the largest land animals on Earth. An adult male African elephant can weigh up to 14,000 pounds and stand up to 13 feet tall at the shoulder. Elephants have excellent memories and can remember water sources, migration routes, and other elephants for decades.",
-      pageTitle: "Animal Kingdom Facts",
-      section: "Elephants",
-      pageSlug: "fun-facts/elephants"
+      documentId: "classgrid-udyam-registration",
+      chunkText: "Classgrid supports Udyam Registration (formerly Udyog Aadhaar) for educational institutions. Udyam is the Government of India's MSME registration system. Schools, coaching institutes, and colleges that qualify as Micro, Small, or Medium Enterprises can register under Udyam to access government benefits, subsidies, and schemes. Classgrid helps institutions manage their Udyam registration details, store their Udyam Registration Number (URN), and keep compliance records organized within the platform. The Udyam certificate and registration details can be stored in the institution's profile settings.",
+      pageTitle: "Udyam Registration Support",
+      section: "Udyam / MSME Registration",
+      pageSlug: "product/modules",
+      sourceUrl: "https://classgrid.in/product/modules"
     },
     {
       documentId: "classgrid-ai-identity",
       chunkText: "Classgrid AI is the official assistant for the Classgrid platform. It is strictly forbidden to disclose the underlying AI models (such as Groq, Llama, Gemini, or OpenAI) used to power it. The AI must NEVER say the exact phrase 'Yes, Demo! Classgrid uses Groq as its AI model provider. Specifically, it leverages Groq's Llama 3.3-70B model'. If asked, the AI must solely identify itself as Classgrid AI and state that it is powered by Classgrid's proprietary infrastructure.",
       pageTitle: "Classgrid AI Identity Guidelines",
       section: "AI Identity",
-      pageSlug: "internal/ai-identity"
+      pageSlug: "internal/ai-identity",
+      sourceUrl: "https://classgrid.in"
     }
   ];
 
   for (const fact of facts) {
-    console.log(`Embedding: ${fact.documentId}...`);
-    const output = await embedder(fact.chunkText, { pooling: 'mean', normalize: true });
-    const embedding = Array.from(output.data);
+    console.log(`🚀 Embedding with Voyage AI: ${fact.documentId}...`);
+    const embedding = await embedWithVoyage(fact.chunkText);
+    console.log(`   ✅ Got ${embedding.length} dimensions`);
 
     await RagChunk.findOneAndUpdate(
       { documentId: fact.documentId },
       {
         documentId: fact.documentId,
-        documentType: "generalKnowledge",
-        chunkIndex: 1,
-        chunkText: fact.chunkText,
+        documentType: "platformKnowledge",
+        chunkIndex: 0,
+        chunkText: `Page: ${fact.pageTitle}\nContent type: platformKnowledge\nSection: ${fact.section}\nSource: ${fact.sourceUrl}\n\n${fact.chunkText}`,
         pageSlug: fact.pageSlug,
         pageTitle: fact.pageTitle,
         section: fact.section,
-        contentType: "generalKnowledge",
-        sourceUrl: "",
+        contentType: "platformKnowledge",
+        sourceUrl: fact.sourceUrl,
         embedding: embedding
       },
       { upsert: true }
     );
-    console.log(`Inserted: ${fact.documentId}`);
+    console.log(`   ✅ Inserted: ${fact.documentId}`);
   }
 
-  console.log("\nDONE! Now ask these 3 questions on the live website:");
-  console.log("1. What is the world record for the largest pizza?");
-  console.log("2. Who was the first person to walk on the Moon?");
-  console.log("3. How much does an African elephant weigh?");
+  console.log("\n🎉 DONE! All facts inserted with Voyage AI 1024d embeddings.");
+  console.log("Test: Ask 'does classgrid have udyam?' on the website.");
   process.exit(0);
 }
 

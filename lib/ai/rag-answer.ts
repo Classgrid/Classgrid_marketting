@@ -827,7 +827,7 @@ export async function generateClassgridRagAnswer(
   console.log(`╚══════════════════════════════════════════════════════════╝`);
 
   const retrieval = await retrieveClassgridContext(question, {
-    topK: options.topK ?? (channel === "whatsapp" || channel === "telegram" ? 2 : 3), // Reduced to save tokens
+    topK: options.topK ?? (channel === "whatsapp" || channel === "telegram" ? 8 : 15),
     pageContext: options.pageContext,
   });
 
