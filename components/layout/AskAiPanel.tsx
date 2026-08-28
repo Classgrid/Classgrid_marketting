@@ -666,45 +666,42 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
         if (block.type === "table") {
           return (
             <div key={`t-${index}`} className="w-full pb-2">
-              <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-white/20">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50 dark:border-white/15 dark:bg-white/[0.04]">
+              <div className="rounded-lg border border-slate-300 dark:border-white/25">
+                <Table className="text-sm">
+                  <TableHeader className="bg-slate-50 dark:bg-white/[0.04]">
+                    <TableRow className="border-b border-slate-300 hover:bg-slate-50 dark:border-white/25 dark:hover:bg-white/[0.04]">
                       {block.headers.map((h, i) => (
-                        <th
-                          key={i}
-                          className="px-3.5 py-2.5 text-left text-xs font-semibold tracking-wide text-slate-900 dark:text-white"
-                        >
+                        <TableHead key={i} className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-900 dark:text-white">
                           {renderInlineText(h)}
-                        </th>
+                        </TableHead>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {block.rows.map((row, rIndex) => (
-                      <tr
+                      <TableRow 
                         key={rIndex}
                         className={cn(
-                          "border-b border-slate-200 dark:border-white/10",
+                          "border-b border-slate-200 dark:border-white/20",
                           rIndex === block.rows.length - 1 && "border-0 font-medium",
                           rIndex % 2 === 1 && "bg-slate-50/50 dark:bg-white/[0.02]"
                         )}
                       >
                         {row.map((cell, cIndex) => (
-                          <td
+                          <TableCell 
                             key={cIndex}
                             className={cn(
-                              "px-3.5 py-2.5 text-slate-600 dark:text-slate-300",
+                              "px-4 py-3 text-slate-600 dark:text-slate-300",
                               rIndex === block.rows.length - 1 && "text-slate-900 dark:text-white"
                             )}
                           >
                             {renderInlineText(cell)}
-                          </td>
+                          </TableCell>
                         ))}
-                      </tr>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
           );
