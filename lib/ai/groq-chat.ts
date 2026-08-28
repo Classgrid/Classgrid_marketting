@@ -107,23 +107,13 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: "openai/gpt-oss-120b",
-    });
-  }
-
   const mistralKey = process.env.MISTRAL_API_KEY?.trim();
   if (mistralKey) {
     providers.push({
       name: "mistral",
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey,
-      model: process.env.MISTRAL_MODEL?.trim() || "mistral-large-latest",
+      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
     });
   }
 
