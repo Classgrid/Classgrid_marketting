@@ -20,10 +20,24 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   async rewrites() {
+    // Proxy AI requests directly to the EC2 server (bypassing Vercel serverless limits)
+    const aiRewrites = [
+      {
+        source: "/api/ask-ai",
+        destination: "http://16.192.13.132:5000/api/ask-ai",
+      },
+      {
+        source: "/api/ask-ai/:path*",
+        destination: "http://16.192.13.132:5000/api/ask-ai/:path*",
+      },
+    ];
+
     // Only proxy to external backend when REQUEST_DEMO_API_BASE_URL is set
     // Without it, the local app/api/request-demo/route.ts handles demos via MongoDB directly
-    if (!requestDemoApiBase) return [];
+    if (!requestDemoApiBase) return aiRewrites;
+    
     return [
+      ...aiRewrites,
       {
         source: "/api/request-demo",
         destination: `${requestDemoApiBase}/api/public/request-demo`,
