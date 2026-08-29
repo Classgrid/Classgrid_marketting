@@ -1082,35 +1082,6 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
     return () => clearInterval(interval);
   }, [bannedUntil]);
 
-  // Check if user is already banned on page load
-  useEffect(() => {
-    async function checkBanStatus() {
-      try {
-        const endpoint = process.env.NEXT_PUBLIC_AI_ENDPOINT || "/api/ask-ai";
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            question: "__ban_check__",
-            userEmail: session?.user?.email ?? undefined
-          }),
-        });
-        if (res.status === 403 || res.status === 429) {
-          const data = await res.json().catch(() => ({}));
-          setIsTerminated(true);
-          if (data?.bannedUntil) {
-            setBannedUntil(new Date(data.bannedUntil));
-          } else if (data?.resetAt) {
-            setBannedUntil(new Date(data.resetAt));
-          }
-        }
-      } catch (_) {
-        // silently ignore network errors
-      }
-    }
-    if (open && status !== "loading") void checkBanStatus();
-  }, [open, status, session?.user?.email]);
-
   function handleClearChat() {
     setMessages([]);
     setInput("");
