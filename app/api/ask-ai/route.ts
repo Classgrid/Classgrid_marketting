@@ -113,7 +113,8 @@ export async function POST(req: Request) {
 
     // Get user session and IP for moderation checks
     const session = await getServerSession(authOptions);
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const rawIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const ip = rawIp.split(",")[0].trim();
     const userEmail = session?.user?.email;
 
     // Connect to MongoDB

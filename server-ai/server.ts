@@ -153,7 +153,9 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
     }
 
     // Get IP for moderation
-    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    const xff = req.headers["x-forwarded-for"];
+    const rawIp = (Array.isArray(xff) ? xff[0] : xff) || req.socket.remoteAddress || "unknown";
+    const ip = rawIp.split(",")[0].trim();
     const userEmail = body?.userEmail && body.userEmail !== "anonymous@classgrid.in" ? body.userEmail : undefined;
 
     // Connect to MongoDB
