@@ -10,20 +10,21 @@ export async function sendSafetyEmail(
   toEmail: string,
   userName: string,
   strikeCount: number,
-  flaggedMessages: { message: string; timestamp: string }[]
+  flaggedMessages: { message: string; timestamp: string }[],
+  expiresAt?: string
 ) {
   if (!toEmail) return;
 
   const name = userName ? userName.split(" ")[0] : "User";
-  const isBanned = strikeCount >= 3;
+  const isBanned = strikeCount >= 8;
 
   const subject = isBanned
-    ? "Action Required: Your Classgrid Account has been Suspended"
-    : "Important: Notice Regarding Classgrid Safety Guidelines";
+    ? "Action Required: Your Classgrid AI Chat Access has been Suspended"
+    : "Notice Regarding Classgrid Safety Guidelines";
 
   const actionText = isBanned
-    ? "Your access to the Classgrid Platform and AI Chat has been <strong>permanently suspended</strong> due to repeated safety violations."
-    : "Your access to the AI Chat has been <strong>temporarily paused</strong>. Repeated violations may result in a permanent ban of your account and IP address.";
+    ? `Your access to the Classgrid AI Chat has been temporarily suspended due to repeated safety violations. Your access will automatically resume at ${expiresAt || 'a later time'}.`
+    : "Please note that your access to the Classgrid AI Chat has been temporarily paused. Continued safety violations may result in your chat access being suspended.";
 
   const strikeListHtml = flaggedMessages
     .map(

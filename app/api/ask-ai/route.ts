@@ -119,60 +119,53 @@ export async function POST(req: Request) {
     // Connect to MongoDB
     await connectMongo();
 
-    // --- 0. CHECK IF USER IS ALREADY BANNED (VIA COOKIE OR EMAIL) ---
-    const cookieHeader = req.headers.get("cookie") || "";
-    let bannedUntil: Date | null = null;
+    // --- 0. CHECK IF USER IS ALREADY BANNED (ONLY FOR LOGGED IN USERS) ---
+    if (userEmail) {
+      try {
+        const { createClient } = require('next-sanity');
+        const sanityClient = createClient({
+          projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+          dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+          apiVersion: "2024-01-01",
+          token: process.env.SANITY_API_WRITE_TOKEN,
+          useCdn: false,
+        });
 
-    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
-    const queryConditions: any[] = [{ ipAddress: ip }];
-    if (userEmail) queryConditions.push({ userEmail: userEmail });
+        const query = `*[_type == "safetyIncident" && userEmail == $userEmail][0]`;
+        const incident = await sanityClient.fetch(query, { userEmail });
 
-    const previousStrike = await ModerationFlag.findOne({
-      $or: queryConditions,
-      createdAt: { $gte: threeMinutesAgo }
-    } as any);
+        if (incident && incident.flaggedMessages && incident.flaggedMessages.length >= 8) {
+          const lastMsg = incident.flaggedMessages[incident.flaggedMessages.length - 1];
+          const lastTime = new Date(lastMsg.timestamp).getTime();
+          const threeHoursMs = 3 * 60 * 60 * 1000;
+          const timePassed = Date.now() - lastTime;
 
-    if (previousStrike) {
-      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 1000);
-    }
-
-    // Check if cookie contains a valid timestamp
-    const cookieMatch = cookieHeader.match(/ai_chat_restricted=([^;]+)/);
-    const cookieValue = cookieMatch ? cookieMatch[1] : null;
-
-    if (cookieValue && !bannedUntil) {
-      // Parse the timestamp from the cookie
-      const parsedTime = parseInt(cookieValue, 10);
-      if (!isNaN(parsedTime) && parsedTime > Date.now()) {
-        bannedUntil = new Date(parsedTime);
-      } else if (cookieValue === "true") {
-        // Fallback for old cookie format
-        bannedUntil = new Date(Date.now() + 3 * 60 * 1000);
+          if (timePassed < threeHoursMs) {
+            const expiresDate = new Date(lastTime + threeHoursMs);
+            const banTimeStr = expiresDate.toLocaleTimeString("en-IN", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZone: "Asia/Kolkata",
+            });
+            return NextResponse.json({
+              error: `Your access to Classgrid AI Chat is temporarily suspended due to safety policy violations. Access resumes at ${banTimeStr} IST.`,
+              bannedUntil: expiresDate.toISOString()
+            }, { status: 403 });
+          }
+        }
+      } catch (err) {
+        console.error("[Safety Check] Failed to query Sanity for ban:", err);
       }
     }
 
-    /*
-    if (bannedUntil) {
-      const banTimeStr = bannedUntil.toLocaleTimeString("en-IN", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        timeZone: "Asia/Kolkata",
-      });
-      return NextResponse.json({
-        error: `Your access has been restricted due to safety policy violations. Access resumes at ${banTimeStr} IST.`,
-        bannedUntil: bannedUntil.toISOString()
-      }, { status: 403 });
-    }
-    */
-
-    // Lightweight ban-check from frontend — no need to call Groq
+    // Lightweight ban-check from frontend
     if (question === "__ban_check__") {
       return NextResponse.json({ status: "ok" }, { status: 200 });
     }
 
-    // --- 1. MODERATION / PROFANITY CHECK FOR NEW MESSAGES ---
-    if (containsProfanity(question)) {
+    // --- 1. MODERATION / PROFANITY CHECK (ONLY FOR LOGGED IN USERS) ---
+    if (userEmail && containsProfanity(question)) {
       const now = new Date();
 
       try {
@@ -185,12 +178,8 @@ export async function POST(req: Request) {
           useCdn: false,
         });
 
-        // Unique identifier for the user: email or IP
-        const identifier = userEmail || ip;
-
-        // Check if an incident already exists for this identifier
-        const query = `*[_type == "safetyIncident" && (userEmail == $identifier || ipAddress == $identifier)][0]`;
-        const existingIncident = await writeClient.fetch(query, { identifier });
+        const query = `*[_type == "safetyIncident" && userEmail == $userEmail][0]`;
+        const existingIncident = await writeClient.fetch(query, { userEmail });
 
         const newFlaggedMessage = {
           _key: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -198,39 +187,75 @@ export async function POST(req: Request) {
           timestamp: now.toISOString(),
         };
 
-        if (existingIncident) {
-          // Append to existing flagged messages array
-          await writeClient
-            .patch(existingIncident._id)
-            .setIfMissing({ flaggedMessages: [] })
-            .append('flaggedMessages', [newFlaggedMessage])
-            .commit();
-          console.log(`[Safety] Appended violation to existing incident in Sanity for ${identifier}`);
+        let newStrikeCount = 1;
+        let flaggedMsgs: any[] = [newFlaggedMessage];
 
-          if (userEmail) {
-            const strikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
-            const flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
-            await sendSafetyEmail(userEmail, body?.userName || "", strikeCount, flaggedMsgs);
+        if (existingIncident) {
+          const lastMsg = existingIncident.flaggedMessages?.[existingIncident.flaggedMessages.length - 1];
+          const lastTime = lastMsg ? new Date(lastMsg.timestamp).getTime() : 0;
+          const threeHoursMs = 3 * 60 * 60 * 1000;
+          const isExpired = existingIncident.flaggedMessages?.length >= 8 && (Date.now() - lastTime >= threeHoursMs);
+
+          if (isExpired) {
+            // 3-hour ban has expired! Reset strike count back to 1
+            await writeClient
+              .patch(existingIncident._id)
+              .set({ flaggedMessages: [newFlaggedMessage] })
+              .commit();
+            console.log(`[Safety] Reset strikes for ${userEmail} after 3-hour ban expiration.`);
+            newStrikeCount = 1;
+            flaggedMsgs = [newFlaggedMessage];
+          } else {
+            // Append violation
+            await writeClient
+              .patch(existingIncident._id)
+              .setIfMissing({ flaggedMessages: [] })
+              .append('flaggedMessages', [newFlaggedMessage])
+              .commit();
+            newStrikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
+            flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
+            console.log(`[Safety] Appended violation (Strike ${newStrikeCount}) for ${userEmail}`);
           }
         } else {
           // Create new incident
           await writeClient.create({
             _type: "safetyIncident",
-            userEmail: userEmail || "",
+            userEmail: userEmail,
             userName: body?.userName || "",
             ipAddress: ip,
             device: req.headers.get("user-agent") || "Unknown Device",
             status: "pending",
             flaggedMessages: [newFlaggedMessage],
           });
-          console.log(`[Safety] Created new safety incident in Sanity for ${identifier}`);
+          console.log(`[Safety] Created new safety incident in Sanity for ${userEmail}`);
+          newStrikeCount = 1;
+          flaggedMsgs = [newFlaggedMessage];
+        }
 
-          if (userEmail) {
-            await sendSafetyEmail(userEmail, body?.userName || "", 1, [newFlaggedMessage]);
-          }
+        // Email & Suspension Trigger Logic:
+        // Strike 4 = Warning Email (NO ban yet)
+        // Strike 8 = Suspension Email + 3-Hour Ban
+        if (newStrikeCount === 4) {
+          await sendSafetyEmail(userEmail, body?.userName || "", 4, flaggedMsgs);
+        } else if (newStrikeCount === 8) {
+          const expiresDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+          const expiresTimeStr = expiresDate.toLocaleTimeString("en-IN", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZone: "Asia/Kolkata",
+          }) + " IST";
+
+          await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
+
+          // Return 403 instantly on 8th strike!
+          return NextResponse.json({
+            error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
+            bannedUntil: expiresDate.toISOString()
+          }, { status: 403 });
         }
       } catch (err) {
-        console.error("[Safety] Failed to log incident to Sanity:", err);
+        console.error("[Safety] Failed to process safety incident:", err);
       }
     }
     // --- END MODERATION CHECK ---
