@@ -24,7 +24,7 @@ export async function sendSafetyEmail(
 
   const actionText = isBanned
     ? `Your access to the Classgrid AI Chat has been temporarily suspended due to repeated safety violations. Your access will automatically resume at ${expiresAt || 'a later time'}.`
-    : "This is a formal warning. Please note that continued safety violations may result in your chat access being temporarily suspended.";
+    : "Please note that your access to the Classgrid AI Chat has been temporarily paused. Continued safety violations may result in your chat access being suspended.";
 
   const strikeListHtml = flaggedMessages
     .map(
