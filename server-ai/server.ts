@@ -163,16 +163,16 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
     // ── 0. BAN CHECK ──────────────────────────────────────────────────────────
     let bannedUntil: Date | null = null;
-    const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     
     if (userEmail) {
       const previousStrike = await ModerationFlag.findOne({
         userEmail: userEmail,
-        updatedAt: { $gte: threeHoursAgo },
+        updatedAt: { $gte: tenMinutesAgo },
       });
 
       if (previousStrike) {
-        bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 3 * 60 * 60 * 1000);
+        bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 10 * 60 * 1000);
       }
     }
 
@@ -204,6 +204,26 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
     // Lightweight ban-check from frontend
     if (question === "__ban_check__") {
+      const identifier = userEmail || ip;
+      const rateLimitRecord = await AiRateLimit.findOne({ identifier });
+      
+      if (rateLimitRecord && rateLimitRecord.count >= 35) {
+        const resetAt = new Date(rateLimitRecord.expireAt);
+        if (resetAt.getTime() > Date.now()) {
+          const minutesLeft = Math.max(1, Math.ceil((resetAt.getTime() - Date.now()) / 60000));
+          const resetTimeStr = resetAt.toLocaleTimeString("en-IN", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZone: "Asia/Kolkata",
+          });
+          return res.status(429).json({
+            error: `You have reached your message limit. Your limit resets at ${resetTimeStr} (in ~${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}).`,
+            resetAt: resetAt.toISOString(),
+            minutesLeft,
+          });
+        }
+      }
       return res.status(200).json({ status: "ok" });
     }
 
@@ -235,14 +255,27 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         if (existingIncident) {
           const lastMsg = existingIncident.flaggedMessages?.[existingIncident.flaggedMessages.length - 1];
           const lastTime = lastMsg ? new Date(lastMsg.timestamp).getTime() : 0;
-          const threeHoursMs = 3 * 60 * 60 * 1000;
-          const isExpired = existingIncident.flaggedMessages?.length >= 8 && (Date.now() - lastTime >= threeHoursMs);
+          const tenMinutesMs = 10 * 60 * 1000;
+          
+          // If 10 minutes have passed since their last bad word, their strikes expire
+          // no matter how many they had, so they start fresh from 1.
+          const isExpired = (Date.now() - lastTime >= tenMinutesMs);
 
           if (isExpired) {
-            await writeClient
-              .patch(existingIncident._id)
-              .set({ flaggedMessages: [newFlaggedMessage] })
-              .commit();
+            // Completely DELETE the old chat history from Sanity
+            await writeClient.delete(existingIncident._id).catch(console.error);
+            
+            // Start completely fresh with a brand new document
+            await writeClient.create({
+              _type: "safetyIncident",
+              userEmail: userEmail || "",
+              userName: body?.userName || "",
+              ipAddress: ip,
+              device: req.headers["user-agent"] || "Unknown Device",
+              status: "pending",
+              flaggedMessages: [newFlaggedMessage],
+            });
+            
             newStrikeCount = 1;
             flaggedMsgs = [newFlaggedMessage];
           } else {
@@ -273,7 +306,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           if (newStrikeCount === 4) {
             await sendSafetyEmail(userEmail, body?.userName || "", 4, flaggedMsgs);
           } else if (newStrikeCount >= 8) {
-            const expiresDate = new Date(Date.now() + 3 * 60 * 60 * 1000);
+            const expiresDate = new Date(Date.now() + 10 * 60 * 1000);
             const expiresTimeStr = expiresDate.toLocaleTimeString("en-IN", {
               hour: "numeric",
               minute: "2-digit",
@@ -318,7 +351,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
     // ── 2. RATE LIMITING ──────────────────────────────────────────────────────
     const identifier = userEmail || ip;
     const MAX_MESSAGES = 35;
-    const TWENTY_MIN_MS = 20 * 60 * 1000;
+    const ONE_HOUR_MS = 60 * 60 * 1000;
 
     const rateLimitRecord = await AiRateLimit.findOne({ identifier });
 
@@ -344,7 +377,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       await AiRateLimit.create({
         identifier,
         count: 1,
-        expireAt: new Date(Date.now() + TWENTY_MIN_MS),
+        expireAt: new Date(Date.now() + ONE_HOUR_MS),
       });
     }
     // ── END RATE LIMITING ─────────────────────────────────────────────────────

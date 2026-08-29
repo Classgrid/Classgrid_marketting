@@ -1095,11 +1095,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
             userEmail: session?.user?.email ?? undefined
           }),
         });
-        if (res.status === 403) {
+        if (res.status === 403 || res.status === 429) {
           const data = await res.json().catch(() => ({}));
           setIsTerminated(true);
           if (data?.bannedUntil) {
             setBannedUntil(new Date(data.bannedUntil));
+          } else if (data?.resetAt) {
+            setBannedUntil(new Date(data.resetAt));
           }
         }
       } catch (_) {
@@ -1475,11 +1477,13 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       // Error responses (403 ban, 429 rate-limit) are still JSON
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        if (response.status === 403) {
+        if (response.status === 403 || response.status === 429) {
           setIsTerminated(true);
           wasTerminated = true;
           if (payload?.bannedUntil) {
             setBannedUntil(new Date(payload.bannedUntil));
+          } else if (payload?.resetAt) {
+            setBannedUntil(new Date(payload.resetAt));
           }
         }
         throw new Error(
