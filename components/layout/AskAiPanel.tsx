@@ -1448,13 +1448,11 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
       // Error responses (403 ban, 429 rate-limit) are still JSON
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        if (response.status === 403 || response.status === 429) {
+        if (response.status === 403) {
           setIsTerminated(true);
           wasTerminated = true;
           if (payload?.bannedUntil) {
             setBannedUntil(new Date(payload.bannedUntil));
-          } else if (payload?.resetAt) {
-            setBannedUntil(new Date(payload.resetAt));
           }
         }
         throw new Error(
