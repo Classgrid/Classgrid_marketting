@@ -254,6 +254,15 @@ export async function POST(req: Request) {
             bannedUntil: expiresDate.toISOString()
           }, { status: 403 });
         }
+
+        // INTERCEPT STRIKES 1-7:
+        // Do not let the swear word reach the Mistral AI Engine. Return a polite, generic AI response.
+        return NextResponse.json({
+          text: "Please keep the conversation professional. How can I help you with Classgrid today?",
+          sources: [],
+          requiresContext: false
+        }, { status: 200 });
+
       } catch (err) {
         console.error("[Safety] Failed to process safety incident:", err);
       }
