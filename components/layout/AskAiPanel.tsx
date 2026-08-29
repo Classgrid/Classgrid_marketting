@@ -1575,10 +1575,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           ? error.message
           : "Unable to answer right now. Please try again.";
 
-      // If terminated, add support info to the message shown in chat
-      const fallback = wasTerminated || rawMessage.includes("terminated") || rawMessage.includes("restricted")
-        ? `${rawMessage}\n\nIf you believe this is a mistake, please contact us at support@classgrid.in.\n\nTo understand why this action was taken, please read our [Privacy Policy](/privacy) and [Terms of Service](/terms).`
-        : rawMessage;
+      // If terminated, just show the raw message (it already has the unban time)
+      const fallback = rawMessage;
 
       setThinking(false);
       await wait(prefersReducedMotion ? 0 : 100);
