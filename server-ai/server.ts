@@ -287,7 +287,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             // Ensure the ban is recorded in MongoDB so page reloads catch it,
             // even if they are on strike 9, 10, etc.
             await ModerationFlag.findOneAndUpdate(
-              { userEmail: userEmail },
+              userEmail ? { userEmail: userEmail } : { ipAddress: ip },
               {
                 $set: {
                   ipAddress: ip,
