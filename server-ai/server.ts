@@ -282,13 +282,23 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
             if (newStrikeCount === 8) {
               await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
-              await ModerationFlag.create({
-                userEmail: userEmail,
-                ipAddress: ip,
-                reason: "Suspended for repeated safety violations (8 strikes)",
-                message: flaggedMsgs[flaggedMsgs.length - 1]
-              }).catch(console.error);
             }
+
+            // Ensure the ban is recorded in MongoDB so page reloads catch it,
+            // even if they are on strike 9, 10, etc.
+            await ModerationFlag.findOneAndUpdate(
+              { userEmail: userEmail },
+              {
+                $set: {
+                  ipAddress: ip,
+                  reason: "Suspended for repeated safety violations (8 strikes)",
+                  message: flaggedMsgs[flaggedMsgs.length - 1],
+                  createdAt: new Date(), // Reset the 3-hour timer on each offense
+                  updatedAt: new Date()
+                }
+              },
+              { upsert: true, new: true }
+            ).catch(console.error);
 
             return res.status(403).json({
               error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
