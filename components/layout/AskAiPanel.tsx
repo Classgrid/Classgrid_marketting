@@ -767,7 +767,7 @@ const AssistantMessageContent = memo(({ content, isTyping }: { content: string, 
 });
 
 export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow" }: AskAiPanelProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const prefersReducedMotion = useReducedMotion();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -1106,8 +1106,8 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         // silently ignore network errors
       }
     }
-    if (open) void checkBanStatus();
-  }, [open]);
+    if (open && status !== "loading") void checkBanStatus();
+  }, [open, status, session?.user?.email]);
 
   function handleClearChat() {
     setMessages([]);
