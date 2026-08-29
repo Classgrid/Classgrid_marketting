@@ -234,10 +234,10 @@ export async function POST(req: Request) {
 
         // Email & Suspension Trigger Logic:
         // Strike 4 = Warning Email (NO ban yet)
-        // Strike 8 = Suspension Email + 3-Hour Ban
+        // Strike >= 8 = 3-Hour Ban (Email sent EXACTLY on 8)
         if (newStrikeCount === 4) {
           await sendSafetyEmail(userEmail, body?.userName || "", 4, flaggedMsgs);
-        } else if (newStrikeCount === 8) {
+        } else if (newStrikeCount >= 8) {
           const expiresDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
           const expiresTimeStr = expiresDate.toLocaleTimeString("en-IN", {
             hour: "numeric",
@@ -246,9 +246,12 @@ export async function POST(req: Request) {
             timeZone: "Asia/Kolkata",
           }) + " IST";
 
-          await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
+          // ONLY send the email EXACTLY on Strike 8
+          if (newStrikeCount === 8) {
+            await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
+          }
 
-          // Return 403 instantly on 8th strike!
+          // Return 403 instantly for ANY strike >= 8!
           return NextResponse.json({
             error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
             bannedUntil: expiresDate.toISOString()
