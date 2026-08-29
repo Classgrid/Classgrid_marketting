@@ -173,6 +173,24 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
       if (previousStrike) {
         bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 10 * 60 * 1000);
+      } else {
+        // Check if there is an expired ban record that we should feed to the AI context and then clear
+        const expiredStrike = await ModerationFlag.findOne({
+          userEmail: userEmail,
+          updatedAt: { $lt: tenMinutesAgo },
+        });
+        if (expiredStrike) {
+          if (!body) body = {};
+          if (!body.userContext) body.userContext = {};
+          const suspendTime = new Date(expiredStrike.updatedAt);
+          const reliefTime = new Date(suspendTime.getTime() + 10 * 60 * 1000);
+          body.userContext.previousBan = {
+            bannedAt: suspendTime.toISOString(),
+            liftedAt: reliefTime.toISOString(),
+            offendingMessage: expiredStrike.message
+          };
+          await ModerationFlag.deleteOne({ _id: expiredStrike._id }).catch(console.error);
+        }
       }
     }
 
@@ -327,7 +345,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
                   $set: {
                     userEmail: userEmail,
                     reason: `Suspended for repeated safety violations (8 strikes) at ${Date.now()}`,
-                    message: typeof question === "string" ? question : "Violating message",
+                    message: flaggedMsgs.map(m => m.text).join(" | "),
                     lastStrikeAt: new Date(),
                     updatedAt: new Date()
                   }
@@ -336,8 +354,14 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               ).catch(console.error);
             }
 
+            const errorMsg = `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`;
+            if (sessionId) {
+              await saveMessageToSession(sessionId, { role: "user", content: typeof question === "string" ? question : "Violating message" }).catch(() => {});
+              await saveMessageToSession(sessionId, { role: "assistant", content: errorMsg }).catch(() => {});
+            }
+
             return res.status(403).json({
-              error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
+              error: errorMsg,
               bannedUntil: expiresDate.toISOString()
             });
           }
