@@ -127,11 +127,11 @@ export async function POST(req: Request) {
 
     const previousStrike = await ModerationFlag.findOne({
       $or: queryConditions,
-      createdAt: { $gte: threeHoursAgo },
+      updatedAt: { $gte: threeHoursAgo },
     } as any);
 
     if (previousStrike) {
-      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 60 * 1000);
+      bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 3 * 60 * 60 * 1000);
     }
     
     // Cookie-based ban
