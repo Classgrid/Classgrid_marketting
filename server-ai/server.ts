@@ -293,9 +293,9 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
                 {
                   $set: {
                     userEmail: userEmail,
-                    reason: "Suspended for repeated safety violations (8 strikes)",
-                    message: flaggedMsgs[flaggedMsgs.length - 1],
-                    createdAt: new Date(),
+                    reason: `Suspended for repeated safety violations (8 strikes) at ${Date.now()}`,
+                    message: typeof question === "string" ? question : "Violating message",
+                    lastStrikeAt: new Date(),
                     updatedAt: new Date()
                   }
                 },
