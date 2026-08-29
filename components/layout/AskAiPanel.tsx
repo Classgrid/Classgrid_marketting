@@ -474,14 +474,14 @@ function SearchingSpinner({ reducedMotion }: { reducedMotion: boolean }) {
 }
 
 function isSafeAssistantHref(href: string) {
-  return href.startsWith("/") || href.startsWith("#") || /^https?:\/\//i.test(href);
+  return href.startsWith("/") || href.startsWith("#") || /^https?:\/\//i.test(href) || /^mailto:/i.test(href);
 }
 
 function renderInlineText(rawText: string) {
   // Pre-process to fix **[Link](url)** being caught as bold instead of a link
-  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#)[^\s)]*\))\*\*/g, "$1");
+  const text = rawText.replace(/\*\*(\[[^\]]+\]\s*\((?:https?:\/\/|\/|#|mailto:)[^\s)]*\))\*\*/g, "$1");
 
-  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#)[^\s)]*)\)|\*\*([^*]+)\*\*)/g;
+  const pattern = /(\[([^\]]+)\]\s*\(((?:https?:\/\/|\/|#|mailto:)[^\s)]*)\)|\*\*([^*]+)\*\*)/g;
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -497,7 +497,7 @@ function renderInlineText(rawText: string) {
     const boldText = match[4];
 
     if (label && href && isSafeAssistantHref(href)) {
-      const external = /^https?:\/\//i.test(href);
+      const external = /^(https?:\/\/|mailto:)/i.test(href);
       // Strip any bold asterisks that might be inside the label: [**Book Demo**](...)
       const cleanLabel = label.replace(/\*\*/g, "");
 
