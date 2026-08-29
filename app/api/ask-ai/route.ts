@@ -119,44 +119,45 @@ export async function POST(req: Request) {
     // Connect to MongoDB
     await connectMongo();
 
-    // --- 0. CHECK IF USER IS ALREADY BANNED (ONLY FOR LOGGED IN USERS) ---
-    if (userEmail) {
-      try {
-        const { createClient } = require('next-sanity');
-        const sanityClient = createClient({
-          projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-          dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-          apiVersion: "2024-01-01",
-          token: process.env.SANITY_API_WRITE_TOKEN,
-          useCdn: false,
-        });
+    // --- 0. BAN CHECK ──────────────────────────────────────────────────────────
+    let bannedUntil: Date | null = null;
+    const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
+    const queryConditions: any[] = [{ ipAddress: ip }];
+    if (userEmail) queryConditions.push({ userEmail });
 
-        const query = `*[_type == "safetyIncident" && userEmail == $userEmail][0]`;
-        const incident = await sanityClient.fetch(query, { userEmail });
+    const previousStrike = await ModerationFlag.findOne({
+      $or: queryConditions,
+      createdAt: { $gte: threeHoursAgo },
+    } as any);
 
-        if (incident && incident.flaggedMessages && incident.flaggedMessages.length >= 8) {
-          const lastMsg = incident.flaggedMessages[incident.flaggedMessages.length - 1];
-          const lastTime = new Date(lastMsg.timestamp).getTime();
-          const threeHoursMs = 3 * 60 * 60 * 1000;
-          const timePassed = Date.now() - lastTime;
-
-          if (timePassed < threeHoursMs) {
-            const expiresDate = new Date(lastTime + threeHoursMs);
-            const banTimeStr = expiresDate.toLocaleTimeString("en-IN", {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-              timeZone: "Asia/Kolkata",
-            });
-            return NextResponse.json({
-              error: `Your access to Classgrid AI Chat is temporarily suspended due to safety policy violations. Access resumes at ${banTimeStr} IST.`,
-              bannedUntil: expiresDate.toISOString()
-            }, { status: 403 });
-          }
-        }
-      } catch (err) {
-        console.error("[Safety Check] Failed to query Sanity for ban:", err);
+    if (previousStrike) {
+      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 60 * 1000);
+    }
+    
+    // Cookie-based ban
+    const cookieHeader = req.headers.get("cookie") || "";
+    const cookieMatch = cookieHeader.match(/ai_chat_restricted=([^;]+)/);
+    const cookieValue = cookieMatch ? cookieMatch[1] : null;
+    if (cookieValue && !bannedUntil) {
+      const parsedTime = parseInt(cookieValue, 10);
+      if (!isNaN(parsedTime) && parsedTime > Date.now()) {
+        bannedUntil = new Date(parsedTime);
+      } else if (cookieValue === "true") {
+        bannedUntil = new Date(Date.now() + 3 * 60 * 1000);
       }
+    }
+
+    if (bannedUntil) {
+      const banTimeStr = bannedUntil.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
+      return NextResponse.json({
+        error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${banTimeStr}.`,
+        bannedUntil: bannedUntil.toISOString()
+      }, { status: 403 });
     }
 
     // Lightweight ban-check from frontend
@@ -250,6 +251,22 @@ export async function POST(req: Request) {
           if (newStrikeCount === 8) {
             await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
           }
+
+          // Ensure the ban is recorded in MongoDB so page reloads catch it,
+          // even if they are on strike 9, 10, etc.
+          await ModerationFlag.findOneAndUpdate(
+            userEmail ? { userEmail: userEmail } : { ipAddress: ip },
+            {
+              $set: {
+                ipAddress: ip,
+                reason: "Suspended for repeated safety violations (8 strikes)",
+                message: flaggedMsgs[flaggedMsgs.length - 1],
+                createdAt: new Date(), // Reset the 3-hour timer on each offense
+                updatedAt: new Date()
+              }
+            },
+            { upsert: true, new: true }
+          ).catch(console.error);
 
           // Return 403 instantly for ANY strike >= 8!
           return NextResponse.json({
