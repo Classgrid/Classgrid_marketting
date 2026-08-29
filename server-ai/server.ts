@@ -228,17 +228,30 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
           timestamp: new Date().toISOString(),
         };
 
+        let newStrikeCount = 1;
+        let flaggedMsgs: any[] = [newFlaggedMessage];
+
         if (existingIncident) {
-          await writeClient
-            .patch(existingIncident._id)
-            .setIfMissing({ flaggedMessages: [] })
-            .append("flaggedMessages", [newFlaggedMessage])
-            .commit();
-          console.log(`[Safety] Appended violation to existing Sanity incident for ${identifier}`);
-          if (userEmail) {
-            const strikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
-            const flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
-            await sendSafetyEmail(userEmail, body?.userName || "", strikeCount, flaggedMsgs);
+          const lastMsg = existingIncident.flaggedMessages?.[existingIncident.flaggedMessages.length - 1];
+          const lastTime = lastMsg ? new Date(lastMsg.timestamp).getTime() : 0;
+          const threeHoursMs = 3 * 60 * 60 * 1000;
+          const isExpired = existingIncident.flaggedMessages?.length >= 8 && (Date.now() - lastTime >= threeHoursMs);
+
+          if (isExpired) {
+            await writeClient
+              .patch(existingIncident._id)
+              .set({ flaggedMessages: [newFlaggedMessage] })
+              .commit();
+            newStrikeCount = 1;
+            flaggedMsgs = [newFlaggedMessage];
+          } else {
+            await writeClient
+              .patch(existingIncident._id)
+              .setIfMissing({ flaggedMessages: [] })
+              .append("flaggedMessages", [newFlaggedMessage])
+              .commit();
+            newStrikeCount = (existingIncident.flaggedMessages?.length || 0) + 1;
+            flaggedMsgs = [...(existingIncident.flaggedMessages || []), newFlaggedMessage];
           }
         } else {
           await writeClient.create({
@@ -250,9 +263,31 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
             status: "pending",
             flaggedMessages: [newFlaggedMessage],
           });
-          console.log(`[Safety] Created new Sanity safety incident for ${identifier}`);
-          if (userEmail) {
-            await sendSafetyEmail(userEmail, body?.userName || "", 1, [newFlaggedMessage]);
+          newStrikeCount = 1;
+          flaggedMsgs = [newFlaggedMessage];
+        }
+
+        // ONLY TRIGGER EMAILS IF USER IS LOGGED IN
+        if (userEmail) {
+          if (newStrikeCount === 4) {
+            await sendSafetyEmail(userEmail, body?.userName || "", 4, flaggedMsgs);
+          } else if (newStrikeCount >= 8) {
+            const expiresDate = new Date(Date.now() + 3 * 60 * 60 * 1000);
+            const expiresTimeStr = expiresDate.toLocaleTimeString("en-IN", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZone: "Asia/Kolkata",
+            }) + " IST";
+
+            if (newStrikeCount === 8) {
+              await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
+            }
+
+            return res.status(403).json({
+              error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
+              bannedUntil: expiresDate.toISOString()
+            });
           }
         }
       } catch (err) {
