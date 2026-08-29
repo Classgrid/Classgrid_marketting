@@ -552,7 +552,7 @@ Classgrid Support Team
   } else {
     channelRules = [
       "Channel: website page-aware chat widget.",
-      "BREVITY RULE (CRITICAL - OVERRIDES ALL OTHER RULES): If the user asks a straightforward factual question (e.g., 'does classgrid support RAG?'), you MUST answer with a single short sentence (e.g., 'Yes, Classgrid supports RAG.'). Do NOT dump marketing paragraphs, do NOT explain extra features, and DO NOT YAP. Be direct and natural.",
+      "CONCISE COMMUNICATION RULE: Keep your answers natural, friendly, and helpful. Do not dump overly long marketing paragraphs unless specifically asked for details.",
       "ANTI-REPETITION RULE: NEVER repeat information you already said in earlier messages. Check the conversation history — if you already listed modules, explained onboarding, or mentioned '41 modules', do NOT repeat it. Vary your responses. If asked the same thing twice, give a shorter version or say 'As I mentioned earlier...' with a brief summary.",
       "ANTI-DUMP RULE: Do NOT proactively list all modules, all features, all institution types, or all support channels. Answer EXACTLY what was asked and nothing more.",
       "Use concise, well-structured answers. ALWAYS format steps or sequential processes as Markdown numbered lists (1. 2. 3. on new lines). ALWAYS format non-sequential lists as Markdown bullet points (- on new lines). Do not put multiple steps on the same line.",
