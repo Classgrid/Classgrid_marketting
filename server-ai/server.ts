@@ -163,18 +163,17 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
     // ── 0. BAN CHECK ──────────────────────────────────────────────────────────
     let bannedUntil: Date | null = null;
-
     const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
-    const queryConditions: any[] = [{ ipAddress: ip }];
-    if (userEmail) queryConditions.push({ userEmail });
+    
+    if (userEmail) {
+      const previousStrike = await ModerationFlag.findOne({
+        userEmail: userEmail,
+        updatedAt: { $gte: threeHoursAgo },
+      });
 
-    const previousStrike = await ModerationFlag.findOne({
-      $or: queryConditions,
-      updatedAt: { $gte: threeHoursAgo },
-    } as any);
-
-    if (previousStrike) {
-      bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 3 * 60 * 60 * 1000);
+      if (previousStrike) {
+        bannedUntil = new Date(new Date(previousStrike.updatedAt).getTime() + 3 * 60 * 60 * 1000);
+      }
     }
 
     // Cookie-based ban
@@ -286,21 +285,23 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
               await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
             }
 
-            // Ensure the ban is recorded in MongoDB so page reloads catch it,
-            // even if they are on strike 9, 10, etc.
-            await ModerationFlag.findOneAndUpdate(
-              userEmail ? { userEmail: userEmail } : { ipAddress: ip },
-              {
-                $set: {
-                  ipAddress: ip,
-                  reason: "Suspended for repeated safety violations (8 strikes)",
-                  message: flaggedMsgs[flaggedMsgs.length - 1],
-                  createdAt: new Date(), // Reset the 3-hour timer on each offense
-                  updatedAt: new Date()
-                }
-              },
-              { upsert: true, new: true }
-            ).catch(console.error);
+            // Ensure the ban is recorded in MongoDB.
+            // We ONLY record it by email to prevent IP-banning entire schools/offices.
+            if (userEmail) {
+              await ModerationFlag.findOneAndUpdate(
+                { userEmail: userEmail },
+                {
+                  $set: {
+                    userEmail: userEmail,
+                    reason: "Suspended for repeated safety violations (8 strikes)",
+                    message: flaggedMsgs[flaggedMsgs.length - 1],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                  }
+                },
+                { upsert: true, new: true }
+              ).catch(console.error);
+            }
 
             return res.status(403).json({
               error: `Your access to Classgrid AI Chat has been temporarily suspended due to safety policy violations. Access resumes at ${expiresTimeStr}.`,
