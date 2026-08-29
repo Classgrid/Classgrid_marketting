@@ -589,7 +589,7 @@ export async function generateGroqReply({
   channel,
   temperature = 0.35,
   maxTokens = 600,
-  timeoutMs = 60000,
+  timeoutMs = 15000,
   onStatus,
   onThought,
 }: GroqChatOptions): Promise<string | null> {
