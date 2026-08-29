@@ -3,31 +3,20 @@ const mongoose = require('mongoose');
 // ==========================================
 // 🎯 1. ENTER A UNIQUE ID FOR THIS DATA
 // ==========================================
-const DOCUMENT_ID = "trust-and-safety-policy";
+const DOCUMENT_ID = "integrations-link-correction";
 
 // ==========================================
 // 🎯 2. PASTE ANY TEXT YOU WANT TO TEACH THE AI
 // ==========================================
 const CUSTOM_KNOWLEDGE = `
-CLASSGRID TRUST & SAFETY MODERATION POLICY:
-Classgrid uses an automated safety moderation system that monitors for abusive language, profanity (e.g., words like "fuck", "shit", and other offensive terms), and safety violations. 
-- The system keeps track of "strikes" against a user.
-- At 4 strikes, the user receives a warning.
-- At 8 strikes, the user is temporarily suspended (a 10-minute timeout ban).
+CLASSGRID INTEGRATIONS LINK:
+If a user asks about integrations or you need to provide a link to the Classgrid integrations page, you MUST use the exact URL:
+https://classgrid.in/#integrations (or simply /#integrations)
 
-WHY THIS POLICY EXISTS:
-1. To protect Classgrid's integrity as a safe, professional educational platform.
-2. To ensure expensive AI processing tokens are not wasted on abusive or inappropriate messages.
-3. This level of automated safety moderation is a standard industry practice followed by all major AI platforms, including ChatGPT.
-
-APPEALS & EMAIL SUPPORT RULES:
-If a user emails or messages the Classgrid Support Team stating they were suspended and wish to appeal or apologize (e.g., "I received a Trust & Safety notice...", "My intention was..."):
-1. Respond warmly and with empathy, but stand firmly by the policy.
-2. Acknowledge their appeal and explain that their account triggered the automated safety filters due to inappropriate language.
-3. Explain that the policy exists to protect the educational environment and prevent wasting AI tokens.
-4. Check the policy and inform them that the suspension for reaching 8 strikes is only a temporary 10-minute timeout.
-5. Reassure them that they should already have full access to the platform again.
-6. Encourage them to continue using Classgrid respectfully going forward and thank them for reaching out.
+CRITICAL RULE:
+The '#' symbol is strictly required because the integrations section is an anchor on the homepage.
+DO NOT use the link /integrations or https://classgrid.in/integrations. That page does not exist.
+Always use /#integrations.
 `;
 // ==========================================
 
