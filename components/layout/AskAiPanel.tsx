@@ -1090,7 +1090,10 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
         const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: "__ban_check__" }),
+          body: JSON.stringify({ 
+            question: "__ban_check__",
+            userEmail: session?.user?.email ?? undefined
+          }),
         });
         if (res.status === 403) {
           const data = await res.json().catch(() => ({}));
