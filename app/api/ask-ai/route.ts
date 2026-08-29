@@ -105,7 +105,7 @@ function normalizePageContext(input: unknown): PageContext | undefined {
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as AskAiRequestBody;
-    let question = normalizeText(body?.question);
+    const question = normalizeText(body?.question);
 
     if (!question) {
       return NextResponse.json({ error: "Question is required." }, { status: 400 });
@@ -254,11 +254,6 @@ export async function POST(req: Request) {
             bannedUntil: expiresDate.toISOString()
           }, { status: 403 });
         }
-
-        // INTERCEPT STRIKES 1-7:
-        // Do not let the swear word reach the Mistral AI Engine. 
-        // We override the user's question with a system instruction so Mistral generates a dynamic, polite refusal!
-        question = "[SYSTEM OVERRIDE: The user used profanity or inappropriate language. Do not attempt to answer their prompt. Generate a very short, polite, professional response asking them to keep the conversation professional, and ask how you can help them with Classgrid.]";
 
       } catch (err) {
         console.error("[Safety] Failed to process safety incident:", err);
