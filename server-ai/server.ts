@@ -361,9 +361,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
         userName: firstName,
         fullName: rawUserName,
         userEmail,
-        userRole: normalizeText(body?.userRole),
         userContext: body?.userContext,
-        orgName: normalizeText(body?.orgName),
         history: mergedHistory,
         pageContext: normalizePageContext(body?.pageContext),
         attachments: body?.attachments,
@@ -1059,6 +1057,7 @@ app.post("/api/whatsapp-webhook", async (req, res) => {
         // 2. Check Kill Switch
         await connectMongo();
         const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+        // @ts-ignore
         let usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
         if (!usage) {
           usage = await WhatsAppUsage.create({ monthYear: currentMonth, messageCount: 0 });
@@ -1271,6 +1270,7 @@ cron.schedule("30 14 * * *", async () => {
     console.log("[Cron] Running Daily WhatsApp Billing Tracker...");
     await connectMongo();
     const currentMonth = new Date().toISOString().slice(0, 7);
+    // @ts-ignore
     const usage = await WhatsAppUsage.findOne({ monthYear: currentMonth });
     const count = usage?.messageCount || 0;
 
