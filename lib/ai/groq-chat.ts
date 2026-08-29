@@ -97,16 +97,6 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  const geminiKey = process.env.GEMINI_API_KEY?.trim();
-  if (geminiKey) {
-    providers.push({
-      name: "gemini",
-      url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-      apiKey: geminiKey,
-      model: "gemini-3.5-flash",
-    });
-  }
-
   const mistralKey = process.env.MISTRAL_API_KEY?.trim();
   if (mistralKey) {
     providers.push({
@@ -114,6 +104,16 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey,
       model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+    });
+  }
+
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    providers.push({
+      name: "gemini",
+      url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      apiKey: geminiKey,
+      model: "gemini-3.5-flash",
     });
   }
 
