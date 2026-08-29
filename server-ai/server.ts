@@ -318,7 +318,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
     // ── 2. RATE LIMITING ──────────────────────────────────────────────────────
     const identifier = userEmail || ip;
     const MAX_MESSAGES = 35;
-    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const TWENTY_MIN_MS = 20 * 60 * 1000;
 
     const rateLimitRecord = await AiRateLimit.findOne({ identifier });
 
@@ -344,7 +344,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       await AiRateLimit.create({
         identifier,
         count: 1,
-        expireAt: new Date(Date.now() + ONE_HOUR_MS),
+        expireAt: new Date(Date.now() + TWENTY_MIN_MS),
       });
     }
     // ── END RATE LIMITING ─────────────────────────────────────────────────────
