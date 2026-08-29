@@ -833,9 +833,6 @@ function DemoSuccessPageInner() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <Toaster />
-
       {/* Classgrid Talk Popup Modal */}
       <AnimatePresence>
         {showTalkPopup && (
