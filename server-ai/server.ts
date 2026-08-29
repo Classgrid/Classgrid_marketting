@@ -162,17 +162,17 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
     // ── 0. BAN CHECK ──────────────────────────────────────────────────────────
     let bannedUntil: Date | null = null;
 
-    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
+    const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
     const queryConditions: any[] = [{ ipAddress: ip }];
     if (userEmail) queryConditions.push({ userEmail });
 
     const previousStrike = await ModerationFlag.findOne({
       $or: queryConditions,
-      createdAt: { $gte: threeMinutesAgo },
+      createdAt: { $gte: threeHoursAgo },
     } as any);
 
     if (previousStrike) {
-      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 1000);
+      bannedUntil = new Date(new Date(previousStrike.createdAt).getTime() + 3 * 60 * 60 * 1000);
     }
 
     // Cookie-based ban
@@ -282,6 +282,12 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
 
             if (newStrikeCount === 8) {
               await sendSafetyEmail(userEmail, body?.userName || "", 8, flaggedMsgs, expiresTimeStr);
+              await ModerationFlag.create({
+                userEmail: userEmail,
+                ipAddress: ip,
+                reason: "Suspended for repeated safety violations (8 strikes)",
+                message: flaggedMsgs[flaggedMsgs.length - 1]
+              }).catch(console.error);
             }
 
             return res.status(403).json({
