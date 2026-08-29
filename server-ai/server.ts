@@ -369,12 +369,6 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       } catch (err) {
         console.error("[Safety] Failed to log incident to Sanity:", err);
       }
-
-      // Return immediately so we don't send profanity to the AI (which triggers accidental support escalations)
-      return res.status(200).json({ 
-        answer: "I’m here to keep the conversation respectful and helpful. If you have a question about Classgrid, feel free to ask!",
-        history: body?.history || [] 
-      });
     }
     // ── END PROFANITY CHECK ───────────────────────────────────────────────────
 
