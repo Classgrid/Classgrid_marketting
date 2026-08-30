@@ -173,44 +173,40 @@ export function DocsToc() {
     };
   }, [pathname]);
 
-  // Auto-open comment form after login redirect with ?openComment=true
-  // NOTE: We read localStorage directly here instead of using hasVoted state,
-  // because hasVoted is set by the pathname useEffect which may not have run yet
-  // (race condition when returning from login redirect).
   useEffect(() => {
     const shouldOpenComment = searchParams.get('openComment') === 'true';
     if (!shouldOpenComment || sessionStatus !== 'authenticated' || !session?.user) return;
 
-    // Read vote state directly from localStorage right now
     let slug = pathname?.replace(/^\/docs\/?/, '');
     if (!slug) slug = 'introduction';
     const saved = localStorage.getItem(`classgrid:docs-feedback:${slug}`);
-    let voted = false;
     let alreadyCommented = false;
     let savedFeedbackId: string | null = null;
+    
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        voted = parsed.hasVoted || false;
         alreadyCommented = parsed.commentSubmitted || false;
         savedFeedbackId = parsed.feedbackId || null;
       } catch (e) {}
     }
 
-    if (!voted || alreadyCommented) return; // nothing to open
+    if (alreadyCommented) return; // If they already submitted a comment, don't re-open
 
-    // Restore the state values first so they're correct when the modal renders
+    // Ensure we have a feedbackId (if they somehow lost localStorage, generate one so they can still comment)
+    if (!savedFeedbackId) {
+      savedFeedbackId = Math.random().toString(36).substring(2, 9);
+    }
+
     setHasVoted(true);
-    if (savedFeedbackId) setFeedbackId(savedFeedbackId);
+    setFeedbackId(savedFeedbackId);
+    setShowCommentForm(true); // Open immediately, no timeout
 
-    const timer = setTimeout(() => {
-      setShowCommentForm(true);
-      // Clean up the URL param so it doesn't re-trigger on refresh
-      const url = new URL(window.location.href);
-      url.searchParams.delete('openComment');
-      window.history.replaceState({}, '', url.toString());
-    }, 400);
-    return () => clearTimeout(timer);
+    // Clean up the URL param so it doesn't re-trigger on refresh
+    const url = new URL(window.location.href);
+    url.searchParams.delete('openComment');
+    window.history.replaceState({}, '', url.toString());
+
   }, [sessionStatus, session, searchParams, pathname]);
 
 
