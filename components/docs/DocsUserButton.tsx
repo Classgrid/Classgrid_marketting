@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -92,7 +92,10 @@ export function DocsUserButton() {
     return (
       <button
         type="button"
-        onClick={() => signIn(undefined, { callbackUrl: pathname })}
+        onClick={() => {
+          const returnPath = pathname || '/docs';
+          window.location.href = `/login?callbackUrl=${encodeURIComponent(returnPath)}`;
+        }}
         className="hidden md:inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 dark:border-white/[0.1] bg-slate-100 dark:bg-white/[0.04] px-3 text-sm font-medium tracking-tight text-slate-900 dark:text-white/90 shadow-sm dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-200 hover:bg-slate-200 dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.2] hover:text-slate-900 dark:hover:text-white cursor-pointer"
       >
         Sign up
