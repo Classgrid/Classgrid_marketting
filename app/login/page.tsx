@@ -53,7 +53,8 @@ function LoginContent() {
     unsubscribeReturnTo += `&c=${targetShortCode}`;
   }
 
-  // After OAuth → /api/auth/post-login checks role and redirects to support/ticket or support/inquiry
+  // After OAuth → if there's an explicit callbackUrl (e.g. from docs ?openComment=true), honour it directly.
+  // Otherwise fall back to /api/auth/post-login which checks role and redirects appropriately.
   const oauthCallbackUrl = ssoReturnTo || unsubscribeReturnTo || explicitNext || "/api/auth/post-login";
   const otpSuccessUrl = ssoReturnTo || unsubscribeReturnTo || explicitNext || "/api/auth/post-login";
 
