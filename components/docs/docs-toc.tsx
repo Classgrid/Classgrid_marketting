@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ThumbsUp, ThumbsDown, Copy, Bot, Sparkles } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
@@ -15,7 +15,8 @@ interface TocItem {
 
 export function DocsToc() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const { data: session, status: sessionStatus } = useSession();
   
   const [headings, setHeadings] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
@@ -82,7 +83,7 @@ export function DocsToc() {
       const res = await fetch('/api/docs/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, feedbackId, title: commentTitle, comment: commentText }),
+        body: JSON.stringify({ slug, feedbackId, title: commentTitle, comment: commentText, isHelpful: votedValue }),
       });
 
       if (!res.ok) throw new Error('Failed to submit comment');
@@ -172,6 +173,22 @@ export function DocsToc() {
     };
   }, [pathname]);
 
+  // Auto-open comment form after login redirect with ?openComment=true
+  useEffect(() => {
+    const shouldOpenComment = searchParams.get('openComment') === 'true';
+    if (shouldOpenComment && sessionStatus === 'authenticated' && session?.user && hasVoted && !commentSubmitted) {
+      // Small delay to let the vote state restore from localStorage first
+      const timer = setTimeout(() => {
+        setShowCommentForm(true);
+        // Clean up the URL param so it doesn't persist on refresh
+        const url = new URL(window.location.href);
+        url.searchParams.delete('openComment');
+        window.history.replaceState({}, '', url.toString());
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [sessionStatus, searchParams, hasVoted, commentSubmitted]);
+
   const handleCopyMarkdown = () => {
     const el = document.getElementById('markdown-content-wrapper');
     const content = el?.getAttribute('data-markdown') || el?.textContent || 'No content found.';
@@ -244,7 +261,17 @@ export function DocsToc() {
                 <p className="text-emerald-400 font-medium mb-1">Thanks for your feedback!</p>
               )}
               <button 
-                onClick={() => setShowCommentForm(true)}
+                onClick={() => {
+                  // Require login before allowing comments
+                  if (!session?.user) {
+                    // Redirect to login, and after login redirect back with ?openComment=true so the form auto-opens
+                    const currentPath = pathname || '/docs';
+                    const returnUrl = `${currentPath}?openComment=true`;
+                    window.location.href = `/login?callbackUrl=${encodeURIComponent(returnUrl)}`;
+                    return;
+                  }
+                  setShowCommentForm(true);
+                }}
                 className="text-slate-500 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white transition-colors underline decoration-slate-300 dark:decoration-white/20 underline-offset-2 cursor-pointer"
               >
                 {votedValue ? 'What went well?' : 'What could we improve?'}

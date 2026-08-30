@@ -27,46 +27,58 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 })
     }
 
-    // If providing a comment to an existing feedback entry
-    if (feedbackId && (comment || title)) {
-      const updates: any = {}
-      if (title) updates[`feedbackHistory[_key=="${feedbackId}"].title`] = title
-      if (comment) updates[`feedbackHistory[_key=="${feedbackId}"].comment`] = comment
-
-      await sanityWriteClient
-        .patch(docId)
-        .set(updates)
-        .commit()
-      return NextResponse.json({ success: true })
-    }
-
-    const userAgent = req.headers.get('user-agent') || 'unknown'
-    const field = isHelpful ? 'helpfulCount' : 'notHelpfulCount'
-
     // Get authenticated user securely from the server
     const session = await getServerSession(authOptions)
 
-    // Create the feedback object to append to the array
-    const feedbackEntry: any = {
-      _key: Math.random().toString(36).substring(2, 9), // Generate a random key for Sanity array item
-      reaction: isHelpful ? 'helpful' : 'not_helpful',
-      pageUrl: req.headers.get('referer') || '',
-      userAgent,
-      submittedAt: new Date().toISOString(),
+    // If providing a comment to an existing feedback entry
+    if (feedbackId && (comment || title)) {
+      // Check if this feedbackId already exists in the array (for backwards compatibility)
+      const doc = await sanityWriteClient.fetch(`*[_id == $docId][0]{ feedbackHistory }`, { docId })
+      const exists = doc.feedbackHistory?.some((item: any) => item._key === feedbackId)
+
+      if (exists) {
+        const updates: any = {}
+        if (title) updates[`feedbackHistory[_key=="${feedbackId}"].title`] = title
+        if (comment) updates[`feedbackHistory[_key=="${feedbackId}"].comment`] = comment
+
+        await sanityWriteClient
+          .patch(docId)
+          .set(updates)
+          .commit()
+      } else {
+        const feedbackEntry: any = {
+          _key: feedbackId,
+          reaction: isHelpful !== undefined ? (isHelpful ? 'helpful' : 'not_helpful') : 'unknown',
+          title,
+          comment,
+          pageUrl: req.headers.get('referer') || '',
+          userAgent: req.headers.get('user-agent') || 'unknown',
+          submittedAt: new Date().toISOString(),
+        }
+
+        if (session?.user?.email) {
+          feedbackEntry.userEmail = session.user.email
+        }
+
+        await sanityWriteClient
+          .patch(docId)
+          .setIfMissing({ feedbackHistory: [] })
+          .append('feedbackHistory', [feedbackEntry])
+          .commit()
+      }
+      return NextResponse.json({ success: true })
     }
 
-    if (session?.user?.email) {
-      feedbackEntry.userEmail = session.user.email
-    }
+    const field = isHelpful ? 'helpfulCount' : 'notHelpfulCount'
+    const newFeedbackId = Math.random().toString(36).substring(2, 9)
 
     await sanityWriteClient
       .patch(docId)
-      .setIfMissing({ [field]: 0, feedbackHistory: [] })
+      .setIfMissing({ [field]: 0 })
       .inc({ [field]: 1 })
-      .append('feedbackHistory', [feedbackEntry])
       .commit()
 
-    return NextResponse.json({ success: true, id: docId, feedbackId: feedbackEntry._key })
+    return NextResponse.json({ success: true, id: docId, feedbackId: newFeedbackId })
   } catch (error) {
     console.error('[Docs Feedback API] Error:', error)
     return NextResponse.json({ success: false, error: 'Failed to submit feedback' }, { status: 500 })

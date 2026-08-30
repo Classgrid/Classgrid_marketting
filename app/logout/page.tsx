@@ -8,7 +8,7 @@ import Link from "next/link";
 
 function LogoutContent() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/login";
 
   useEffect(() => {
     const doLogout = async () => {

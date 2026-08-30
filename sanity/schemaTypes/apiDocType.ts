@@ -98,7 +98,7 @@ export const apiDocType = defineType({
               // If there's a title, show it. Otherwise fall back to a snippet of the comment.
               let displayTitle = title 
                 ? title 
-                : (comment ? `"${comment.substring(0, 40)}..."` : 'No comment provided')
+                : (comment ? `"${comment.substring(0, 40)}..."` : (reaction === 'helpful' ? 'Helpful Vote' : 'Not Helpful Vote'))
               
               // Show email if available, otherwise show date
               let displaySubtitle = userEmail 

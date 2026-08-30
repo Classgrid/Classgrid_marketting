@@ -211,33 +211,9 @@ export const authOptions: NextAuthOptions = {
         console.log(`[NextAuth signIn] referer=${referer}, callbackUrl=${callbackUrl}`);
         console.log(`[NextAuth signIn] isDocsLogin=${isDocsLogin}`);
 
-        if (!isPlatformUser && user.email && isDocsLogin) {
-          // Parse user agent for device info
-          const userAgent = reqHeaders.get("user-agent") || "";
-          let device = "Unknown device";
-          if (userAgent.includes("Windows")) device = "Windows PC";
-          else if (userAgent.includes("Mac OS")) device = "Mac";
-          else if (userAgent.includes("iPhone") || userAgent.includes("iPad")) device = "iOS Device";
-          else if (userAgent.includes("Android")) device = "Android Device";
-          else if (userAgent.includes("Linux")) device = "Linux PC";
-          else device = "Web Browser";
-
-          const html = getNoAccountSignInAttemptHtml(user.email, { device });
-          
-          // Fire and forget using Resend (only if API key is provided)
-          if (process.env.RESEND_API_KEY) {
-            const resend = new Resend(process.env.RESEND_API_KEY);
-            resend.emails.send({
-              from: "Classgrid Notifications <notification@updates.classgrid.in>",
-              to: user.email,
-              bcc: "nikhilsubsun123@gmail.com",
-              subject: "Login attempt",
-              html,
-            }).catch(err => console.error("[NextAuth] Failed to send no-account email via Resend:", err));
-          } else {
-            console.warn("[NextAuth] RESEND_API_KEY is missing. Skipping no-account email for:", user.email);
-          }
-        }
+        // NOTE: "No account found" email for non-platform users is intentionally disabled.
+        // Previously sent an email when a non-platform user signed in from docs — turned off per product decision.
+        // if (!isPlatformUser && user.email && isDocsLogin) { ... }
       }
       return true;
     },
