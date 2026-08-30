@@ -101,6 +101,13 @@ function LoginContent() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isRedirecting = useRef(false);
 
+  // Pre-fetch CSRF token as soon as login page loads.
+  // This ensures the next-auth CSRF cookie is properly set BEFORE the user clicks
+  // any OAuth button, preventing the "Sign-in was interrupted" (OAuthCallback) error.
+  useEffect(() => {
+    fetch("/api/auth/csrf", { credentials: "include" }).catch(() => {});
+  }, []);
+
   const handleGoogle = () => {
     // Save the real callbackUrl before OAuth starts, in case NextAuth mangles it on error
     if (typeof window !== "undefined" && oauthCallbackUrl !== "/api/auth/post-login") {
