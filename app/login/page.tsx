@@ -47,17 +47,20 @@ function LoginContent() {
   // to localStorage before starting OAuth, and restore it here if the URL has been mangled.
   const isHomepageCallback = !rawCallbackUrl || rawCallbackUrl === "https://classgrid.in" || rawCallbackUrl === "/";
   let explicitNext = rawCallbackUrl;
+  const hasRetried = searchParams.get("retried") === "true";
 
   if (typeof window !== "undefined") {
-    // If there's an OAuthCallback error and the callbackUrl got replaced with homepage,
-    // restore the original one from localStorage
+    // Restore the original callbackUrl from localStorage if it was mangled
     if (oauthError && isHomepageCallback) {
       const saved = localStorage.getItem("classgrid:login-callback");
       if (saved) explicitNext = saved;
     }
 
-    // Clear stale NextAuth cookies on OAuthCallback error so retry works cleanly
-    if (oauthError === "OAuthCallback" || oauthError === "Callback") {
+    // AUTO-RECOVER: On OAuthCallback error, clear stale cookies and silently redirect
+    // to a clean login page so the user never sees "Sign-in was interrupted."
+    // The "retried" flag prevents infinite loops — if it fails twice, show the error.
+    if ((oauthError === "OAuthCallback" || oauthError === "Callback") && !hasRetried) {
+      // Clear all NextAuth cookies
       document.cookie.split(";").forEach((c) => {
         const name = c.split("=")[0].trim();
         if (name.includes("next-auth") || name.includes("__Secure-next-auth")) {
@@ -65,6 +68,15 @@ function LoginContent() {
           document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; secure`;
         }
       });
+
+      // Build a clean login URL with the preserved callbackUrl
+      const cleanUrl = new URL(window.location.origin + "/login");
+      const preservedCallback = explicitNext || localStorage.getItem("classgrid:login-callback");
+      if (preservedCallback) cleanUrl.searchParams.set("callbackUrl", preservedCallback);
+      cleanUrl.searchParams.set("retried", "true");
+
+      // Silently redirect — user never sees the error
+      window.location.replace(cleanUrl.toString());
     }
   }
 
