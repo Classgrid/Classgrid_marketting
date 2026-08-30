@@ -28,16 +28,18 @@ function LogoutContent() {
         localStorage.removeItem("support_email");
       }
 
-      // 2. Clear NextAuth session & redirect
-      const timer = setTimeout(() => {
-        signOut({ callbackUrl });
-      }, 3000);
+      // 2. IMPORTANT: Replace /logout in browser history with callbackUrl BEFORE signing out.
+      // This way, after signOut redirects to /login, clicking the browser Back button
+      // goes to the page BEFORE /logout — NOT back to this logout spinner.
+      window.history.replaceState(null, '', callbackUrl);
 
-      return () => clearTimeout(timer);
+      // 3. Clear NextAuth session & redirect (no delay needed)
+      signOut({ callbackUrl });
     };
 
     doLogout();
   }, [callbackUrl]);
+
 
   return null; // The visual UI is handled by the parent
 }
