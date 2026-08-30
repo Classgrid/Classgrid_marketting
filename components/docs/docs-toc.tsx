@@ -182,12 +182,14 @@ export function DocsToc() {
     const saved = localStorage.getItem(`classgrid:docs-feedback:${slug}`);
     let alreadyCommented = false;
     let savedFeedbackId: string | null = null;
+    let savedVotedValue: boolean | null = null;
     
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         alreadyCommented = parsed.commentSubmitted || false;
         savedFeedbackId = parsed.feedbackId || null;
+        savedVotedValue = parsed.votedValue ?? null;
       } catch (e) {}
     }
 
@@ -198,13 +200,29 @@ export function DocsToc() {
       savedFeedbackId = Math.random().toString(36).substring(2, 9);
     }
 
+    // Restore votedValue from URL if present (survives lost localStorage)
+    const urlVote = searchParams.get('vote');
+    let finalVotedValue = savedVotedValue;
+    if (urlVote === 'up') finalVotedValue = true;
+    if (urlVote === 'down') finalVotedValue = false;
+
+    // Aggressively re-save to localStorage right now so it survives immediate refreshes
+    localStorage.setItem(`classgrid:docs-feedback:${slug}`, JSON.stringify({
+      hasVoted: true,
+      votedValue: finalVotedValue,
+      commentSubmitted: false,
+      feedbackId: savedFeedbackId
+    }));
+
     setHasVoted(true);
+    setVotedValue(finalVotedValue);
     setFeedbackId(savedFeedbackId);
     setShowCommentForm(true); // Open immediately, no timeout
 
     // Clean up the URL param so it doesn't re-trigger on refresh
     const url = new URL(window.location.href);
     url.searchParams.delete('openComment');
+    url.searchParams.delete('vote');
     window.history.replaceState({}, '', url.toString());
 
   }, [sessionStatus, session, searchParams, pathname]);
@@ -287,7 +305,8 @@ export function DocsToc() {
                   if (!session?.user) {
                     // Redirect to login, and after login redirect back with ?openComment=true so the form auto-opens
                     const currentPath = pathname || '/docs';
-                    const returnUrl = `${currentPath}?openComment=true`;
+                    const voteParam = votedValue === true ? 'up' : 'down';
+                    const returnUrl = `${currentPath}?openComment=true&vote=${voteParam}`;
                     window.location.href = `/login?callbackUrl=${encodeURIComponent(returnUrl)}`;
                     return;
                   }
