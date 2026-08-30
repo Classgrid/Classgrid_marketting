@@ -70,7 +70,6 @@ export const apiDocType = defineType({
       name: 'feedbackHistory',
       title: 'Feedback History',
       type: 'array',
-      readOnly: true,
       description: 'Log of individual ratings for this document.',
       of: [
         {
