@@ -39,7 +39,34 @@ function LoginContent() {
   const ssoReturnTo = (sso && sig)
     ? `/onboarding?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`
     : null;
-  const explicitNext = searchParams.get("next") || searchParams.get("callbackUrl");
+  const rawCallbackUrl = searchParams.get("next") || searchParams.get("callbackUrl");
+  const oauthError = searchParams.get("error");
+
+  // IMPORTANT: When NextAuth encounters an OAuthCallback error, it replaces the original
+  // callbackUrl with the homepage (https://classgrid.in). We save the REAL callbackUrl
+  // to localStorage before starting OAuth, and restore it here if the URL has been mangled.
+  const isHomepageCallback = !rawCallbackUrl || rawCallbackUrl === "https://classgrid.in" || rawCallbackUrl === "/";
+  let explicitNext = rawCallbackUrl;
+
+  if (typeof window !== "undefined") {
+    // If there's an OAuthCallback error and the callbackUrl got replaced with homepage,
+    // restore the original one from localStorage
+    if (oauthError && isHomepageCallback) {
+      const saved = localStorage.getItem("classgrid:login-callback");
+      if (saved) explicitNext = saved;
+    }
+
+    // Clear stale NextAuth cookies on OAuthCallback error so retry works cleanly
+    if (oauthError === "OAuthCallback" || oauthError === "Callback") {
+      document.cookie.split(";").forEach((c) => {
+        const name = c.split("=")[0].trim();
+        if (name.includes("next-auth") || name.includes("__Secure-next-auth")) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; secure`;
+        }
+      });
+    }
+  }
 
   const intent = searchParams.get("intent");
   const unsubscribeType = searchParams.get("type");
@@ -63,10 +90,18 @@ function LoginContent() {
   const isRedirecting = useRef(false);
 
   const handleGoogle = () => {
+    // Save the real callbackUrl before OAuth starts, in case NextAuth mangles it on error
+    if (typeof window !== "undefined" && oauthCallbackUrl !== "/api/auth/post-login") {
+      localStorage.setItem("classgrid:login-callback", oauthCallbackUrl);
+    }
     signIn("google", { callbackUrl: oauthCallbackUrl });
   };
 
   const handleGithub = () => {
+    // Save the real callbackUrl before OAuth starts, in case NextAuth mangles it on error
+    if (typeof window !== "undefined" && oauthCallbackUrl !== "/api/auth/post-login") {
+      localStorage.setItem("classgrid:login-callback", oauthCallbackUrl);
+    }
     signIn("github", { callbackUrl: oauthCallbackUrl });
   };
 
