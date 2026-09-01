@@ -6,9 +6,9 @@ type PageMeta = {
 
 export const pageMeta: Record<string, PageMeta> = {
   home: {
-    title: "The Operating System for Educational Institutions",
+    title: "The AI-Powered Operating System for Educational Institutions",
     description:
-      "Classgrid is the Operating System for Educational Institutions - one stack for academics, operations, finance, admissions, communication, and AI.",
+      "Classgrid is the AI-Powered Operating System for Educational Institutions - one stack for academics, operations, finance, admissions, communication, and AI.",
     path: "/",
   },
   about: {
