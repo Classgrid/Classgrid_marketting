@@ -24,7 +24,7 @@ I needed cloud infrastructure but had zero money and no investors. Most startup 
 
 I prepared detailed evidence — system diagrams, database schemas, live URLs, and infrastructure requirements — and applied. Classgrid was accepted and received $1,000 in AWS credits.
 
-Then I did the same thing with MongoDB, Cloudflare, Razorpay, and Anthropic Claude. Total infrastructure value secured: over $12,000 — without raising a single rupee.
+Then I did the same thing with MongoDB, Cloudflare, Razorpay, and Anthropic Claude. Total infrastructure value secured: over $11,000 — without raising a single rupee.
 
 ---
 
@@ -235,11 +235,68 @@ Vercel's startup team mentioned YC as one of their accelerator partners.
 
 ---
 
+## **FOUNDER VIDEO SCRIPT** (Max 1 Minute — Webcam, Face to Camera)
+
+**TIPS:** Sit in a quiet, well-lit room. Look directly into the camera lens (not the screen). Speak naturally like you're talking to a friend. Do NOT read from a script — just glance at these bullet points and talk. YC partners want to see YOUR energy and conviction, not a polished production.
+
+---
+
+**[0:00–0:10] WHO YOU ARE:**
+> "Hi, I'm Nikhil Shinde. I'm 19, I'm in my second year of B.Tech at Pimpri Chinchwad College of Engineering in Pune, and I'm the solo founder of Classgrid."
+
+**[0:10–0:25] WHAT CLASSGRID IS:**
+> "Classgrid is the AI-powered operating system for educational institutions in India. We replace the 4 or 5 fragmented legacy tools that schools and colleges hate — attendance systems, exam software, fee platforms, communication apps — with a single, modern platform that has AI built directly into the foundation."
+
+**[0:25–0:40] WHY YOU BUILT IT:**
+> "I built this because I've lived through terrible educational software my entire life — school, coaching, junior college, and now engineering college. Every institution already had software. The software made things worse. Faculty hated it. Students ignored it. I got tired of waiting for someone else to fix it, so I taught myself to code and built what institutions actually need."
+
+**[0:40–0:55] TRACTION:**
+> "Right now, my own engineering college is our first live pilot. A faculty member and his students use Classgrid every single class to run GPS-verified attendance. It completely eliminated proxy attendance and saves 10 minutes per lecture. We solved the hard technical problem of indoor GPS drift and achieve 5 to 20 meter accuracy."
+
+**[0:55–1:00] CLOSE:**
+> "I'm applying to YC because I now have proof that this works in a real institution. I need help hiring 2-3 engineers to finish the product and scale to more schools across Maharashtra."
+
+---
+
+## **DEMO VIDEO SCRIPT** (1–2 Minutes — Screen Recording + Voice Narration)
+
+**TIPS:** Use Loom (free at loom.com) to screen record with your voice. No webcam needed for this one. Talk fast and energetically. Don't pause or hesitate — just keep moving through the product. Show real data, not empty dashboards.
+
+---
+
+**[0:00–0:08] OPEN LOGIN PAGE (v2.classgrid.in)**
+> "This is Classgrid — the AI-powered operating system for educational institutions. Let me show you the live version deployed at my engineering college."
+
+**[0:08–0:18] LOG IN → DASHBOARD LOADS**
+> "This is the faculty dashboard. Everything an institution needs — attendance, quizzes, classroom tools, analytics — all in one place. No more switching between 5 different apps."
+
+**[0:18–0:35] CLICK ON GPS ATTENDANCE → START A SESSION**
+> "This is our killer feature — GPS-verified attendance. Faculty starts a session, and students can only mark attendance if they are physically present inside the classroom. We solved indoor GPS drift — most competitors give up on GPS indoors because readings jump to 200 or 300 meters. We rebuilt the location engine with multi-sample validation and hard rejection of bad readings, achieving reliable 5 to 20 meter accuracy."
+
+**[0:35–0:50] SHOW ATTENDANCE RECORDS / ANALYTICS**
+> "This is real data — real students at Pimpri Chinchwad College of Engineering use this every single class. It completely eliminated proxy attendance and saves 10 minutes per lecture that was previously wasted calling out names."
+
+**[0:50–1:05] OPEN ASK AI PANEL → TYPE A QUESTION**
+> "And this is Classgrid AI — our built-in AI assistant. It's not a generic chatbot bolted on top. It uses RAG — retrieval-augmented generation — to pull answers directly from the institution's own data and documentation. Watch — it answers in under 2 seconds."
+
+**[1:05–1:15] SHOW THE AI RESPONSE APPEARING**
+> "No competitor in the Indian education market has this. Legacy ERPs were built before modern AI existed. We built AI into the foundation from day one — so it comes included, not as a premium add-on that costs extra."
+
+**[1:15–1:25] QUICK SCROLL THROUGH ADMIN PANEL / ORG SETTINGS**
+> "On the enterprise side, we built a multi-tenant architecture. We can provision a brand new school — with its own branded subdomain, complete data isolation, and role-based access — in under 60 seconds."
+
+**[1:25–1:30] END**
+> "This is Classgrid. Real product, real users, real institution. Thank you."
+
+---
+
 ## **[PENDING — Remove this section before submission]**
 
-- [ ] Record product demo video
+- [ ] Record Founder Video (1 min, webcam, face to camera)
+- [ ] Record Demo Video (1-2 min, screen recording + voice narration)
 - [ ] Capture user count / traction screenshot
 - [ ] Capture super admin dashboard image
 - [ ] Get Yahia's review and feedback
 - [ ] Remove the `[NOTE TO YAHIA]` tag from test scores section
+- [ ] Remove both video script sections before final submission
 - [ ] Final proofread before pasting into YC form 
