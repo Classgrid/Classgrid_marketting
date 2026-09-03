@@ -929,7 +929,7 @@ export async function generateClassgridRagAnswer(
       messages,
       channel,
       maxTokens: 4096,
-      timeoutMs: channel === "whatsapp" ? 10000 : 15000, // Reduced from 60000 to fail fast and show fallback
+      timeoutMs: channel === "whatsapp" ? 10000 : 10000, // Strict 10-second limit
       temperature: 0.35,
       onStatus: options.onStatus,
       onThought: options.onThought,
