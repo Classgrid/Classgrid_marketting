@@ -424,7 +424,15 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       try { res.write(`data: ${JSON.stringify(data)}\n\n`); } catch (_) { }
     };
 
+    let keepAliveInterval: NodeJS.Timeout | undefined;
+
     try {
+      // KEEP-ALIVE PING FOR VERCEL EDGE TIMEOUT
+      // Vercel drops proxy connections if no bytes are sent for 10s.
+      keepAliveInterval = setInterval(() => {
+        try { res.write(`: keep-alive\n\n`); } catch (_) { }
+      }, 4000);
+
       sendEvent({ type: "status", label: "thinking" });
 
       const rawUserName = normalizeText(body?.userName);
@@ -1029,6 +1037,7 @@ const aiChatHandler = async (req: express.Request, res: express.Response) => {
       }
       sendEvent({ type: "error", error: DEFAULT_ERROR_MESSAGE });
     } finally {
+      if (keepAliveInterval) clearInterval(keepAliveInterval);
       res.end();
     }
 

@@ -1575,10 +1575,20 @@ export function AskAiPanel({ open, onOpenChange, pageContext, variant = "in-flow
           ? error.message
           : "Unable to answer right now. Please try again.";
 
-      // If terminated, add support info to the message shown in chat
-      const fallback = wasTerminated || rawMessage.includes("terminated") || rawMessage.includes("restricted")
-        ? `${rawMessage}\n\nIf you believe this is a mistake, please contact us at support@classgrid.in.\n\nTo understand why this action was taken, please read our [Privacy Policy](/privacy) and [Terms of Service](/terms).`
+      // NETWORK ERROR FIX: Never show raw browser errors like "network error",
+      // "Failed to fetch", "ERR_", "CORS", "timeout" etc. to the user.
+      // Instead, show a friendly fallback message.
+      const isNetworkError =
+        /network\s*error|failed\s*to\s*fetch|ERR_|CORS|ECONNREFUSED|ETIMEDOUT|net::/i.test(rawMessage);
+
+      const displayMessage = isNetworkError
+        ? "I'm having trouble connecting right now. Please try again in a moment — I'll be right back! 🔄"
         : rawMessage;
+
+      // If terminated, add support info to the message shown in chat
+      const fallback = wasTerminated || displayMessage.includes("terminated") || displayMessage.includes("restricted")
+        ? `${displayMessage}\n\nIf you believe this is a mistake, please contact us at support@classgrid.in.\n\nTo understand why this action was taken, please read our [Privacy Policy](/privacy) and [Terms of Service](/terms).`
+        : displayMessage;
 
       setThinking(false);
       await wait(prefersReducedMotion ? 0 : 100);
