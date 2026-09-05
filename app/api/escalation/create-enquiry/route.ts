@@ -201,13 +201,13 @@ export async function GET(req: NextRequest) {
         name: "mistral",
         url: "https://api.mistral.ai/v1/chat/completions",
         apiKey: process.env.MISTRAL_API_KEY?.trim() || "",
-        model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+        model: process.env.MISTRAL_MODEL?.trim() || "open-mistral-nemo",
       },
       {
         name: "mistral-fallback",
         url: "https://api.mistral.ai/v1/chat/completions",
         apiKey: process.env.MISTRAL_API_KEY_2?.trim() || "",
-        model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+        model: process.env.MISTRAL_MODEL?.trim() || "open-mistral-nemo",
       },
     ].filter(p => p.apiKey);
 

@@ -103,7 +103,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "mistral",
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey,
-      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+      model: process.env.MISTRAL_MODEL?.trim() || "open-mistral-nemo",
     });
   }
 
@@ -113,7 +113,7 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
       name: "mistral-fallback",
       url: "https://api.mistral.ai/v1/chat/completions",
       apiKey: mistralKey2,
-      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+      model: process.env.MISTRAL_MODEL?.trim() || "open-mistral-nemo",
     });
   }
 
@@ -279,7 +279,8 @@ async function tryProvider(
         messages,
         temperature,
         ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
-        reasoning_effort: "high", // Tell capable models to think hard
+        // Dynamically turn off reasoning for nemo, keep it high for everything else
+        ...(provider.model !== "open-mistral-nemo" && provider.name !== "gemini" ? { reasoning_effort: "high" } : {}),
         tools: currentTools,
       }),
     });
