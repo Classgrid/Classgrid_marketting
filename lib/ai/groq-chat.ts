@@ -280,7 +280,7 @@ async function tryProvider(
         temperature,
         ...(provider.name !== "gemini" ? { max_tokens: maxTokens } : {}),
         // Dynamically turn off reasoning for nemo, keep it high for everything else
-        ...(provider.model !== "open-mistral-nemo" && provider.name !== "gemini" ? { reasoning_effort: "high" } : {}),
+        ...(provider.model !== "open-mistral-nemo" ? { reasoning_effort: "high" } : {}),
         tools: currentTools,
       }),
     });
