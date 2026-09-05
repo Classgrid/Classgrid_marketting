@@ -45,9 +45,9 @@ export function DocsUserButton() {
         if (res.ok) {
           const data = await res.json();
           let url = data.dashboardUrl;
-          // For custom domain orgs, append the SSO token as a query param
-          // because the .classgrid.in cookie won't be sent to a different domain
-          if (user?.orgCustomDomain && user?.isCustomDomainEnabled && data.token) {
+          // Always append the SSO token as a query param to guarantee auth works.
+          // The cookie may have expired, and custom domains can't use .classgrid.in cookies at all.
+          if (data.token) {
             const separator = url.includes("?") ? "&" : "?";
             url = `${url}${separator}sso_token=${data.token}`;
           }
