@@ -65,12 +65,23 @@ export async function GET() {
       { expiresIn: "7d" }
     );
 
+    let activeCustomDomain = user.orgCustomDomain;
+    let isCustomDomainEnabled = user.isCustomDomainEnabled;
+
+    if (platformUser.organization_id) {
+      const org = await db.collection("organizations").findOne({ _id: platformUser.organization_id });
+      if (org) {
+        activeCustomDomain = org.erp_domain?.domain || org.custom_domain?.domain || activeCustomDomain;
+        isCustomDomainEnabled = !!((org.erp_domain?.is_enabled || org.custom_domain?.is_enabled) || (org.custom_domain?.status === "verified" || org.erp_domain?.status === "verified"));
+      }
+    }
+
     // Build the dashboard URL
     const dashboardUrl = getDashboardUrl({
       role: user.platformRole,
       orgSubdomain: user.orgSubdomain,
-      orgCustomDomain: user.orgCustomDomain,
-      isCustomDomainEnabled: user.isCustomDomainEnabled,
+      orgCustomDomain: activeCustomDomain,
+      isCustomDomainEnabled: isCustomDomainEnabled,
     });
 
     // Set the platform token cookie

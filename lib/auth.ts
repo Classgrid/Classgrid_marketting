@@ -248,8 +248,8 @@ export const authOptions: NextAuthOptions = {
                   token.orgName = org?.name || null;
                   token.orgLogo = org?.logo_url || null;
                   token.orgSubdomain = org?.subdomain || null;
-                  token.orgCustomDomain = org?.customDomain || null;
-                  token.isCustomDomainEnabled = !!(org?.customDomain && org?.isCustomDomainEnabled);
+                  token.orgCustomDomain = org?.erp_domain?.domain || org?.custom_domain?.domain || null;
+                  token.isCustomDomainEnabled = !!((org?.erp_domain?.is_enabled || org?.custom_domain?.is_enabled) || (org?.custom_domain?.status === "verified" || org?.erp_domain?.status === "verified"));
                 } else if (platformUser.role === "super_admin" || platformUser.role === "co_super_admin") {
                   // Super Admins don't have an org, but they can upload a platformLogo
                   token.orgLogo = platformUser.platformLogo || null;
