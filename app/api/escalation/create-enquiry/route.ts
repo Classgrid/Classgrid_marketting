@@ -203,6 +203,12 @@ export async function GET(req: NextRequest) {
         apiKey: process.env.MISTRAL_API_KEY?.trim() || "",
         model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
       },
+      {
+        name: "mistral-fallback",
+        url: "https://api.mistral.ai/v1/chat/completions",
+        apiKey: process.env.MISTRAL_API_KEY_2?.trim() || "",
+        model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+      },
     ].filter(p => p.apiKey);
 
     let draftContent = "";

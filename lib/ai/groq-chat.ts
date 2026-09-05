@@ -107,6 +107,16 @@ function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvide
     });
   }
 
+  const mistralKey2 = process.env.MISTRAL_API_KEY_2?.trim();
+  if (mistralKey2) {
+    providers.push({
+      name: "mistral-fallback",
+      url: "https://api.mistral.ai/v1/chat/completions",
+      apiKey: mistralKey2,
+      model: process.env.MISTRAL_MODEL?.trim() || "mistral-small-latest",
+    });
+  }
+
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   if (geminiKey) {
     providers.push({
