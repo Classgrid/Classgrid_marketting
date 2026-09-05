@@ -44,7 +44,14 @@ export function DocsUserButton() {
         const res = await fetch("/api/auth/platform-sso");
         if (res.ok) {
           const data = await res.json();
-          setDashboardUrl(data.dashboardUrl);
+          let url = data.dashboardUrl;
+          // For custom domain orgs, append the SSO token as a query param
+          // because the .classgrid.in cookie won't be sent to a different domain
+          if (user?.orgCustomDomain && user?.isCustomDomainEnabled && data.token) {
+            const separator = url.includes("?") ? "&" : "?";
+            url = `${url}${separator}sso_token=${data.token}`;
+          }
+          setDashboardUrl(url);
           setSsoReady(true);
         }
       } catch (err) {

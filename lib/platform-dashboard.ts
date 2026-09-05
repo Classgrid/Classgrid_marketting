@@ -81,12 +81,10 @@ export function getDashboardUrl({
     return `https://superadmin.classgrid.in/`;
   }
 
-  // Custom domain org → redirect to custom domain login (no SSO possible)
+  // Custom domain org → send to dashboard path directly.
+  // SSO token will be appended as ?sso_token=xxx by the caller to bridge authentication.
   if (orgCustomDomain && isCustomDomainEnabled) {
-    // For student/teacher, go to /login; for admin roles, go to /admin/login
-    const isAdmin = !["student", "teacher", "faculty"].includes(role);
-    const loginPath = isAdmin ? "/admin/login" : "/login";
-    return `https://${orgCustomDomain}${loginPath}`;
+    return `https://${orgCustomDomain}${dashboardPath}`;
   }
 
   // Classgrid subdomain → SSO works, go directly to dashboard
