@@ -97,16 +97,6 @@ const TOOLS = [
 function getProviderChain(channel?: "web" | "whatsapp" | "telegram"): LLMProvider[] {
   const providers: LLMProvider[] = [];
 
-  const groqKey = process.env.GROQ_API_KEY?.trim();
-  if (groqKey) {
-    providers.push({
-      name: "groq",
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: groqKey,
-      model: "openai/gpt-oss-120b",
-    });
-  }
-
   const mistralKey = process.env.MISTRAL_API_KEY?.trim();
   if (mistralKey) {
     providers.push({
