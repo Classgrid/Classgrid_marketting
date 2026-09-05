@@ -4,9 +4,9 @@
  */
 
 const DASHBOARD_TARGETS: Record<string, string> = {
-  student: "/classrooms",
-  teacher: "/classrooms",
-  faculty: "/classrooms",
+  student: "/student/dashboard",
+  teacher: "/faculty/dashboard",
+  faculty: "/faculty/dashboard",
   org_admin: "/org/dashboard",
   library_manager: "/dept/library/dashboard",
   hod: "/org/dashboard",
