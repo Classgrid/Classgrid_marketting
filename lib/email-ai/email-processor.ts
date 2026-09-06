@@ -68,7 +68,7 @@ export function shouldSkipEmail(senderEmail: string, subject: string): boolean {
   }
 
   // Skip @classgrid.in senders entirely (internal team)
-  // if (senderLower.endsWith("@classgrid.in")) return true; // Disabled temporarily to allow internal testing
+  if (senderLower.endsWith("@classgrid.in")) return true;
 
   // Skip automated/bounce subjects
   for (const pattern of SKIP_SUBJECT_PATTERNS) {
