@@ -189,7 +189,8 @@ export const authOptions: NextAuthOptions = {
         let isPlatformUser = false;
         if (db) {
           const platformUser = await db.collection("users").findOne({
-            email: { $regex: new RegExp(`^${user.email}$`, 'i') }
+            email: { $regex: new RegExp(`^${user.email}$`, 'i') },
+            mustResetPassword: { $ne: true }
           });
           isPlatformUser = !!platformUser;
         }
@@ -227,7 +228,8 @@ export const authOptions: NextAuthOptions = {
           const db = mongoose.connection.db;
             if (db) {
               const platformUser = await db.collection("users").findOne({ 
-                email: { $regex: new RegExp(`^${user.email}$`, 'i') } 
+                email: { $regex: new RegExp(`^${user.email}$`, 'i') },
+                mustResetPassword: { $ne: true }
               });
               if (platformUser) {
                 token.isPlatformUser = true;

@@ -48,6 +48,7 @@ export async function GET() {
     // Find the platform user to get their _id and organization_id
     const platformUser = await db.collection("users").findOne({
       email: { $regex: new RegExp(`^${session.user.email}$`, "i") },
+      mustResetPassword: { $ne: true }
     });
 
     if (!platformUser) {
