@@ -28,8 +28,13 @@ import { sendFailedEscalationEmail, sendTicketCreatedEscalationEmail } from "../
 
 // ── Escalation regex (same as server.ts) ──────────────────────────────────────
 
-const ESCALATE_RE = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+))\]/;
-const ESCALATE_RE_G = /\[ESCALATE:\s*(.+?)(?:\s*\|\s*SUBJECT:\s*(.+?))?(?:\s*\|\s*CATEGORY:\s*(.+?))?(?:\s*\|\s*PRIORITY:\s*(.+?))?(?:\s*\|\s*DRAFT:\s*([\s\S]+))\]/g;
+const ESCALATE_SUMMARY_GROUP = `((?:(?!\\s*\\|?\\s*(?:SUBJECT|CATEGORY|PRIORITY|DRAFT):)[\\s\\S])+?)`;
+const ESCALATE_RE = new RegExp(
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|?\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*DRAFT:\\s*([\\s\\S]+))?\\]`, "i"
+);
+const ESCALATE_RE_G = new RegExp(
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|?\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*DRAFT:\\s*([\\s\\S]+))?\\]`, "gi"
+);
 
 // ── Sender filter: skip internal/automated emails ─────────────────────────────
 

@@ -75,13 +75,13 @@ const DEFAULT_ERROR_MESSAGE = "Unable to answer right now. Please try again.";
 // ── ESCALATE regex ────────────────────────────────────────────────────────────
 // Uses negative lookahead so the summary group stops at | SUBJECT: / | CATEGORY: / | PRIORITY: / | DRAFT:
 // This prevents ] inside AI summary (e.g. "[number]") from breaking the match.
-const ESCALATE_SUMMARY_GROUP = `((?:(?!\\s*\\|\\s*(?:SUBJECT|CATEGORY|PRIORITY|DRAFT):)[\\s\\S])+?)`;
+const ESCALATE_SUMMARY_GROUP = `((?:(?!\\s*\\|?\\s*(?:SUBJECT|CATEGORY|PRIORITY|DRAFT):)[\\s\\S])+?)`;
 const ESCALATE_RE = new RegExp(
-  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*DRAFT:\\s*([\\s\\S]+?))?\\]`
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|?\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*DRAFT:\\s*([\\s\\S]+))?\\]`, "i"
 );
 const ESCALATE_RE_G = new RegExp(
-  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|\\s*DRAFT:\\s*([\\s\\S]+?))?\\]`,
-  "g"
+  `\\[ESCALATE:\\s*${ESCALATE_SUMMARY_GROUP}(?:\\s*\\|?\\s*SUBJECT:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*CATEGORY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*PRIORITY:\\s*([\\s\\S]+?))?(?:\\s*\\|?\\s*DRAFT:\\s*([\\s\\S]+))?\\]`,
+  "gi"
 );
 
 // Helper: strip ESCALATE blocks + any leaked fragments
