@@ -108,9 +108,9 @@ Finalized and deployed Classgrid's automated dual-provider marketing & transacti
 
 ## 🧠 Anthropic Claude for Startups Program
 **Date:** July 31, 2026  
-**Status:** ✅ Accepted (Community) / ⏳ Credits Pending  
+**Status:** ✅ Accepted (Community)
 
-Classgrid was officially welcomed into the **Claude for Startups** community program! This grants Classgrid a direct line to the Anthropic team, early access to new Claude models, and priority invites to technical deep dives and builder events. The application for API credits to power intelligent workflows for educators and admins is still pending further review.
+Classgrid was officially welcomed into the **Claude for Startups** community program! This grants Classgrid a direct line to the Anthropic team, early access to new Claude models, and priority invites to technical deep dives and builder events. (Note: API credits are exclusively reserved for VC-backed startups, making Classgrid currently ineligible as a 100% bootstrapped company, but community access is fully active).
 
 ---
 

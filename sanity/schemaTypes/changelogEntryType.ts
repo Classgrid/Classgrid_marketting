@@ -70,6 +70,20 @@ export const changelogEntryType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "postToFacebook",
+      title: "📘 Publish to Facebook Page",
+      description: "Turn this ON to automatically post this to the Classgrid Facebook Page when you publish. It will reset after posting.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "postToInstagram",
+      title: "📸 Publish to Instagram",
+      description: "Turn this ON to automatically post this to Classgrid Instagram when you publish (requires an image). It will reset after posting.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
       name: "updateType",
       title: "Update Type",
       type: "string",
